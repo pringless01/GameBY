@@ -1,6 +1,7 @@
 import { initDb } from '../config/database.js';
 import { getIo } from '../sockets/io.js';
 import { autoAdvanceOnEvent } from '../services/mentorService.js';
+import { logAudit } from '../services/auditService.js';
 
 export async function createContract({ creator_id, counterparty_id, subject, amount, type }) {
   const db = await initDb();
@@ -9,6 +10,7 @@ export async function createContract({ creator_id, counterparty_id, subject, amo
   const created = await getContract(result.lastID);
   const io = getIo();
   if (io) io.emit('contract_created', created);
+  logAudit({ userId: creator_id, action: 'contract_create', detail: JSON.stringify({ id: created.id, counterparty_id, amount, type }) });
   // tutorial advance (first contract of creator?)
   const countRow = await db.get('SELECT COUNT(*) as c FROM contracts WHERE creator_id = ?', [creator_id]);
   if (countRow.c === 1) autoAdvanceOnEvent(creator_id, 'contract:first_created').catch(()=>{});
@@ -39,6 +41,7 @@ export async function actOnContract(id, userId, action) {
     const updated = await getContract(id);
     const io = getIo();
     if (io) io.emit('contract_updated', updated);
+    logAudit({ userId, action: 'contract_'+action, detail: JSON.stringify({ id, status: updated.status }) });
     return updated;
   }
   return contract;

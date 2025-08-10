@@ -1,6 +1,7 @@
 import { initDb } from '../config/database.js';
 import bcrypt from 'bcrypt';
 import { getIo } from '../sockets/io.js';
+import { logAudit } from '../services/auditService.js';
 
 export async function createUser({ username, password }) {
   const db = await initDb();
@@ -18,16 +19,11 @@ export function validatePassword(user, password) {
   return bcrypt.compareSync(password, user.password_hash);
 }
 
-async function audit(userId, action, detail, ip) {
-  const db = await initDb();
-  await db.run('INSERT INTO audit_log (user_id, action, detail, ip) VALUES (?, ?, ?, ?)', [userId, action, detail || null, ip || null]);
-}
-
 export async function updateTrust(userId, delta, reason='manual_adjust', ip=null) {
   const db = await initDb();
   await db.run('UPDATE users SET trust_score = MAX(0, MIN(200, trust_score + ?)) WHERE id = ?', [delta, userId]);
   await db.run('INSERT INTO reputation_events (user_id, delta, reason) VALUES (?, ?, ?)', [userId, delta, reason]);
-  await audit(userId, 'trust_update', JSON.stringify({ delta, reason }), ip);
+  logAudit({ userId, action: 'trust_update', detail: JSON.stringify({ delta, reason }), ip });
   const updated = await db.get('SELECT id, username, trust_score FROM users WHERE id = ?', [userId]);
   const io = getIo();
   if (io) io.emit('trust_updated', updated);
