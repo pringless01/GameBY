@@ -10,7 +10,8 @@
     "prepare": "husky install",
     "lint": "node --eval \"process.exit(0)\"",
     "commitlint": "commitlint --from=HEAD~1 --to=HEAD",
-    "test:integration": "node tests/integration/contracts.test.js"
+    "test:integration": "node tests/integration/contracts.test.js",
+    "audit:trim": "node scripts/trim-audit.js"
   },
   "dependencies": {
     "bcrypt": "^5.1.1",
