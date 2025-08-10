@@ -1,4 +1,4 @@
-// Basic integration test for contract real-time flow
+// Basic integration test for contract real-time flow + tutorial + audit
 import http from 'http';
 import { io as Client } from 'socket.io-client';
 import assert from 'assert';
@@ -42,32 +42,52 @@ async function authFetch(path, token, options={}){
     const me1 = await me(l1.token); const me2 = await me(l2.token);
 
     const socket1 = Client(BASE, { transports:['websocket'] });
-    const events = { created: [], updated: [] };
+    const events = { created: [], updated: [], tutorial: [], trust: [] };
     socket1.on('contract_created', c => events.created.push(c));
     socket1.on('contract_updated', c => events.updated.push(c));
+    socket1.on('tutorial_progress', t => events.tutorial.push(t));
+    socket1.on('trust_updated', t => events.trust.push(t));
+
+    // İlk tutorial state doğrula
+    const stateBefore = await authFetch('/api/mentor/state', l1.token).then(r=>r.json());
+    assert(stateBefore.bot_tutorial_state === 'INTRO', 'Başlangıç INTRO değil');
+
+    // İlk mesaj gönder (chat namespace için join + send simulate HTTP yok; direkt socket event)
+    socket1.emit('join_chat', { userId: me1.user.id });
+    socket1.emit('send_message', { userId: me1.user.id, message: 'selam' });
+    for(let i=0;i<10 && events.tutorial.length===0;i++) await sleep(200);
+    // tutorial_progress gelebilir (asenkron), toleranslıyız; state çek
+    const stateAfterMsg = await authFetch('/api/mentor/state', l1.token).then(r=>r.json());
+    assert(['FIRST_CHAT','FIRST_CONTRACT','TRUST_LEARN','MENTOR_MATCH','DONE'].includes(stateAfterMsg.bot_tutorial_state), 'Mesaj sonrası ilerleme yok');
 
     // create contract
     const createRes = await authFetch('/api/contracts', l1.token, { method:'POST', body: JSON.stringify({ counterparty_id: me2.user.id, subject:'Test', amount: 50, type:'trade' })});
     const created = await createRes.json();
     assert(created.contract && created.contract.id, 'Kontrat oluşmadı');
-
-    // wait for socket event
     for(let i=0;i<10 && events.created.length===0;i++) await sleep(200);
     assert(events.created.length===1, 'contract_created event gelmedi');
 
-    // accept with user2
+    // accept
     const acceptRes = await authFetch(`/api/contracts/${created.contract.id}/action`, l2.token, { method:'POST', body: JSON.stringify({ action:'accept' })});
     const accepted = await acceptRes.json();
     assert(accepted.contract.status === 'ACTIVE', 'Accept başarısız');
-    for(let i=0;i<10 && events.updated.filter(e=>e.status==='ACTIVE').length===0;i++) await sleep(200);
-    assert(events.updated.some(e=>e.status==='ACTIVE'), 'contract_updated ACTIVE event yok');
+    for(let i=0;i<10 && !events.updated.some(e=>e.status==='ACTIVE');i++) await sleep(200);
+    assert(events.updated.some(e=>e.status==='ACTIVE'), 'ACTIVE event yok');
 
     // complete
     const completeRes = await authFetch(`/api/contracts/${created.contract.id}/action`, l1.token, { method:'POST', body: JSON.stringify({ action:'complete' })});
     const completed = await completeRes.json();
     assert(completed.contract.status === 'COMPLETED', 'Complete başarısız');
-    for(let i=0;i<10 && events.updated.filter(e=>e.status==='COMPLETED').length===0;i++) await sleep(200);
-    assert(events.updated.some(e=>e.status==='COMPLETED'), 'contract_completed event yok');
+    for(let i=0;i<10 && !events.updated.some(e=>e.status==='COMPLETED');i++) await sleep(200);
+    assert(events.updated.some(e=>e.status==='COMPLETED'), 'COMPLETED event yok');
+
+    // Audit kontrol (son kayıtlar)
+    const auditRes = await authFetch('/api/admin/audit?limit=20', l1.token); // l1 admin olmayabilir; skip hatasız
+    if (auditRes.status === 200) {
+      const auditJson = await auditRes.json();
+      const hasContract = auditJson.logs.some(l => l.action.startsWith('contract_'));
+      assert(hasContract, 'Audit log contract_ kayıt yok');
+    }
 
     console.log('INTEGRATION_TEST_SUCCESS');
     process.exit(0);
