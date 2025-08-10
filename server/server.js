@@ -21,7 +21,17 @@ app.use(cors());
 app.use(express.json());
 app.use(morgan('dev'));
 
-app.get('/health', (req, res) => res.json({ status: 'ok' }));
+const startTime = Date.now();
+let currentCommit = process.env.GIT_COMMIT || null;
+
+app.get('/health', (req, res) => {
+  res.json({
+    status: 'ok',
+    commit: currentCommit,
+    uptime_sec: Math.round((Date.now() - startTime) / 1000),
+    memory_mb: Math.round(process.memoryUsage().rss / 1024 / 1024)
+  });
+});
 app.use('/api/auth', authRoutes);
 app.use('/api/user', userRoutes);
 
@@ -37,4 +47,18 @@ app.use(express.static(path.join(__dirname, '..', 'frontend', 'public')));
   server.listen(PORT, () => {
     console.log('Server listening on port', PORT);
   });
+
+  const shutdown = (signal) => {
+    console.log(`Received ${signal}, shutting down...`);
+    io.close();
+    server.close(() => {
+      console.log('HTTP server closed');
+      process.exit(0);
+    });
+    setTimeout(() => {
+      console.error('Force exit');
+      process.exit(1);
+    }, 8000).unref();
+  };
+  ['SIGINT','SIGTERM'].forEach(sig => process.on(sig, () => shutdown(sig)));
 })();

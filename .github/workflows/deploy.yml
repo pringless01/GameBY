@@ -10,13 +10,31 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  DEPLOY_PATH: /home/musa/oyun
+  DEPLOY_BASE: /home/musa/releases
+  CURRENT_SYMLINK: /home/musa/oyun
   SERVER_USER: musa
   SERVICE_NAME: oyun
 
 jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Install backend deps (prod only check)
+        run: |
+          cd server
+          npm ci
+          node -e "require('fs').accessSync('migrations')" || echo 'No migrations dir'
+      - name: Lint placeholder
+        run: echo "No lint yet"
   deploy:
     runs-on: ubuntu-latest
+    needs: test
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -37,6 +55,12 @@ jobs:
         run: |
           ssh-keyscan -H ${{ secrets.SERVER_HOST }} >> ~/.ssh/known_hosts
 
+      - name: Prepare release metadata
+        id: meta
+        run: |
+          echo "sha=${GITHUB_SHA}" >> $GITHUB_OUTPUT
+          echo "release_dir=${GITHUB_SHA::7}" >> $GITHUB_OUTPUT
+
       - name: Create rsync exclude file
         run: |
           cat > rsync-excludes.txt <<'EOF'
@@ -50,33 +74,54 @@ jobs:
           **/*.log
           EOF
 
-      - name: Rsync code to server
+      - name: Rsync code to server (new release dir)
         run: |
-          rsync -az --delete --exclude-from=rsync-excludes.txt ./ $SERVER_USER@${{ secrets.SERVER_HOST }}:$DEPLOY_PATH/
+          ssh $SERVER_USER@${{ secrets.SERVER_HOST }} "mkdir -p $DEPLOY_BASE/${{ steps.meta.outputs.release_dir }}"
+          rsync -az --delete --exclude-from=rsync-excludes.txt ./ $SERVER_USER@${{ secrets.SERVER_HOST }}:$DEPLOY_BASE/${{ steps.meta.outputs.release_dir }}/
 
-      - name: Remote install, migrate & restart
+      - name: Install, migrate & symlink switch
         run: |
           ssh $SERVER_USER@${{ secrets.SERVER_HOST }} <<'EOSSH'
           set -e
-          cd $DEPLOY_PATH/server
+          RELEASE_DIR=${DEPLOY_BASE}/${{ steps.meta.outputs.release_dir }}
+          cd $RELEASE_DIR/server
           if [ -f package-lock.json ]; then npm ci --omit=dev; else npm install --omit=dev; fi
-          npm run migrate
+          # DB backup & migrate
+          mkdir -p $RELEASE_DIR/server/data
+          if [ -f $CURRENT_SYMLINK/server/data/game.db ]; then
+            cp $CURRENT_SYMLINK/server/data/game.db $RELEASE_DIR/server/data/game.db 2>/dev/null || true
+          fi
+          sqlite3 $RELEASE_DIR/server/data/game.db ".backup '$RELEASE_DIR/server/data/backup-pre-${{ steps.meta.outputs.release_dir }}.db'" || true
+          npm run migrate --prefix $RELEASE_DIR/server
+          # Symlink atomic switch
+          ln -sfn $RELEASE_DIR $CURRENT_SYMLINK
+          # Write commit file
+          echo '${{ steps.meta.outputs.sha }}' > $CURRENT_SYMLINK/COMMIT
+          EOSSH
+
+      - name: Restart service
+        run: |
+          ssh $SERVER_USER@${{ secrets.SERVER_HOST }} <<'EOSSH'
           if systemctl list-units --type=service --all | grep -q "${SERVICE_NAME}.service"; then
             sudo systemctl restart ${SERVICE_NAME}
           elif command -v pm2 >/dev/null 2>&1; then
+            cd $CURRENT_SYMLINK/server
             pm2 restart ${SERVICE_NAME} || pm2 start server.js --name ${SERVICE_NAME}
             pm2 save
           else
-            nohup node server.js >/dev/null 2>&1 &
+            cd $CURRENT_SYMLINK/server
+            nohup env GIT_COMMIT=$(cat $CURRENT_SYMLINK/COMMIT) node server.js >/dev/null 2>&1 &
           fi
           EOSSH
 
       - name: Health Check
         run: |
-          curl -I --max-time 10 http://${{ secrets.SERVER_HOST }}:3000 || echo "Health check failed"
+          curl --fail --silent http://${{ secrets.SERVER_HOST }}:3000/health | tee health.json
+          node -e "const d=require('./health.json'); if(d.status!=='ok'){process.exit(1)}"
 
       - name: Summary
         run: |
           echo "Deploy tamamlandı $(date -u)" >> $GITHUB_STEP_SUMMARY
           echo "Host: ${{ secrets.SERVER_HOST }}" >> $GITHUB_STEP_SUMMARY
-          echo "Path: $DEPLOY_PATH" >> $GITHUB_STEP_SUMMARY
+          echo "Commit: ${{ steps.meta.outputs.sha }}" >> $GITHUB_STEP_SUMMARY
+          echo "Release dir: ${{ steps.meta.outputs.release_dir }}" >> $GITHUB_STEP_SUMMARY
