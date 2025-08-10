@@ -203,6 +203,20 @@ class ChatManager {
                 this.handleBotMessage(data);
             });
 
+            // Yeni: trust güncelleme
+            this.socket.on('trust_updated', (data) => {
+                if (this.user && data.id === this.user.id) {
+                    this.user.trustScore = data.trust_score;
+                    this.inlineToast('Güven puanın: '+data.trust_score, 'trust');
+                }
+            });
+            // Yeni: tutorial ilerleme
+            this.socket.on('tutorial_progress', (p) => {
+                if (this.user && p.userId === this.user.id) {
+                    this.inlineToast('Tutorial adımı: '+p.state, 'tutorial');
+                }
+            });
+
             this.socket.on('error', (data) => {
                 console.error('Chat socket error:', data);
             });
@@ -787,6 +801,41 @@ class ChatManager {
         if (statusEl) {
             statusEl.classList.add('d-none');
         }
+    }
+
+    inlineToast(message, type='info'){
+        let bar = document.getElementById('inline-toast-bar');
+        if(!bar){
+            bar = document.createElement('div');
+            bar.id='inline-toast-bar';
+            bar.style.position='fixed';
+            bar.style.bottom='10px';
+            bar.style.left='50%';
+            bar.style.transform='translateX(-50%)';
+            bar.style.zIndex='9999';
+            bar.style.display='flex';
+            bar.style.flexDirection='column';
+            bar.style.alignItems='center';
+            bar.style.pointerEvents='none';
+            document.body.appendChild(bar);
+        }
+        const el = document.createElement('div');
+        el.textContent = message;
+        el.style.background = type==='tutorial' ? '#4b6ef5' : (type==='trust' ? '#9333ea' : '#222');
+        el.style.color = '#fff';
+        el.style.padding = '6px 10px';
+        el.style.marginTop = '6px';
+        el.style.borderRadius = '20px';
+        el.style.fontSize = '13px';
+        el.style.boxShadow = '0 2px 6px rgba(0,0,0,0.2)';
+        el.style.opacity='0';
+        el.style.transition='opacity .3s';
+        bar.appendChild(el);
+        requestAnimationFrame(()=>{ el.style.opacity='1'; });
+        setTimeout(()=>{
+            el.style.opacity='0';
+            setTimeout(()=> el.remove(), 400);
+        }, 3500);
     }
 }
 

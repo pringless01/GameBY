@@ -253,6 +253,31 @@ class Dashboard {
                         this.updateResourcesDisplay();
                     }
                 });
+                // Yeni: trust güncelleme
+                this.socket.on('trust_updated', (data) => {
+                    if (this.user && data.id === this.user.id) {
+                        this.user.trustScore = data.trust_score;
+                        this.updateUserDisplay();
+                        this.showSuccess('Güven puanın güncellendi: ' + data.trust_score);
+                    }
+                });
+                // Yeni: contract created
+                this.socket.on('contract_created', (c) => {
+                    this.showContractToast('Yeni kontrat #' + c.id + ' (' + c.status + ')');
+                });
+                // Yeni: contract updated
+                this.socket.on('contract_updated', (c) => {
+                    this.showContractToast('Kontrat #' + c.id + ' durum: ' + c.status);
+                });
+                // Yeni: tutorial ilerleme
+                this.socket.on('tutorial_progress', (p) => {
+                    if (this.user && p.userId === this.user.id) {
+                        this.showTutorialToast('Tutorial ilerledi: ' + p.state);
+                        if (!this.user.bot_tutorial_state || this.user.bot_tutorial_state !== p.state) {
+                            this.user.bot_tutorial_state = p.state;
+                        }
+                    }
+                });
                 
                 // Timeout ekle - 5 saniye içinde bağlanamazsa simüle et
                 setTimeout(() => {
@@ -626,6 +651,42 @@ class Dashboard {
         
         const message = details[resourceType] || 'Kaynak bilgisi bulunamadı';
         alert(message);
+    }
+
+    showContractToast(text){
+        this.genericToast(text, 'contract');
+    }
+    showTutorialToast(text){
+        this.genericToast(text, 'tutorial');
+    }
+    genericToast(message, type='info'){
+        let container = document.getElementById('toast-container');
+        if(!container){
+            container = document.createElement('div');
+            container.id = 'toast-container';
+            container.style.position='fixed';
+            container.style.top='10px';
+            container.style.right='10px';
+            container.style.zIndex='9999';
+            document.body.appendChild(container);
+        }
+        const el = document.createElement('div');
+        el.textContent = message;
+        el.style.background = type==='tutorial' ? '#4b6ef5' : (type==='contract' ? '#16a34a' : '#333');
+        el.style.color = '#fff';
+        el.style.padding = '8px 12px';
+        el.style.marginTop = '6px';
+        el.style.borderRadius = '6px';
+        el.style.fontSize = '14px';
+        el.style.boxShadow = '0 2px 6px rgba(0,0,0,0.2)';
+        el.style.opacity='0';
+        el.style.transition='opacity .3s';
+        container.appendChild(el);
+        requestAnimationFrame(()=>{ el.style.opacity='1'; });
+        setTimeout(()=>{
+            el.style.opacity='0';
+            setTimeout(()=> el.remove(), 400);
+        }, 4000);
     }
 }
 

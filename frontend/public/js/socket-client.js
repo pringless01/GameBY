@@ -196,8 +196,25 @@ class SocketClient {
             this.triggerEvent('resource_updated', data);
         });
 
-        this.socket.on('trust_update', (data) => {
-            this.triggerEvent('trust_update', data);
+        // Trust (backend 'trust_updated' emit ediyor) – geriye dönük uyumluluk için iki isim
+        this.socket.on('trust_updated', (data) => {
+            this.triggerEvent('trust_updated', data);
+        });
+        this.socket.on('trust_update', (data) => { // eski isim (varsa)
+            this.triggerEvent('trust_updated', data);
+        });
+
+        // Contract lifecycle events
+        this.socket.on('contract_created', (data) => {
+            this.triggerEvent('contract_created', data);
+        });
+        this.socket.on('contract_updated', (data) => {
+            this.triggerEvent('contract_updated', data);
+        });
+
+        // Tutorial progression
+        this.socket.on('tutorial_progress', (data) => {
+            this.triggerEvent('tutorial_progress', data);
         });
 
         this.socket.on('transaction_notification', (data) => {
