@@ -16,3 +16,16 @@ export async function findUserByUsername(username) {
 export function validatePassword(user, password) {
   return bcrypt.compareSync(password, user.password_hash);
 }
+
+export async function updateTrust(userId, delta, reason='manual_adjust') {
+  const db = await initDb();
+  await db.run('UPDATE users SET trust_score = MAX(0, MIN(200, trust_score + ?)) WHERE id = ?', [delta, userId]);
+  await db.run('INSERT INTO reputation_events (user_id, delta, reason) VALUES (?, ?, ?)', [userId, delta, reason]);
+  return db.get('SELECT id, username, trust_score FROM users WHERE id = ?', [userId]);
+}
+
+export async function getUserMetrics() {
+  const db = await initDb();
+  const totals = await db.get('SELECT COUNT(*) as users, AVG(trust_score) as avg_trust FROM users');
+  return { users: totals.users, avg_trust: totals.avg_trust };
+}
