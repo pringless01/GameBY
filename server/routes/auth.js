@@ -1,10 +1,11 @@
 import express from 'express';
 import jwt from 'jsonwebtoken';
 import { createUser, findUserByUsername, validatePassword } from '../services/userService.js';
+import { authRateLimit } from '../middleware/rateLimit.js';
 
 const router = express.Router();
 
-router.post('/register', async (req, res) => {
+router.post('/register', authRateLimit, async (req, res) => {
   const { username, password } = req.body;
   if (!username || !password) return res.status(400).json({ error: 'Eksik alan' });
   const existing = await findUserByUsername(username);
@@ -17,7 +18,7 @@ router.post('/register', async (req, res) => {
   }
 });
 
-router.post('/login', async (req, res) => {
+router.post('/login', authRateLimit, async (req, res) => {
   const { username, password } = req.body;
   if (!username || !password) return res.status(400).json({ error: 'Eksik alan' });
   const user = await findUserByUsername(username);
