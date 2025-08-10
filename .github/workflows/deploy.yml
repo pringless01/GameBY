@@ -3,6 +3,16 @@ name: Deploy Backend
 on:
   push:
     branches: [ main ]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-main
+  cancel-in-progress: true
+
+env:
+  DEPLOY_PATH: /home/musa/oyun
+  SERVER_USER: musa
+  SERVICE_NAME: oyun
 
 jobs:
   deploy:
@@ -10,6 +20,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
 
       - name: Setup Node
         uses: actions/setup-node@v4
@@ -23,16 +35,48 @@ jobs:
 
       - name: Add known_hosts
         run: |
-          ssh-keyscan -H 192.168.1.106 >> ~/.ssh/known_hosts
+          ssh-keyscan -H ${{ secrets.SERVER_HOST }} >> ~/.ssh/known_hosts
 
-      - name: Sync files
+      - name: Create rsync exclude file
         run: |
-          rsync -avz --delete --exclude '.git' ./ musa@192.168.1.106:/home/musa/oyun/
+          cat > rsync-excludes.txt <<'EOF'
+          .git
+          node_modules
+          server/node_modules
+          frontend/node_modules
+          6000.1.14f1
+          .github
+          .husky
+          **/*.log
+          EOF
 
-      - name: Install & Migrate
+      - name: Rsync code to server
         run: |
-          ssh musa@192.168.1.106 'cd /home/musa/oyun/server && npm install --omit=dev && npm run migrate'
+          rsync -az --delete --exclude-from=rsync-excludes.txt ./ $SERVER_USER@${{ secrets.SERVER_HOST }}:$DEPLOY_PATH/
 
-      - name: Restart service
+      - name: Remote install, migrate & restart
         run: |
-          ssh musa@192.168.1.106 'sudo systemctl restart oyun'
+          ssh $SERVER_USER@${{ secrets.SERVER_HOST }} <<'EOSSH'
+          set -e
+          cd $DEPLOY_PATH/server
+          if [ -f package-lock.json ]; then npm ci --omit=dev; else npm install --omit=dev; fi
+          npm run migrate
+          if systemctl list-units --type=service --all | grep -q "${SERVICE_NAME}.service"; then
+            sudo systemctl restart ${SERVICE_NAME}
+          elif command -v pm2 >/dev/null 2>&1; then
+            pm2 restart ${SERVICE_NAME} || pm2 start server.js --name ${SERVICE_NAME}
+            pm2 save
+          else
+            nohup node server.js >/dev/null 2>&1 &
+          fi
+          EOSSH
+
+      - name: Health Check
+        run: |
+          curl -I --max-time 10 http://${{ secrets.SERVER_HOST }}:3000 || echo "Health check failed"
+
+      - name: Summary
+        run: |
+          echo "Deploy tamamlandı $(date -u)" >> $GITHUB_STEP_SUMMARY
+          echo "Host: ${{ secrets.SERVER_HOST }}" >> $GITHUB_STEP_SUMMARY
+          echo "Path: $DEPLOY_PATH" >> $GITHUB_STEP_SUMMARY
