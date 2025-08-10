@@ -63,7 +63,7 @@ app.use(express.static(path.join(__dirname, '..', 'frontend', 'public')));
   const io = new Server(server, { cors: { origin: '*' } });
   setIo(io);
   registerChatNamespace(io);
-  const PORT = process.env.PORT || 8081;
+  const PORT = process.env.PORT || 3000;
   server.listen(PORT, () => {
     console.log('Server listening on port', PORT);
   });

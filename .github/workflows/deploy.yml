@@ -25,11 +25,14 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
-      - name: Install backend deps (prod only check)
+      - name: Install backend deps (dev)
         run: |
           cd server
           npm ci
-          node -e "require('fs').accessSync('migrations')" || echo 'No migrations dir'
+      - name: Run integration test
+        run: |
+          cd server
+          node tests/integration/contracts.test.js
       - name: Lint placeholder
         run: echo "No lint yet"
   deploy:
@@ -131,7 +134,6 @@ jobs:
           echo "Failure detected. Attempting rollback..."
           ssh $SERVER_USER@${{ secrets.SERVER_HOST }} <<'EOSSH'
           set -e
-          # Find previous release (list, remove current, pick last)
           CUR=${{ steps.meta.outputs.release_dir }}
           cd $DEPLOY_BASE
           PREV=$(ls -1t | grep -v "$CUR" | head -n1 || true)
