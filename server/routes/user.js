@@ -12,7 +12,7 @@ router.get('/me', authRequired, async (req, res) => {
   return res.json({ user: row });
 });
 
-router.post('/trust/update', async (req, res) => {
+router.post('/trust/update', authRequired, async (req, res) => {
   const { username, delta, reason } = req.body;
   if (!username || typeof delta !== 'number') return res.status(400).json({ error: 'Eksik alan' });
   const user = await findUserByUsername(username);

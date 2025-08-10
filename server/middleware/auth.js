@@ -15,3 +15,12 @@ export function authRequired(req, res, next) {
     return res.status(401).json({ error: 'Token geçersiz' });
   }
 }
+
+export function roleRequired(role) {
+  return (req, res, next) => {
+    if (!req.user || !req.user.roles || !req.user.roles.includes(role)) {
+      return res.status(403).json({ error: 'Yetki yok' });
+    }
+    next();
+  };
+}

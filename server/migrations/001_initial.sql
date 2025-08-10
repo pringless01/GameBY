@@ -6,6 +6,7 @@ CREATE TABLE IF NOT EXISTS users (
   trust_score INTEGER NOT NULL DEFAULT 100,
   reputation INTEGER NOT NULL DEFAULT 0,
   bot_tutorial_state TEXT NOT NULL DEFAULT 'INTRO',
+  roles TEXT DEFAULT '[]',
   created_at TEXT NOT NULL DEFAULT (datetime('now'))
 );
 
