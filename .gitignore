@@ -1,0 +1,36 @@
+# Unity Engine (büyük dosyalar - oyun projesi değil)
+6000.1.14f1/
+
+# Dependencies
+node_modules/
+
+# Environment / secrets
+.env
+*.env.local
+server/.env
+
+# SQLite data
+server/data/*.db
+server/data/*.db-journal
+server/data/*.sqlite
+server/data/backup*
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS / Editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Build outputs
+/dist
+/build
+
+# Husky
+.husky/_

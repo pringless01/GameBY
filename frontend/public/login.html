@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="description" content="2D Online Ticaret Oyunu - Güven odaklı ticaret ekosistemi">
+    <meta name="theme-color" content="#43e97b">
+    <title>Giriş Yap - Ticaret Oyunu</title>
+    
+    <!-- Styles -->
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/login.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- PWA -->
+    <link rel="manifest" href="/manifest.json">
+    <link rel="apple-touch-icon" href="/assets/icon-192.png">
+</head>
+<body class="login-page">
+    <div class="login-container">
+        
+        <!-- Animated Background -->
+        <div class="login-bg">
+            <div class="bg-shape shape-1"></div>
+            <div class="bg-shape shape-2"></div>
+            <div class="bg-shape shape-3"></div>
+            <div class="floating-icons">
+                <span class="floating-icon">💰</span>
+                <span class="floating-icon">🌾</span>
+                <span class="floating-icon">🏪</span>
+                <span class="floating-icon">⭐</span>
+                <span class="floating-icon">🤝</span>
+            </div>
+        </div>
+
+        <!-- Login Card -->
+        <div class="login-card animate-slideUp">
+            
+            <!-- Game Logo & Title -->
+            <div class="game-brand">
+                <div class="game-logo">
+                    <span class="logo-icon">🏛️</span>
+                    <div class="logo-pulse"></div>
+                </div>
+                <h1 class="game-title">Ticaret Dünyası</h1>
+                <p class="game-subtitle">Güven Odaklı Online Ekonomi</p>
+            </div>
+
+            <!-- Welcome Message -->
+            <div class="welcome-section">
+                <h2 class="welcome-title">
+                    <span class="gradient-text">Hoş Geldin!</span> 👋
+                </h2>
+                <p class="welcome-text">
+                    İtibar sistemi ile güven dolu ticaret deneyimini başlat. 
+                    <br>Mentor rehberliğinde ekonomik dünyada yerini al!
+                </p>
+            </div>
+
+            <!-- Auth Tabs -->
+            <div class="auth-tabs">
+                <button class="auth-tab active" id="loginTab" onclick="switchTab('login')">
+                    🔐 Giriş Yap
+                </button>
+                <button class="auth-tab" id="registerTab" onclick="switchTab('register')">
+                    ✨ Kayıt Ol
+                </button>
+            </div>
+
+            <!-- Login Form -->
+            <form class="auth-form active" id="loginForm">
+                <div class="form-title">
+                    <h3>🚀 Oyuna Geri Dön</h3>
+                    <p>Mevcut hesabınla giriş yapın</p>
+                </div>
+
+                <div class="input-group">
+                    <label for="loginUsername" class="input-label">
+                        👤 Kullanıcı Adı
+                    </label>
+                    <div class="input-wrapper">
+                        <input 
+                            type="text" 
+                            id="loginUsername" 
+                            name="username"
+                            class="auth-input" 
+                            placeholder="kullanici_adi"
+                            maxlength="20"
+                            required
+                        >
+                        <div class="input-focus-line"></div>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label for="loginPassword" class="input-label">
+                        🔑 Şifre
+                    </label>
+                    <div class="input-wrapper">
+                        <input 
+                            type="password" 
+                            id="loginPassword" 
+                            name="password"
+                            class="auth-input" 
+                            placeholder="••••••••"
+                            required
+                        >
+                        <div class="input-focus-line"></div>
+                        <button type="button" class="password-toggle" onclick="togglePassword('loginPassword')">
+                            👁️
+                        </button>
+                    </div>
+                </div>
+
+                <button type="submit" class="auth-btn login-btn">
+                    <span class="btn-text">🎮 Oyuna Başla</span>
+                    <div class="btn-ripple"></div>
+                </button>
+
+                <div class="auth-links">
+                    <a href="#" class="forgot-link">🔄 Şifremi Unuttum</a>
+                </div>
+            </form>
+
+            <!-- Register Form -->
+            <form class="auth-form" id="registerForm">
+                <div class="form-title">
+                    <h3>🌟 Yeni Hesap Oluştur</h3>
+                    <p>Ticaret dünyasına katıl!</p>
+                </div>
+
+                <div class="input-group">
+                    <label for="registerUsername" class="input-label">
+                        👤 Kullanıcı Adı
+                    </label>
+                    <div class="input-wrapper">
+                        <input 
+                            type="text" 
+                            id="registerUsername" 
+                            name="username"
+                            class="auth-input" 
+                            placeholder="kullanici_adi"
+                            maxlength="20"
+                            required
+                        >
+                        <div class="input-focus-line"></div>
+                        <div class="input-status" id="usernameStatus"></div>
+                    </div>
+                    <span class="input-hint">
+                        3-20 karakter, sadece harf, rakam ve _ kullanın
+                    </span>
+                </div>
+
+                <div class="input-group">
+                    <label for="registerPhone" class="input-label">
+                        📱 Telefon Numarası <span class="optional">(İsteğe bağlı)</span>
+                    </label>
+                    <div class="input-wrapper">
+                        <input 
+                            type="tel" 
+                            id="registerPhone" 
+                            name="phone"
+                            class="auth-input" 
+                            placeholder="0555 123 45 67"
+                            maxlength="15"
+                        >
+                        <div class="input-focus-line"></div>
+                    </div>
+                    <span class="input-hint">
+                        SMS doğrulama için (güvenlik artışı)
+                    </span>
+                </div>
+
+                <div class="input-group">
+                    <label for="registerPassword" class="input-label">
+                        🔑 Şifre
+                    </label>
+                    <div class="input-wrapper">
+                        <input 
+                            type="password" 
+                            id="registerPassword" 
+                            name="password"
+                            class="auth-input" 
+                            placeholder="••••••••"
+                            required
+                        >
+                        <div class="input-focus-line"></div>
+                        <button type="button" class="password-toggle" onclick="togglePassword('registerPassword')">
+                            👁️
+                        </button>
+                    </div>
+                    <div class="password-strength" id="passwordStrength"></div>
+                </div>
+
+                <div class="input-group">
+                    <label for="confirmPassword" class="input-label">
+                        🔐 Şifre Tekrar
+                    </label>
+                    <div class="input-wrapper">
+                        <input 
+                            type="password" 
+                            id="confirmPassword" 
+                            name="confirmPassword"
+                            class="auth-input" 
+                            placeholder="••••••••"
+                            required
+                        >
+                        <div class="input-focus-line"></div>
+                        <div class="password-match" id="passwordMatch"></div>
+                    </div>
+                </div>
+
+                <div class="terms-checkbox">
+                    <label class="checkbox-container">
+                        <input type="checkbox" id="acceptTerms" required>
+                        <span class="checkmark"></span>
+                        <span class="checkbox-text">
+                            <strong>Kullanım Şartları</strong>'nı ve <strong>Gizlilik Politikası</strong>'nı kabul ediyorum
+                        </span>
+                    </label>
+                </div>
+
+                <button type="submit" class="auth-btn register-btn">
+                    <span class="btn-text">🚀 Hesap Oluştur</span>
+                    <div class="btn-ripple"></div>
+                </button>
+            </form>
+
+            <!-- Quick Stats Preview -->
+            <div class="stats-preview">
+                <div class="stat-preview-item">
+                    <span class="stat-icon">👥</span>
+                    <span class="stat-value" id="onlineCount">1,234</span>
+                    <span class="stat-label">Aktif Oyuncu</span>
+                </div>
+                <div class="stat-preview-item">
+                    <span class="stat-icon">🤝</span>
+                    <span class="stat-value">15,678</span>
+                    <span class="stat-label">Başarılı İşlem</span>
+                </div>
+                <div class="stat-preview-item">
+                    <span class="stat-icon">⭐</span>
+                    <span class="stat-value">4.9</span>
+                    <span class="stat-label">Ortalama İtibar</span>
+                </div>
+            </div>
+
+            <!-- Game Features -->
+            <div class="features-section">
+                <h3 class="features-title">🎮 Seni Neler Bekliyor?</h3>
+                <div class="features-grid">
+                    <div class="feature-item">
+                        <span class="feature-icon">🤖</span>
+                        <span class="feature-text">Bot Mentor Desteği</span>
+                    </div>
+                    <div class="feature-item">
+                        <span class="feature-icon">💬</span>
+                        <span class="feature-text">Anlık Chat Sistemi</span>
+                    </div>
+                    <div class="feature-item">
+                        <span class="feature-icon">⚡</span>
+                        <span class="feature-text">Hızlı İşlemler</span>
+                    </div>
+                    <div class="feature-item">
+                        <span class="feature-icon">🏆</span>
+                        <span class="feature-text">İtibar Puanı</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <div class="login-footer">
+                <p class="footer-text">
+                    Oyuna katılarak <strong>Kullanım Şartları</strong>'nı kabul etmiş olursun.
+                </p>
+                <p class="version-info">v1.0.0 • 2025</p>
+            </div>
+        </div>
+
+        <!-- Loading Overlay -->
+        <div class="loading-overlay hidden" id="loadingOverlay">
+            <div class="loading-spinner">
+                <div class="spinner-ring"></div>
+                <div class="spinner-ring"></div>
+                <div class="spinner-ring"></div>
+            </div>
+            <p class="loading-text">SMS gönderiliyor...</p>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script>
+        // Debug için window objesine fonksiyonları ekleyelim
+        console.log('🔐 Login page loading...');
+        
+        // Click test fonksiyonu
+        function testClicks() {
+            console.log('🖱️ Testing clicks...');
+            
+            // Tüm tıklanabilir elementleri bul
+            const clickableElements = document.querySelectorAll('button, input, .auth-tab, .auth-input, .auth-btn');
+            
+            clickableElements.forEach((element, index) => {
+                const rect = element.getBoundingClientRect();
+                const computedStyle = window.getComputedStyle(element);
+                
+                console.log(`Element ${index}:`, {
+                    tagName: element.tagName,
+                    className: element.className,
+                    id: element.id,
+                    position: {
+                        x: rect.x,
+                        y: rect.y,
+                        width: rect.width,
+                        height: rect.height
+                    },
+                    zIndex: computedStyle.zIndex,
+                    pointerEvents: computedStyle.pointerEvents,
+                    position: computedStyle.position
+                });
+                
+                // Element'e click handler ekle
+                element.addEventListener('click', (e) => {
+                    console.log('✅ Click detected on:', element);
+                }, true);
+            });
+        }
+        
+        // Test için global fonksiyonları tanımla
+        window.switchTab = function(tab) {
+            console.log('🔄 switchTab called with:', tab);
+            
+            const loginTab = document.getElementById('loginTab');
+            const registerTab = document.getElementById('registerTab');
+            const loginForm = document.getElementById('loginForm');
+            const registerForm = document.getElementById('registerForm');
+            
+            console.log('🔍 Elements found:', {
+                loginTab: !!loginTab,
+                registerTab: !!registerTab,
+                loginForm: !!loginForm,
+                registerForm: !!registerForm
+            });
+            
+            if (tab === 'login') {
+                if (loginTab) loginTab.classList.add('active');
+                if (registerTab) registerTab.classList.remove('active');
+                if (loginForm) loginForm.classList.add('active');
+                if (registerForm) registerForm.classList.remove('active');
+                console.log('✅ Switched to login tab');
+            } else {
+                if (loginTab) loginTab.classList.remove('active');
+                if (registerTab) registerTab.classList.add('active');
+                if (loginForm) loginForm.classList.remove('active');
+                if (registerForm) registerForm.classList.add('active');
+                console.log('✅ Switched to register tab');
+            }
+        };
+        
+        window.togglePassword = function(inputId) {
+            console.log('👁️ togglePassword called with:', inputId);
+            
+            const input = document.getElementById(inputId);
+            const toggle = input?.parentElement?.querySelector('.password-toggle');
+            
+            console.log('🔍 Elements found:', {
+                input: !!input,
+                toggle: !!toggle
+            });
+            
+            if (input && toggle) {
+                if (input.type === 'password') {
+                    input.type = 'text';
+                    toggle.textContent = '🙈';
+                    console.log('✅ Password revealed');
+                } else {
+                    input.type = 'password';
+                    toggle.textContent = '👁️';
+                    console.log('✅ Password hidden');
+                }
+            } else {
+                console.error('❌ togglePassword: Elements not found');
+            }
+        };
+        
+        // Test click fonksiyonu
+        window.testClicks = testClicks;
+        
+        console.log('✅ Global functions defined');
+        
+        // Sayfa yüklendikten sonra test yap
+        setTimeout(() => {
+            testClicks();
+            console.log('🔍 Run testClicks() in console to debug click issues');
+        }, 1000);
+    </script>
+    <script src="/js/login.js"></script>
+</body>
+</html>
