@@ -10,6 +10,8 @@ import { initDb } from './config/database.js';
 import authRoutes from './routes/auth.js';
 import userRoutes from './routes/user.js';
 import contractRoutes from './routes/contract.js';
+import adminRoutes from './routes/admin.js';
+import roleRoutes from './routes/role.js';
 import { registerChatNamespace } from './sockets/chatSocket.js';
 import { setIo } from './sockets/io.js';
 
@@ -53,6 +55,8 @@ app.get('/metrics', async (req, res) => {
 app.use('/api/auth', authRoutes);
 app.use('/api/user', userRoutes);
 app.use('/api/contracts', contractRoutes);
+app.use('/api/admin', adminRoutes);
+app.use('/api/role', roleRoutes);
 
 // Serve frontend (optional quick integration)
 app.use(express.static(path.join(__dirname, '..', 'frontend', 'public')));

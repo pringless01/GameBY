@@ -51,3 +51,7 @@ export async function addRole(userId, role) {
   await db.run('UPDATE users SET roles = ? WHERE id = ?', [JSON.stringify(roles), userId]);
   return roles;
 }
+
+export async function ensureRole(userId, role){
+  return addRole(userId, role);
+}
