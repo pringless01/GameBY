@@ -57,28 +57,34 @@ app.use('/api/contracts', contractRoutes);
 // Serve frontend (optional quick integration)
 app.use(express.static(path.join(__dirname, '..', 'frontend', 'public')));
 
-(async () => {
-  await initDb();
-  const server = http.createServer(app);
-  const io = new Server(server, { cors: { origin: '*' } });
-  setIo(io);
-  registerChatNamespace(io);
-  const PORT = process.env.PORT || 3000;
-  server.listen(PORT, () => {
-    console.log('Server listening on port', PORT);
-  });
+const requiredEnv = ['JWT_SECRET'];
+const missing = requiredEnv.filter(k => !process.env[k]);
+if (missing.length) {
+  console.error('Eksik ortam değişkenleri:', missing.join(','));
+}
 
-  const shutdown = (signal) => {
-    console.log(`Received ${signal}, shutting down...`);
-    io.close();
-    server.close(() => {
-      console.log('HTTP server closed');
-      process.exit(0);
-    });
-    setTimeout(() => {
-      console.error('Force exit');
-      process.exit(1);
-    }, 8000).unref();
-  };
-  ['SIGINT','SIGTERM'].forEach(sig => process.on(sig, () => shutdown(sig)));
-})();
+// (async () => {
+//   await initDb();
+//   const server = http.createServer(app);
+//   const io = new Server(server, { cors: { origin: '*' } });
+//   setIo(io);
+//   registerChatNamespace(io);
+//   const PORT = process.env.PORT || 3000;
+//   server.listen(PORT, () => {
+//     console.log('Server listening on port', PORT);
+//   });
+
+//   const shutdown = (signal) => {
+//     console.log(`Received ${signal}, shutting down...`);
+//     io.close();
+//     server.close(() => {
+//       console.log('HTTP server closed');
+//       process.exit(0);
+//     });
+//     setTimeout(() => {
+//       console.error('Force exit');
+//       process.exit(1);
+//     }, 8000).unref();
+//   };
+//   ['SIGINT','SIGTERM'].forEach(sig => process.on(sig, () => shutdown(sig)));
+// })();
