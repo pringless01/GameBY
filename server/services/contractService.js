@@ -1,10 +1,14 @@
 import { initDb } from '../config/database.js';
+import { getIo } from '../sockets/io.js';
 
 export async function createContract({ creator_id, counterparty_id, subject, amount, type }) {
   const db = await initDb();
   const result = await db.run(`INSERT INTO contracts (creator_id, counterparty_id, subject, amount, type, status)
     VALUES (?, ?, ?, ?, ?, 'PENDING')`, [creator_id, counterparty_id, subject, amount, type]);
-  return getContract(result.lastID);
+  const created = await getContract(result.lastID);
+  const io = getIo();
+  if (io) io.emit('contract_created', created);
+  return created;
 }
 
 export async function getContract(id) {
@@ -28,6 +32,10 @@ export async function actOnContract(id, userId, action) {
   else if (action === 'complete' && contract.status === 'ACTIVE') newStatus = 'COMPLETED';
   if (newStatus !== contract.status) {
     await db.run('UPDATE contracts SET status = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?', [newStatus, id]);
+    const updated = await getContract(id);
+    const io = getIo();
+    if (io) io.emit('contract_updated', updated);
+    return updated;
   }
-  return getContract(id);
+  return contract;
 }

@@ -11,6 +11,7 @@ import authRoutes from './routes/auth.js';
 import userRoutes from './routes/user.js';
 import contractRoutes from './routes/contract.js';
 import { registerChatNamespace } from './sockets/chatSocket.js';
+import { setIo } from './sockets/io.js';
 
 dotenv.config();
 
@@ -60,6 +61,7 @@ app.use(express.static(path.join(__dirname, '..', 'frontend', 'public')));
   await initDb();
   const server = http.createServer(app);
   const io = new Server(server, { cors: { origin: '*' } });
+  setIo(io);
   registerChatNamespace(io);
   const PORT = process.env.PORT || 8081;
   server.listen(PORT, () => {
