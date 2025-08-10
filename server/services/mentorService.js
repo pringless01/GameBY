@@ -55,3 +55,31 @@ export async function getGuidance(userId){
   if(!row) return null;
   return botGuidanceFor(row.bot_tutorial_state);
 }
+
+export async function ensureAtLeast(userId, targetState){
+  const dbState = await getUserState(userId);
+  if(!dbState) return null;
+  const current = dbState.bot_tutorial_state;
+  const curIdx = TUTORIAL_STEPS.indexOf(current);
+  const targetIdx = TUTORIAL_STEPS.indexOf(targetState);
+  if (targetIdx === -1) return current;
+  if (curIdx >= targetIdx) return current;
+  // advance step by step
+  let state = current;
+  while(state !== targetState){
+    state = await advanceState(userId);
+  }
+  return state;
+}
+
+export async function autoAdvanceOnEvent(userId, event){
+  // event -> hedef state eşlemesi
+  const mapping = {
+    'chat:first_message': 'FIRST_CHAT',
+    'contract:first_created': 'FIRST_CONTRACT',
+    'trust:viewed_info': 'TRUST_LEARN'
+  };
+  const target = mapping[event];
+  if(!target) return null;
+  return ensureAtLeast(userId, target);
+}

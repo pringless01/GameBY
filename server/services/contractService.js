@@ -1,5 +1,6 @@
 import { initDb } from '../config/database.js';
 import { getIo } from '../sockets/io.js';
+import { autoAdvanceOnEvent } from '../services/mentorService.js';
 
 export async function createContract({ creator_id, counterparty_id, subject, amount, type }) {
   const db = await initDb();
@@ -8,6 +9,9 @@ export async function createContract({ creator_id, counterparty_id, subject, amo
   const created = await getContract(result.lastID);
   const io = getIo();
   if (io) io.emit('contract_created', created);
+  // tutorial advance (first contract of creator?)
+  const countRow = await db.get('SELECT COUNT(*) as c FROM contracts WHERE creator_id = ?', [creator_id]);
+  if (countRow.c === 1) autoAdvanceOnEvent(creator_id, 'contract:first_created').catch(()=>{});
   return created;
 }
 
