@@ -23,8 +23,8 @@ router.post('/login', async (req, res) => {
   const user = await findUserByUsername(username);
   if (!user) return res.status(401).json({ error: 'Geçersiz bilgiler' });
   if (!validatePassword(user, password)) return res.status(401).json({ error: 'Geçersiz bilgiler' });
-  const token = jwt.sign({ sub: user.id, username: user.username }, process.env.JWT_SECRET || 'dev-secret', { expiresIn: '2d' });
-  return res.json({ token, user: { id: user.id, username: user.username, trust_score: user.trust_score } });
+  const token = jwt.sign({ sub: user.id, username: user.username, roles: user.roles ? JSON.parse(user.roles||'[]'):[] }, process.env.JWT_SECRET || 'dev-secret', { expiresIn: '2d' });
+  return res.json({ token, user: { id: user.id, username: user.username, trust_score: user.trust_score, roles: user.roles ? JSON.parse(user.roles||'[]'):[] } });
 });
 
 export default router;

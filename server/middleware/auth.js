@@ -9,7 +9,7 @@ export function authRequired(req, res, next) {
   const token = header.slice(7);
   try {
     const payload = jwt.verify(token, process.env.JWT_SECRET || 'dev-secret');
-    req.user = { id: payload.sub, username: payload.username };
+    req.user = { id: payload.sub, username: payload.username, roles: payload.roles || [] };
     return next();
   } catch (e) {
     return res.status(401).json({ error: 'Token geçersiz' });

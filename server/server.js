@@ -9,6 +9,7 @@ import { fileURLToPath } from 'url';
 import { initDb } from './config/database.js';
 import authRoutes from './routes/auth.js';
 import userRoutes from './routes/user.js';
+import contractRoutes from './routes/contract.js';
 import { registerChatNamespace } from './sockets/chatSocket.js';
 
 dotenv.config();
@@ -50,6 +51,7 @@ app.get('/metrics', async (req, res) => {
 });
 app.use('/api/auth', authRoutes);
 app.use('/api/user', userRoutes);
+app.use('/api/contracts', contractRoutes);
 
 // Serve frontend (optional quick integration)
 app.use(express.static(path.join(__dirname, '..', 'frontend', 'public')));
