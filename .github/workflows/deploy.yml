@@ -80,22 +80,20 @@ jobs:
           rsync -az --delete --exclude-from=rsync-excludes.txt ./ $SERVER_USER@${{ secrets.SERVER_HOST }}:$DEPLOY_BASE/${{ steps.meta.outputs.release_dir }}/
 
       - name: Install, migrate & symlink switch
+        id: deploy_step
         run: |
           ssh $SERVER_USER@${{ secrets.SERVER_HOST }} <<'EOSSH'
           set -e
           RELEASE_DIR=${DEPLOY_BASE}/${{ steps.meta.outputs.release_dir }}
           cd $RELEASE_DIR/server
           if [ -f package-lock.json ]; then npm ci --omit=dev; else npm install --omit=dev; fi
-          # DB backup & migrate
           mkdir -p $RELEASE_DIR/server/data
           if [ -f $CURRENT_SYMLINK/server/data/game.db ]; then
             cp $CURRENT_SYMLINK/server/data/game.db $RELEASE_DIR/server/data/game.db 2>/dev/null || true
           fi
           sqlite3 $RELEASE_DIR/server/data/game.db ".backup '$RELEASE_DIR/server/data/backup-pre-${{ steps.meta.outputs.release_dir }}.db'" || true
           npm run migrate --prefix $RELEASE_DIR/server
-          # Symlink atomic switch
           ln -sfn $RELEASE_DIR $CURRENT_SYMLINK
-          # Write commit file
           echo '${{ steps.meta.outputs.sha }}' > $CURRENT_SYMLINK/COMMIT
           EOSSH
 
@@ -114,14 +112,51 @@ jobs:
           fi
           EOSSH
 
-      - name: Health Check
+      - name: Health & Metrics Check
+        id: health
         run: |
+          set -e
           curl --fail --silent http://${{ secrets.SERVER_HOST }}:3000/health | tee health.json
           node -e "const d=require('./health.json'); if(d.status!=='ok'){process.exit(1)}"
+          curl --fail --silent http://${{ secrets.SERVER_HOST }}:3000/metrics | tee metrics.json || echo '{"metrics":"unavailable"}' > metrics.json
+
+      - name: Dump last logs (best-effort)
+        if: always()
+        run: |
+          ssh $SERVER_USER@${{ secrets.SERVER_HOST }} "sudo journalctl -u ${SERVICE_NAME} -n 50 --no-pager" || echo 'Log alınamadı'
+
+      - name: Rollback on failure
+        if: failure() && steps.meta.outputs.release_dir
+        run: |
+          echo "Failure detected. Attempting rollback..."
+          ssh $SERVER_USER@${{ secrets.SERVER_HOST }} <<'EOSSH'
+          set -e
+          # Find previous release (list, remove current, pick last)
+          CUR=${{ steps.meta.outputs.release_dir }}
+          cd $DEPLOY_BASE
+          PREV=$(ls -1t | grep -v "$CUR" | head -n1 || true)
+          if [ -n "$PREV" ]; then
+            echo "Rolling back to $PREV";
+            ln -sfn $DEPLOY_BASE/$PREV $CURRENT_SYMLINK
+            if systemctl list-units --type=service --all | grep -q "${SERVICE_NAME}.service"; then
+              sudo systemctl restart ${SERVICE_NAME}
+            fi
+          else
+            echo 'No previous release found.'
+          fi
+          EOSSH
 
       - name: Summary
+        if: always()
         run: |
-          echo "Deploy tamamlandı $(date -u)" >> $GITHUB_STEP_SUMMARY
+          STATUS=${{ job.status }}
+          echo "Deploy durum: $STATUS" >> $GITHUB_STEP_SUMMARY
           echo "Host: ${{ secrets.SERVER_HOST }}" >> $GITHUB_STEP_SUMMARY
           echo "Commit: ${{ steps.meta.outputs.sha }}" >> $GITHUB_STEP_SUMMARY
           echo "Release dir: ${{ steps.meta.outputs.release_dir }}" >> $GITHUB_STEP_SUMMARY
+          if [ "$STATUS" = "success" ]; then
+            echo 'Health:' >> $GITHUB_STEP_SUMMARY
+            cat health.json >> $GITHUB_STEP_SUMMARY || true
+            echo 'Metrics:' >> $GITHUB_STEP_SUMMARY
+            cat metrics.json >> $GITHUB_STEP_SUMMARY || true
+          fi

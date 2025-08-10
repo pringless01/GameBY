@@ -32,6 +32,22 @@ app.get('/health', (req, res) => {
     memory_mb: Math.round(process.memoryUsage().rss / 1024 / 1024)
   });
 });
+app.get('/metrics', async (req, res) => {
+  try {
+    const db = await initDb();
+    const users = await db.get('SELECT COUNT(*) as c FROM users');
+    const messages = await db.get('SELECT COUNT(*) as c FROM chat_messages');
+    const trust = await db.get('SELECT AVG(trust_score) as avg_trust FROM users');
+    res.json({
+      users: users.c,
+      messages: messages.c,
+      avg_trust: trust.avg_trust !== null ? Number(trust.avg_trust.toFixed(2)) : null,
+      timestamp: Date.now()
+    });
+  } catch (e) {
+    res.status(500).json({ error: 'metrics_failed' });
+  }
+});
 app.use('/api/auth', authRoutes);
 app.use('/api/user', userRoutes);
 
