@@ -223,3 +223,21 @@ export async function getMentorshipById(id){
   const db = await initDb();
   return db.get('SELECT * FROM mentorships WHERE id=?',[id]);
 }
+
+export async function computeMentorQualityScore(mentorId){
+  const db = await initDb();
+  const row = await db.get(`SELECT 
+      (SELECT COUNT(*) FROM mentorships WHERE mentor_id=? AND status='COMPLETED') as sessions,
+      (SELECT AVG(mentee_rating) FROM mentorships WHERE mentor_id=? AND mentee_rating IS NOT NULL) as avg_rating,
+      (SELECT COUNT(*) FROM mentorships WHERE mentor_id=? AND status='ACTIVE') as active_now
+    `,[mentorId, mentorId, mentorId]);
+  const sessions = row.sessions||0;
+  const avg = row.avg_rating||0;
+  // Basit formül: (avg_rating_normalized * 0.6 + log1p(sessions) / log1p(50) * 0.4) * (active_now?0.95:1)
+  const ratingFactor = (avg/5); // varsayım 1-5 arası
+  const sessionFactor = Math.log1p(sessions)/Math.log1p(50);
+  const activePenalty = row.active_now ? 0.95 : 1; // çok uzun aktif kalma minimize edilmemiş, placeholder
+  const score = ((ratingFactor*0.6)+(sessionFactor*0.4))*activePenalty;
+  return { mentorId, score: Number(score.toFixed(4)), sessions, avg_rating: Number(avg.toFixed(2)), active_now: !!row.active_now };
+}
+// TODO(mentor): computeMentorQualityScore iyileştirme (decay, retention, fraud etkileşimi)
