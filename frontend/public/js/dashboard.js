@@ -14,6 +14,7 @@ class Dashboard {
             daily: { target: 100, current: 50 }
         };
         this.isLoading = false;
+        this.trustEarnedToday = 0;
         
         this.init();
     }
@@ -115,35 +116,20 @@ class Dashboard {
     async fetchUserProfileWithTimeout() {
         try {
             console.log('🔄 Dashboard: API profil güncelleme deneniyor...');
-            
             const token = localStorage.getItem('jwt_token');
             const controller = new AbortController();
-            
-            // 3 saniye timeout
-            const timeoutId = setTimeout(() => {
-                controller.abort();
-                console.warn('⏰ Dashboard: API timeout - localStorage verisi kullanılıyor');
-            }, 3000);
-            
-            const response = await fetch('/api/user/profile', {
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json'
-                },
-                signal: controller.signal
-            });
-
+            const timeoutId = setTimeout(() => { controller.abort(); console.warn('⏰ Dashboard: API timeout - localStorage verisi kullanılıyor'); }, 3000);
+            const response = await fetch('/api/user/profile', { headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' }, signal: controller.signal });
             clearTimeout(timeoutId);
-
             if (response.ok) {
                 const data = await response.json();
                 this.user = data.user;
                 this.resources = data.user.resources;
                 this.updateUserDisplay();
                 this.updateResourcesDisplay();
+                this.updateMentorCard(); // yeni
                 console.log('✅ Dashboard: API den profil güncellendi');
             } else if (response.status === 401) {
-                // Token geçersiz, yeniden giriş yap
                 localStorage.removeItem('jwt_token');
                 localStorage.removeItem('user');
                 window.location.href = '/login.html';
@@ -154,7 +140,30 @@ class Dashboard {
             } else {
                 console.warn('⚠️ Dashboard: API hatası - localStorage verisi kullanılıyor:', error.message);
             }
-            // Hata durumunda localStorage verisi ile devam et
+        }
+    }
+
+    updateMentorCard() {
+        const state = this.user?.bot_tutorial_state;
+        const botSection = document.getElementById('bot-mentor');
+        const realSection = document.getElementById('real-mentor');
+        const mentorStatus = document.getElementById('mentor-status');
+        if(!state || !botSection || !realSection || !mentorStatus) return;
+        if(['INTRO','FIRST_CHAT','FIRST_CONTRACT','TRUST_LEARN'].includes(state)) {
+            botSection.classList.remove('d-none');
+            realSection.classList.add('d-none');
+            mentorStatus.textContent = 'Bot';
+            mentorStatus.className = 'trust-badge trust-good';
+        } else if(state === 'MENTOR_MATCH') {
+            botSection.classList.remove('d-none');
+            realSection.classList.add('d-none');
+            mentorStatus.textContent = 'Eşleşme Aranıyor';
+            mentorStatus.className = 'trust-badge trust-medium';
+        } else if(state === 'DONE') {
+            botSection.classList.add('d-none');
+            realSection.classList.remove('d-none');
+            mentorStatus.textContent = 'Aktif';
+            mentorStatus.className = 'trust-badge trust-excellent';
         }
     }
 
@@ -251,6 +260,7 @@ class Dashboard {
                     if (data.userId === this.user?.id) {
                         this.resources = data.resources;
                         this.updateResourcesDisplay();
+                        this.showSuccess('Kaynak güncellendi');
                     }
                 });
                 // Yeni: trust güncelleme
@@ -268,6 +278,12 @@ class Dashboard {
                 // Yeni: contract updated
                 this.socket.on('contract_updated', (c) => {
                     this.showContractToast('Kontrat #' + c.id + ' durum: ' + c.status);
+                    if(c.status==='COMPLETED'){
+                        // varsayılan ödül +2
+                        this.trustEarnedToday += 2; 
+                        this.updateTrustEarningsDisplay();
+                        this.genericToast('+2 İtibar (Kontrat)', 'contract');
+                    }
                 });
                 // Yeni: tutorial ilerleme
                 this.socket.on('tutorial_progress', (p) => {
@@ -275,6 +291,7 @@ class Dashboard {
                         this.showTutorialToast('Tutorial ilerledi: ' + p.state);
                         if (!this.user.bot_tutorial_state || this.user.bot_tutorial_state !== p.state) {
                             this.user.bot_tutorial_state = p.state;
+                            this.updateMentorCard();
                         }
                     }
                 });
@@ -370,6 +387,8 @@ class Dashboard {
             userInitial.textContent = name.charAt(0).toUpperCase();
             console.log('✅ Dashboard: Avatar initial güncellendi:', name.charAt(0));
         }
+
+        this.updateTrustEarningsDisplay();
     }
 
     // Kaynakları güncelle
@@ -687,6 +706,11 @@ class Dashboard {
             el.style.opacity='0';
             setTimeout(()=> el.remove(), 400);
         }, 4000);
+    }
+    
+    updateTrustEarningsDisplay(){
+        const el = document.getElementById('trust-earned-today');
+        if(el){ el.textContent = '+'+this.trustEarnedToday; }
     }
 }
 
