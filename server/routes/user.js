@@ -791,6 +791,9 @@ router.get('/leaderboard/metrics/prom', authRequired, (req,res)=>{
     lines.push('reputation_events_contract_default_total '+(reputationMetrics.eventsByType.contract_default||0));
     lines.push('# TYPE reputation_events_fraud_flag_total counter');
     lines.push('reputation_events_fraud_flag_total '+(reputationMetrics.eventsByType.fraud_flag||0));
+    // Reputation rules info (version & count)
+    lines.push('# TYPE reputation_rules_info gauge');
+    lines.push(`reputation_rules_info{version="${getReputationRulesVersion()}"} ${getReputationRuleCount()}`);
     // Mentor kalite metrics
     lines.push('# TYPE mentor_sessions_completed_total counter');
     lines.push('mentor_sessions_completed_total '+reputationMetrics.mentorSessionsCompleted);

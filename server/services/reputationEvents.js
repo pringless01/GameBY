@@ -8,6 +8,7 @@ import { invalidateOnTrustChange } from '../cache/trustCaches.js';
 import { incReputationEvent, incCappedSkip, incUnknownType, incReputationDbError } from '../metrics/reputationMetrics.js';
 import fs from 'fs';
 import path from 'path';
+import crypto from 'crypto';
 
 // Event tipleri (genişletilebilir)
 export const ReputationEventType = {
@@ -23,12 +24,39 @@ export const ReputationEventType = {
 // Delta haritalama (ilk taslak) – ileride konfigürasyona taşınabilir.
 // Soft cap / günlük limitler dış katmanda uygulanacak.
 let DELTA_RULES = {};
+let __LAST_RULES_RAW = '';
+let __RULES_VERSION = '';
+function hashContent(txt){ return crypto.createHash('sha256').update(txt).digest('hex').slice(0,12); }
+function diffRules(oldObj, newObj){
+  const changes = [];
+  const keys = new Set([...Object.keys(oldObj), ...Object.keys(newObj)]);
+  for(const k of keys){
+    if(k.startsWith('_')) continue;
+    const o = oldObj[k];
+    const n = newObj[k];
+    if(o && n){
+      if(o.delta !== n.delta || o.dailyCap !== n.dailyCap){ changes.push({ type:'modify', key:k, from:o, to:n }); }
+    } else if(o && !n){ changes.push({ type:'remove', key:k, from:o }); }
+    else if(!o && n){ changes.push({ type:'add', key:k, to:n }); }
+  }
+  return changes;
+}
 const RULES_PATH = path.resolve(process.cwd(), 'server', 'config', 'reputationRules.json');
 function loadRules(){
   try {
     const txt = fs.readFileSync(RULES_PATH, 'utf8');
+    if(txt === __LAST_RULES_RAW) return; // no change
     const json = JSON.parse(txt);
-    if(json && typeof json === 'object') DELTA_RULES = json;
+    if(json && typeof json === 'object'){
+      const old = DELTA_RULES;
+      DELTA_RULES = json;
+      const changes = diffRules(old, DELTA_RULES);
+      __RULES_VERSION = hashContent(txt);
+      if(changes.length){
+        try { console.warn(JSON.stringify({ level:'warn', ts:new Date().toISOString(), event:'reputation_rules_changed', version:__RULES_VERSION, changes })); } catch {}
+      }
+      __LAST_RULES_RAW = txt;
+    }
   } catch { /* ignore parse */ }
 }
 loadRules();
@@ -132,6 +160,8 @@ export async function addManualPenalty({ userId, delta, reason }){
 // TODO(metrics): reputation.events_total counter export
 
 export function listDeltaRules(){ return JSON.parse(JSON.stringify(DELTA_RULES)); }
+export function getReputationRulesVersion(){ return __RULES_VERSION || 'unknown'; }
+export function getReputationRuleCount(){ return Object.keys(DELTA_RULES).filter(k=>!k.startsWith('_')).length; }
 
 export async function applyDirectReputationDelta({ userId, delta, reason }){
   if(typeof delta !== 'number' || !delta) return { success:false, error:'invalid_delta' };
