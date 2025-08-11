@@ -120,6 +120,8 @@ class Dashboard {
             if(r.ok){
                 const j=await r.json();
                 this.trustEarnedToday = j.earned;
+                this.trustCap = j.cap;
+                this.trustRemaining = j.remaining;
                 this.updateTrustEarningsDisplay();
             }
         } catch(e){}
@@ -744,7 +746,19 @@ class Dashboard {
     
     updateTrustEarningsDisplay(){
         const el = document.getElementById('trust-earned-today');
-        if(el){ el.textContent = '+'+this.trustEarnedToday; }
+        if(el){
+            const earned = this.trustEarnedToday||0;
+            const cap = this.trustCap||40;
+            el.textContent = '+'+earned;
+            const ratio = earned / cap;
+            el.classList.remove('trust-excellent','trust-good','trust-medium','trust-low','trust-bad');
+            if(ratio >= 1){ el.classList.add('trust-bad'); }
+            else if(ratio >= 0.85){ el.classList.add('trust-low'); }
+            else if(ratio >= 0.6){ el.classList.add('trust-medium'); }
+            else if(ratio >= 0.3){ el.classList.add('trust-good'); }
+            else { el.classList.add('trust-excellent'); }
+            el.title = `Günlük ödül: ${earned}/${cap} (kalan ${Math.max(0, cap-earned)})`;
+        }
     }
 }
 

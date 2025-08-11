@@ -3,6 +3,7 @@ import { initDb } from '../config/database.js';
 import { authRequired } from '../middleware/auth.js';
 import { updateTrust, getUserMetrics, findUserByUsername } from '../services/userService.js';
 import { trustRateLimit } from '../middleware/rateLimit.js';
+import { DAILY_CONTRACT_TRUST_CAP } from '../services/contractService.js';
 
 const router = express.Router();
 // In-memory cache for daily trust earned (userId -> {date, earned, ts})
@@ -67,13 +68,13 @@ router.get('/trust/daily-earned', authRequired, async (req, res) => {
     const cached = dailyTrustCache.get(cacheKey);
     if(!force && cached && cached.date === today && (now - cached.ts) < DAILY_TRUST_TTL_MS){
       res.setHeader('X-Cache','HIT');
-      return res.json({ earned: cached.earned, cached: true, ttl_ms: DAILY_TRUST_TTL_MS - (now - cached.ts) });
+      return res.json({ earned: cached.earned, remaining: Math.max(0, DAILY_CONTRACT_TRUST_CAP - cached.earned), cap: DAILY_CONTRACT_TRUST_CAP, cached: true, ttl_ms: DAILY_TRUST_TTL_MS - (now - cached.ts) });
     }
     const db = await initDb();
     const row = await db.get(`SELECT COALESCE(SUM(delta),0) as earned FROM reputation_events WHERE user_id = ? AND date(created_at)=date('now')`, [userId]);
     dailyTrustCache.set(cacheKey, { date: today, earned: row.earned, ts: now });
     res.setHeader('X-Cache','MISS');
-    res.json({ earned: row.earned, cached: false });
+    res.json({ earned: row.earned, remaining: Math.max(0, DAILY_CONTRACT_TRUST_CAP - row.earned), cap: DAILY_CONTRACT_TRUST_CAP, cached: false });
   } catch (e) { res.status(500).json({ error: 'query_failed' }); }
 });
 
