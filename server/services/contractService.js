@@ -225,3 +225,16 @@ async function markDefaultExpiredContracts(){
   }
   return rows.length;
 }
+
+const TRADE_WINDOW_MS = 10 * 60 * 1000; // 10 dakika
+let tradeWindow = [];// {ts,a,b}
+export function recordTradePair(a,b){
+  const now = Date.now();
+  tradeWindow.push({ ts: now, a: Math.min(a,b), b: Math.max(a,b) });
+  const cutoff = now - TRADE_WINDOW_MS;
+  tradeWindow = tradeWindow.filter(e=>e.ts >= cutoff);
+  const pairSet = new Set();
+  const partnerSet = new Set();
+  for(const e of tradeWindow){ pairSet.add(e.a+':'+e.b); partnerSet.add(e.a); partnerSet.add(e.b); }
+  setTradeWindowMetrics({ pairs: pairSet.size, uniquePartners: partnerSet.size });
+}
