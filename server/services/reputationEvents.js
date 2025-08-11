@@ -13,7 +13,9 @@ export const ReputationEventType = {
   TRADE_COMPLETED: 'trade_completed',
   MENTOR_SESSION_COMPLETE: 'mentor_session_complete',
   SPAM_PENALTY: 'spam_penalty',
-  MENTEE_SESSION_COMPLETE: 'mentee_session_complete'
+  MENTEE_SESSION_COMPLETE: 'mentee_session_complete',
+  CONTRACT_DEFAULT: 'contract_default',
+  FRAUD_FLAG: 'fraud_flag'
 };
 
 // Delta haritalama (ilk taslak) – ileride konfigürasyona taşınabilir.
@@ -23,7 +25,9 @@ const DELTA_RULES = {
   [ReputationEventType.TRADE_COMPLETED]: { delta: +2, dailyCap: 20 },
   [ReputationEventType.MENTOR_SESSION_COMPLETE]: { delta: +3, dailyCap: 15 },
   [ReputationEventType.MENTEE_SESSION_COMPLETE]: { delta: +2, dailyCap: 15 },
-  [ReputationEventType.SPAM_PENALTY]: { delta: -2, dailyCap: 50 }
+  [ReputationEventType.SPAM_PENALTY]: { delta: -2, dailyCap: 50 },
+  [ReputationEventType.CONTRACT_DEFAULT]: { delta: -5, dailyCap: 10 },
+  [ReputationEventType.FRAUD_FLAG]: { delta: -8, dailyCap: 5 }
 };
 
 // Günlük sayaç cache (in-memory). Gelecekte Redis'e taşınabilir.
@@ -113,6 +117,7 @@ export async function addManualPenalty({ userId, delta, reason }){
 // TODO(reputation): Cap aşımında event loglama (audit)
 // TODO(reputation): Negative eventlerin cap dışı konfigüre edilebilmesi
 // TODO(reputation): mentee_session_complete olayı ekleyip delta kuralı kararlaştır -> UYGULANDI (+2, dailyCap 15)
+// TODO(reputation): fraud_flag & contract_default external config -> eklendi (DELTA_RULES)
 // TODO(metrics): reputation.events_total counter export
 
 export function listDeltaRules(){ return JSON.parse(JSON.stringify(DELTA_RULES)); }
