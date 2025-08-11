@@ -18,7 +18,8 @@ export const ReputationEventType = {
   SPAM_PENALTY: 'spam_penalty',
   MENTEE_SESSION_COMPLETE: 'mentee_session_complete',
   CONTRACT_DEFAULT: 'contract_default',
-  FRAUD_FLAG: 'fraud_flag'
+  FRAUD_FLAG: 'fraud_flag',
+  ONBOARD_STEP: 'onboard_step'
 };
 
 // Delta haritalama (ilk taslak) – ileride konfigürasyona taşınabilir.
@@ -180,4 +181,21 @@ export async function applyDirectReputationDelta({ userId, delta, reason }){
     await db.exec('ROLLBACK');
     return { success:false, error:'db_error' };
   }
+}
+
+export async function emitOnboardingStep({ userId, step, deltaIfConfigured=true }){
+  if(!userId || !step) return { success:false, error:'invalid_args' };
+  const db = await initDb();
+  // idempotent insert
+  try {
+    await db.run('INSERT INTO onboarding_progress (user_id, step) VALUES (?,?)',[userId, step]);
+  } catch { /* duplicate ignore */ }
+  // reputation rule optional (onboard_step or specific step key override)
+  const rules = listDeltaRules();
+  let reasonKey = 'onboard_step';
+  if(rules['onboard_'+step]) reasonKey = 'onboard_'+step;
+  if(deltaIfConfigured && rules[reasonKey]){
+    return emitReputationEvent({ userId, type: reasonKey });
+  }
+  return { success:true, delta:0, reason:reasonKey };
 }

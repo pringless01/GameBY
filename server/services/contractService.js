@@ -3,7 +3,7 @@ import { getIo } from '../sockets/io.js';
 import { autoAdvanceOnEvent } from '../services/mentorService.js';
 import { logAudit } from '../services/auditService.js';
 import { updateTrust } from '../services/userService.js';
-import { applyDirectReputationDelta, emitReputationEvent, ReputationEventType } from '../services/reputationEvents.js';
+import { applyDirectReputationDelta, emitReputationEvent, ReputationEventType, emitOnboardingStep } from '../services/reputationEvents.js';
 import { setTradeWindowMetrics } from '../metrics/reputationMetrics.js';
 
 export const DAILY_CONTRACT_TRUST_CAP = 40; // ileride .env'e taşınabilir
@@ -161,6 +161,16 @@ export async function actOnContract(id, userId, action) {
       if (updated.counterparty_id !== updated.creator_id) {
         emitReputationEvent({ userId: updated.counterparty_id, type: ReputationEventType.TRADE_COMPLETED }).catch(()=>{});
       }
+      // onboarding: first completed contract per user
+      try {
+        const db2 = await initDb();
+        const cr = await db2.get('SELECT COUNT(*) as c FROM contracts WHERE creator_id=? AND status="COMPLETED"',[updated.creator_id]);
+        if(cr.c === 1) emitOnboardingStep({ userId: updated.creator_id, step: 'contract_first_completed' }).catch(()=>{});
+        if(updated.counterparty_id !== updated.creator_id){
+          const pr = await db2.get('SELECT COUNT(*) as c FROM contracts WHERE counterparty_id=? AND status="COMPLETED"',[updated.counterparty_id]);
+          if(pr.c === 1) emitOnboardingStep({ userId: updated.counterparty_id, step: 'contract_first_completed' }).catch(()=>{});
+        }
+      } catch {}
       // trade pair metrics record
       recordTradePair(updated.creator_id, updated.counterparty_id);
     }
