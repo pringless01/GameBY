@@ -428,37 +428,42 @@ Hammadde → İşlenmiş Ürün → Lüks Eşya → Mega Projeler (AVM, Fabrika)
 - Admin fraud flag endpoint: `POST /api/admin/fraud/flag` → `FRAUD_FLAG` reputation event.
 - Cursor abuse haritaları için periyodik hafif prune scheduler (memory kontrolü başlangıç adımı).
 - Negatif eventler reputation pipeline’a unified şekilde dahil (aynı caps & delta hesabı mekanizması).
+- Onboarding progression altyapısı: `onboarding_progress` tablosu + `emitOnboardingStep` + ilk tamamlanan kontrat için `onboard_contract_first_completed` kuralı.
+- Fraud repeat-pair heuristiği: 10 dk pencerede aşırı tekrar eden çiftlere otomatik `FRAUD_FLAG` (soğuma süresi ile).
+- Reputation rules version hashing + diff log (audit friendly başlangıç).
 - README, 3.5-pre durumuna güncellendi (doküman senkronizasyonu).
 
 ### Revize / Kaldırılan TODO'lar
-- `// TODO(config): externalize reputation DELTA_RULES` TAMAMLANDI (kaldırılabilir / arşiv notu).
+- `// TODO(config): externalize reputation DELTA_RULES` TAMAMLANDI.
 - `// TODO(security): abuse maps periodic prune` TAMAMLANDI.
-- Fraud & default event mapping TODO güncellendi → heuristik otomasyonu odaklı.
+- `// TODO(onboarding): progression events emit` KISMEN TAMAM (ilk kontrat adımı; genişletme açık).
+- Fraud & default event mapping TODO güncellendi → gelişmiş davranışsal heuristik odaklı.
 
 ### Mevcut Sınırlamalar (Güncel)
-- Fraud & default tetikleyicileri manuel / süre-aşımı temelli; davranışsal (pattern) heuristikler yok.
-- Onboarding 30 dk progression event set’i henüz emit edilmiyor.
-- Mentor gelişmiş kalite skoru (ağırlıklı rating + decay) yok.
+- Fraud heuristikleri basit (repeat-pair); çeşitlilik / hacim patternleri & multi-sinyal korelasyon yok.
+- Onboarding adım seti minimal (yalnızca ilk kontrat) – çok adımlı görev zinciri & zamanlama tetikleri eksik.
+- Mentor gelişmiş kalite skoru (decay, retention, fraud etkileşimi) yok (yalnızca basit bileşik skor helper fonksiyon). 
 - Multi-account & cihaz fingerprint korelasyon metriği yok (yalnızca plan düzeyi).
-- Reputation rule set versiyonlama + audit diff kaydı yok.
-- Negatif event türleri için ayrı Prometheus counter isimlendirme ayrıştırması (label yerine explicit) henüz eklenmedi.
+- Reputation rule set version için kalıcı audit diff persist edilmedi (yalnızca console log).
+- Trade pair metrikleri için label bazlı ayrıntılandırma yok (sadece aggregate counters); potansiyel label patlama kontrolü beklemede.
 
 ### Kısa Vadeli Teknik Öncelikler (3.5 Finalizasyon)
-1. Onboarding progression event şeması + reputation rule entegrasyonu.
-2. Otomatik fraud heuristikleri (ani trade yoğunluğu, düşük çeşitlilik → `fraud_flag`).
-3. Mentor composite kalite skoru (sessions, rating, mentee retention) + gauge.
-4. Multi-account erken sinyal: IP kümelenmesi + creation cadence + placeholder device hash.
-5. Reputation rule set version tag + değişim audit kaydı (reputationRules.json diff).
-6. Negatif reputation eventleri için ayrı counter/gauge export (örn: `reputation_events_contract_default_total`).
-7. Trade pair metriklerini label patlamasına karşı koruma (örn. top-N sampling / limit) – tasarım kararı.
+1. Onboarding multi-step progression (zaman damgalı görev zinciri + ek spesifik kural anahtarları).
+2. Gelişmiş fraud heuristikleri (partner çeşitliliği düşük + burst hız + değer eşiği kombinasyonu → risk skor + koşullu FRAUD_FLAG).
+3. Mentor composite kalite skoru derivation (decay + mentee retention + rating varyans) + Prometheus metric (`mentor_quality_score`).
+4. Multi-account erken sinyal: IP kümelenmesi + creation cadence + (placeholder) device fingerprint alanı.
+5. Reputation rule set persistent audit (version -> previous version diff tablo kaydı) + Prometheus `reputation_rules_info` label genişletme.
+6. Negatif reputation eventleri için explicit counters tamamlandı; onboarding event counters (onboard_step, specific overrides) ekle.
+7. Trade pair heuristik sampling / top-N raporlama stratejisi (performans & etiket patlaması önleme).
 
 ### Yeni / Güncellenen TODO Etiketleri
-- `// TODO(fraud): heuristic flag emit (burst trade / low diversity)`
-- `// TODO(onboarding): progression event emit + rule link`
-- `// TODO(mentor): composite_quality_score derivation`
-- `// TODO(meta): reputationRules version tagging & audit diff`
-- `// TODO(metrics): explicit negative event counters`
+- `// TODO(fraud): heuristic flag emit (burst trade / low diversity / value spike)`
+- `// TODO(onboarding): multi-step progression & granular rules` 
+- `// TODO(mentor): composite_quality_score decay & retention`
+- `// TODO(meta): reputationRules persistent audit storage`
+- `// TODO(metrics): onboarding counters & mentor quality gauge`
 - `// TODO(security): device fingerprint placeholder`
+- `// TODO(trade): pair sampling strategy`
 
 ---
 
