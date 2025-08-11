@@ -13,8 +13,8 @@ GameBY, %100 oyuncu odaklı ekonomi sistemi ile çalışan sosyal ticaret oyunud
 - **Frontend:** HTML5 + CSS3 + Vanilla JavaScript (PWA)
 - **Real-time:** Socket.io WebSocket connection
 - **Auth:** JWT + bcrypt password hashing
-- **Caching & Metrics:** In-memory TTL caches + Prometheus format metrics (leaderboard + reputation)
-- **Security:** HMAC imzalı cursor pagination + abuse cooldown + timing-safe imza karşılaştırması
+- **Caching & Metrics:** In-memory TTL caches + Prometheus format metrics (leaderboard + reputation + trade + mentor quality)
+- **Security:** HMAC imzalı cursor pagination + abuse cooldown + timing-safe imza karşılaştırması + periyodik abuse map prune
 
 ## 📁 Proje Yapısı
 
@@ -23,26 +23,27 @@ GameBY, %100 oyuncu odaklı ekonomi sistemi ile çalışan sosyal ticaret oyunud
 │   ├── public/        # HTML, CSS, JS dosyaları
 │   └── simple-server.js # Development server
 ├── server/            # Node.js backend API
-│   ├── config/        # Database configuration
+│   ├── config/        # Database configuration (reputationRules.json external)
 │   ├── routes/        # API endpoints  
 │   ├── services/      # Business logic
 │   ├── sockets/       # Socket.io handlers
 │   ├── security/      # Cursor security & abuse logic
 │   ├── cache/         # TTL caches (trust, mentor, around)
-│   ├── metrics/       # Leaderboard + reputation metrics counters
+│   ├── metrics/       # Leaderboard + reputation + mentor + trade metrics
 │   └── migrations/    # Database migrations
 └── Oyun_Proje_Dokumanlari/ # Comprehensive game docs
 ```
 
 ## 🎮 Ana Özellikler
 
-- **İtibar Sistemi (Otomasyon Genişletildi):** reputation_events + ReputationEventEmitter (chat, spam, mentor session, contract dyn reward unify, mentee/mentor session events)
-- **Gelişmiş Leaderboard:** offset / cursor / around / batch + imzalı cursor + rotation + auto-degrade + granular cursor hata metrikleri
-- **Mentor Leaderboard:** rating + min session filtreli self-rank cache
-- **Bot / Gerçek Mentor Yapısı (Kısmi):** eşleşme + tamamlama reputation hook
-- **Chat Sistemi:** flood guard (+ spam penalty reputasyon)
-- **Kontrat Altyapısı:** dinamik trust ödülü artık unified reputation pipeline (applyDirectReputationDelta)
-- **Dolandırıcılık Koruması:** Cursor abuse cooldown & granular hata izleme (format/signature/oversize)
+- **İtibar Sistemi (Otomasyon Genişletildi):** reputation_events + ReputationEventEmitter (chat, spam, mentor & mentee session, contract dyn reward unify, trade_completed, contract_default, fraud_flag)
+- **Gelişmiş Leaderboard:** offset / cursor / around / batch + imzalı cursor + rotation + auto-degrade + granular cursor hata metrikleri + prune
+- **Mentor Leaderboard & Kalite:** rating + min session filtreli self-rank cache + tamamlanan seans ve rating metrikleri
+- **Bot / Gerçek Mentor Yapısı:** eşleşme + tamamlanınca double reputation hook (mentor & mentee)
+- **Chat Sistemi:** flood guard (+ spam penalty reputation)
+- **Kontrat Altyapısı:** dinamik trust ödülü unified reputation pipeline + auto default sweeper (negatif reputasyon)
+- **Fraud / Risk Altyapısı (İlk Adım):** admin fraud flag endpoint → negatif reputation, sliding window trade pair & unique partner metric
+- **Dış Konfig:** reputationRules.json hot-reload (delta ve caps runtime ayarlanabilir)
 
 ## 🛠️ Geliştirme
 
@@ -77,17 +78,17 @@ node simple-server.js
 ```
 
 ## 📊 Gelişim Durumu (Yüzde Tahmini)
-- Backend çekirdek (Express + JWT + Socket scaffold): ~85%
-- Leaderboard sistemi (trust + mentor + security): ~96%
-- Reputation otomasyon (event pipeline): ~55% (trade & bazı risk event’leri pending)
-- Mentor akışı (bot→gerçek, ödül/limit): ~35%
-- Trade & ekonomik döngü (kaynak üretim, basit trade): ~20%
-- Kontrat risk & dolandırıcılık cezaları: ~15%
+- Backend çekirdek (Express + JWT + Socket scaffold): ~87%
+- Leaderboard sistemi (trust + mentor + security): ~97%
+- Reputation otomasyon (event pipeline): ~68% (kalan: onboarding, ileri risk heuristics)
+- Mentor akışı (bot→gerçek, ödül/limit, kalite metriği): ~45%
+- Trade & ekonomik döngü (kaynak üretim, gelişmiş trade): ~22%
+- Kontrat risk & dolandırıcılık cezaları: ~28% (default & fraud flag temel eklendi)
 - Onboarding 30 dk görevleri: ~10%
-- Anti-abuse genişletmeleri (chat flood, multi-account): ~12%
+- Anti-abuse genişletmeleri (chat flood, multi-account plan): ~18%
 - Prod izleme & alarm (Prometheus dışında): ~30%
 
-## ✅ Tamamlanan Önemli Güvenlik / Gözlemlenebilirlik İyileştirmeleri (v3.4+)
+## ✅ Tamamlanan Önemli Güvenlik / Gözlemlenebilirlik İyileştirmeleri (v3.5-pre)
 - İmzasız cursor formatı reddedildi.
 - Strict `>` threshold standardizasyonu.
 - Auto-degrade helper (`shouldAutoDegrade`).
@@ -97,23 +98,30 @@ node simple-server.js
 - Granular cursor hata metrikleri: format / signature / oversize.
 - Oversize (>256) cursor DoS koruması & metriği.
 - Reputation pipeline unify: kontrat dinamik ödülleri direct reputation delta ile.
+- Trade tamamlanınca TRADE_COMPLETED event tetikleme.
+- Negatif eventler: CONTRACT_DEFAULT & FRAUD_FLAG (external config).
+- Auto contract default sweeper (aktif kontrat uzun süre güncellenmezse).
+- Sliding window trade pair / unique partner gauge metrikleri.
+- Mentor session & rating kalite metrikleri (Prometheus).
+- reputationRules.json: hot-reload + delta/cap dışa alınması.
+- Cursor abuse map periyodik prune.
 
 ## 🎯 Güncel Roadmap (Revize)
 **Faz 2 (Tamamlandı kısmen):** Gelişmiş leaderboard + cursor abuse yönetimi  
-**Faz 3 (Aktif):** Reputation event otomasyon (trade + risk) + mentor akışı  
-**Faz 4:** Kontrat risk analizi + fraud penalize + ekonomi craft döngüsü  
+**Faz 3 (Aktif):** Reputation event otomasyon (onboarding & ileri risk) + mentor akışı derinleştirme  
+**Faz 4:** Kontrat risk analizi + dolandırıcılık cezaları genişleme + ekonomi craft döngüsü  
 **Faz 5:** Moderasyon & anti-abuse (multi-account, SMS) + gelişmiş dış izleme  
 
 ## 🔜 Kısa Vadeli Sprint Hedefleri
-1. Trade / barter tamamlama event’lerinin ReputationEventEmitter ile standardizasyonu (kısmen bitti)
-2. Fraud / default risk event haritalaması (negatif reputation)
-3. Mentor bot state machine ince ayar & seans kalite metriği
-4. Onboarding görev ilerleme (persisted state + progress events)
-5. Multi-account / device fingerprint araştırması (plan dokümanı)
-6. Prometheus: reputation events per type + contract risk metrics label’ları
+1. Onboarding event’leri (30 dk progression) reputasyon entegrasyonu
+2. Fraud heuristics (tekrarlı düşük riskli trade pattern analizi) → otomatik FRAUD_FLAG
+3. Mentor gelişmiş state machine + seans kalitesi ağırlıklı skor
+4. Multi-account baseline (IP / device fingerprint placeholder) metrik
+5. Reputation rule set versiyonlama & audit log diff
+6. Prometheus: contract_default & fraud_flag ayrı counter export (etiketli)
 
 ## 📚 Dokümantasyon
-- [Ana Oyun Dokümanı](Oyun_Proje_Dokumanlari/Ana_Oyun_Dokumani.md) (Versiyon 3.4)
+- [Ana Oyun Dokümanı](Oyun_Proje_Dokumanlari/Ana_Oyun_Dokumani.md) (Versiyon 3.5-pre güncellenmeli)
 - [API Documentation](Oyun_Proje_Dokumanlari/API_Documentation.md)
 - [UI/UX Tasarım Rehberi](Oyun_Proje_Dokumanlari/UI_UX_Tasarim_Rehberi.md)
 - [VPS Deployment Guide](Oyun_Proje_Dokumanlari/VPS_Deployment_Guide.md)
@@ -123,7 +131,10 @@ node simple-server.js
 leaderboard_errors_cursor_format 5
 leaderboard_errors_cursor_signature 12
 leaderboard_errors_cursor_oversize 2
-reputation_events_type_count{type="mentor_session_complete"} 3
+trade_pairs_window 14
+trade_unique_partners_window 9
+mentor_sessions_completed_total 3
+reputation_events_type_count{type="contract_default"} 1
 ```
 
 ## 🚀 Deploy & Test URLs
@@ -133,4 +144,4 @@ reputation_events_type_count{type="mentor_session_complete"} 3
 
 ---
 
-**Not:** Bu README v3.4+ genişletilmiş teknik durumunu yansıtır; roadmap güncellemeleri Ana Oyun Dokümanı ile senkron tutulur.
+**Not:** Bu README v3.5-pre teknik durumunu yansıtır; roadmap güncellemeleri Ana Oyun Dokümanı ile senkron tutulacaktır.
