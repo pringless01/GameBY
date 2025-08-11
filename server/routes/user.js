@@ -782,10 +782,15 @@ router.get('/leaderboard/metrics/prom', authRequired, (req,res)=>{
     lines.push('reputation_events_unknown_type_skips '+reputationMetrics.unknownTypeSkips);
     lines.push('# TYPE reputation_events_db_errors counter');
     lines.push('reputation_events_db_errors '+reputationMetrics.dbErrors);
+    lines.push('# TYPE reputation_events_type_count counter');
     for(const [t,c] of Object.entries(reputationMetrics.eventsByType)){
-      lines.push(`# TYPE reputation_events_type_count counter`);
       lines.push(`reputation_events_type_count{type="${t}"} ${c}`);
     }
+    // Explicit negative reputation event counters (roadmap 3.5-pre)
+    lines.push('# TYPE reputation_events_contract_default_total counter');
+    lines.push('reputation_events_contract_default_total '+(reputationMetrics.eventsByType.contract_default||0));
+    lines.push('# TYPE reputation_events_fraud_flag_total counter');
+    lines.push('reputation_events_fraud_flag_total '+(reputationMetrics.eventsByType.fraud_flag||0));
     // Mentor kalite metrics
     lines.push('# TYPE mentor_sessions_completed_total counter');
     lines.push('mentor_sessions_completed_total '+reputationMetrics.mentorSessionsCompleted);
