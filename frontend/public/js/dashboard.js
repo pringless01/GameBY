@@ -110,6 +110,18 @@ class Dashboard {
             this.updateUserDisplay();
             this.updateResourcesDisplay();
         }
+        await this.loadDailyTrustEarned();
+    }
+    async loadDailyTrustEarned(){
+        try { 
+            const token = localStorage.getItem('jwt_token'); 
+            const r = await fetch('/api/user/trust/daily-earned',{headers:{'Authorization':'Bearer '+token}}); 
+            if(r.ok){ 
+                const j=await r.json(); 
+                this.trustEarnedToday = j.earned; 
+                this.updateTrustEarningsDisplay(); 
+            } 
+        } catch(e){}
     }
 
     // API'den kullanıcı profilini getir (timeout ile)
@@ -547,6 +559,18 @@ class Dashboard {
         setInterval(() => {
             this.fetchUserProfile();
         }, 300000);
+
+        // Günlük reset kontrolü (her 60 sn)
+        setInterval(()=>{
+            const now = new Date();
+            if(!this._lastDay){ this._lastDay = now.getDate(); }
+            if(this._lastDay !== now.getDate()){
+                this._lastDay = now.getDate();
+                this.trustEarnedToday = 0;
+                this.updateTrustEarningsDisplay();
+                this.loadDailyTrustEarned();
+            }
+        },60000);
     }
 
     // Bildirimler ayarla

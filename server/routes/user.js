@@ -54,4 +54,12 @@ router.get('/search', authRequired, async (req, res) => {
   }
 });
 
+router.get('/trust/daily-earned', authRequired, async (req, res) => {
+  try {
+    const db = await initDb();
+    const row = await db.get(`SELECT COALESCE(SUM(delta),0) as earned FROM reputation_events WHERE user_id = ? AND date(created_at)=date('now')`, [req.user.id]);
+    res.json({ earned: row.earned });
+  } catch (e) { res.status(500).json({ error: 'query_failed' }); }
+});
+
 export default router;
