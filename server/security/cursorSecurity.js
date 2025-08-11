@@ -172,4 +172,25 @@ export function getCooldownIpCount(){
 export function getInvalidCursorRecent(){ return invalidCursorEventsGlobal.length; }
 export function getCursorCooldownUntil(ip){ return abuseCooldownUntilByIp.get(ip) || 0; }
 
+// Periodik prune: bellek büyümesini sınırla (doküman TODO: abuse map prune)
+function _periodicPrune(){
+  const now = Date.now();
+  // invalid cursor lists
+  for(const [ip,list] of invalidCursorEventsByIp.entries()){
+    pruneArray(list, now);
+    if(!list.length) invalidCursorEventsByIp.delete(ip);
+  }
+  // cooldown map: süresi geçmişleri temizle
+  for(const [ip,until] of abuseCooldownUntilByIp.entries()){
+    if(now > until) abuseCooldownUntilByIp.delete(ip);
+  }
+  // last abuse log map: ilgili ip tamamen yoksa kaldır
+  for(const [ip] of lastAbuseLogByIp.entries()){
+    if(!invalidCursorEventsByIp.has(ip) && !abuseCooldownUntilByIp.has(ip)) lastAbuseLogByIp.delete(ip);
+  }
+}
+if(!global.__CURSOR_ABUSE_PRUNE_INTERVAL){
+  global.__CURSOR_ABUSE_PRUNE_INTERVAL = setInterval(_periodicPrune, 5 * 60 * 1000); // 5 dk
+}
+
 export const __CURSOR_SECURITY_LOADED = true;
