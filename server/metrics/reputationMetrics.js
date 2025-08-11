@@ -7,7 +7,9 @@ export const reputationMetrics = {
   dbErrors: 0,
   mentorSessionsCompleted: 0,
   mentorRatingsGiven: 0,
-  menteeRatingsGiven: 0
+  menteeRatingsGiven: 0,
+  tradePairsWindow: 0,
+  tradeUniquePartnersWindow: 0
 };
 
 export function incReputationEvent(type){
@@ -20,3 +22,4 @@ export function incReputationDbError(){ reputationMetrics.dbErrors++; }
 export function incMentorSessionCompleted(){ reputationMetrics.mentorSessionsCompleted++; }
 export function incMentorRatingGiven(){ reputationMetrics.mentorRatingsGiven++; }
 export function incMenteeRatingGiven(){ reputationMetrics.menteeRatingsGiven++; }
+export function setTradeWindowMetrics({ pairs, uniquePartners }){ reputationMetrics.tradePairsWindow = pairs; reputationMetrics.tradeUniquePartnersWindow = uniquePartners; }

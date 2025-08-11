@@ -3,8 +3,8 @@ import { getIo } from '../sockets/io.js';
 import { autoAdvanceOnEvent } from '../services/mentorService.js';
 import { logAudit } from '../services/auditService.js';
 import { updateTrust } from '../services/userService.js';
-import { applyDirectReputationDelta } from '../services/reputationEvents.js';
-import { emitReputationEvent, ReputationEventType } from '../services/reputationEvents.js';
+import { applyDirectReputationDelta, emitReputationEvent, ReputationEventType } from '../services/reputationEvents.js';
+import { setTradeWindowMetrics } from '../metrics/reputationMetrics.js';
 
 export const DAILY_CONTRACT_TRUST_CAP = 40; // ileride .env'e taşınabilir
 // Anti-abuse parametreleri
@@ -156,11 +156,12 @@ export async function actOnContract(id, userId, action) {
         if (pReward > 0) await applyDirectReputationDelta({ userId: updated.counterparty_id, delta: pReward, reason: 'contract_completed_dynamic' });
         logAudit({ userId: null, action: 'contract_trust_reward_dynamic', detail: JSON.stringify({ contractId: id, dyn_base: dyn, creator_reward: cReward, counterparty_reward: pReward, cap: DAILY_CONTRACT_TRUST_CAP, flags, micro_threshold: MICRO_PRICE_TRUST_THRESHOLD, pair_limit: MAX_DAILY_PAIR_REWARDING, barter: barterValue(updated) }) });
       } catch (e) { /* ignore */ }
-      // Trade reputasyon eventleri (ayrı küçük delta; dailyCap reputationEvents içinde yönetilir)
       emitReputationEvent({ userId: updated.creator_id, type: ReputationEventType.TRADE_COMPLETED }).catch(()=>{});
       if (updated.counterparty_id !== updated.creator_id) {
         emitReputationEvent({ userId: updated.counterparty_id, type: ReputationEventType.TRADE_COMPLETED }).catch(()=>{});
       }
+      // trade pair metrics record
+      recordTradePair(updated.creator_id, updated.counterparty_id);
     }
 
     const io = getIo();

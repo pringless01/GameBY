@@ -793,6 +793,11 @@ router.get('/leaderboard/metrics/prom', authRequired, (req,res)=>{
     lines.push('mentor_ratings_given_total '+reputationMetrics.mentorRatingsGiven);
     lines.push('# TYPE mentee_ratings_given_total counter');
     lines.push('mentee_ratings_given_total '+reputationMetrics.menteeRatingsGiven);
+    // Trade pair volume window metrics
+    lines.push('# TYPE trade_pairs_window gauge');
+    lines.push('trade_pairs_window '+reputationMetrics.tradePairsWindow);
+    lines.push('# TYPE trade_unique_partners_window gauge');
+    lines.push('trade_unique_partners_window '+reputationMetrics.tradeUniquePartnersWindow);
     res.setHeader('Content-Type','text/plain; version=0.0.4');
     res.send(lines.join('\n')+'\n');
   } catch { res.status(500).end(); }
