@@ -228,13 +228,35 @@ async function markDefaultExpiredContracts(){
 
 const TRADE_WINDOW_MS = 10 * 60 * 1000; // 10 dakika
 let tradeWindow = [];// {ts,a,b}
-export function recordTradePair(a,b){
+const FRAUD_PAIR_WINDOW_THRESHOLD = 8; // aynı çift 10 dk içinde bu sayıyı aşarsa şüpheli (taslak)
+const FRAUD_PAIR_FLAG_COOLDOWN_MS = 60 * 60 * 1000; // 1 saat aynı çift için tekrar flag verme
+const lastFraudFlagByPair = new Map(); // pairKey -> ts
+function pairKey(a,b){ return a+':'+b; }
+function recordTradePair(a,b){
   const now = Date.now();
   tradeWindow.push({ ts: now, a: Math.min(a,b), b: Math.max(a,b) });
   const cutoff = now - TRADE_WINDOW_MS;
   tradeWindow = tradeWindow.filter(e=>e.ts >= cutoff);
-  const pairSet = new Set();
+  const pairCounts = new Map();
   const partnerSet = new Set();
-  for(const e of tradeWindow){ pairSet.add(e.a+':'+e.b); partnerSet.add(e.a); partnerSet.add(e.b); }
-  setTradeWindowMetrics({ pairs: pairSet.size, uniquePartners: partnerSet.size });
+  for(const e of tradeWindow){
+    const k = pairKey(e.a,e.b);
+    pairCounts.set(k, (pairCounts.get(k)||0)+1);
+    partnerSet.add(e.a); partnerSet.add(e.b);
+  }
+  const k = pairKey(Math.min(a,b), Math.max(a,b));
+  const countForPair = pairCounts.get(k) || 0;
+  const uniquePartners = partnerSet.size;
+  setTradeWindowMetrics({ pairs: pairCounts.size, uniquePartners });
+  // Basit fraud heuristik: Aynı çift yoğun tekrarlı tamamlanmış kontratlar
+  if(countForPair > FRAUD_PAIR_WINDOW_THRESHOLD){
+    const last = lastFraudFlagByPair.get(k) || 0;
+    if(now - last > FRAUD_PAIR_FLAG_COOLDOWN_MS){
+      lastFraudFlagByPair.set(k, now);
+      // Her iki kullanıcıya FRAUD_FLAG reputation event (taslak heuristik)
+      emitReputationEvent({ userId: a, type: ReputationEventType.FRAUD_FLAG }).catch(()=>{});
+      if(b !== a) emitReputationEvent({ userId: b, type: ReputationEventType.FRAUD_FLAG }).catch(()=>{});
+      try { console.warn(JSON.stringify({ level:'warn', ts:new Date().toISOString(), event:'fraud_flag_auto_pair_repeat', pair:k, count:countForPair, window_ms:TRADE_WINDOW_MS, threshold:FRAUD_PAIR_WINDOW_THRESHOLD })); } catch {}
+    }
+  }
 }
