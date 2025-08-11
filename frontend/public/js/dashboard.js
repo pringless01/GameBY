@@ -112,15 +112,16 @@ class Dashboard {
         }
         await this.loadDailyTrustEarned();
     }
-    async loadDailyTrustEarned(){
-        try { 
-            const token = localStorage.getItem('jwt_token'); 
-            const r = await fetch('/api/user/trust/daily-earned',{headers:{'Authorization':'Bearer '+token}}); 
-            if(r.ok){ 
-                const j=await r.json(); 
-                this.trustEarnedToday = j.earned; 
-                this.updateTrustEarningsDisplay(); 
-            } 
+    async loadDailyTrustEarned(force=false){
+        try {
+            const token = localStorage.getItem('jwt_token');
+            const url = '/api/user/trust/daily-earned' + (force ? '?force=1' : '');
+            const r = await fetch(url,{headers:{'Authorization':'Bearer '+token}});
+            if(r.ok){
+                const j=await r.json();
+                this.trustEarnedToday = j.earned;
+                this.updateTrustEarningsDisplay();
+            }
         } catch(e){}
     }
 
@@ -291,10 +292,11 @@ class Dashboard {
                 this.socket.on('contract_updated', (c) => {
                     this.showContractToast('Kontrat #' + c.id + ' durum: ' + c.status);
                     if(c.status==='COMPLETED'){
-                        // varsayılan ödül +2
-                        this.trustEarnedToday += 2; 
+                        // Lokal tahmini + server force sync
+                        this.trustEarnedToday += 2;
                         this.updateTrustEarningsDisplay();
                         this.genericToast('+2 İtibar (Kontrat)', 'contract');
+                        this.loadDailyTrustEarned(true); // force senkron
                     }
                 });
                 // Yeni: tutorial ilerleme
@@ -571,6 +573,14 @@ class Dashboard {
                 this.loadDailyTrustEarned();
             }
         },60000);
+
+        // Günlük trust periyodik senkron (her 30sn cache hit, 5. dakikada force)
+        let counter=0;
+        setInterval(()=>{
+            counter++;
+            const force = (counter % 10 === 0); // ~5 dakikada bir force (30s *10)
+            this.loadDailyTrustEarned(force);
+        },30000);
     }
 
     // Bildirimler ayarla
