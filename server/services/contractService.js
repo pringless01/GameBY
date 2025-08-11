@@ -10,6 +10,7 @@ export const DAILY_CONTRACT_TRUST_CAP = 40; // ileride .env'e taşınabilir
 // Anti-abuse parametreleri
 export const MICRO_PRICE_TRUST_THRESHOLD = 5; // Bu fiyatın altı: trust ödülü yok
 export const MAX_DAILY_PAIR_REWARDING = 3; // Aynı çift için günde en fazla ödül verilen kontrat sayısı
+export const CONTRACT_DEFAULT_AFTER_MS = 6 * 60 * 60 * 1000; // 6 saat ACTIVE kalırsa default say (taslak)
 
 export async function getTodayContractTrustTotal(userId){
   const db = await initDb();
@@ -201,4 +202,26 @@ export async function listUserContractsFiltered(userId, { status=null, role='any
   const rows = await db.all(`SELECT * FROM contracts ${whereSql} ORDER BY ${orderBy} LIMIT ? OFFSET ?`, [...params, limit, offset]);
   const countRow = await db.get(`SELECT COUNT(*) as total FROM contracts ${whereSql}`, params);
   return { contracts: rows.map(projectContractWithEstimates), total: countRow.total, limit, offset, sort };
+}
+
+// Periodik tarayıcı (basit interval) – çoklu process yok varsayımı
+if(!global.__CONTRACT_DEFAULT_SWEEPER){
+  global.__CONTRACT_DEFAULT_SWEEPER = setInterval(()=>{ markDefaultExpiredContracts().catch(()=>{}); }, 5 * 60 * 1000); // 5 dk
+}
+
+async function markDefaultExpiredContracts(){
+  const db = await initDb();
+  const rows = await db.all(`SELECT id, creator_id, counterparty_id FROM contracts WHERE status='ACTIVE' AND (strftime('%s','now') - strftime('%s',updated_at))*1000 > ? LIMIT 50`, [CONTRACT_DEFAULT_AFTER_MS]);
+  if(!rows.length) return 0;
+  for(const r of rows){
+    try {
+      await db.run(`UPDATE contracts SET status='DEFAULTED', updated_at=CURRENT_TIMESTAMP WHERE id=? AND status='ACTIVE'`, [r.id]);
+      logAudit({ userId:null, action:'contract_default_auto', detail: JSON.stringify({ contractId:r.id }) });
+      // Negatif reputation (her iki taraf da etkilenir; ileride ağırlıklandırılabilir)
+      emitReputationEvent({ userId: r.creator_id, type: ReputationEventType.CONTRACT_DEFAULT }).catch(()=>{});
+      if(r.counterparty_id !== r.creator_id) emitReputationEvent({ userId: r.counterparty_id, type: ReputationEventType.CONTRACT_DEFAULT }).catch(()=>{});
+      const io = getIo(); if(io) io.emit('contract_defaulted', { id:r.id });
+    } catch{}
+  }
+  return rows.length;
 }

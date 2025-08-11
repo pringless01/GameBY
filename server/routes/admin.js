@@ -1,6 +1,7 @@
 import express from 'express';
 import { authRequired, roleRequired } from '../middleware/auth.js';
 import { initDb } from '../config/database.js';
+import { emitReputationEvent, ReputationEventType } from '../services/reputationEvents.js';
 
 const router = express.Router();
 
@@ -16,6 +17,18 @@ router.get('/audit', authRequired, roleRequired('admin'), async (req, res) => {
   const where = clauses.length ? 'WHERE ' + clauses.join(' AND ') : '';
   const rows = await db.all(`SELECT id, user_id, action, detail, ip, created_at FROM audit_log ${where} ORDER BY id DESC LIMIT ?`, [...params, lim]);
   res.json({ logs: rows });
+});
+
+// Admin fraud flag endpoint
+router.post('/fraud/flag', authRequired, roleRequired('admin'), async (req, res) => {
+  const { user_id } = req.body;
+  if (!user_id) return res.status(400).json({ error: 'missing_user_id' });
+  try {
+    await emitReputationEvent({ userId: Number(user_id), type: ReputationEventType.FRAUD_FLAG });
+    res.json({ ok: true });
+  } catch {
+    res.status(500).json({ error: 'flag_failed' });
+  }
 });
 
 export default router;
