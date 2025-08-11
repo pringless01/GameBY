@@ -6,6 +6,8 @@
 import { initDb } from '../config/database.js';
 import { invalidateOnTrustChange } from '../cache/trustCaches.js';
 import { incReputationEvent, incCappedSkip, incUnknownType, incReputationDbError } from '../metrics/reputationMetrics.js';
+import fs from 'fs';
+import path from 'path';
 
 // Event tipleri (genişletilebilir)
 export const ReputationEventType = {
@@ -20,15 +22,24 @@ export const ReputationEventType = {
 
 // Delta haritalama (ilk taslak) – ileride konfigürasyona taşınabilir.
 // Soft cap / günlük limitler dış katmanda uygulanacak.
-const DELTA_RULES = {
-  [ReputationEventType.CHAT_MESSAGE]: { delta: +1, dailyCap: 10 },
-  [ReputationEventType.TRADE_COMPLETED]: { delta: +2, dailyCap: 20 },
-  [ReputationEventType.MENTOR_SESSION_COMPLETE]: { delta: +3, dailyCap: 15 },
-  [ReputationEventType.MENTEE_SESSION_COMPLETE]: { delta: +2, dailyCap: 15 },
-  [ReputationEventType.SPAM_PENALTY]: { delta: -2, dailyCap: 50 },
-  [ReputationEventType.CONTRACT_DEFAULT]: { delta: -5, dailyCap: 10 },
-  [ReputationEventType.FRAUD_FLAG]: { delta: -8, dailyCap: 5 }
-};
+let DELTA_RULES = {};
+const RULES_PATH = path.resolve(process.cwd(), 'server', 'config', 'reputationRules.json');
+function loadRules(){
+  try {
+    const txt = fs.readFileSync(RULES_PATH, 'utf8');
+    const json = JSON.parse(txt);
+    if(json && typeof json === 'object') DELTA_RULES = json;
+  } catch { /* ignore parse */ }
+}
+loadRules();
+let __watching = false;
+function watchRules(){
+  if(__watching) return; __watching = true;
+  try {
+    fs.watch(RULES_PATH, { persistent:false }, (evt)=>{ setTimeout(loadRules, 100); });
+  } catch { /* ignore */ }
+}
+watchRules();
 
 // Günlük sayaç cache (in-memory). Gelecekte Redis'e taşınabilir.
 const dailyCounters = new Map(); // key: userId:YYYY-MM-DD:eventType -> count

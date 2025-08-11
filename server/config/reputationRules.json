@@ -1,0 +1,9 @@
+{
+  "chat_message": { "delta": 1, "dailyCap": 10 },
+  "trade_completed": { "delta": 2, "dailyCap": 20 },
+  "mentor_session_complete": { "delta": 3, "dailyCap": 15 },
+  "mentee_session_complete": { "delta": 2, "dailyCap": 15 },
+  "spam_penalty": { "delta": -2, "dailyCap": 50 },
+  "contract_default": { "delta": -5, "dailyCap": 10 },
+  "fraud_flag": { "delta": -8, "dailyCap": 5 }
+}
