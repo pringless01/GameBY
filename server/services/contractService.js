@@ -2,6 +2,7 @@ import { initDb } from '../config/database.js';
 import { getIo } from '../sockets/io.js';
 import { autoAdvanceOnEvent } from '../services/mentorService.js';
 import { logAudit } from '../services/auditService.js';
+import { updateTrust } from '../services/userService.js';
 
 export async function createContract({ creator_id, counterparty_id, subject, amount, type, price=0, currency='TL' }) {
   const db = await initDb();
@@ -37,11 +38,9 @@ export async function actOnContract(id, userId, action) {
   else if (action === 'cancel' && ['PENDING','ACTIVE'].includes(contract.status) && userId === contract.creator_id) newStatus = 'CANCELLED';
   else if (action === 'complete' && contract.status === 'ACTIVE') newStatus = 'COMPLETED';
   if (newStatus !== contract.status) {
-    // Transaction: status update + (varsa) para transferi
     await db.run('BEGIN');
     try {
       if (newStatus === 'COMPLETED' && contract.price > 0) {
-        // Yeterli bakiye kontrolü (creator öder varsayımı)
         const payer = await db.get('SELECT id, money FROM users WHERE id = ?', [contract.creator_id]);
         if (!payer || payer.money < contract.price) {
           await db.run('ROLLBACK');
@@ -59,6 +58,21 @@ export async function actOnContract(id, userId, action) {
       if (e.message === 'insufficient_funds') throw e;
     }
     const updated = await getContract(id);
+
+    // Trust reward (tamamlama sonrası güven artışı)
+    if (newStatus === 'COMPLETED') {
+      const reward = 2;
+      try {
+        await updateTrust(contract.creator_id, reward, 'contract_completed');
+        if (contract.counterparty_id !== contract.creator_id) {
+          await updateTrust(contract.counterparty_id, reward, 'contract_completed');
+        }
+        logAudit({ userId: null, action: 'contract_trust_reward', detail: JSON.stringify({ contractId: id, users:[contract.creator_id, contract.counterparty_id], reward }) });
+      } catch (e) {
+        // sessiz geç
+      }
+    }
+
     const io = getIo();
     if (io) io.emit('contract_updated', updated);
     logAudit({ userId, action: 'contract_'+action, detail: JSON.stringify({ id, status: updated.status }) });
