@@ -4,6 +4,24 @@ import { autoAdvanceOnEvent } from '../services/mentorService.js';
 import { logAudit } from '../services/auditService.js';
 import { updateTrust } from '../services/userService.js';
 
+// Günlük kullanıcı başı maksimum kontrat trust ödülü (toplam)
+const DAILY_CONTRACT_TRUST_CAP = 40; // ileride .env'e taşınabilir
+
+async function getTodayContractTrustTotal(userId){
+  const db = await initDb();
+  const row = await db.get(`SELECT COALESCE(SUM(delta),0) as total FROM reputation_events WHERE user_id = ? AND reason = 'contract_completed_dynamic' AND date(created_at)=date('now')`, [userId]);
+  return row.total || 0;
+}
+
+function calculateDynamicTrustReward(contract){
+  // Baseline: miktar ve fiyat ölçekli min 1 max 10
+  // Formül: base = 1 + log10( (amount * max(price,1)) + 1 )
+  const amount = Math.max(1, contract.amount || 1);
+  const price = Math.max(1, contract.price || 1);
+  const raw = 1 + Math.log10(amount * price + 1);
+  return Math.min(10, Math.max(1, Math.round(raw)));
+}
+
 export async function createContract({ creator_id, counterparty_id, subject, amount, type, price=0, currency='TL' }) {
   const db = await initDb();
   const result = await db.run(`INSERT INTO contracts (creator_id, counterparty_id, subject, amount, type, status, price, currency)
@@ -44,7 +62,7 @@ export async function actOnContract(id, userId, action) {
         const payer = await db.get('SELECT id, money FROM users WHERE id = ?', [contract.creator_id]);
         if (!payer || payer.money < contract.price) {
           await db.run('ROLLBACK');
-          throw new Error('insufficient_funds');
+            throw new Error('insufficient_funds');
         }
         await db.run('UPDATE users SET money = money - ? WHERE id = ?', [contract.price, contract.creator_id]);
         await db.run('UPDATE users SET money = money + ? WHERE id = ?', [contract.price, contract.counterparty_id]);
@@ -59,18 +77,23 @@ export async function actOnContract(id, userId, action) {
     }
     const updated = await getContract(id);
 
-    // Trust reward (tamamlama sonrası güven artışı)
     if (newStatus === 'COMPLETED') {
-      const reward = 2;
+      // Dinamik ödül
+      const dyn = calculateDynamicTrustReward(contract);
+      // Her iki taraf için mevcut gün toplamları
+      const [cTot, pTot] = await Promise.all([
+        getTodayContractTrustTotal(contract.creator_id),
+        getTodayContractTrustTotal(contract.counterparty_id)
+      ]);
+      const cRemaining = Math.max(0, DAILY_CONTRACT_TRUST_CAP - cTot);
+      const pRemaining = Math.max(0, DAILY_CONTRACT_TRUST_CAP - pTot);
+      const cReward = Math.min(dyn, cRemaining);
+      const pReward = (contract.counterparty_id !== contract.creator_id) ? Math.min(dyn, pRemaining) : 0;
       try {
-        await updateTrust(contract.creator_id, reward, 'contract_completed');
-        if (contract.counterparty_id !== contract.creator_id) {
-          await updateTrust(contract.counterparty_id, reward, 'contract_completed');
-        }
-        logAudit({ userId: null, action: 'contract_trust_reward', detail: JSON.stringify({ contractId: id, users:[contract.creator_id, contract.counterparty_id], reward }) });
-      } catch (e) {
-        // sessiz geç
-      }
+        if (cReward > 0) await updateTrust(contract.creator_id, cReward, 'contract_completed_dynamic');
+        if (pReward > 0) await updateTrust(contract.counterparty_id, pReward, 'contract_completed_dynamic');
+        logAudit({ userId: null, action: 'contract_trust_reward_dynamic', detail: JSON.stringify({ contractId: id, dyn_base: dyn, creator_reward: cReward, counterparty_reward: pReward, cap: DAILY_CONTRACT_TRUST_CAP }) });
+      } catch (e) { /* ignore */ }
     }
 
     const io = getIo();
