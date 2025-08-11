@@ -29,10 +29,10 @@ jobs:
         run: |
           cd server
           npm ci
-      - name: Run integration test
+      - name: Run integration tests (all)
         run: |
           cd server
-          node tests/integration/contracts.test.js
+          npm run test:integration:all
       - name: Lint placeholder
         run: echo "No lint yet"
   deploy:

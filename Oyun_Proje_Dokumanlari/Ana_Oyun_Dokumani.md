@@ -352,115 +352,76 @@ Hammadde → İşlenmiş Ürün → Lüks Eşya → Mega Projeler (AVM, Fabrika)
 
 ---
 
-## 🧮 İtibar (Reputation) & Güven Puanı Taslak Algoritması (MVP)
-**Başlangıç Değerleri:** trust_score = 100 (0–200 aralığı)
+## 🆕 Versiyon 3.4 Güncelleme Özeti (11 Ağustos 2025)
+**Durum:** Güvenli leaderboard & cursor abuse yönetimi tamamlandı; mentor & reputation otomasyonu kısmi.
 
-### Olay Bazlı Puan Değişimleri (Taslak)
-| Olay | Delta | Not |
-|------|-------|-----|
-| Başarılı trade (her iki taraf onay) | +2 | Rate limit / gün üst sınırı (max +20) |
-| Pozitif oyuncu oylaması | +1 | Aynı oyuncudan tekrar 24h cooldown |
-| Negatif oy / rapor (onaylanmış) | -5 | İnceleme sonrası işlenir |
-| Dolandırıcılık tespiti | -30 | Etiket + görünür uyarı |
-| Mentor görevi tamamlatma | +3 | Mentor başına günlük limit |
-| Spam / flood cezası | -2 | Otomatik (geçici) |
+### Eklenen / Değişen Teknik Öğeler
+- Cursor güvenliği sıkılaştırma: İmzasız (2 parça) cursor formatı artık REDDEDİLİYOR.
+- Threshold karşılaştırmaları tüm kodda strict `>` (>= kaldırıldı) – abuse hesaplaması dokümana uyumlu hale geldi.
+- `shouldAutoDegrade(count)` helper eklendi (auto-degrade karar mantığı merkezileştirildi).
+- Rotation env standardizasyonu: `CURSOR_SECRET_ROTATION` (eski `CURSOR_SECRET_SECONDARY` geriye dönük destekleniyor).
+- Around (rank etrafı) leaderboard modu için `X-Cache` ve `X-Cache-TTL` header'ları eklendi.
+- Mentor & trust leaderboard batch modunda cache ttl minimaline göre `X-Batch-Min-TTL` set ediliyor (önceden vardı, around uyumu tamamlandı).
+- Eşik sonrası cooldown / grace isteği header tutarlılığı iyileştirildi.
+- Güvenlik imza formatı dokümante edildi: HMAC-SHA256(base="score|id") → base64 filtre → ilk 16 karakter.
+- Timing-safe HMAC imza karşılaştırması (`safeEqual`) eklendi (yan kanal risk azaltımı).
+- Granular cursor hata metrikleri: `leaderboard_errors_cursor_format`, `leaderboard_errors_cursor_signature`, `leaderboard_errors_cursor_oversize`.
+- Oversize (>256) cursor inputları erken reddedilerek DoS yüzeyi daraltıldı (+ metrik).
+- ReputationEventEmitter uygulandı: chat mesajı (+1), spam penaltısı (-2), mentor session complete (+3), mentee session complete (+2), kontrat dinamik ödülü unified pipeline (applyDirectReputationDelta).
+- Gün değişiminde reputation dailyCounters cleanup (basit day-change pruning) eklendi.
+- Kontrat dinamik trust ödülleri artık `updateTrust` yerine reputation pipeline’dan geçiyor (gözlemlenebilirlik artışı).
 
-### Eşikler (Renk Kodları)
-- 180–200: Excellent (🌟 yüksek güven)  
-- 160–179: Good  
-- 140–159: Medium  
-- 120–139: Low  
-- 0–119: Bad (⚠ Kontrat kısıtlamaları)  
+### Revize / Kaldırılanlar
+- Eski imzasız cursor geçiş uyumluluğu kaldırıldı (potansiyel manipülasyon yüzeyi kapandı).
+- 3.2 dokümanındaki "JWT middleware yok" sınırlaması artık geçerli değil (uygulandı).
 
-### Hesaplama Notları
-- trust_score doğrudan delta birikimi (soft cap 200)
-- reputation_events tablosu audit trail sağlar
-- İleride ağırlıklı decay (pasif oyuncuda yavaş düşüş) eklenebilir
+### Mevcut Sınırlamalar (Güncel)
+- Reputation pipeline: Risk / fraud (default, dolandırıcılık) negatif eventleri ve trade volumetrik eventleri EKLENMEDİ.
+- Mentor akışı: Bot → gerçek mentor geçiş limitleri, kalite metriği, günlük mentor/mentee limitleri yok.
+- Trade & geniş ekonomik döngü: Kaynak üretim dengeleri, fiyat dalgalanma sistemi, piyasa analitiği eksik.
+- Onboarding 30 dk görev zinciri backend tetikleyicileri (progress events) henüz yok.
+- Fraud / default heuristikleri & contract risk skor hesaplayıcısı yok.
+- SMS doğrulama ve multi-account/device fingerprint modülü yok.
+- Reputation caps: Negatif eventlerin cap dışı konfigürasyonu (örn. SPAM_PENALTY exempt flag) henüz uygulanmadı.
+- Leaderboard abuse IP haritaları için LRU / TTL shrink mekanizması yok (düşük ölçek varsayımı ile bekletiliyor).
 
----
+### Kısa Vadeli Teknik Öncelikler (3.5 Hedefi - Revize)
+1. Fraud / contract default reputation penalty eventleri (`contract_default`, `fraud_flag`).
+2. Trade hacim / pair risk metrikleri + Prometheus etiketleri (örn. `trade_completed_total{pair="userA_userB"}` minimal tasarım orijinal load düşünülerek throttle).
+3. Mentor state machine genişletme (günlük limitler + kalite oranı metriği).
+4. Onboarding görev progression tablosu + event tetikleyicileri.
+5. Multi-account erken sinyal heuristikleri (IP + creation cadence + shared device hash taslağı).
+6. Reputation konfigürasyon haritasını dış JSON’a taşıma (dinamik reload potansiyeli).
+7. Cache & abuse haritaları için hafif periyodik temizlik (scheduler / interval).
+8. Prometheus’a contract risk & reputation tür bazlı TYPE satırları; trade için future-proof label spaces (`reason` vs `type` ayrımı korunacak).
 
-## 🧪 Örnek ReputationEvent Akışı
-1. Kullanıcı A & B trade tamamlar → +2 event
-2. Kullanıcı A 3 defa pozitif oy alır → +3
-3. Flood spam tespiti → -2
-4. Gün sonu trust_score: 100 + 2 + 3 - 2 = 103
-
----
-
-## 🔐 Planlanan Middleware Katmanı (3.3)
-- authRequired: JWT kontrolü, req.user inject
-- rateLimitSimple: IP + kullanıcı bazlı kısa pencere sayaç
-- inputValidation (lightweight) – temel alan kontrolleri
-
----
-
-## 🗂️ API Yol Haritası (Incremental)
-| Endpoint | Durum | Faz |
-|----------|-------|-----|
-| POST /api/auth/register | ✅ | 3.2 |
-| POST /api/auth/login | ✅ | 3.2 |
-| GET /health | ✅ | 3.2 |
-| GET /api/user/me | ⏳ | 3.3 |
-| POST /api/chat/message (REST opsiyonel) | ⏳ | 3.3 |
-| POST /api/reputation/report | ⏳ | 3.3 |
-| POST /api/mentor/request | ⏳ | 3.4 |
-| POST /api/trade/initiate | ⏳ | 3.4 |
+### Yeni / Güncellenen TODO Etiketleri
+- `// TODO(reputation): fraud/default event mapping`
+- `// TODO(security): abuse maps periodic prune (low prio)`
+- `// TODO(economy): trade.volume_daily aggregation` (önceki korundu)
+- `// TODO(mentor): quality_score metric derivation`
+- `// TODO(onboarding): progression events emit`
+- `// TODO(config): externalize reputation DELTA_RULES`
 
 ---
+## 🆕 Versiyon 3.4.1 Ek Notlar (İç İyileştirme Patch)
+**Amaç:** Güvenlik & observability mikro iyileştirmeleri.
+- Timing-safe cursor imza doğrulama.
+- Oversize cursor reject + metrik.
+- Unified contract reward → reputation pipeline.
+- Mentor & mentee session completion reputation ödülleri.
+- Daily counter rollover cleanup.
 
-## 🧵 Socket Event Genişleme Planı
-| Event | Mevcut | Plan |
-|-------|--------|------|
-| join_chat | ✅ | Gelişmiş kanal parametresi |
-| send_message | ✅ | Rate limit + moderation hook |
-| new_message | ✅ | Mesaj tipleri (SYSTEM, USER, BOT) |
-| online_count_updated | ✅ | Bölgesel sayaç desteği |
-| typing_start / typing_stop | ⏳ | 3.4 |
-| reputation_update | ⏳ | 3.4 |
-| mentor_status | ⏳ | 3.4 |
-
----
-
-## 🧭 Revize MVP Tanımı (Net)
-- Global chat + online sayaç
-- Register / Login (JWT) + /me
-- Reputation temel event kayıt (manual tetik prototip)
-- Basit trade (yalnızca para transferi kaydı) – UI henüz opsiyon
-- Bot tutorial state alanı (logic sonraki faz)
+> 3.5 ile birlikte risk, fraud ve onboarding event set’i genişletilecek.
 
 ---
 
 ## 🚀 Güncel Geliştirme Roadmap (Revize)
 **Faz 1 (Tamamlandı kısmen):** Onboarding konsept + chat UI + backend scaffold  
-**Faz 2 (3.3 hedef):** Auth middleware, reputation temel kuralları, /me, rate limit  
-**Faz 3:** Mentor temel akışı + basit trade REST/socket  
-**Faz 4:** Kontrat prototipi + dolandırıcılık işaretleme  
-**Faz 5:** Geniş ölçek optimizasyon + caching + moderasyon araçları  
-
----
-
-## 📝 Notlar & Vizyoner Özellikler
-- **2D mobil oyun** (basit ve erişilebilir)
-- **%100 oyuncu odaklı ekonomi** (NPC yok, sadece gerçek oyuncular)
-- **Sohbet = Oyunun kalbi** (sosyal beceriler en önemli stat)
-- **Unity + Node.js** = Güçlü ve ölçeklenebilir altyapı
-- **Pay2Win YASAK** = Eşitlik ve adalet temel prensip
-- **İtibar sistemi** = Güven ekonomisinin temeli
-- **30 dakikalık kritik onboarding** = Oyuncuyu bağlama stratejisi
-- **Viral büyüme potansiyeli** = "Para kazanılabilir oyun" haberi 🚀
-
-### 🎯 Hedef Vizyon
-**"Dünyanın ilk sürdürülebilir oyuncu ekonomili mobil ticaret simülatörü"**
-
-### 🚀 **Geliştirme Roadmap**
-**Faz 1:** İlk 30 dakika deneyimi + temel chat sistemi  
-**Faz 2:** Mentor sistemi + basit ticaret  
-**Faz 3:** Kontrat sistemi + dolandırıcılık mekaniği  
-**Faz 4:** AVM projeleri + büyük ticaret  
-
-**Hazırlayan:** Musa & GitHub Copilot  
-**Tarih:** 10 Ağustos 2025  
-**Versiyon:** 3.2 - Backend Scaffold + Stack Senkron 🚀
+**Faz 2 (3.4 ile genişledi):** Auth middleware, gelişmiş leaderboard, cursor abuse yönetimi ✅  
+**Faz 3 (3.5 hedef):** Reputation otomasyon genişletme + mentor derinleşme + trade metrikleri  
+**Faz 4:** Kontrat risk & dolandırıcılık + ekonomik craft döngüsü  
+**Faz 5:** Geniş ölçek optimizasyon + moderasyon araçları + multi-account / SMS  
 
 ---
 
@@ -472,22 +433,24 @@ Hammadde → İşlenmiş Ürün → Lüks Eşya → Mega Projeler (AVM, Fabrika)
 3. **Eski bilgiler** silinmez, üstü çizilir veya "güncellenmiş" etiketi eklenir
 4. **Değişiklik tarihi** her zaman kaydedilir
 
-### **🎯 Bir Sonraki Güncellemeler:**
-- [ ] JWT auth middleware & /api/user/me
-- [ ] ReputationService implementasyonu + delta uygulama
-- [ ] Chat flood/spam koruması
-- [ ] Basit trade endpoint taslağı
-- [ ] Mentor eşleşme taslak modeli
-- [ ] İtibar decay stratejisi (opsiyonel)
-
-### **💡 Güncelleme Komutları:**
-**"Dökümanı güncelle"** = Yeni özellikleri ekle  
-**"Versiyon artır"** = Numarayı yükselt  
-**"Özet çıkar"** = Kısa versiyon hazırla
+### **🎯 Bir Sonraki Güncellemeler:** (Güncellendi 11 Ağustos 2025)
+- [ ] Reputation event otomasyon pipeline
+- [ ] Mentor bot → gerçek mentor geçişi
+- [ ] Trade temel endpoint & audit entegrasyonu
+- [ ] Contract risk skor algoritması
+- [ ] Onboarding görev state alanları
+- [ ] Fraud default penalty (otomatik trust delta)
+- [ ] applyAbuseHeaders refactor (tek set geçişi)
 
 ---
 
 ## 📚 **REFERANS DOSYA DURUMU**
-**Bu dosya aktif referans dökümanıdır.**  
-**Tüm gelecek konuşmalarda bu bilgiler temel alınacaktır.**  
+**Bu dosya aktif referans dökümanıdır (Versiyon 3.4).**  
+**Önceki versiyon (3.2) değişiklikleri üstte korunmuştur.**  
 **Yeni özellikler burada kaydedilecektir.**
+
+---
+
+**Hazırlayan:** Musa & GitHub Copilot  
+**Tarih:** 11 Ağustos 2025  
+**Versiyon:** 3.4 - Güvenli Leaderboard & Cursor İyileştirme

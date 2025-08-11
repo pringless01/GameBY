@@ -1,7 +1,17 @@
 import { initDb } from '../config/database.js';
 import { autoAdvanceOnEvent } from '../services/mentorService.js';
+import { emitReputationEvent, ReputationEventType } from '../services/reputationEvents.js';
 
 const onlineUsers = new Set();
+// Basit in-memory flood sayaçları (TODO: kalıcı / kaydırmalı pencere rate limit)
+const messageWindow = 10_000; // 10s pencere
+const maxMessagesPerWindow = 8;
+const userMessageTimestamps = new Map(); // userId -> [timestamps]
+
+function prune(tsArr){
+  const now = Date.now();
+  while(tsArr.length && now - tsArr[0] > messageWindow){ tsArr.shift(); }
+}
 
 export function registerChatNamespace(io) {
   io.on('connection', (socket) => {
@@ -17,6 +27,18 @@ export function registerChatNamespace(io) {
 
     socket.on('send_message', async (data) => {
       if (!data?.userId || !data?.message) return;
+      const now = Date.now();
+      // Flood kontrolü
+      let bucket = userMessageTimestamps.get(data.userId);
+      if(!bucket){ bucket = []; userMessageTimestamps.set(data.userId, bucket); }
+      prune(bucket);
+      if(bucket.length >= maxMessagesPerWindow){
+        // Flood: reputasyon cezası tetikleyebilir.
+        emitReputationEvent({ userId: data.userId, type: ReputationEventType.SPAM_PENALTY }).catch(()=>{});
+        return; // mesajı kayıt etmiyoruz (sessiz drop)
+      }
+      bucket.push(now);
+
       const db = await initDb();
       // İlk mesaj mı kontrol et
       const countRow = await db.get('SELECT COUNT(*) as c FROM chat_messages WHERE user_id = ?', [data.userId]);
@@ -27,6 +49,8 @@ export function registerChatNamespace(io) {
       if(first) {
         autoAdvanceOnEvent(data.userId, 'chat:first_message').catch(()=>{});
       }
+      // Reputation +1 (cap uygulanır)
+      emitReputationEvent({ userId: data.userId, type: ReputationEventType.CHAT_MESSAGE }).catch(()=>{});
     });
 
     socket.on('disconnect', () => {

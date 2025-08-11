@@ -15,6 +15,19 @@ class Dashboard {
         };
         this.isLoading = false;
         this.trustEarnedToday = 0;
+        this.isMentorQueued = false; // yeni
+        this.isMenteeWaiting = false; // yeni
+        this.trustHistory = { recent: [], totals: { gained:0, lost:0 } }; // yeni
+        this.activeMentorshipId = null; // yeni
+        this.mentorshipRatings = { asMentor:{}, asMentee:{} }; // yeni
+        this.lbMode = 'top'; // yeni: leaderboard modu
+        this.lbCategory = 'trust'; // yeni: trust | mentor
+        // Yeni: Trust rank & trend
+        this.trustRank = null;
+        this.trustTrend = [];
+        
+        this.mentorLbMinSessions = 3; // yeni dinamik filtre
+        this.mentorLbLimit = 15;      // yeni dinamik limit
         
         this.init();
     }
@@ -72,45 +85,51 @@ class Dashboard {
     // Kullanıcı verilerini yükle
     async loadUserData() {
         try {
-            console.log('📊 Dashboard: Kullanıcı verileri yükleniyor...');
-            
-            // LocalStorage'dan kullanıcı verilerini al
-            const userData = localStorage.getItem('user');
             const token = localStorage.getItem('jwt_token');
-            
-            if (userData && token) {
-                this.user = JSON.parse(userData);
-                this.resources = this.user.resources || this.resources;
-                console.log('✅ Dashboard: LocalStorage veriler yüklendi:', this.user);
-                
-                // UI'yi hemen güncelle - donmaması için
-                setTimeout(() => {
-                    this.updateUserDisplay();
-                    this.updateResourcesDisplay();
-                }, 100);
-                
-                // API'den güncel verileri al (background'da, timeout ile)
-                this.fetchUserProfileWithTimeout();
-            } else {
-                // Giriş yapmamış, login sayfasına yönlendir
-                console.warn('⚠️ Dashboard: Kullanıcı verisi yok, login sayfasına yönlendiriliyor');
-                setTimeout(() => {
-                    window.location.href = '/login.html';
-                }, 1000);
-                return;
-            }
-        } catch (error) {
-            console.error('❌ Dashboard: Kullanıcı verileri yüklenemedi:', error);
-            // Hata durumunda default verilerle devam et
-            this.user = { 
-                name: 'Oyuncu', 
-                trustScore: 100,
-                resources: this.resources 
-            };
+            if(!token){ window.location.href='/login.html'; return; }
+            const r = await fetch('/api/user/bootstrap', { headers:{'Authorization':'Bearer '+token} });
+            if(r.ok){
+                const b = await r.json();
+                this.user = { id: b.user.id, displayName: b.user.username, trustScore: b.user.trust_score, bot_tutorial_state: b.user.bot_tutorial_state, resources:{ money:b.user.money, wood:b.user.wood, grain:b.user.grain, business:b.user.business } };
+                this.resources = this.user.resources;
+                this.trustEarnedToday = b.dailyTrust.earned;
+                this.trustCap = b.dailyTrust.cap;
+                this.trustRemaining = b.dailyTrust.remaining;
+                if(b.user.mentor_ready) this.isMentorQueued = true;
+                if(b.user.mentee_waiting) this.isMenteeWaiting = true;
+                if(b.mentorship.active){ this.user.bot_tutorial_state='DONE'; }
+                this.trustHistory.recent = b.trust?.recent || [];
+                this.trustHistory.totals = b.trust?.totals || { gained:0, lost:0 };
+                this.mentorshipRatings = b.mentorshipRatings || { asMentor:{}, asMentee:{} };
+                // Yeni: rank & trend
+                this.trustRank = b.trustRank || null;
+                this.trustTrend = (b.trustTrend && b.trustTrend.days) || [];
+                this.updateUserDisplay();
+                this.updateResourcesDisplay();
+                this.updateMentorCard();
+                this.updateMentorReadyButton();
+                this.updateTrustEarningsDisplay();
+                this.renderTrustMiniHistory();
+                this.renderMentorRatingSummary();
+                this.renderTrustRank();
+                this.renderTrustTrend();
+                // Mentor self rank badge
+                this.refreshMentorRankBadge();
+            } else { await this.legacyLoadUserData(); }
+        } catch{ await this.legacyLoadUserData(); }
+    }
+
+    async legacyLoadUserData(){
+        const userData = localStorage.getItem('user');
+        const token = localStorage.getItem('jwt_token');
+        if (userData && token) {
+            this.user = JSON.parse(userData);
+            this.resources = this.user.resources || this.resources;
             this.updateUserDisplay();
             this.updateResourcesDisplay();
-        }
-        await this.loadDailyTrustEarned();
+            await this.loadDailyTrustEarned();
+            this.fetchActiveMentorship();
+        } else { window.location.href='/login.html'; }
     }
     async loadDailyTrustEarned(force=false){
         try {
@@ -163,25 +182,195 @@ class Dashboard {
         const botSection = document.getElementById('bot-mentor');
         const realSection = document.getElementById('real-mentor');
         const mentorStatus = document.getElementById('mentor-status');
+        const reqBtn = document.getElementById('request-real-mentor');
+        const cancelBtn = document.getElementById('cancel-real-mentor');
+        const eligInfo = document.getElementById('mentor-eligibility-info');
         if(!state || !botSection || !realSection || !mentorStatus) return;
         if(['INTRO','FIRST_CHAT','FIRST_CONTRACT','TRUST_LEARN'].includes(state)) {
             botSection.classList.remove('d-none');
             realSection.classList.add('d-none');
             mentorStatus.textContent = 'Bot';
             mentorStatus.className = 'trust-badge trust-good';
+            if(reqBtn) { reqBtn.disabled=false; reqBtn.classList.remove('d-none'); }
         } else if(state === 'MENTOR_MATCH') {
             botSection.classList.remove('d-none');
             realSection.classList.add('d-none');
             mentorStatus.textContent = 'Eşleşme Aranıyor';
             mentorStatus.className = 'trust-badge trust-medium';
-        } else if(state === 'DONE') {
-            botSection.classList.add('d-none');
-            realSection.classList.remove('d-none');
-            mentorStatus.textContent = 'Aktif';
-            mentorStatus.className = 'trust-badge trust-excellent';
+            if(reqBtn) reqBtn.disabled = true;
+            if(cancelBtn) cancelBtn.classList.remove('d-none');
+        } else {
+            if(cancelBtn) cancelBtn.classList.add('d-none');
+        }
+        if(this.isMenteeWaiting && cancelBtn){ cancelBtn.classList.remove('d-none'); if(reqBtn) reqBtn.disabled = true; }
+        if(eligInfo) this.loadMentorEligibility();
+        this.updateMentorQueues();
+    }
+
+    async loadMentorEligibility(){
+        try {
+            const r = await fetch('/api/mentor/mentor/eligibility', { headers:{'Authorization':'Bearer '+localStorage.getItem('jwt_token')} });
+            if(!r.ok) return;
+            const j = await r.json();
+            const eligInfo = document.getElementById('mentor-eligibility-info');
+            const mentorSelf = document.getElementById('mentor-self-actions');
+            if(!eligInfo) return;
+            if(j.eligible){
+                eligInfo.textContent = 'Mentor olabilirsin (Trust: '+j.trust+')';
+                eligInfo.className = 'mentor-eligibility ok';
+                if(mentorSelf) mentorSelf.classList.remove('d-none');
+                // Backend flag üzerinden hazır mı kontrolü
+                this.fetchMentorFlags();
+            } else {
+                if(j.reason==='low_trust') eligInfo.textContent = 'Mentor olmak için Trust '+j.trust+'/'+j.required;
+                else if(j.reason==='already_active') eligInfo.textContent = 'Aktif mentorship var';
+                else eligInfo.textContent = 'Mentor olamazsın';
+                eligInfo.className = 'mentor-eligibility fail';
+                if(mentorSelf) mentorSelf.classList.add('d-none');
+            }
+        } catch{}
+    }
+
+    async fetchMentorFlags(){
+        try {
+            const r = await fetch('/api/user/me',{ headers:{'Authorization':'Bearer '+localStorage.getItem('jwt_token')} });
+            if(!r.ok) return; const j = await r.json();
+            if(j.user){
+                this.isMentorQueued = j.user.mentor_ready === 1;
+                this.isMenteeWaiting = j.user.mentee_waiting === 1;
+                this.updateMentorReadyButton();
+                this.updateMentorCard();
+            }
+        } catch{}
+    }
+
+    // API'den kullanıcı profilini getir (timeout ile)
+    async fetchUserProfileWithTimeout() {
+        try {
+            console.log('🔄 Dashboard: API profil güncelleme deneniyor...');
+            const token = localStorage.getItem('jwt_token');
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => { controller.abort(); console.warn('⏰ Dashboard: API timeout - localStorage verisi kullanılıyor'); }, 3000);
+            const response = await fetch('/api/user/profile', { headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' }, signal: controller.signal });
+            clearTimeout(timeoutId);
+            if (response.ok) {
+                const data = await response.json();
+                this.user = data.user;
+                this.resources = data.user.resources;
+                this.updateUserDisplay();
+                this.updateResourcesDisplay();
+                this.updateMentorCard(); // yeni
+                console.log('✅ Dashboard: API den profil güncellendi');
+            } else if (response.status === 401) {
+                localStorage.removeItem('jwt_token');
+                localStorage.removeItem('user');
+                window.location.href = '/login.html';
+            }
+        } catch (error) {
+            if (error.name === 'AbortError') {
+                console.warn('⚠️ Dashboard: API timeout - localStorage verisi kullanılıyor');
+            } else {
+                console.warn('⚠️ Dashboard: API hatası - localStorage verisi kullanılıyor:', error.message);
+            }
         }
     }
 
+    updateMentorCard() {
+        const state = this.user?.bot_tutorial_state;
+        const botSection = document.getElementById('bot-mentor');
+        const realSection = document.getElementById('real-mentor');
+        const mentorStatus = document.getElementById('mentor-status');
+        const reqBtn = document.getElementById('request-real-mentor');
+        const cancelBtn = document.getElementById('cancel-real-mentor');
+        const eligInfo = document.getElementById('mentor-eligibility-info');
+        if(!state || !botSection || !realSection || !mentorStatus) return;
+        if(['INTRO','FIRST_CHAT','FIRST_CONTRACT','TRUST_LEARN'].includes(state)) {
+            botSection.classList.remove('d-none');
+            realSection.classList.add('d-none');
+            mentorStatus.textContent = 'Bot';
+            mentorStatus.className = 'trust-badge trust-good';
+            if(reqBtn) { reqBtn.disabled=false; reqBtn.classList.remove('d-none'); }
+        } else if(state === 'MENTOR_MATCH') {
+            botSection.classList.remove('d-none');
+            realSection.classList.add('d-none');
+            mentorStatus.textContent = 'Eşleşme Aranıyor';
+            mentorStatus.className = 'trust-badge trust-medium';
+            if(reqBtn) reqBtn.disabled = true;
+            if(cancelBtn) cancelBtn.classList.remove('d-none');
+        } else {
+            if(cancelBtn) cancelBtn.classList.add('d-none');
+        }
+        if(this.isMenteeWaiting && cancelBtn){ cancelBtn.classList.remove('d-none'); if(reqBtn) reqBtn.disabled = true; }
+        if(eligInfo) this.loadMentorEligibility();
+        this.updateMentorQueues();
+    }
+
+    async loadMentorEligibility(){
+        try {
+            const r = await fetch('/api/mentor/mentor/eligibility', { headers:{'Authorization':'Bearer '+localStorage.getItem('jwt_token')} });
+            if(!r.ok) return;
+            const j = await r.json();
+            const eligInfo = document.getElementById('mentor-eligibility-info');
+            const mentorSelf = document.getElementById('mentor-self-actions');
+            if(!eligInfo) return;
+            if(j.eligible){
+                eligInfo.textContent = 'Mentor olabilirsin (Trust: '+j.trust+')';
+                eligInfo.className = 'mentor-eligibility ok';
+                if(mentorSelf) mentorSelf.classList.remove('d-none');
+                // Backend flag üzerinden hazır mı kontrolü
+                this.fetchMentorFlags();
+            } else {
+                if(j.reason==='low_trust') eligInfo.textContent = 'Mentor olmak için Trust '+j.trust+'/'+j.required;
+                else if(j.reason==='already_active') eligInfo.textContent = 'Aktif mentorship var';
+                else eligInfo.textContent = 'Mentor olamazsın';
+                eligInfo.className = 'mentor-eligibility fail';
+                if(mentorSelf) mentorSelf.classList.add('d-none');
+            }
+        } catch{}
+    }
+
+    async fetchMentorFlags(){
+        try {
+            const r = await fetch('/api/user/me',{ headers:{'Authorization':'Bearer '+localStorage.getItem('jwt_token')} });
+            if(!r.ok) return; const j = await r.json();
+            if(j.user){
+                this.isMentorQueued = j.user.mentor_ready === 1;
+                this.isMenteeWaiting = j.user.mentee_waiting === 1;
+                this.updateMentorReadyButton();
+                this.updateMentorCard();
+            }
+        } catch{}
+    }
+
+    // Mentor rank fetch
+    async fetchSelfMentorRank(minSessions=this.mentorLbMinSessions){
+        try {
+            const r = await fetch(`/api/user/leaderboard?category=mentor&self=1&limit=0&minSessions=${encodeURIComponent(minSessions)}`, { headers:{'Authorization':'Bearer '+localStorage.getItem('jwt_token')} });
+            if(!r.ok) return null; const j = await r.json(); return j.selfRank || null;
+        } catch { return null; }
+    }
+    openMentorRankModal(){ this.loadMentorRank(); const m=document.getElementById('mentor-rank-modal'); if(m) m.classList.remove('d-none'); }
+    closeMentorRankModal(){ const m=document.getElementById('mentor-rank-modal'); if(m) m.classList.add('d-none'); }
+    async loadMentorRank(){
+        const box = document.getElementById('mentor-rank-box'); if(box) box.textContent='Yükleniyor...';
+        const data = await this.fetchSelfMentorRank();
+        if(!box) return; if(!data){ box.textContent='Hata'; return; }
+        if(!data.ranked){
+            if(data.reason==='min_sessions') box.innerHTML = `Henüz sıralamada değilsin. Minimum ${data.minSessions} oturum gerek. (Sen: ${data.sessions})`;
+            else if(data.reason==='no_rating') box.innerHTML = 'Henüz rating verisi yok.';
+            else box.innerHTML = 'Sıralama verisi yok.';
+            this.updateMentorRankBadge(null);
+            return;
+        }
+        box.innerHTML = `<div style='display:flex;flex-direction:column;gap:6px;'>
+          <div><strong>Rank:</strong> #${data.rank} / ${data.total}</div>
+          <div><strong>Percentile:</strong> %${data.percentile}</div>
+          <div><strong>Oturum:</strong> ${data.sessions}</div>
+          <div><strong>Ortalama Puan:</strong> ⭐ ${data.avg_rating}</div>
+          <div style='font-size:11px;opacity:.6;'>Filtre: >=${data.minSessions} oturum</div>
+        </div>`;
+        this.updateMentorRankBadge(data);
+    }
     // Event listener'ları ayarla
     setupEventListeners() {
         // Action buttons
@@ -309,6 +498,45 @@ class Dashboard {
                             this.user.bot_tutorial_state = p.state;
                             this.updateMentorCard();
                         }
+                    }
+                });
+                // Yeni: mentor atama
+                this.socket.on('mentor_assigned', (data) => {
+                    if(this.user && (data.menteeId === this.user.id || data.mentorId === this.user.id)) {
+                        if(data.menteeId === this.user.id){
+                            this.user.bot_tutorial_state = 'DONE';
+                            this.isMenteeWaiting = false; // reset
+                            this.updateMentorCard();
+                            const name = data.mentorUsername ? ('Mentor: '+data.mentorUsername) : ('Mentor #' + data.mentorId);
+                            this.genericToast('Mentor atandı! '+name,'mentor');
+                            this.fetchActiveMentorship();
+                            this.fetchMentorFlags();
+                        } else if(data.mentorId === this.user.id){
+                            this.isMentorQueued = false; // mentor artık aktif
+                            const name = data.menteeUsername ? ('Mentee: '+data.menteeUsername) : ('Mentee #' + data.menteeId);
+                            this.genericToast('Yeni mentee eşleşti! '+name,'mentor');
+                            this.fetchActiveMentorship();
+                            this.fetchMentorFlags();
+                        }
+                    }
+                });
+                // Yeni: mentorluk tamamlandı -> leaderboard & self rank refresh
+                let _mentorLbRefreshTimer=null;
+                const scheduleMentorLbRefresh = ()=>{
+                    if(_mentorLbRefreshTimer) return;
+                    _mentorLbRefreshTimer = setTimeout(()=>{
+                        _mentorLbRefreshTimer=null;
+                        try { if(this.lbCategory==='mentor') this.loadLeaderboard(); } catch{}
+                        try { this.fetchSelfMentorRank && this.fetchSelfMentorRank(); } catch{}
+                    }, 1200);
+                };
+                this.socket.on('mentorship_completed', (m)=>{
+                    if(!m) return;
+                    // Her iki taraf için güncelleme anlamlı
+                    if(this.user && (m.mentor_id===this.user.id || m.mentee_id===this.user.id)){
+                        this.genericToast('Mentorluk tamamlandı (#'+m.id+')','mentor');
+                        scheduleMentorLbRefresh();
+                        this.refreshMentorRankBadge();
                     }
                 });
                 
@@ -583,6 +811,9 @@ class Dashboard {
             const force = (counter % 10 === 0); // ~5 dakikada bir force (30s *10)
             this.loadDailyTrustEarned(force);
         },30000);
+
+        // Mentor queue sayıları (her 40sn)
+        setInterval(()=>{ this.updateMentorQueues(); }, 40000);
     }
 
     // Bildirimler ayarla
@@ -760,10 +991,333 @@ class Dashboard {
             el.title = `Günlük ödül: ${earned}/${cap} (kalan ${Math.max(0, cap-earned)})`;
         }
     }
+    async fetchActiveMentorship(){
+        try {
+            const r = await fetch('/api/mentor/active', { headers:{'Authorization':'Bearer '+localStorage.getItem('jwt_token')} });
+            if(r.ok){
+                const j = await r.json();
+                if(j.active){
+                    const realSection = document.getElementById('real-mentor');
+                    const botSection = document.getElementById('bot-mentor');
+                    const mentorStatus = document.getElementById('mentor-status');
+                    if(realSection && botSection && mentorStatus){
+                        botSection.classList.add('d-none');
+                        realSection.classList.remove('d-none');
+                        mentorStatus.textContent = 'Aktif';
+                        mentorStatus.className = 'trust-badge trust-excellent';
+                        const nameEl = document.getElementById('mentor-name');
+                        const descEl = document.getElementById('mentor-description');
+                        if(nameEl) nameEl.textContent = j.mentorship.mentor_username || ('Mentor #' + j.mentorship.mentor_id);
+                        if(descEl) descEl.textContent = 'Mentor-ID: '+ j.mentorship.mentor_id + ' | Mentee-ID: ' + j.mentorship.mentee_id;
+                    }
+                }
+            }
+        } catch(e){}
+    }
+    async updateMentorQueues(){
+        try {
+            const r = await fetch('/api/mentor/queues',{ headers:{'Authorization':'Bearer '+localStorage.getItem('jwt_token')} });
+            if(!r.ok) return; const j = await r.json();
+            const el = document.getElementById('mentor-queue-counts');
+            if(el){ el.textContent = 'Kuyruk: '+(j.counts?.mentors||0)+' mentor / '+(j.counts?.mentees||0)+' mentee'; }
+        } catch{}
+    }
+
+    async toggleMentorReady(){
+        if(this.isMentorQueued){
+            try { const r = await fetch('/api/mentor/mentor/leave',{method:'POST', headers:{'Authorization':'Bearer '+localStorage.getItem('jwt_token')} }); if(r.ok){ this.isMentorQueued=false; this.genericToast('Mentor kuyruğundan çıktın','mentor'); this.updateMentorReadyButton(); } } catch{}
+        } else {
+            try { const r = await fetch('/api/mentor/mentor/ready',{method:'POST', headers:{'Authorization':'Bearer '+localStorage.getItem('jwt_token')} }); const j = await r.json().catch(()=>({})); if(r.ok && j.ok){ this.isMentorQueued=true; this.genericToast('Mentor olarak hazırsın','mentor'); this.updateMentorReadyButton(); } else { this.showError('Mentor olamadı: '+(j.reason||j.error||'hata')); } } catch{ this.showError('Bağlantı hatası'); }
+        }
+    }
+
+    updateMentorReadyButton(){
+        const btn = document.getElementById('mentor-ready-btn');
+        if(!btn) return;
+        if(this.isMentorQueued){
+            btn.textContent = '🛑 Mentor Modu Kapat';
+            btn.classList.remove('btn-outline');
+            btn.classList.add('btn-danger');
+        } else {
+            btn.textContent = '✅ Mentor Modu Aç';
+            btn.classList.add('btn-outline');
+            btn.classList.remove('btn-danger');
+        }
+    }
+
+    async requestRealMentor(){
+        if(this.isMenteeWaiting){ return; }
+        try {
+            const r = await fetch('/api/mentor/mentor/request',{ method:'POST', headers:{'Authorization':'Bearer '+localStorage.getItem('jwt_token')} });
+            if(r.ok){
+                const j = await r.json();
+                if(j.queued){ this.isMenteeWaiting = true; this.genericToast('Gerçek mentor aranıyor...','mentor'); this.user.bot_tutorial_state='MENTOR_MATCH'; this.updateMentorCard(); }
+            } else {
+                const e = await r.json().catch(()=>({}));
+                this.showError('Mentor isteği başarısız: '+(e.reason||e.error||'hata'));
+            }
+        } catch{ this.showError('Bağlantı hatası'); }
+    }
+
+    async cancelRealMentor(){
+        if(!this.isMenteeWaiting) return;
+        try {
+            const r = await fetch('/api/mentor/mentee/toggle',{ method:'POST', headers:{'Authorization':'Bearer '+localStorage.getItem('jwt_token'),'Content-Type':'application/json'}, body: JSON.stringify({ waiting:false }) });
+            if(r.ok){ this.isMenteeWaiting = false; this.genericToast('Mentor arama iptal edildi','mentor'); const cancelBtn=document.getElementById('cancel-real-mentor'); if(cancelBtn) cancelBtn.classList.add('d-none'); const reqBtn=document.getElementById('request-real-mentor'); if(reqBtn) { reqBtn.disabled=false; } }
+        } catch{}
+    }
+    renderTrustMiniHistory(){
+        const wrapId = 'trust-mini-history';
+        let wrap = document.getElementById(wrapId);
+        if(!wrap){
+            wrap = document.createElement('div');
+            wrap.id = wrapId;
+            wrap.style.marginTop = '12px';
+            const statsCard = document.querySelector('.stats-grid')?.parentElement;
+            if(statsCard){ statsCard.appendChild(wrap); }
+        }
+        if(!wrap) return;
+        const gained = this.trustHistory.totals.gained||0;
+        const lost = this.trustHistory.totals.lost||0;
+        wrap.innerHTML = `<div style="font-size:12px;color:#bbb;display:flex;gap:12px;flex-wrap:wrap;align-items:center;">
+          <span>Trust Kazanç: +${gained}</span>
+          <span>Trust Kayıp: -${lost}</span>
+          <span>Son Olaylar:</span>
+          ${this.trustHistory.recent.map(r=>`<span style='background:#222;padding:2px 6px;border-radius:12px;'>${r.delta>0?'+':''}${r.delta} (${r.reason})</span>`).join('') || '<em>kayıt yok</em>'}
+        </div>`;
+        if(!wrap.querySelector('.trust-history-btn')){
+            const btn = document.createElement('button');
+            btn.textContent = 'Detaylı';
+            btn.className = 'trust-history-btn';
+            btn.style.cssText = 'margin-left:auto;background:#263238;border:1px solid #444;color:#fff;padding:4px 8px;border-radius:6px;font-size:11px;cursor:pointer;';
+            btn.onclick = ()=> this.openTrustHistory();
+            wrap.appendChild(btn);
+        }
+    }
+
+    async openTrustHistory(){
+        if(!this._trustModal){
+            const m = document.createElement('div');
+            m.id='trust-modal';
+            m.style.cssText='position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.6);display:flex;align-items:center;justify-content:center;z-index:9999;';
+            m.innerHTML=`<div style="background:#121214;padding:16px;border-radius:12px;width:90%;max-width:420px;max-height:80%;overflow:auto;font-size:13px;">
+              <h3 style='margin-top:0'>Trust Geçmişi</h3>
+              <div id='trust-history-list'>Yükleniyor...</div>
+              <div style='display:flex;gap:8px;margin-top:12px;justify-content:space-between;'>
+                <button id='trust-prev' style='flex:1;background:#263238;color:#fff;border:1px solid #333;padding:6px 10px;border-radius:6px;'>Önceki</button>
+                <button id='trust-next' style='flex:1;background:#263238;color:#fff;border:1px solid #333;padding:6px 10px;border-radius:6px;'>Sonraki</button>
+                <button id='trust-close' style='flex:1;background:#8d2e2e;color:#fff;border:1px solid #333;padding:6px 10px;border-radius:6px;'>Kapat</button>
+              </div>
+            </div>`;
+            document.body.appendChild(m);
+            this._trustModal = m;
+            m.addEventListener('click', e=>{ if(e.target===m) this.closeTrustHistory(); });
+            m.querySelector('#trust-close').onclick = ()=> this.closeTrustHistory();
+            m.querySelector('#trust-prev').onclick = ()=> { if(this._trustOffset>0){ this._trustOffset -= this._trustLimit; this.loadTrustHistory(); } };
+            m.querySelector('#trust-next').onclick = ()=> { if(this._trustOffset + this._trustLimit < (this._trustTotal||0)){ this._trustOffset += this._trustLimit; this.loadTrustHistory(); } };
+            this._trustLimit = 20; this._trustOffset = 0; this._trustTotal = 0;
+        }
+        this._trustModal.style.display='flex';
+        this.loadTrustHistory();
+    }
+
+    closeTrustHistory(){ if(this._trustModal) this._trustModal.style.display='none'; }
+
+    async loadTrustHistory(){
+        try {
+            const list = document.getElementById('trust-history-list');
+            if(list) list.textContent='Yükleniyor...';
+            const r = await fetch(`/api/user/trust/history?limit=${this._trustLimit}&offset=${this._trustOffset}`, { headers:{'Authorization':'Bearer '+localStorage.getItem('jwt_token')} });
+            if(r.ok){
+                const j = await r.json();
+                this._trustTotal = j.total;
+                if(list){
+                    if(!j.events.length){ list.innerHTML='<em>Kayıt yok</em>'; }
+                    else {
+                        list.innerHTML = j.events.map(ev=>`<div style='padding:4px 0;border-bottom:1px solid #1e1e22;display:flex;gap:8px;'>
+                          <span style='min-width:46px;color:${ev.delta>0?'#4caf50':'#f44336'};'>${ev.delta>0?'+':''}${ev.delta}</span>
+                          <span style='flex:1;'>${ev.reason}</span>
+                          <span style='opacity:.6;font-size:11px;'>${ev.created_at}</span>
+                        </div>`).join('');
+                    }
+                }
+            } else {
+                if(list) list.textContent='Hata';
+            }
+        } catch(e){ const list = document.getElementById('trust-history-list'); if(list) list.textContent='Hata'; }
+    }
+    openMentorshipCompleteModal(){ if(!this.activeMentorshipId) return; const m=document.getElementById('mentorship-complete-modal'); if(m) m.classList.remove('d-none'); }
+    closeMentorshipCompleteModal(){ const m=document.getElementById('mentorship-complete-modal'); if(m) m.classList.add('d-none'); }
+    async submitMentorshipCompletion(){
+        if(!this.activeMentorshipId) return;
+        const body={};
+        const mrEl=document.getElementById('mentor-rating-input');
+        const meEl=document.getElementById('mentee-rating-input');
+        const mr=Number(mrEl?.value)||0; if(mr>=1&&mr<=5) body.mentor_rating=mr;
+        const me=Number(meEl?.value)||0; if(me>=1&&me<=5) body.mentee_rating=me;
+        try {
+          const r=await fetch(`/api/mentor/mentorship/${this.activeMentorshipId}/complete`, { method:'POST', headers:{'Authorization':'Bearer '+localStorage.getItem('jwt_token'),'Content-Type':'application/json'}, body: JSON.stringify(body)});
+          const j=await r.json().catch(()=>({}));
+          if(r.ok){ this.genericToast('Mentorluk tamamlandı','mentor'); this.closeMentorshipCompleteModal(); this.activeMentorshipId=null; const sess=document.getElementById('mentor-session-actions'); if(sess) sess.style.display='none'; this.fetchMentorFlags(); }
+          else { this.showError('Tamamlama hata: '+(j.error||'bilinmeyen')); }
+        } catch { this.showError('Bağlantı hatası'); }
+    }
+    renderMentorRatingSummary(){
+        const el = document.getElementById('mentor-rating-summary');
+        if(!el || !this.mentorshipRatings) return;
+        const m = this.mentorshipRatings.asMentor || { count:0, avg_rating:null };
+        const me = this.mentorshipRatings.asMentee || { count:0, avg_rating:null };
+        el.textContent = `Mentor: ${m.count||0} oturum${m.avg_rating? ' (⭐'+m.avg_rating+')':''} • Mentee: ${me.count||0}${me.avg_rating? ' (⭐'+me.avg_rating+')':''}`;
+    }
+    // Mentorluk geçmişi modal
+    openMentorshipHistory(){ this.mhOffset=0; this.loadMentorshipHistory(); const modal=document.getElementById('mentorship-history-modal'); if(modal) modal.classList.remove('d-none'); }
+    closeMentorshipHistory(){ const modal=document.getElementById('mentorship-history-modal'); if(modal) modal.classList.add('d-none'); }
+    async loadMentorshipHistory(){
+       try {
+         const limit=10; const r=await fetch(`/api/user/mentorship/history?limit=${limit}&offset=${this.mhOffset||0}`, { headers:{'Authorization':'Bearer '+localStorage.getItem('jwt_token')} });
+         if(!r.ok) return; const j=await r.json();
+         const list=document.getElementById('mentorship-history-list'); if(!list) return;
+         list.innerHTML='';
+         if(!j.mentorships.length){ list.innerHTML='<div style="padding:8px;color:#777;">Kayıt yok</div>'; }
+         j.mentorships.forEach(m=>{
+            const div=document.createElement('div');
+            div.style.background='#26262b'; div.style.padding='8px 10px'; div.style.borderRadius='8px';
+            const youAre = m.role==='mentor' ? 'Mentor' : 'Mentee';
+            const otherId = m.role==='mentor' ? m.mentee_id : m.mentor_id;
+            const rating = m.role==='mentor' ? (m.mentee_rating? '⭐'+m.mentee_rating : '-') : (m.mentor_rating? '⭐'+m.mentor_rating : '-');
+            div.innerHTML = `<strong>${youAre}</strong> • Diğer: #${otherId} • Puan: ${rating}<br><span style='opacity:.7;'>${m.created_at.split('T')[0]} → ${(m.ended_at||'').split('T')[0] || '—'}</span>`;
+            list.appendChild(div);
+         });
+         const pageInfo=document.getElementById('mh-page-info');
+         const prev=document.getElementById('mh-prev');
+         const next=document.getElementById('mh-next');
+         const page = Math.floor((this.mhOffset||0)/limit)+1;
+         const totalPages = Math.max(1, Math.ceil(j.total/limit));
+         if(pageInfo) pageInfo.textContent = page + '/' + totalPages;
+         if(prev) prev.disabled = page<=1;
+         if(next) next.disabled = page>=totalPages;
+         prev&&prev.addEventListener('click', ()=>{ if(this.mhOffset>=limit){ this.mhOffset-=limit; this.loadMentorshipHistory(); } });
+         next&&next.addEventListener('click', ()=>{ if(this.mhOffset+limit<j.total){ this.mhOffset+=limit; this.loadMentorshipHistory(); } });
+       } catch{}
+    }
+    openLeaderboard(){ this.lbMode='top'; this.loadLeaderboard(); const m=document.getElementById('leaderboard-modal'); if(m) m.classList.remove('d-none'); }
+    closeLeaderboard(){ const m=document.getElementById('leaderboard-modal'); if(m) m.classList.add('d-none'); }
+    setLeaderboardMode(mode){ this.lbMode=mode; const topBtn=document.getElementById('lb-mode-top'); const aroundBtn=document.getElementById('lb-mode-around'); if(topBtn&&aroundBtn){ if(mode==='top'){ topBtn.classList.replace('btn-outline','btn-secondary'); aroundBtn.classList.replace('btn-secondary','btn-outline'); } else { aroundBtn.classList.replace('btn-outline','btn-secondary'); topBtn.classList.replace('btn-secondary','btn-outline'); } } this.loadLeaderboard(); }
+    setLeaderboardCategory(cat){
+        if(!['trust','mentor'].includes(cat)) return; this.lbCategory=cat; this.loadLeaderboard();
+        const catTrust=document.getElementById('lb-cat-trust'); const catMentor=document.getElementById('lb-cat-mentor');
+        if(catTrust&&catMentor){ if(cat==='trust'){ catTrust.classList.add('btn-secondary'); catTrust.classList.remove('btn-outline'); catMentor.classList.add('btn-outline'); catMentor.classList.remove('btn-secondary'); } else { catMentor.classList.add('btn-secondary'); catMentor.classList.remove('btn-outline'); catTrust.classList.add('btn-outline'); catTrust.classList.remove('btn-secondary'); } }
+        // Mode buttons sadece trust için göster
+        const modeWrap=document.getElementById('lb-mode-wrap'); if(modeWrap){ modeWrap.style.display = (cat==='trust') ? 'flex':'none'; }
+        const userRankEl=document.getElementById('leaderboard-user-rank'); if(userRankEl){ userRankEl.style.display = (cat==='trust') ? 'block':'none'; }
+    }
+    async loadLeaderboard(){
+      try {
+        const listEl = document.getElementById('leaderboard-list');
+        if(listEl) listEl.innerHTML = '<div style="padding:8px;color:#666;">Yükleniyor...</div>';
+        if(this.lbCategory==='mentor'){
+          const r = await fetch(`/api/user/leaderboard?category=mentor&limit=${this.mentorLbLimit}&minSessions=${this.mentorLbMinSessions}`, { headers:{'Authorization':'Bearer '+localStorage.getItem('jwt_token')} });
+          if(!r.ok){ if(listEl) listEl.innerHTML='<div style="padding:8px;color:#c55;">Hata</div>'; return; }
+          const j = await r.json();
+          if(!listEl) return;
+          listEl.innerHTML='';
+          if(typeof j.total === 'number'){
+            const info=document.createElement('div');
+            info.style.cssText='padding:4px 8px 6px;font-size:11px;opacity:.65;text-align:right;';
+            info.textContent = `Toplam Nitelikli Mentor: ${j.total} (>=${this.mentorLbMinSessions} oturum)`;
+            listEl.appendChild(info);
+          }
+          if(!(j.list||[]).length){ listEl.innerHTML+='<div style="padding:8px;color:#888;">Kayıt yok</div>'; return; }
+          j.list.forEach((u,i)=>{
+            const div=document.createElement('div');
+            div.style.background='#26262b'; div.style.padding='6px 10px'; div.style.borderRadius='8px'; div.style.display='flex'; div.style.justifyContent='space-between'; div.style.fontSize='13px';
+            div.innerHTML = `<span>#${i+1} ${u.username||('U'+u.id)}<span style='opacity:.5;margin-left:4px;'>${u.sessions} oturum</span></span><span style='font-weight:600;'>⭐ ${u.avg_rating||'-'}</span>`;
+            listEl.appendChild(div);
+          });
+          const rankEl=document.getElementById('leaderboard-user-rank'); if(rankEl) rankEl.textContent='';
+          return;
+        }
+        // trust leaderboard
+        const around = this.lbMode==='around' ? '1':'0';
+        const r = await fetch(`/api/user/leaderboard?category=trust&limit=15&around=${around}&window=3`, { headers:{'Authorization':'Bearer '+localStorage.getItem('jwt_token')} });
+        if(!r.ok) return; const j = await r.json();
+        const rankEl = document.getElementById('leaderboard-user-rank');
+        if(!listEl) return;
+        listEl.innerHTML='';
+        if(rankEl && !j.around){ rankEl.textContent = j.userRank ? ('SIRAN: #' + j.userRank) : ''; }
+        if(j.around && rankEl){ rankEl.textContent = j.userRank ? ('Çevre Sıra: #' + j.userRank) : ''; }
+        (j.list||[]).forEach((u,i)=>{
+          const div=document.createElement('div');
+          const rank = u.r || (i+1); // around modda r var
+          const highlight = (u.id === this.user.id);
+          div.style.background = highlight ? '#274054' : '#26262b';
+          div.style.padding='6px 10px';
+          div.style.borderRadius='8px';
+          div.style.display='flex';
+          div.style.justifyContent='space-between';
+          div.innerHTML = `<span>#${rank} ${u.username}</span><span style='font-weight:600;'>${u.trust_score}</span>`;
+          listEl.appendChild(div);
+        });
+      } catch{}
+    }
+    // Yeni: Trust Rank gösterimi
+    renderTrustRank(){
+        const line = document.getElementById('trust-rank-line');
+        if(!line || !this.trustRank) return;
+        const { rank, total, percentile } = this.trustRank;
+        line.textContent = `Sıra: #${rank}/${total} • Yüzdelik: ${percentile}%`;
+    }
+    // Yeni: Trust Trend sparkline
+    renderTrustTrend(){
+        const wrap = document.getElementById('trust-trend-spark');
+        if(!wrap) return;
+        const data = this.trustTrend || [];
+        if(!data.length){ wrap.innerHTML = '<em style="font-size:11px;color:#555;">Trend yok</em>'; return; }
+        const values = data.map(d=>d.total);
+        const min = Math.min(...values, 0);
+        const max = Math.max(...values, 1);
+        const W = Math.max(120, data.length * 18);
+        const H = 28; const pad = 2;
+        const scaleX = (i)=> pad + (i/(data.length-1))*(W-2*pad);
+        const scaleY = (v)=> {
+            if(max===min) return H/2; // flat line
+            return H - pad - ((v - min)/(max - min))*(H-2*pad);
+        };
+        let path = '';
+        data.forEach((d,i)=>{
+            const x = scaleX(i).toFixed(2);
+            const y = scaleY(d.total).toFixed(2);
+            path += (i===0?`M${x},${y}`:` L${x},${y}`);
+        });
+        const areaPath = path + ` L${scaleX(data.length-1).toFixed(2)},${H-pad} L${scaleX(0).toFixed(2)},${H-pad} Z`;
+        const last = data[data.length-1];
+        const diff = last.total - data[0].total;
+        const color = diff>0 ? '#4CAF50' : (diff<0 ? '#F44336' : '#FFC107');
+        wrap.innerHTML = `<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none">
+            <path d="${areaPath}" fill="${color}20" stroke="none"></path>
+            <path d="${path}" fill="none" stroke="${color}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"></path>
+        </svg>`;
+        wrap.title = data.map(d=>`${d.day}: ${d.total}`).join('\n');
+    }
 }
 
 // Global fonksiyonlar (HTML'den çağrılabilir)
 window.dashboard = null;
+window.requestRealMentor = function(){ if(window.dashboard) window.dashboard.requestRealMentor(); };
+window.toggleMentorReady = function(){ if(window.dashboard) window.dashboard.toggleMentorReady(); };
+window.cancelRealMentor = function(){ if(window.dashboard) window.dashboard.cancelRealMentor(); };
+window.openMentorshipCompleteModal=()=>window.dashboard&&window.dashboard.openMentorshipCompleteModal();
+window.closeMentorshipCompleteModal=()=>window.dashboard&&window.dashboard.closeMentorshipCompleteModal();
+window.submitMentorshipCompletion=()=>window.dashboard&&window.dashboard.submitMentorshipCompletion();
+window.openMentorshipHistory=()=>window.dashboard&&window.dashboard.openMentorshipHistory();
+window.closeMentorshipHistory=()=>window.dashboard&&window.dashboard.closeMentorshipHistory();
+window.openLeaderboard=()=>window.dashboard&&window.dashboard.openLeaderboard();
+window.closeLeaderboard=()=>window.dashboard&&window.dashboard.closeLeaderboard();
+window.setLeaderboardMode=(m)=>window.dashboard&&window.dashboard.setLeaderboardMode(m);
+window.setLeaderboardCategory=(c)=>window.dashboard&&window.dashboard.setLeaderboardCategory(c);
+window.openMentorRankModal=()=>window.dashboard&&window.dashboard.openMentorRankModal();
+window.closeMentorRankModal=()=>window.dashboard&&window.dashboard.closeMentorRankModal();
+
 
 // Kaynakları yenile
 function refreshResources() {
@@ -841,6 +1395,7 @@ document.addEventListener('visibilitychange', () => {
         window.dashboard.refreshData();
     }
 });
+
 
 // Online/offline durumu
 window.addEventListener('online', () => {

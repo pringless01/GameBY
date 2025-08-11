@@ -2,12 +2,24 @@ import { initDb } from '../config/database.js';
 import bcrypt from 'bcrypt';
 import { getIo } from '../sockets/io.js';
 import { logAudit } from '../services/auditService.js';
+import { invalidateOnTrustChange } from '../cache/trustCaches.js';
+import { incReputationEvent } from '../metrics/reputationMetrics.js';
 
 export async function createUser({ username, password }) {
   const db = await initDb();
   const hash = bcrypt.hashSync(password, 10);
-  const result = await db.run(`INSERT INTO users (username, password_hash) VALUES (?, ?)`, [username, hash]);
-  return { id: result.lastID, username };
+  let rolesJson = null;
+  if(process.env.NODE_ENV !== 'production'){
+    const devAdmin = process.env.DEV_ADMIN_USERNAME || 'admin';
+    if(username === devAdmin){ rolesJson = JSON.stringify(['admin']); }
+  }
+  if(rolesJson){
+    const result = await db.run(`INSERT INTO users (username, password_hash, roles) VALUES (?, ?, ?)`, [username, hash, rolesJson]);
+    return { id: result.lastID, username, roles: ['admin'] };
+  } else {
+    const result = await db.run(`INSERT INTO users (username, password_hash) VALUES (?, ?)`, [username, hash]);
+    return { id: result.lastID, username };
+  }
 }
 
 export async function findUserByUsername(username) {
@@ -23,8 +35,12 @@ export async function updateTrust(userId, delta, reason='manual_adjust', ip=null
   const db = await initDb();
   await db.run('UPDATE users SET trust_score = MAX(0, MIN(200, trust_score + ?)) WHERE id = ?', [delta, userId]);
   await db.run('INSERT INTO reputation_events (user_id, delta, reason) VALUES (?, ?, ?)', [userId, delta, reason]);
+  // Metrics (manual / legacy yol da reputasyon istatistiklerine girsin)
+  try { incReputationEvent(reason); } catch {}
   logAudit({ userId, action: 'trust_update', detail: JSON.stringify({ delta, reason }), ip });
   const updated = await db.get('SELECT id, username, trust_score FROM users WHERE id = ?', [userId]);
+  // Cache invalidation
+  try { invalidateOnTrustChange(String(userId)); } catch {}
   const io = getIo();
   if (io) io.emit('trust_updated', updated);
   return updated;

@@ -55,6 +55,13 @@
                         <span class="stat-label">💰 Günlük</span>
                     </div>
                 </div>
+                <div id="trust-rank-panel" style="margin-top:8px;padding:6px 10px;background:#1e1f23;border:1px solid #2c2d31;border-radius:10px;display:flex;flex-direction:column;gap:4px;">
+                  <div id="trust-rank-line" style="font-size:11px;color:#aaa;">Sıra: -</div>
+                  <div id="trust-trend-spark" style="height:30px;overflow:hidden;"></div>
+                  <div style="display:flex;gap:6px;flex-wrap:wrap;">
+                    <button class="btn btn-xsmall btn-outline" style="font-size:10px;padding:2px 6px;" onclick="openTrustTrendModal()">Trend Detay</button>
+                  </div>
+                </div>
             </div>
         </header>
 
@@ -171,9 +178,10 @@
             <div class="card stats-card animate-slideUp" style="animation-delay: 0.4s">
                 <div class="card-header">
                     <h2 class="card-title">📊 İstatistikler</h2>
-                    <button class="btn btn-small btn-outline" onclick="showDetailedStats()">
-                        📈 Detay
-                    </button>
+                    <div style="display:flex;gap:6px;flex-wrap:wrap;">
+                      <button class="btn btn-small btn-outline" onclick="showDetailedStats()">📈 Detay</button>
+                      <button class="btn btn-small btn-outline" onclick="openLeaderboard()">🏆 Liderlik</button>
+                    </div>
                 </div>
                 
                 <div class="stats">
@@ -210,7 +218,7 @@
                     <h2 class="card-title">🤝 Mentorüm</h2>
                     <span class="trust-badge trust-excellent" id="mentor-status">Aktif</span>
                 </div>
-                
+                <div id="mentor-eligibility-info" style="font-size:12px;margin:4px 0 0 4px;color:#888"></div>
                 <div class="mentor-status" id="mentor-content">
                     <!-- Bot Mentor -->
                     <div class="mentor-info" id="bot-mentor">
@@ -227,6 +235,8 @@
                             <button class="btn btn-small btn-outline" onclick="showMentorTips()">
                                 💡 İpuçları
                             </button>
+                            <button class="btn btn-small btn-secondary" id="request-real-mentor" onclick="requestRealMentor()">🔍 Gerçek Mentor İste</button>
+                            <button class="btn btn-small btn-outline d-none" id="cancel-real-mentor" onclick="cancelRealMentor()">❌ İptal</button>
                         </div>
                     </div>
                     
@@ -237,6 +247,15 @@
                         <p class="mentor-status-text" id="mentor-description">
                             Deneyimli ticaret uzmanı. 5 yıllık tecrübesi var.
                         </p>
+                        <div id="mentor-rating-summary" style="font-size:11px;color:#aaa;margin:4px 0 2px 0;"></div>
+                        <div id="mentor-rank-badge" style="font-size:11px;color:#aaa;margin:2px 0 4px 0;"></div>
+                        <div id="mentor-queue-counts" style="font-size:11px;color:#666;margin:4px 0"></div>
+                        <div id="mentor-self-actions" class="mentor-actions d-none" style="margin-top:6px;display:flex;gap:6px;flex-wrap:wrap">
+                            <button class="btn btn-small btn-outline" id="mentor-ready-btn" onclick="toggleMentorReady()">✅ Mentor Modu Aç</button>
+                        </div>
+                        <div class="mentor-actions" id="mentor-session-actions" style="margin-top:6px;display:none;flex-direction:column;gap:6px;">
+                          <button class="btn btn-small btn-secondary" onclick="openMentorshipCompleteModal()">🛑 Oturumu Bitir</button>
+                        </div>
                         <div class="mentor-actions">
                             <button class="btn btn-small btn-primary" onclick="contactMentor()">
                                 📞 İletişim
@@ -244,9 +263,50 @@
                             <button class="btn btn-small btn-outline" onclick="viewMentorProfile()">
                                 👤 Profil
                             </button>
+                            <button class="btn btn-small btn-outline" onclick="openMentorshipHistory()">📜 Geçmiş</button>
+                            <button class="btn btn-small btn-outline" onclick="openMentorRankModal()">🏅 Sıram</button>
                         </div>
                     </div>
                 </div>
+            </div>
+
+            <!-- Mentorluk Geçmiş Modal -->
+            <div id="mentorship-history-modal" class="d-none" style="position:fixed;inset:0;background:rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;z-index:1000;">
+              <div style="background:#1f1f23;width:92%;max-width:420px;padding:16px 18px;border-radius:14px;max-height:80vh;overflow:auto;">
+                <h3 style="margin:0 0 6px 0;display:flex;justify-content:space-between;align-items:center;">📜 Mentorluk Geçmişi <button class="btn btn-small btn-outline" onclick="closeMentorshipHistory()">Kapat</button></h3>
+                <div id="mentorship-history-list" style="display:flex;flex-direction:column;gap:6px;font-size:12px;"></div>
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-top:10px;">
+                  <button class="btn btn-small btn-outline" id="mh-prev" disabled>Önceki</button>
+                  <span id="mh-page-info" style="font-size:11px;color:#888;">1/1</span>
+                  <button class="btn btn-small btn-outline" id="mh-next" disabled>Sonraki</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Mentor Rank Modal -->
+            <div id="mentor-rank-modal" class="d-none" style="position:fixed;inset:0;background:rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;z-index:1500;">
+              <div style="background:#1f1f23;width:92%;max-width:380px;padding:16px 18px;border-radius:14px;max-height:80vh;overflow:auto;">
+                <h3 style="margin:0 0 10px 0;display:flex;justify-content:space-between;align-items:center;">🏅 Mentor Sıralamam <button class="btn btn-small btn-outline" onclick="closeMentorRankModal()">Kapat</button></h3>
+                <div id="mentor-rank-box" style="font-size:13px;color:#ccc;">Yükleniyor...</div>
+                <div style="margin-top:12px;font-size:11px;color:#777;line-height:1.4;">Sıralama: Ortalama mentor rating (önce) ve toplam oturum sayısına göre. Minimum 3 tamamlanmış ve puanlanmış oturum gereklidir.</div>
+                <div style="margin-top:14px;padding:10px 12px;background:#232429;border:1px solid #2e2f33;border-radius:10px;display:flex;flex-direction:column;gap:10px;">
+                  <div style="display:flex;flex-direction:column;gap:4px;">
+                    <label style="font-size:11px;letter-spacing:.5px;color:#888;display:flex;justify-content:space-between;align-items:center;">Min Oturum (>=<span id="mentor-minsessions-val" style="color:#fff;margin-left:4px;">3</span>)</label>
+                    <input id="mentor-minsessions" type="range" min="1" max="10" value="3" style="width:100%;" oninput="(function(v){ document.getElementById('mentor-minsessions-val').textContent=v; if(window.dashboard){ dashboard.mentorLbMinSessions=Number(v); dashboard.loadLeaderboard(); dashboard.loadMentorRank(); } })(this.value)">
+                  </div>
+                  <div style="display:flex;flex-direction:column;gap:4px;">
+                    <label style="font-size:11px;letter-spacing:.5px;color:#888;display:flex;justify-content:space-between;align-items:center;">Limit
+                      <select id="mentor-lb-limit" style="margin-left:auto;background:#1c1d21;color:#ddd;border:1px solid #333;padding:4px 6px;border-radius:6px;font-size:12px;"
+                        onchange="(function(sel){ if(window.dashboard){ dashboard.mentorLbLimit=Number(sel.value); dashboard.loadLeaderboard(); } })(this)">
+                        <option value="10">10</option>
+                        <option value="15" selected>15</option>
+                        <option value="20">20</option>
+                        <option value="30">30</option>
+                      </select>
+                    </label>
+                  </div>
+                </div>
+              </div>
             </div>
 
             <!-- Notifications Card -->
@@ -537,6 +597,61 @@
             50% { opacity: 1; }
         }
         
+        /* Trust Trend Modal */
+        #trust-trend-modal {
+          position: fixed;
+          inset: 0;
+          background: rgba(0, 0, 0, 0.55);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          z-index: 1400;
+        }
+        
+        #trust-trend-modal > div {
+          background: #1f1f23;
+          width: 92%;
+          max-width: 460px;
+          padding: 16px 18px;
+          border-radius: 14px;
+          max-height: 82vh;
+          overflow: auto;
+        }
+        
+        #trust-trend-modal h3 {
+          margin: 0 0 10px 0;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+        }
+        
+        #trust-trend-modal .btn {
+          font-size: 12px;
+        }
+        
+        #trust-trend-modal .btn-xsmall {
+          font-size: 10px;
+          padding: 2px 6px;
+        }
+        
+        #trust-trend-chart {
+          width: 100%;
+          min-height: 160px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: #666;
+          font-size: 12px;
+        }
+        
+        #trust-trend-table {
+          margin-top: 12px;
+          font-size: 11px;
+          display: grid;
+          grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+          gap: 6px;
+        }
+        
         /* Utility Classes */
         .d-none {
             display: none !important;
@@ -570,5 +685,129 @@
     
     <!-- Navigation Script -->
     <script src="/js/navigation.js"></script>
+    
+    <!-- Trust Trend modal fonksiyonları -->
+    <script>
+      function openTrustTrendModal(){ const m=document.getElementById('trust-trend-modal'); if(m){ m.classList.remove('d-none'); loadTrustTrend(7); } }
+      function closeTrustTrendModal(){ const m=document.getElementById('trust-trend-modal'); if(m) m.classList.add('d-none'); }
+      async function loadTrustTrend(days){
+        const chartEl=document.getElementById('trust-trend-chart');
+        const tableEl=document.getElementById('trust-trend-table');
+        if(chartEl) chartEl.textContent='Yükleniyor...';
+        try {
+          const r=await fetch(`/api/user/trust/trend?days=${days}`, { headers:{'Authorization':'Bearer '+localStorage.getItem('jwt_token')} });
+          if(!r.ok){ if(chartEl) chartEl.textContent='Hata'; return; }
+          const j=await r.json();
+          const data=j.days||[];
+          if(!data.length){ if(chartEl) chartEl.textContent='Veri yok'; return; }
+          // Basit alan grafiği
+            const values=data.map(d=>d.total);
+            const min=Math.min(...values,0); const max=Math.max(...values,1);
+            const W= Math.max(260, data.length*22); const H=140; const pad=6;
+            const scaleX = (i)=> pad + (i/(data.length-1))*(W-2*pad);
+            const scaleY = (v)=> max===min? H/2 : (H - pad - ((v-min)/(max-min))*(H-2*pad));
+            let line=''; data.forEach((d,i)=>{ const x=scaleX(i).toFixed(2); const y=scaleY(d.total).toFixed(2); line += (i===0?`M${x},${y}`:` L${x},${y}`); });
+            const area = line + ` L${scaleX(data.length-1).toFixed(2)},${H-pad} L${scaleX(0).toFixed(2)},${H-pad} Z`;
+            const last=data[data.length-1]; const diff= last.total - data[0].total; const color = diff>0? '#4CAF50' : (diff<0?'#F44336':'#FFC107');
+            chartEl.innerHTML = `<div style='overflow:auto;width:100%;'><svg width='${W}' height='${H}' viewBox='0 0 ${W} ${H}' preserveAspectRatio='none'>
+              <defs><linearGradient id='tg' x1='0' y1='0' x2='0' y2='1'><stop offset='0%' stop-color='${color}' stop-opacity='0.35'/><stop offset='100%' stop-color='${color}' stop-opacity='0'/></linearGradient></defs>
+              <path d='${area}' fill='url(#tg)' stroke='none'></path>
+              <path d='${line}' fill='none' stroke='${color}' stroke-width='2' stroke-linejoin='round' stroke-linecap='round'></path>
+            </svg></div>`;
+            tableEl.innerHTML = data.map(d=>`<div style='background:#232429;padding:6px 8px;border-radius:8px;display:flex;flex-direction:column;gap:4px;'>
+              <span style='font-weight:600;'>${d.total>=0?'+':''}${d.total}</span>
+              <span style='opacity:.65;'>${d.day.slice(5)}</span>
+            </div>`).join('');
+        } catch { if(chartEl) chartEl.textContent='Hata'; }
+      }
+      window.openTrustTrendModal=openTrustTrendModal; window.closeTrustTrendModal=closeTrustTrendModal; window.loadTrustTrend=loadTrustTrend;
+    </script>
+
+    <!-- Leaderboard Script -->
+    <script>
+      let currentLeaderboardCategory = 'trust';
+      let currentLeaderboardMode = 'top';
+
+      function openLeaderboard() {
+        const modal = document.getElementById('leaderboard-modal');
+        if (modal) {
+          modal.classList.remove('d-none');
+          loadLeaderboard();
+        }
+      }
+
+      function closeLeaderboard() {
+        const modal = document.getElementById('leaderboard-modal');
+        if (modal) {
+          modal.classList.add('d-none');
+        }
+      }
+
+      function setLeaderboardCategory(category) {
+        currentLeaderboardCategory = category;
+        const isTrust = category === 'trust';
+        document.getElementById('lb-cat-trust').classList.toggle('btn-secondary', isTrust);
+        document.getElementById('lb-cat-trust').classList.toggle('btn-outline', !isTrust);
+        document.getElementById('lb-cat-mentor').classList.toggle('btn-secondary', !isTrust);
+        document.getElementById('lb-cat-mentor').classList.toggle('btn-outline', isTrust);
+        loadLeaderboard();
+      }
+
+      function setLeaderboardMode(mode) {
+        currentLeaderboardMode = mode;
+        const isTop = mode === 'top';
+        document.getElementById('lb-mode-top').classList.toggle('btn-secondary', isTop);
+        document.getElementById('lb-mode-top').classList.toggle('btn-outline', !isTop);
+        document.getElementById('lb-mode-around').classList.toggle('btn-secondary', !isTop);
+        document.getElementById('lb-mode-around').classList.toggle('btn-outline', isTop);
+        loadLeaderboard();
+      }
+
+      async function loadLeaderboard() {
+        const listEl = document.getElementById('leaderboard-list');
+        const rankEl = document.getElementById('leaderboard-user-rank');
+        if (listEl) listEl.innerHTML = '<div style="padding:12px;text-align:center;">Yükleniyor...</div>';
+        try {
+          const response = await fetch(`/api/user/leaderboard?category=${currentLeaderboardCategory}&mode=${currentLeaderboardMode}`, {
+            headers: { 'Authorization': 'Bearer ' + localStorage.getItem('jwt_token') }
+          });
+          if (!response.ok) throw new Error('Ağ hatası');
+          const data = await response.json();
+          if (data.rank !== undefined) {
+            rankEl.innerHTML = `SIRAN: ${data.rank}`;
+          } else {
+            rankEl.innerHTML = `SIRAN: -`;
+          }
+          if (data.leaderboard && Array.isArray(data.leaderboard)) {
+            const rows = data.leaderboard.map((user, index) => `
+              <div style="padding:10px 12px;background:#232429;border-radius:8px;display:flex;align-items:center;gap:8px;">
+                <div style="flex-shrink:0;width:28px;height:28px;background:#1e1f23;border-radius:50%;display:flex;align-items:center;justify-content:center;">
+                  ${index + 1}
+                </div>
+                <div style="flex-grow:1;display:flex;align-items:center;gap:8px;">
+                  <span style="font-weight:500;color:#fff;">${user.name}</span>
+                  <span style="font-size:12px;color:#aaa;">${user.category === 'trust' ? 'İtibar' : 'Mentor'}</span>
+                </div>
+                <div style="font-weight:500;color:#43e97b;">
+                  ${user.value >= 0 ? '+' : ''}${user.value}
+                </div>
+              </div>
+            `).join('');
+            listEl.innerHTML = rows;
+          } else {
+            listEl.innerHTML = '<div style="padding:12px;text-align:center;color:#888;">Veri bulunamadı</div>';
+          }
+        } catch (error) {
+          console.error('Liderlik tablosu yüklenirken hata:', error);
+          if (listEl) listEl.innerHTML = '<div style="padding:12px;text-align:center;color:#f44336;">Hata oluştu</div>';
+        }
+      }
+
+      window.openLeaderboard = openLeaderboard;
+      window.closeLeaderboard = closeLeaderboard;
+      window.setLeaderboardCategory = setLeaderboardCategory;
+      window.setLeaderboardMode = setLeaderboardMode;
+      window.loadLeaderboard = loadLeaderboard;
+    </script>
 </body>
 </html>

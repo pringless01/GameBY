@@ -17,6 +17,7 @@ import activityRoutes from './routes/activity.js';
 import { registerChatNamespace } from './sockets/chatSocket.js';
 import { setIo } from './sockets/io.js';
 import helmet from 'helmet';
+import { rehydrateQueues } from './services/mentorService.js';
 
 dotenv.config();
 
@@ -91,6 +92,7 @@ if (process.env.NODE_ENV === 'production' && secret.length < 32) {
   const io = new Server(server, { cors: { origin: '*' } });
   setIo(io);
   registerChatNamespace(io);
+  await rehydrateQueues();
   const PORT = process.env.PORT || 3000;
   server.listen(PORT, () => {
     console.log('Server listening on port', PORT);

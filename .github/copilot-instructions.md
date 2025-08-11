@@ -1,372 +1,206 @@
-# GitHub Copilot Instructions
+# GitHub Copilot / AI Agent Geliştirici Yönergeleri (Detaylı)
 
-Bu proje **2D Mobil Online Ticaret Oyunu** - İtibar odaklı sosyal ekonomi simülasyonu. Web-based PWA olarak geliştirilmekte.
-
-## 🎯 Proje Vizyonu
-
-**Temel Konsept:** "İtibar ve İletişim Odaklı Ticaret Ekosistemi"
-- %100 oyuncu odaklı ekonomi (NPC yok)
-- İtibar sistemi (güven puanı en değerli meta-game)
-- İki aşamalı mentor sistemi (bot + gerçek oyuncu)
-- Dolandırıcılığa izin veren kontrat sistemi
-- 30 dakikalık kritik onboarding deneyimi
-
-## 🏗️ Current Architecture Status
-
-**Technology Stack:**
-- **Frontend:** HTML5 + CSS3 + Vanilla JavaScript ES6+ (Mobile-first PWA)
-- **Server:** Node.js HTTP server (simple-server.js) ✅ RUNNING
-- **Database:** SQLite (PLANNED - documented in Oyun_Proje_Dokumanlari/)
-- **Real-time:** Socket.io client ready, server pending
-- **Auth:** Username/password system ✅ IMPLEMENTED
-- **Navigation:** Cross-page routing ✅ IMPLEMENTED
-
-**Implementation Status:**
-- ✅ Frontend: Complete responsive interface with auth system
-- ✅ Login/Register: Tab-based system with real-time validation
-- ✅ Navigation: Cross-page routing with keyboard shortcuts  
-- ✅ Development Server: Node.js HTTP server on localhost:8080
-- ⏳ Backend API: Express + Socket.io server (documented, ready for implementation)
-- ⏳ Database: SQLite schema designed
-
-## 📁 Current Project Structure
-
-**Frontend (Production Ready):**
-```
-frontend/
-├── simple-server.js     # 🚀 Node.js HTTP server (port 8080)
-└── public/
-    ├── login.html       # 🔐 Auth system with tab interface
-    ├── index.html       # 🏠 Main dashboard 
-    ├── chat.html        # 💬 Real-time chat interface
-    ├── test.html        # 🧪 Navigation test page
-    ├── css/
-    │   ├── style.css    # 670+ lines: Design system, CSS variables
-    │   ├── dashboard.css # 500+ lines: Dashboard animations
-    │   ├── chat.css     # 400+ lines: Chat styling  
-    │   ├── login.css    # Auth page styling with animations
-    │   └── navigation.css # Cross-page navigation styling
-    ├── js/
-    │   ├── login.js     # AuthManager class with validation
-    │   ├── dashboard.js # 550+ lines: Dashboard functionality
-    │   ├── chat.js      # 600+ lines: ChatManager class
-    │   ├── socket-client.js # 440+ lines: SocketClient
-    │   ├── navigation.js # Page routing with transitions  
-    │   └── utils.js     # 400+ lines: Utilities
-    └── assets/          # PWA icons, manifest
-```
-
-**Documentation Archive:**
-```
-Oyun_Proje_Dokumanlari/
-├── Ana_Oyun_Dokumani.md     # Master game design (REFERENCE for mechanics)
-├── Flutter_Implementasyon_Rehberi.md # Node.js examples (despite name)
-├── Firebase_Backend_Dokumani.md      # Database schemas adapted for SQLite
-└── [8 other comprehensive docs]
-```
-
-## 🔧 Development Patterns
-
-**Frontend ES6+ Classes Pattern:**
-```javascript
-// AuthManager pattern (login.js)
-class AuthManager {
-    constructor() {
-        this.loginForm = document.getElementById('loginForm');
-        this.currentTab = 'login';
-    }
-    
-    async handleLogin(e) {
-        e.preventDefault();
-        this.showLoading('Giriş yapılıyor...');
-        await this.simulateLogin(username, password);
-        window.location.href = 'index.html'; // Navigation
-    }
-}
-
-// Navigation pattern (navigation.js)  
-class NavigationManager {
-    setupNavigationHandlers() {
-        document.addEventListener('click', (e) => {
-            const link = e.target.closest('a[href]');
-            if (link && link.closest('.page-navigation')) {
-                e.preventDefault();
-                this.navigateToPage(link.href);
-            }
-        });
-    }
-}
-```
-
-**CSS Architecture:**
-```css
-/* Trust score color system */
-:root {
-    --trust-excellent: #4CAF50;  /* 180-200 */
-    --trust-good: #8BC34A;       /* 160-179 */
-    --trust-bad: #F44336;        /* 0-119 */
-}
-
-/* Mobile-first responsive */
-.mobile-container { max-width: 428px; margin: 0 auto; }
-@media (min-width: 768px) { /* Desktop adaptations */ }
-```
-
-## 🚀 Development Workflow
-
-**Local Development:**
-```bash
-# Start development server
-cd frontend
-node simple-server.js  # Runs on http://localhost:8080
-
-# Key URLs:
-# http://localhost:8080/login.html  - Auth system
-# http://localhost:8080/index.html - Dashboard  
-# http://localhost:8080/chat.html  - Chat interface
-# http://localhost:8080/test.html  - Navigation test
-```
-
-**Navigation System:**
-- **Fixed header** on all pages except login
-- **Keyboard shortcuts:** Alt+1 (Dashboard), Alt+2 (Chat), Alt+3 (Test)
-- **Smooth transitions** between pages with loading animations
-- **Active page indicators** in navigation
-
-**Authentication Flow:**
-- **Tab-based interface:** Login ↔ Register seamless switching
-- **Real-time validation:** Username availability, password strength
-- **Visual feedback:** Success animations, error states
-- **Local storage:** JWT token simulation for session management
-
-## 💡 Critical Implementation Notes
-
-**Socket.io Integration (Ready for Backend):**
-```javascript
-// Client-side patterns already implemented
-socket.emit('send_message', {userId, userName, message});
-socket.emit('join_chat', userId);
-
-// Expected server events
-io.emit('new_message', messageWithId);
-io.emit('online_count_updated', count);
-```
-
-**Trust Score System:**
-- Color-coded throughout UI (green=excellent → red=bad)  
-- Real-time updates planned via Socket.io
-- Trust calculator formulas in utils.js
-
-**CRITICAL REFERENCE:** Always check `Oyun_Proje_Dokumanlari/Ana_Oyun_Dokumani.md` for game mechanics and business logic
-
-## 🎮 Game Mechanics Priority
-
-**30-Minute Onboarding Critical Path:**
-- 0-5min: Username registration + "kimsesiz" start
-- 5-15min: Bot mentor assignment + learning basics  
-- 15-25min: Real mentor matching
-- 25-30min: Social bonding + long-term planning
-
-**Social System Core:** Chat = heart of game, trust economy drives all mechanics
+Bu proje: PWA (Vanilla JS) + Express / SQLite tabanlı sosyal ticaret & itibar oyunu.
+Odak Alanları: Oyuncu odaklı ekonomi, güven (trust_score) meta oyunu, mentor (bot + gerçek) sistemi, sözleşme / potansiyel dolandırıcılık risk yönetimi.
 
 ---
+## 1. Büyük Resim (Big Picture)
+- frontend/: Mobil öncelikli (mobile-first) PWA; yalnızca statik servis + istemci etkileşimleri; ek framework (React/Vue) YOK (bilinçli sadelik kararı).
+- server/: Oyun verisi + skor tabloları + güven/mentor mantığı; JSON REST API; ileride Socket.io real-time kanalına genişleyebilir.
+- İş Kuralları Kaynağı: `Oyun_Proje_Dokumanlari/Ana_Oyun_Dokumani.md` → Core ekonomik / itibar mantığı eklemeden ÖNCE KONTROL ET.
+- Veritabanı: SQLite (düşük operasyon maliyeti, tek dosya, hızlı prototipleme). Performans kritik yollar için LIMIT + sıralama + hafif indeks gereksinimi göz önünde tutulur.
+- Ölçülebilirlik: Şu an bellek içi cache (Map + TTL) + basit sayaç metrikleri → Prometheus formatı ile dış izleme entegrasyonu.
 
-**Next Development Phase:** Backend API implementation (Express + Socket.io + SQLite) following documented patterns in Flutter_Implementasyon_Rehberi.md
+---
+## 2. Backend Modüler Yapı
+| Bölüm | Amaç | Ana Dosyalar |
+|-------|------|--------------|
+| Routes | API uçları (profil, leaderboard, metrics, bootstrap) | `routes/user.js` |
+| Security | Cursor imzalama, rotation, abuse (threshold + cooldown) | `security/cursorSecurity.js` |
+| Cache | TTL’li bellek map’leri (trust, mentor, around, daily) | `cache/trustCaches.js`, `cache/mentorCaches.js` |
+| Metrics | Sayaç objesi + export | `metrics/leaderboardMetrics.js` |
+| Middleware | Auth (JWT), rate limit (LB) | `middleware/auth.js`, `middleware/rateLimit.js` (varsa) |
+| Services | Kullanıcı & mentor sorguları / güncellemeler | `services/userService.js`, `services/mentorService.js` |
+| Utils | ETag hesaplama, yardımcı fonksiyonlar | `utils/etag.js` |
 
-## 🔧 Development Patterns
+Not: Kod okunabilirliği için “tek sorumluluk” korunur; header / metric isimleri TEKRAR EDİLMEZ ya da değiştirilmez.
 
-**Frontend Architecture (ES6+ Classes):**
-```javascript
-// Main pattern: ES6 classes with async/await
-class Dashboard {
-    constructor() {
-        this.user = null;
-        this.socket = null;
-        this.resources = { money: 50, wood: 0, grain: 0, business: 0 };
-        this.init();
-    }
-    
-    async init() {
-        await this.loadUserData();
-        this.setupEventListeners();
-        this.connectSocket();
-    }
-}
+---
+## 3. Leaderboard (Çekirdek Özellik)
+### Modlar
+1. offset (klasik pagination)  
+2. cursor (HMAC-SHA256 imzalı; stabil, leak’e dayanıklı)  
+3. around (kullanıcı rank merkezli pencere: rank-window .. rank+window)  
+4. batch (categories=trust,mentor bir arada)
 
-// Socket.io real-time pattern
-class SocketClient {
-    constructor() {
-        this.socket = io({ transports: ['websocket', 'polling'] });
-        this.eventHandlers = new Map();
-    }
-}
+### Cursor Güvenliği
+- encodeCursor(score,id) → base64(payload|signature).  
+- decodeCursor() → rotation desteği: Hem `CURSOR_SECRET` hem `CURSOR_SECRET_ROTATION` test edilir; rotation yakalanırsa `X-Cursor-Rotation` header.  
+- Weak secret kontrolü (çok kısa secret) → `X-Cursor-Weak-Secret`.  
 
-// Chat system pattern  
-class ChatManager {
-    sendMessage(message) {
-        this.socket.emit('send_message', {
-            userId: this.user.id,
-            userName: this.user.name,
-            message: message
-        });
-    }
-}
+### Abuse / Degrade Mantığı
+- IP bazlı invalid cursor sayacı: invalid decode → metrics.errors.invalidCursor ++
+- Eşik: `count > INVALID_CURSOR_THRESHOLD` (strict >, asla >=).  
+- Cooldown: `CURSOR_ABUSE_COOLDOWN_MS` boyunca cursor istekleri degrade edilmek istenebilir; ilk OFFSET isteği grace (200) + `X-Cursor-Abuse` header’ları.  
+- Auto-degrade: Sadece (a) `CURSOR_AUTO_DEGRADE=1` ve (b) eşik SONRASI yeni invalid cursor olduğunda tetiklenir; cursor → offset fallback + `X-Cursor-Auto-Degrade=1`.  
+- 429: Cooldown içinde tekrarlayan offset dışı veya grace harcanmış talepler.
+
+### Header Konvansiyonu (DEĞİŞTİRME)  
+- Pagination: `X-Pagination-Mode`, `X-Next-Cursor`, `X-Has-More`, `X-Total-Count`  
+- Kullanıcı Rank: `X-User-Rank`, `X-User-Percentile`, `X-User-Rank-Skipped`  
+- Cursor Güvenlik: `X-Cursor-Abuse`, `X-Cursor-Abuse-Count`, `X-Cursor-Cooldown`, `X-Cursor-Degrade`, `X-Cursor-Auto-Degrade`, `X-Cursor-Rotation`, `X-Cursor-Weak-Secret`, `X-Cursor-Signed`  
+- Cache: `X-Cache` (HIT|MISS), `X-Cache-TTL`  
+- Batch: `X-Batch-Categories`, `X-Batch-Cache`, `X-Batch-Min-TTL`  
+- Diğer: `Server-Timing`, ETag / Last-Modified.  
+
+### Uygulama Deseni
+- Tüm abuse / degrade header set’leri: `applyAbuseHeaders(req,res)` (tek giriş noktası).  
+- Rank isteğe bağlı: query param `rank=0` ise hesaplanmaz → `X-User-Rank-Skipped` + metrics.rank.skipped ++.  
+- around modunda rank zorunlu (otomatik).  
+
+---
+## 4. Cache Politikası
+| Cache | Amaç | TTL Kaynağı | HIT/MISS Header | Anahtar Yapısı |
+|-------|------|-------------|-----------------|----------------|
+| leaderboardCache | trust offset sayfaları | LEADERBOARD_TTL_MS | Evet | `${limit}:${offset}` |
+| trustAroundCache | around pencere (rank etrafı) | LEADERBOARD_TTL_MS | Evet | `${userId}:${window}` |
+| mentorsLbCache | mentor LB (liste) | MENTOR_LB_TTL_MS | Evet | `${limit}:${minSessions}` |
+| mentorsRankCache | mentor self-rank aggregate | MENTOR_LB_TTL_MS | Dolaylı (selfRank.ttl_ms) | `${minSessions}` |
+| dailyTrustCache | günlük kazanılan trust | DAILY_TRUST_TTL_MS | Evet | `${userId}` |
+| trustTrendCache | 7 günlük trend | TRUST_TREND_TTL_MS | Dolaylı | `${userId}:7` |
+
+Kural: Cache MISS → kaydedip TTL header; HIT → kalan süre TTL header’da.
+
+---
+## 5. Metrikler (leaderboardMetrics)
+Gruplar:
+- trust.offset.{hits,misses}
+- trust.cursor.{requests,rotations}
+- trust.around.requests
+- mentor.{hits,misses}
+- rank.{computed,skipped}
+- errors.invalidCursor
+- security.{cursorAbuse429,modeDegradeSuggested,cursorAutoDegrade,cooldownGraceServed}
+
+Export Uçları:
+- JSON: `GET /api/user/leaderboard/metrics` (admin role)  
+- Prometheus: `GET /api/user/leaderboard/metrics/prom` (text/plain; v0.0.4)  
+
+Yeni sayaç eklerken: Aynı isimlendirme stilini (snake, hiyerarşik) koru; Prometheus endpoint’e TYPE satırı ekle; test ekle (format & artış).
+
+---
+## 6. Test & Çalıştırma
+Komutlar:
 ```
-
-**CSS Architecture (Mobile-first + CSS Variables):**
-```css
-/* Design system with trust score colors */
-:root {
-    --trust-excellent: #4CAF50;  /* 180-200 */
-    --trust-good: #8BC34A;       /* 160-179 */
-    --trust-medium: #FFEB3B;     /* 140-159 */
-    --trust-low: #FF9800;        /* 120-139 */
-    --trust-bad: #F44336;        /* 0-119 */
-}
-
-/* Mobile-first responsive pattern */
-.mobile-container { max-width: 428px; margin: 0 auto; }
-@media (min-width: 768px) { /* Desktop adaptations */ }
+cd server
+npm install
+npm run start
+npm run test:unit:cursor-security
+npm run test:integration:leaderboard-metrics
+npm run test:integration:leaderboard-prom
 ```
-
-**Trust Score Integration (Throughout UI):**
-- Color-coded badges: Excellent(green) → Bad(red)
-- Real-time updates via Socket.io
-- Visual feedback in chat, dashboard, user profiles
-- Trust calculator in utils.js with game-specific formula
-
-## 🔄 Geliştirme Workflow
-
-**Frontend Development (Current Phase):**
-```bash
-# Frontend file structure
-frontend/public/
-├── index.html       # Dashboard (production ready)
-├── chat.html        # Real-time chat (production ready)
-├── css/            # Complete design system (1500+ lines)
-├── js/             # ES6+ classes (2000+ lines)
-└── assets/         # PWA icons, manifest
-
-# Testing frontend locally
-cd frontend/public
-python -m http.server 8000  # Simple HTTP server
-# or use Live Server in VS Code
+Frontend:
 ```
-
-**Planned Backend Structure:**
+cd frontend && node simple-server.js    # 8080
 ```
-server.js              # Express + Socket.io server
-config/database.js     # SQLite connection + schema
-src/services/          # Bot mentor, chat, trust calculator  
-src/routes/           # API endpoints (auth, chat, user)
-data/game.db          # SQLite database file
+Test Odakları:
+- cursorSecurity: imza, rotation, threshold, cooldown.
+- leaderboard: abuse, auto-degrade, grace, param validation, Prometheus format.
+
+Yeni test eklerken: Başarılı senaryoya ek olarak negative param & abuse edge case kapsa.
+
+---
+## 7. Ortam Değişkenleri
+| Değişken | Amaç |
+|----------|------|
+| JWT_SECRET | JWT doğrulama (güçlü üretim secret) |
+| CURSOR_SECRET | Cursor imzalama ana secret |
+| CURSOR_SECRET_ROTATION | Opsiyonel eski/rotate secret |
+| CURSOR_INVALID_THRESHOLD | Invalid cursor abuse eşiği (strict >) |
+| CURSOR_ABUSE_COOLDOWN_MS | Cooldown süresi (ms) |
+| CURSOR_AUTO_DEGRADE | 1 → eşik sonrası invalid cursor’da degrade |
+| LB_RATE_WINDOW_MS | /leaderboard rate limit pencere |
+| LB_RATE_MAX | Pencere başına izin verilen istek |
+
+Not: Değerler değiştiğinde testlerde ıraksama olabilir; testleri güncelle.
+
+---
+## 8. Genişletme Rehberi
+Senaryo: Yeni “guild leaderboard” eklemek istiyorsun.
+1. Cache: Map + { ts } + TTL (örn: GUILD_LB_TTL_MS).  
+2. Sorgu: LIMIT / OFFSET / optional cursor (aynı pattern).  
+3. Header: Aynı X-* şeması + kategori ismini batch moduna ekle.  
+4. Metrics: guild.offset.{hits,misses} & guild.cursor.requests vb. (gerekliyse).  
+5. Abuse: Cursor kullanıyorsa decodeCursor → INVALID → increment + degrade pattern.  
+6. Test: offset hit/miss, cursor rotation, invalid→400, cooldown grace, Prometheus satırları.
+
+---
+## 9. Kodlama Konvansiyonları
+- Threshold karşılaştırmaları: her zaman `>` (asla `>=`).
+- Header isimleri sabit; varyasyon eklemeyin (geriye dönük uyum). 
+- Fonksiyon isimleri camelCase; metrics alanları snake_case varyasyonunu dış exportta koruyor.
+- ETag: Response body (JSON.stringify) üzerinden build; değişmeyen veri için 304 optimize.
+- Server-Timing: Yalnızca toplam süre (`total;dur=xx.xx`).
+- Hata JSON formatı: `{ error: 'kod' }` + gerekiyorsa `fields` dizisi.
+
+---
+## 10. Güvenlik Notları
+- JWT geliştirme secret’ı zayıf → üretimde ENV ile güçlendir.
+- Cursor manipülasyonu → invalid decode → metrik artır, degrade değerlendirmesi.
+- Rotation: Eski secret devreden çıktığında metrik (rotations) izlenebilir; kalıcı değilse kodu kaldırma, env boş geç.
+- IP bazlı abuselar memory haritasında tutuluyor; ileride LRU / TTL prune gerekebilir (şimdilik düşük ölçek varsayımı). 
+
+---
+## 11. Performans & Ölçeklenebilirlik
+- Ranking hesaplaması: userRankMeta için COUNT(*) > trust_score sorgusu (O(N) index yoksa). Gerekirse `CREATE INDEX idx_users_trust_score ON users(trust_score DESC)` ileride eklenebilir.
+- Around modunda: ROW_NUMBER window fallback (SQLite versiyon farkına tolerans için try/catch + manuel sıralama fallback).
+- Cache TTL değerlerini gereksiz azaltma (fazla invalidation → DB baskısı). 
+
+---
+## 12. Sık Yapılan Hatalar / Anti-Patternler
+| Hata | Sonuç | Doğrusu |
+|------|-------|---------|
+| >= kullanımı (threshold) | Erken degrade | `if (cnt > INVALID_CURSOR_THRESHOLD)` |
+| Header ismi değiştirme | Test kırılması | Mevcut isimleri koru |
+| Cache TTL atlaması | Yanlış X-Cache-TTL | TTL hesapla & header set |
+| applyAbuseHeaders atlaması | Tutarsız abuse header | Her yeni cursor endpoint’te çağır |
+| Yeni metric endpoint’e TYPE eklememe | Prom format uyumsuz | `# TYPE name counter|gauge` ekle |
+| Cursor error sonrası degrade etmemek | Tekrar invalid spam | count > threshold & AUTO_DEGRADE kontrol et |
+
+---
+## 13. Örnek İstekler (Hızlı Referans)
 ```
-
-**Database Schema (SQLite, Ready for Implementation):**
-- `users` table: phone_number, trust_score, resources
-- `chat_messages` table: real-time chat storage
-- `transactions` table: işlem kayıtları  
-- `mentorships` table: mentor-çırak ilişkileri
-
-**Socket.io Event Patterns (Frontend Implemented):**
-```javascript
-// Client → Server (Ready)
-socket.emit('send_message', {userId, userName, message});
-socket.emit('join_chat', userId);
-
-// Server → Client (Expected)
-io.emit('new_message', messageWithId);
-io.emit('online_count_updated', count);
+GET /api/user/leaderboard?limit=10&offset=0
+GET /api/user/leaderboard?cursor=ENC...&limit=10
+GET /api/user/leaderboard?around=1&window=2
+GET /api/user/leaderboard?categories=trust,mentor&limit=5
+GET /api/user/leaderboard/metrics (admin JWT)
+GET /api/user/leaderboard/metrics/prom (admin JWT)
 ```
+Yanıt header’ları üzerinden mod, degrade, abuse, cache tutarlılığını doğrula.
 
-**Döküman Güncelleme Komutları:**
-- `"Dökümanı güncelle"` = Ana dosyaya yeni özellik ekle
-- `"Versiyon artır"` = Version number yükselt
-- `"Özet çıkar"` = Kısa versiyon hazırla
+---
+## 14. Geliştirme Durumu (Güncel)
+- Leaderboard offset/cursor/around + batch stabil.
+- Cursor güvenlik: rotation, weak secret, abuse threshold, cooldown, grace, auto-degrade uygulanmış.
+- Prometheus format testleri geçiyor.
+- Param validation & metrics snapshot testleri mevcut.
+- İyileştirme fırsatı: `applyAbuseHeaders` sadeleştirme (double degrade guard), helper: `shouldAutoDegrade(count)`.
 
-**Deployment Commands (Planned):**
-```bash
-# Development start
-npm run dev          # nodemon server.js
+---
+## 15. Yeni Katkı İçin Check-List
+1. İlgili dokümanı (Ana_Oyun_Dokumani) oku.  
+2. Endpoint taslağı → header & metric gereksinimlerini haritala.  
+3. Cache gerekip gerekmediğine karar ver (TTL & anahtar tasarla).  
+4. Abuse / cursor gerekiyorsa decodeCursor + invalid path testleri ekle.  
+5. Prometheus endpoint satırları güncelle (TYPE + metric).  
+6. Test: başarı, hata, threshold sınırı, cooldown grace, degrade.  
+7. ETag / Last-Modified entegrasyonu (değişken veri).  
+8. Kod incele: threshold strict >, header isimleri, X-Cache-TTL doğru mu?  
 
-# Production deployment  
-docker-compose up -d # Docker container
-./quick-deploy.sh    # VPS deployment script
+---
+## 16. Soru / Eksik Durumlar
+Bu dokümanda eksik gördüğün başlık, yeni kategori ya da ölçeklenme gereksinimi varsa PR öncesi kısa not ekle (örn: `// TODO(metrics): guild.* counters`).
 
-# Database operations
-node scripts/migrate.js  # Test data setup
-./backup.sh             # SQLite backup
-```
-
-**Kritik Özellikler (MVP):**
-1. Bot mentor + chat sistemi (Socket.io real-time)
-2. SMS doğrulama (simple token-based, no Firebase)
-3. Basit ticaret penceresi (marketplace API)
-4. İtibar puanı hesaplama (SQLite triggers)
-5. 30 dakikalık onboarding flow (bot service)
-
-## 🎮 Oyun Mekaniği Öncelikleri
-
-**İlk 30 Dakika Critical Path:**
-- 0-5dk: SMS doğrulama + "kimsesiz" başlangıç
-- 5-15dk: Bot mentor ataması + temel öğrenme
-- 15-25dk: Gerçek mentor arama
-- 25-30dk: Sosyal bağ kurma + uzun vade planlama
-
-**Sosyal Sistem:** Chat = oyunun kalbi, güven ekonomisi tüm mekanikleri yönetir
-
-## 💡 Kod Yazım Yaklaşımı
-
-**Node.js Architecture Patterns:**
-```javascript
-// Express + Socket.io pattern
-const app = express();
-const server = http.createServer(app);
-const io = socketIo(server);
-
-// SQLite operations (promisified)
-await database.run('INSERT INTO users...', [params]);
-const user = await database.get('SELECT * FROM users WHERE id = ?', [userId]);
-
-// Real-time chat implementation
-socket.on('send_message', async (data) => {
-  const result = await ChatService.sendMessage(data);
-  io.emit('new_message', result);
-});
-```
-
-**Web Frontend Approach:**
-- Progressive Web App (PWA) targeting mobile
-- Socket.io client for real-time features
-- Vanilla JS + responsive CSS (no React/Vue complexity)
-- Local storage for auth tokens
-
-**Anti-Pattern:** 
-- Unity game engine (rejected - UI-heavy app)
-- Flutter + Firebase (replaced - too complex for simple chat game)
-- Heavy frontend frameworks (keeping it simple)
-
-## 🚀 Development Timeline
-
-**Node.js Advantage:** 2-3 week development cycle (vs 12+ weeks Flutter)
-
-**Faz 1:** Node.js server + SQLite setup (1 hafta)
-**Faz 2:** Socket.io chat + bot mentor (1 hafta)  
-**Faz 3:** Web frontend + PWA features (1 hafta)
-**Faz 4:** VPS deployment + testing (testing phase)
-
-**Technology Decision Rationale:**
-- Node.js: Better VS Code integration, simpler deployment
-- SQLite: Portable database, easy VPS migration
-- Socket.io: Proven real-time chat solution
-- Web App: Cross-platform without app store complexity
-
-## 🎮 Oyun Mekaniği Öncelikleri
-
-**İlk 30 Dakika Critical Path:**
-- 0-5dk: SMS doğrulama + "kimsesiz" başlangıç
-- 5-15dk: Bot mentor ataması + temel öğrenme
-- 15-25dk: Gerçek mentor arama
-- 25-30dk: Sosyal bağ kurma + uzun vade planlama
-
-**Sosyal Sistem:** Chat = oyunun kalbi, güven ekonomisi tüm mekanikleri yönetir
+---
+Bu yönerge keşfedilebilir mevcut durumu yansıtır; spekülatif / geleceğe dönük kurallar eklenmez. Aynı desenleri takip ederek katkı yap.

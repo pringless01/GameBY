@@ -876,8 +876,83 @@ X-RateLimit-Reset: 1628097600
 
 ---
 
-Bu API documentation ile frontend development ve API integration çok daha kolay! 📡
+### Ek Güvenlik & Gözlemlenebilirlik (Leaderboard Güncellemeleri)
 
-**Hazırlayan:** Musa & GitHub Copilot  
-**Tarih:** 5 Ağustos 2025  
-**Versiyon:** 1.0 - Complete API Reference
+Yeni Ortam Değişkenleri (Environment Variables):
+```
+CURSOR_SECRET                # ZORUNLU (prod) - 24+ karakter güçlü secret (cursor HMAC primary)
+CURSOR_SECRET_SECONDARY      # Opsiyonel - Rotasyon sürecinde eski secret
+CURSOR_INVALID_THRESHOLD     # Varsayılan 30 - 60sn pencerede geçersiz cursor denemesi eşiği
+LB_RATE_WINDOW_MS            # Leaderboard rate limit pencere süresi (ms) vars: 15000
+LB_RATE_MAX                  # Pencere başına istek limiti vars: 10
+CURSOR_ABUSE_COOLDOWN_MS     # Abuse sonrası IP bazlı cooldown süresi (ms) vars: 30000
+ALLOW_WEAK_CURSOR_SECRET     # (Opsiyonel) Prod'da zayıf secret geçici olarak kabul et (1)
+CURSOR_AUTO_DEGRADE          # (Opsiyonel) 1 ise cooldown süresince 429 yerine otomatik offset fallback (X-Cursor-Auto-Degrade)
+```
+
+Güvenlik Politikaları:
+- Prod ortamında CURSOR_SECRET zayıf ise (default değer veya <24 char) her cevapta `X-Cursor-Weak-Secret: 1` → Derhal secret değiştir. Prod başlarken zayıf ise (override yoksa) sunucu hata verip durur.
+- Rotasyon: Yeni secret'ı CURSOR_SECRET olarak tanımla, eskisini CURSOR_SECRET_SECONDARY'ye koy. `X-Cursor-Rotation` olayları sıfıra düşünce secondary kaldır.
+- Abuse Tespiti: Aynı IP 60 sn içinde `CURSOR_INVALID_THRESHOLD` veya üstü geçersiz cursor üretirse `X-Cursor-Abuse: 1` header set edilir ve cooldown tetiklenebilir.
+- Cooldown: Eşik aşımı olduğunda IP `CURSOR_ABUSE_COOLDOWN_MS` süresince cursor moduna yönelik isteklerde 429 döner (auto degrade kapalıysa).
+- Auto Degrade: `CURSOR_AUTO_DEGRADE=1` ise cooldown aktifken cursor/around yerine dahili offset (0 tabanlı) kullanılır, 200 döner ve hem `X-Cursor-Degrade: offset` hem `X-Cursor-Auto-Degrade: 1` set edilir.
+
+Yeni Header / Metrik Güncellemeleri:
+- X-Cursor-Abuse: '1' → IP bazlı eşik aşımı. İstemci invalid üretimeyi bırakmalı.
+- X-Cursor-Abuse-Count: Son 60 sn penceresinde geçersiz cursor deneme sayısı (IP bazlı)
+- X-Cursor-Cooldown: (ms) aktif cooldown süresi kaldıysa gönderilir (200 / 429 / auto degrade senaryoları)
+- X-Cursor-Degrade: 'offset' → Cursor modundan geçici olarak offset moduna geç (öneri veya zorunlu fallback)
+- X-Cursor-Auto-Degrade: '1' → Sunucu isteği otomatik offset fallback'e çevirdi (CURSOR_AUTO_DEGRADE aktif + cooldown)
+- Retry-After: 429 cevaplarında (auto degrade kapalı) saniye cinsinden yeniden deneme önerisi
+- Prometheus Ek Metrikler: `leaderboard_invalid_cursor_abusive_ips`, `leaderboard_security_cursor_abuse_429_total`, `leaderboard_security_cooldown_active_ips`, `leaderboard_security_cursor_auto_degrade`
+- JSON Metrics Ek Alanlar:
+  - invalidCursorRecent: Global (tüm IP'ler) son 60 sn geçersiz cursor sayısı
+  - invalidCursorAbusiveIpCount: Eşik aşan IP sayısı
+  - cooldownActiveIpCount: Aktif cooldown altında IP sayısı
+  - security.cursorAbuse429: Toplam dönen 429 sayısı
+  - security.cursorAutoDegrade: Otomatik fallback uygulanan istek sayısı
+  - security.modeDegradeSuggested: Tavsiye edilen degrade sayısı (manual + auto)
+
+Degrade Davranışı Karşılaştırması:
+- Advisory Degrade: `X-Cursor-Degrade` var, `X-Cursor-Auto-Degrade` yok, istemci kendisi offset'e düşmeli.
+- Auto Degrade: Her ikisi var (`X-Cursor-Degrade` + `X-Cursor-Auto-Degrade: 1`), sunucu zaten offset döndürdü; istemci cursor param gönderimini cooldown bitene kadar bırakmalı.
+
+İstemci Backoff / Degrade Stratejisi:
+1. `X-Cursor-Abuse=1` alırsan invalid üretimi kes, son geçerli cursor'u yeniden gönderme.
+2. `X-Cursor-Degrade` varsa cursor yerine offset kullan (state değiştir).
+3. `X-Cursor-Auto-Degrade=1` ise sunucu zaten fallback yaptı; local state'i cursor->offset olarak işaretle; cooldown süresi boyunca cursor paramı gönderme.
+4. Cooldown bitince (X-Cursor-Cooldown yok olduğunda) yeniden cursor moduna kademeli geç (ör: ilk sayfa offset, sonra cursor fetch).
+
+Cooldown 429 Örnek Response (Auto Degrade KAPALI):
+```
+HTTP/1.1 429 Too Many Requests
+Retry-After: 12
+X-Cursor-Cooldown: 12034
+X-Cursor-Abuse: 1
+X-Cursor-Abuse-Count: 47
+Content-Type: application/json
+
+{ "error": "cursor_abuse_cooldown", "retryAfter": 12 }
+```
+
+Auto Degrade Örnek Response (Cooldown aktif, 200):
+```
+HTTP/1.1 200 OK
+X-Pagination-Mode: offset
+X-Cursor-Degrade: offset
+X-Cursor-Auto-Degrade: 1
+X-Cursor-Cooldown: 11893
+X-Cursor-Abuse: 1
+X-Cursor-Abuse-Count: 31
+Content-Type: application/json
+
+{ "category":"trust", "mode":"offset", "list":[...], "offset":0, "limit":10, "hasMore":true }
+```
+
+Gözlem & Alarm Önerisi:
+- `leaderboard_invalid_cursor_abusive_ips > 5` (5dk) → Potansiyel brute force uyarısı
+- `leaderboard_errors_invalid_cursor` slope ani artış → Secret sızıntısı / keşif girişimi
+- `leaderboard_trust_cursor_rotations` > 0 AND beklenmiyorsa → Rotasyon yanlış yapılandırması
+- `leaderboard_security_cursor_abuse_429_total` artış hızlanırsa → İstemci entegrasyon hatası veya saldırı
+- `leaderboard_security_mode_degrade_suggested` artışı → Çok sayıda istemci degrade önerisi aldı; istemci implementasyonu gözden geçir
+- `leaderboard_security_cursor_auto_degrade` artışı 429 ile birlikte değilse → Auto degrade aktif ve saldırı etkisi azaltılıyor; oranı izleyin

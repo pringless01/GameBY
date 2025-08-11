@@ -14,8 +14,19 @@
     "test:integration": "node tests/integration/contracts.test.js",
     "test:integration:rate": "node tests/integration/rateLimit.test.js",
     "test:integration:funds": "node tests/integration/insufficientFunds.test.js",
-    "test:integration:all": "npm run test:integration && npm run test:integration:rate && npm run test:integration:funds",
-    "audit:trim": "node scripts/trim-audit.js"
+    "test:integration:barter": "node tests/integration/barter.test.js",
+    "test:integration:trustcap": "node tests/integration/trustCap.test.js",
+    "test:integration:leaderboard": "node tests/integration/leaderboard.test.js",
+    "test:integration:leaderboard-abuse": "node tests/integration/leaderboardAbuse.test.js",
+    "test:integration:leaderboard-cooldown": "node tests/integration/leaderboardCooldown.test.js",
+    "test:integration:leaderboard-degrade-header": "node tests/integration/leaderboardDegradeHeader.test.js",
+    "test:integration:leaderboard-auto-degrade": "node tests/integration/leaderboardAutoDegrade.test.js",
+    "test:integration:leaderboard-metrics": "node tests/integration/leaderboardMetricsSnapshot.test.js",
+    "test:integration:all": "npm run test:integration:contracts && npm run test:integration:funds && npm run test:integration:barter && npm run test:integration:trustcap && npm run test:integration:leaderboard",
+    "audit:trim": "node scripts/trim-audit.js",
+    "test:unit:cursor-security": "node tests/unit/cursorSecurity.test.js",
+    "test:integration:leaderboard-params": "node tests/integration/leaderboardParams.test.js",
+    "test:integration:leaderboard-prom": "node tests/integration/leaderboardPromFormat.test.js"
   },
   "dependencies": {
     "bcrypt": "^5.1.1",
