@@ -416,12 +416,58 @@ Hammadde → İşlenmiş Ürün → Lüks Eşya → Mega Projeler (AVM, Fabrika)
 
 ---
 
+## 🆕 Versiyon 3.5-pre Güncelleme Özeti (11 Ağustos 2025)
+**Durum:** Reputation yüzeyi genişletildi, risk (default & fraud) ve gözlemlenebilirlik altyapısı güçlendirildi; konfigürasyon dışsallaştırıldı.
+
+### Eklenen / Değişen Teknik Öğeler
+- Reputation delta & günlük cap kuralları `server/config/reputationRules.json` dosyasına taşındı (hot-reload: fs.watch) → canlı tuning olanağı.
+- Yeni reputation eventleri: `trade_completed`, `contract_default`, `fraud_flag` (negatif risk sinyalleri dahil edildi).
+- Mentor kalite metrikleri: `mentorSessionsCompleted`, `mentorRatingsGiven`, `menteeRatingsGiven` (Prometheus export).
+- Sliding window (10 dk) trade ilişkisi metrikleri: `tradePairsWindow`, `tradeUniquePartnersWindow` (anomalik pattern ön sinyali).
+- Otomatik sözleşme (contract) default süpürücü: süre aşımlarında `CONTRACT_DEFAULT` reputation event emit.
+- Admin fraud flag endpoint: `POST /api/admin/fraud/flag` → `FRAUD_FLAG` reputation event.
+- Cursor abuse haritaları için periyodik hafif prune scheduler (memory kontrolü başlangıç adımı).
+- Negatif eventler reputation pipeline’a unified şekilde dahil (aynı caps & delta hesabı mekanizması).
+- README, 3.5-pre durumuna güncellendi (doküman senkronizasyonu).
+
+### Revize / Kaldırılan TODO'lar
+- `// TODO(config): externalize reputation DELTA_RULES` TAMAMLANDI (kaldırılabilir / arşiv notu).
+- `// TODO(security): abuse maps periodic prune` TAMAMLANDI.
+- Fraud & default event mapping TODO güncellendi → heuristik otomasyonu odaklı.
+
+### Mevcut Sınırlamalar (Güncel)
+- Fraud & default tetikleyicileri manuel / süre-aşımı temelli; davranışsal (pattern) heuristikler yok.
+- Onboarding 30 dk progression event set’i henüz emit edilmiyor.
+- Mentor gelişmiş kalite skoru (ağırlıklı rating + decay) yok.
+- Multi-account & cihaz fingerprint korelasyon metriği yok (yalnızca plan düzeyi).
+- Reputation rule set versiyonlama + audit diff kaydı yok.
+- Negatif event türleri için ayrı Prometheus counter isimlendirme ayrıştırması (label yerine explicit) henüz eklenmedi.
+
+### Kısa Vadeli Teknik Öncelikler (3.5 Finalizasyon)
+1. Onboarding progression event şeması + reputation rule entegrasyonu.
+2. Otomatik fraud heuristikleri (ani trade yoğunluğu, düşük çeşitlilik → `fraud_flag`).
+3. Mentor composite kalite skoru (sessions, rating, mentee retention) + gauge.
+4. Multi-account erken sinyal: IP kümelenmesi + creation cadence + placeholder device hash.
+5. Reputation rule set version tag + değişim audit kaydı (reputationRules.json diff).
+6. Negatif reputation eventleri için ayrı counter/gauge export (örn: `reputation_events_contract_default_total`).
+7. Trade pair metriklerini label patlamasına karşı koruma (örn. top-N sampling / limit) – tasarım kararı.
+
+### Yeni / Güncellenen TODO Etiketleri
+- `// TODO(fraud): heuristic flag emit (burst trade / low diversity)`
+- `// TODO(onboarding): progression event emit + rule link`
+- `// TODO(mentor): composite_quality_score derivation`
+- `// TODO(meta): reputationRules version tagging & audit diff`
+- `// TODO(metrics): explicit negative event counters`
+- `// TODO(security): device fingerprint placeholder`
+
+---
+
 ## 🚀 Güncel Geliştirme Roadmap (Revize)
 **Faz 1 (Tamamlandı kısmen):** Onboarding konsept + chat UI + backend scaffold  
 **Faz 2 (3.4 ile genişledi):** Auth middleware, gelişmiş leaderboard, cursor abuse yönetimi ✅  
-**Faz 3 (3.5 hedef):** Reputation otomasyon genişletme + mentor derinleşme + trade metrikleri  
-**Faz 4:** Kontrat risk & dolandırıcılık + ekonomik craft döngüsü  
-**Faz 5:** Geniş ölçek optimizasyon + moderasyon araçları + multi-account / SMS  
+**Faz 3 (3.5-pre aşaması):** Reputation genişleme + risk & trade metrik altyapısı ✅ (finalizasyon görevleri açık)  
+**Faz 4:** Kontrat gelişmiş risk heuristikleri & ekonomik craft döngüsü  
+**Faz 5:** Ölçek optimizasyon + moderasyon araçları + multi-account / SMS  
 
 ---
 
@@ -453,4 +499,4 @@ Hammadde → İşlenmiş Ürün → Lüks Eşya → Mega Projeler (AVM, Fabrika)
 
 **Hazırlayan:** Musa & GitHub Copilot  
 **Tarih:** 11 Ağustos 2025  
-**Versiyon:** 3.4 - Güvenli Leaderboard & Cursor İyileştirme
+**Versiyon:** 3.5-pre - Reputation & Risk Altyapı Genişlemesi
