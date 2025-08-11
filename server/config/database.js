@@ -38,6 +38,11 @@ export async function runMigration(name, sql) {
     await db.exec('COMMIT');
   } catch (e) {
     await db.exec('ROLLBACK');
+    if (/duplicate column name: roles/i.test(e.message)) {
+      console.warn('Migration uyarı (roles zaten var) skip:', name);
+      await db.run('INSERT INTO migrations (name) VALUES (?)', [name]);
+      return true;
+    }
     throw e;
   }
   return true;

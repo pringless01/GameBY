@@ -5,12 +5,15 @@
   "main": "server.js",
   "scripts": {
     "dev": "node --watch server.js",
+    "dev:secure": "NODE_ENV=production JWT_SECRET=dev-temp-long-secret-CHANGE-ME node server.js",
     "start": "NODE_ENV=production node server.js",
     "migrate": "node migrations/run-migrations.js",
     "prepare": "husky install",
     "lint": "node --eval \"process.exit(0)\"",
     "commitlint": "commitlint --from=HEAD~1 --to=HEAD",
     "test:integration": "node tests/integration/contracts.test.js",
+    "test:integration:rate": "node tests/integration/rateLimit.test.js",
+    "test:integration:all": "npm run test:integration && npm run test:integration:rate",
     "audit:trim": "node scripts/trim-audit.js"
   },
   "dependencies": {
@@ -18,18 +21,20 @@
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
+    "helmet": "^7.1.0",
     "jsonwebtoken": "^9.0.2",
     "morgan": "^1.10.0",
     "socket.io": "^4.7.5",
+    "sqlite": "^5.1.1",
     "sqlite3": "^5.1.7"
   },
   "devDependencies": {
-    "husky": "^9.0.11",
-    "lint-staged": "^15.2.7",
     "@commitlint/cli": "^19.3.0",
     "@commitlint/config-conventional": "^19.2.2",
-    "supertest": "^6.3.4",
-    "socket.io-client": "^4.7.5"
+    "husky": "^9.0.11",
+    "lint-staged": "^15.2.7",
+    "socket.io-client": "^4.7.5",
+    "supertest": "^6.3.4"
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx}": [

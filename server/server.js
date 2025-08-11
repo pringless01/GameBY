@@ -15,6 +15,7 @@ import roleRoutes from './routes/role.js';
 import mentorRoutes from './routes/mentor.js';
 import { registerChatNamespace } from './sockets/chatSocket.js';
 import { setIo } from './sockets/io.js';
+import helmet from 'helmet';
 
 dotenv.config();
 
@@ -22,7 +23,12 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
-app.use(cors());
+app.use(helmet({ crossOriginResourcePolicy: false }));
+const allowed = (process.env.ALLOWED_ORIGINS || '*').split(',').map(s=>s.trim());
+app.use(cors({ origin: (origin, cb)=> {
+  if(!origin || allowed.includes('*') || allowed.includes(origin)) return cb(null, true);
+  return cb(new Error('CORS blocked'), false);
+}}));
 app.use(express.json());
 app.use(morgan('dev'));
 
@@ -68,6 +74,13 @@ const missing = requiredEnv.filter(k => !process.env[k]);
 if (missing.length) {
   console.error('Eksik ortam değişkenleri:', missing.join(','));
 }
+const secret = process.env.JWT_SECRET || 'dev-secret';
+if (process.env.NODE_ENV === 'production' && secret.length < 32) {
+  console.error('JWT_SECRET çok kısa (>=32 tavsiye). Çıkılıyor.');
+  process.exit(1);
+} else if (secret.length < 24) {
+  console.warn('Uyarı: JWT_SECRET kısa, üretimde güçlendir.');
+}
 
 // Sunucu başlatma bloğu yeniden aktif
 (async () => {
@@ -94,4 +107,19 @@ if (missing.length) {
     }, 8000).unref();
   };
   ['SIGINT','SIGTERM'].forEach(sig => process.on(sig, () => shutdown(sig)));
+
+  // Periyodik audit trim (her 10 dakikada bir, maksimum 5000 kayıt)
+  async function periodicAuditTrim(){
+    try {
+      const db = await initDb();
+      const row = await db.get('SELECT COUNT(*) as c FROM audit_log');
+      const MAX = Number(process.env.AUDIT_MAX || 5000);
+      if (row.c > MAX) {
+        const toDelete = row.c - MAX;
+        await db.run(`DELETE FROM audit_log WHERE id IN (SELECT id FROM audit_log ORDER BY id ASC LIMIT ?)`, [toDelete]);
+        console.log('[audit] Trim yapıldı, silinen:', toDelete);
+      }
+    } catch(e){ /* sessiz */ }
+  }
+  setInterval(periodicAuditTrim, 10*60*1000).unref();
 })();
