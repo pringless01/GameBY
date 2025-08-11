@@ -2,6 +2,7 @@ import { initDb } from '../config/database.js';
 import { getIo } from '../sockets/io.js';
 import { invalidateMentorLeaderboards } from '../cache/mentorCaches.js';
 import { emitReputationEvent, ReputationEventType } from '../services/reputationEvents.js';
+import { incMentorSessionCompleted, incMentorRatingGiven, incMenteeRatingGiven } from '../metrics/reputationMetrics.js';
 
 // Tutorial adım tanımları (sade)
 export const TUTORIAL_STEPS = [
@@ -197,8 +198,8 @@ export async function completeMentorship(mentorshipId, userId, { mentor_rating=n
   if(m.mentor_id !== userId && m.mentee_id !== userId) throw new Error('forbidden');
   const updates = [];
   const setCols = [];
-  if(mentor_rating !== null && m.mentee_id === userId){ setCols.push('mentor_rating = ?'); updates.push(mentor_rating); }
-  if(mentee_rating !== null && m.mentor_id === userId){ setCols.push('mentee_rating = ?'); updates.push(mentee_rating); }
+  if(mentor_rating !== null && m.mentee_id === userId){ setCols.push('mentor_rating = ?'); updates.push(mentor_rating); incMentorRatingGiven(); }
+  if(mentee_rating !== null && m.mentor_id === userId){ setCols.push('mentee_rating = ?'); updates.push(mentee_rating); incMenteeRatingGiven(); }
   setCols.push("status='COMPLETED'");
   setCols.push("ended_at = datetime('now')");
   const sql = `UPDATE mentorships SET ${setCols.join(', ')} WHERE id=?`;
@@ -207,10 +208,9 @@ export async function completeMentorship(mentorshipId, userId, { mentor_rating=n
   const io = getIo();
   if(io) io.emit('mentorship_completed', { id: mentorshipId, mentor_id: m.mentor_id, mentee_id: m.mentee_id, mentor_rating: updated.mentor_rating, mentee_rating: updated.mentee_rating });
   try { invalidateMentorLeaderboards(); } catch {}
-  // Reputation: mentor için tamamlanan oturum ödülü (+3 cap dahil)
   emitReputationEvent({ userId: m.mentor_id, type: ReputationEventType.MENTOR_SESSION_COMPLETE }).catch(()=>{});
-  // Reputation: mentee için tamamlanan oturum ödülü (+2 cap dahil)
   emitReputationEvent({ userId: m.mentee_id, type: ReputationEventType.MENTEE_SESSION_COMPLETE }).catch(()=>{});
+  incMentorSessionCompleted();
   return updated;
 }
 

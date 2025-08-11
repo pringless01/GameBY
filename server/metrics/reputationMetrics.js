@@ -4,7 +4,10 @@ export const reputationMetrics = {
   eventsByType: {}, // type -> count
   cappedSkips: 0,
   unknownTypeSkips: 0,
-  dbErrors: 0
+  dbErrors: 0,
+  mentorSessionsCompleted: 0,
+  mentorRatingsGiven: 0,
+  menteeRatingsGiven: 0
 };
 
 export function incReputationEvent(type){
@@ -14,3 +17,6 @@ export function incReputationEvent(type){
 export function incCappedSkip(){ reputationMetrics.cappedSkips++; }
 export function incUnknownType(){ reputationMetrics.unknownTypeSkips++; }
 export function incReputationDbError(){ reputationMetrics.dbErrors++; }
+export function incMentorSessionCompleted(){ reputationMetrics.mentorSessionsCompleted++; }
+export function incMentorRatingGiven(){ reputationMetrics.mentorRatingsGiven++; }
+export function incMenteeRatingGiven(){ reputationMetrics.menteeRatingsGiven++; }

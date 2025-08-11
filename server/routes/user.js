@@ -786,6 +786,13 @@ router.get('/leaderboard/metrics/prom', authRequired, (req,res)=>{
       lines.push(`# TYPE reputation_events_type_count counter`);
       lines.push(`reputation_events_type_count{type="${t}"} ${c}`);
     }
+    // Mentor kalite metrics
+    lines.push('# TYPE mentor_sessions_completed_total counter');
+    lines.push('mentor_sessions_completed_total '+reputationMetrics.mentorSessionsCompleted);
+    lines.push('# TYPE mentor_ratings_given_total counter');
+    lines.push('mentor_ratings_given_total '+reputationMetrics.mentorRatingsGiven);
+    lines.push('# TYPE mentee_ratings_given_total counter');
+    lines.push('mentee_ratings_given_total '+reputationMetrics.menteeRatingsGiven);
     res.setHeader('Content-Type','text/plain; version=0.0.4');
     res.send(lines.join('\n')+'\n');
   } catch { res.status(500).end(); }
