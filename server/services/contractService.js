@@ -4,18 +4,15 @@ import { autoAdvanceOnEvent } from '../services/mentorService.js';
 import { logAudit } from '../services/auditService.js';
 import { updateTrust } from '../services/userService.js';
 
-// Günlük kullanıcı başı maksimum kontrat trust ödülü (toplam)
-const DAILY_CONTRACT_TRUST_CAP = 40; // ileride .env'e taşınabilir
+export const DAILY_CONTRACT_TRUST_CAP = 40; // ileride .env'e taşınabilir
 
-async function getTodayContractTrustTotal(userId){
+export async function getTodayContractTrustTotal(userId){
   const db = await initDb();
   const row = await db.get(`SELECT COALESCE(SUM(delta),0) as total FROM reputation_events WHERE user_id = ? AND reason = 'contract_completed_dynamic' AND date(created_at)=date('now')`, [userId]);
   return row.total || 0;
 }
 
-function calculateDynamicTrustReward(contract){
-  // Baseline: miktar ve fiyat ölçekli min 1 max 10
-  // Formül: base = 1 + log10( (amount * max(price,1)) + 1 )
+export function calculateDynamicTrustReward(contract){
   const amount = Math.max(1, contract.amount || 1);
   const price = Math.max(1, contract.price || 1);
   const raw = 1 + Math.log10(amount * price + 1);
