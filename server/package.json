@@ -13,7 +13,8 @@
     "commitlint": "commitlint --from=HEAD~1 --to=HEAD",
     "test:integration": "node tests/integration/contracts.test.js",
     "test:integration:rate": "node tests/integration/rateLimit.test.js",
-    "test:integration:all": "npm run test:integration && npm run test:integration:rate",
+    "test:integration:funds": "node tests/integration/insufficientFunds.test.js",
+    "test:integration:all": "npm run test:integration && npm run test:integration:rate && npm run test:integration:funds",
     "audit:trim": "node scripts/trim-audit.js"
   },
   "dependencies": {
