@@ -5,10 +5,10 @@ import { createContract, listUserContracts, actOnContract, getContract } from '.
 const router = express.Router();
 
 router.post('/', authRequired, async (req, res) => {
-  const { counterparty_id, subject, amount, type } = req.body;
+  const { counterparty_id, subject, amount, type, price = 0, currency = 'TL' } = req.body;
   if (!counterparty_id || !subject || typeof amount !== 'number' || !type) return res.status(400).json({ error: 'Eksik alan' });
   try {
-    const contract = await createContract({ creator_id: req.user.id, counterparty_id, subject, amount, type });
+    const contract = await createContract({ creator_id: req.user.id, counterparty_id, subject, amount, type, price, currency });
     res.json({ contract });
   } catch (e) {
     res.status(500).json({ error: 'Oluşturma hatası' });
@@ -30,6 +30,7 @@ router.post('/:id/action', authRequired, async (req, res) => {
   } catch (e) {
     if (e.message === 'not_found') return res.status(404).json({ error: 'Bulunamadı' });
     if (e.message === 'forbidden') return res.status(403).json({ error: 'Yetki yok' });
+    if (e.message === 'insufficient_funds') return res.status(400).json({ error: 'Yetersiz bakiye' });
     res.status(500).json({ error: 'İşlem hatası' });
   }
 });

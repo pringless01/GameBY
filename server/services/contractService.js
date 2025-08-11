@@ -3,14 +3,14 @@ import { getIo } from '../sockets/io.js';
 import { autoAdvanceOnEvent } from '../services/mentorService.js';
 import { logAudit } from '../services/auditService.js';
 
-export async function createContract({ creator_id, counterparty_id, subject, amount, type }) {
+export async function createContract({ creator_id, counterparty_id, subject, amount, type, price=0, currency='TL' }) {
   const db = await initDb();
-  const result = await db.run(`INSERT INTO contracts (creator_id, counterparty_id, subject, amount, type, status)
-    VALUES (?, ?, ?, ?, ?, 'PENDING')`, [creator_id, counterparty_id, subject, amount, type]);
+  const result = await db.run(`INSERT INTO contracts (creator_id, counterparty_id, subject, amount, type, status, price, currency)
+    VALUES (?, ?, ?, ?, ?, 'PENDING', ?, ?)`, [creator_id, counterparty_id, subject, amount, type, price, currency]);
   const created = await getContract(result.lastID);
   const io = getIo();
   if (io) io.emit('contract_created', created);
-  logAudit({ userId: creator_id, action: 'contract_create', detail: JSON.stringify({ id: created.id, counterparty_id, amount, type }) });
+  logAudit({ userId: creator_id, action: 'contract_create', detail: JSON.stringify({ id: created.id, counterparty_id, amount, type, price }) });
   // tutorial advance (first contract of creator?)
   const countRow = await db.get('SELECT COUNT(*) as c FROM contracts WHERE creator_id = ?', [creator_id]);
   if (countRow.c === 1) autoAdvanceOnEvent(creator_id, 'contract:first_created').catch(()=>{});
@@ -37,7 +37,27 @@ export async function actOnContract(id, userId, action) {
   else if (action === 'cancel' && ['PENDING','ACTIVE'].includes(contract.status) && userId === contract.creator_id) newStatus = 'CANCELLED';
   else if (action === 'complete' && contract.status === 'ACTIVE') newStatus = 'COMPLETED';
   if (newStatus !== contract.status) {
-    await db.run('UPDATE contracts SET status = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?', [newStatus, id]);
+    // Transaction: status update + (varsa) para transferi
+    await db.run('BEGIN');
+    try {
+      if (newStatus === 'COMPLETED' && contract.price > 0) {
+        // Yeterli bakiye kontrolü (creator öder varsayımı)
+        const payer = await db.get('SELECT id, money FROM users WHERE id = ?', [contract.creator_id]);
+        if (!payer || payer.money < contract.price) {
+          await db.run('ROLLBACK');
+          throw new Error('insufficient_funds');
+        }
+        await db.run('UPDATE users SET money = money - ? WHERE id = ?', [contract.price, contract.creator_id]);
+        await db.run('UPDATE users SET money = money + ? WHERE id = ?', [contract.price, contract.counterparty_id]);
+      }
+      await db.run('UPDATE contracts SET status = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?', [newStatus, id]);
+      await db.run('COMMIT');
+    } catch (e) {
+      if (e.message !== 'insufficient_funds') {
+        await db.run('ROLLBACK');
+      }
+      if (e.message === 'insufficient_funds') throw e;
+    }
     const updated = await getContract(id);
     const io = getIo();
     if (io) io.emit('contract_updated', updated);

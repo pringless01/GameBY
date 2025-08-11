@@ -8,3 +8,12 @@ export async function logAudit({ userId = null, action, detail = null, ip = null
     // sessiz geç
   }
 }
+
+export async function logResource(userId, action, changes) {
+  try {
+    const detail = JSON.stringify({ changes });
+    await logAudit({ userId, action, detail });
+  } catch (e) {
+    /* ignore */
+  }
+}

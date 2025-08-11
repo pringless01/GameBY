@@ -13,6 +13,7 @@ import contractRoutes from './routes/contract.js';
 import adminRoutes from './routes/admin.js';
 import roleRoutes from './routes/role.js';
 import mentorRoutes from './routes/mentor.js';
+import activityRoutes from './routes/activity.js';
 import { registerChatNamespace } from './sockets/chatSocket.js';
 import { setIo } from './sockets/io.js';
 import helmet from 'helmet';
@@ -65,6 +66,7 @@ app.use('/api/contracts', contractRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/role', roleRoutes);
 app.use('/api/mentor', mentorRoutes);
+app.use('/api/activity', activityRoutes);
 
 // Serve frontend (optional quick integration)
 app.use(express.static(path.join(__dirname, '..', 'frontend', 'public')));

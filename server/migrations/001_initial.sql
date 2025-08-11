@@ -7,6 +7,10 @@ CREATE TABLE IF NOT EXISTS users (
   reputation INTEGER NOT NULL DEFAULT 0,
   bot_tutorial_state TEXT NOT NULL DEFAULT 'INTRO',
   roles TEXT DEFAULT '[]',
+  money INTEGER NOT NULL DEFAULT 50,
+  wood INTEGER NOT NULL DEFAULT 0,
+  grain INTEGER NOT NULL DEFAULT 0,
+  business INTEGER NOT NULL DEFAULT 0,
   created_at TEXT NOT NULL DEFAULT (datetime('now'))
 );
 
