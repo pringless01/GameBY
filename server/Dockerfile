@@ -6,6 +6,8 @@ COPY package*.json ./
 FROM base AS deps
 # Lock uyumsuzluğu durumunda ci -> install fallback (repro toleransı)
 RUN npm ci --omit=dev --ignore-scripts || npm install --omit=dev --ignore-scripts
+# Native modüller (sqlite3, bcrypt) için postinstall'ı tetikle (prebuilt ikilileri indir)
+RUN npm rebuild sqlite3 bcrypt --verbose
 
 # Runtime imajı
 FROM node:20-bullseye-slim AS runtime
