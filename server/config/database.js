@@ -32,13 +32,42 @@ export async function runMigration(name, sql) {
   const row = await db.get('SELECT id FROM migrations WHERE name = ?', [name]);
   if (row) return false;
   const hasExplicitTx = /\bBEGIN\b/i.test(sql);
+
+  const isIdempotentError = (msg='') => /duplicate column name|already exists/i.test(msg);
+
+  async function applyStatementsForgiving(sqlText){
+    const stmts = sqlText
+      .split(';')
+      .map(s => s.trim())
+      .filter(Boolean);
+    await db.exec('BEGIN');
+    try{
+      for(const s of stmts){
+        try{
+          await db.exec(s + ';');
+        }catch(e){
+          if(isIdempotentError(e.message)){
+            console.warn('[migrations] forgiving skip stmt due to idempotent error:', s.slice(0,80));
+            continue;
+          }
+          throw e;
+        }
+      }
+      await db.run('INSERT INTO migrations (name) VALUES (?)', [name]);
+      await db.exec('COMMIT');
+      return true;
+    }catch(e){
+      await db.exec('ROLLBACK');
+      throw e;
+    }
+  }
   if(hasExplicitTx){
     try {
       await db.exec(sql);
       await db.run('INSERT INTO migrations (name) VALUES (?)', [name]);
     } catch(e){
-      if (/duplicate column name: roles/i.test(e.message)) {
-        console.warn('Migration uyarı (roles zaten var) skip explicit tx:', name);
+      if (isIdempotentError(e.message)) {
+        console.warn('Migration uyarı (idempotent) skip explicit tx:', name);
         await db.run('INSERT INTO migrations (name) VALUES (?)', [name]);
         return true;
       }
@@ -53,10 +82,10 @@ export async function runMigration(name, sql) {
     await db.exec('COMMIT');
   } catch (e) {
     await db.exec('ROLLBACK');
-    if (/duplicate column name: roles/i.test(e.message)) {
-      console.warn('Migration uyarı (roles zaten var) skip:', name);
-      await db.run('INSERT INTO migrations (name) VALUES (?)', [name]);
-      return true;
+    if (isIdempotentError(e.message)) {
+      // Tek tek çalıştırıp duplicate'ları atla
+      console.warn('Migration uyarı (idempotent) retry forgiving apply:', name);
+      return await applyStatementsForgiving(sql);
     }
     throw e;
   }
