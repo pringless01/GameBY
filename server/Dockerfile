@@ -4,7 +4,8 @@ COPY package*.json ./
 
 # Sadece prod bağımlılıkları kur; prepare gibi lifecycle scriptleri atla
 FROM base AS deps
-RUN npm ci --omit=dev --ignore-scripts
+# Lock uyumsuzluğu durumunda ci -> install fallback (repro toleransı)
+RUN npm ci --omit=dev --ignore-scripts || npm install --omit=dev --ignore-scripts
 
 # Runtime imajı
 FROM node:20-bullseye-slim AS runtime
