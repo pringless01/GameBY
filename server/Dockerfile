@@ -1,19 +1,19 @@
-FROM node:18-alpine AS base
+FROM node:20-bullseye-slim AS base
 WORKDIR /app
 COPY package*.json ./
 
+# Sadece prod bağımlılıkları kur; prepare gibi lifecycle scriptleri atla
 FROM base AS deps
-RUN npm ci --omit=dev
+RUN npm ci --omit=dev --ignore-scripts
 
-FROM base AS build
-RUN npm ci
-COPY . .
-# placeholder for future builds (TS/webpack not used) – verify sources
-RUN node -e "process.exit(0)"
-
-FROM node:18-alpine AS runtime
+# Runtime imajı
+FROM node:20-bullseye-slim AS runtime
 WORKDIR /app
 ENV NODE_ENV=production
+# Healthcheck aracı için curl ekle
+RUN apt-get update \
+ && apt-get install -y --no-install-recommends curl \
+ && rm -rf /var/lib/apt/lists/*
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 EXPOSE 3000

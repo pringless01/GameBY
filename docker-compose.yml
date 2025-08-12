@@ -17,14 +17,15 @@ services:
     ports:
       - "3000:3000"
     healthcheck:
-      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://localhost:3000/health"]
+      test: ["CMD", "curl", "-fsS", "http://localhost:3000/health"]
       interval: 10s
       timeout: 3s
       retries: 6
   nginx:
     image: nginx:stable-alpine
     depends_on:
-      - api
+      api:
+        condition: service_healthy
     ports:
       - "80:80"
     volumes:
