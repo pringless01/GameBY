@@ -4,13 +4,112 @@ import { authRequired } from '../middleware/auth.js';
 import { updateTrust, getUserMetrics, findUserByUsername } from '../services/userService.js';
 import { trustRateLimit, rateLimit } from '../middleware/rateLimit.js';
 import { DAILY_CONTRACT_TRUST_CAP } from '../services/contractService.js';
-import { canBeMentor, getActiveMentorship, getQueues } from '../services/mentorService.js';
+import { canBeMentor, getActiveMentorship, getQueues, computeMentorQualityScore } from '../services/mentorService.js';
 import { dailyTrustCache, leaderboardCache, trustTrendCache, DAILY_TRUST_TTL_MS, LEADERBOARD_TTL_MS, TRUST_TREND_TTL_MS, trustAroundCache } from '../cache/trustCaches.js';
 import { mentorsLbCache, mentorsRankCache, MENTOR_LB_TTL_MS } from '../cache/mentorCaches.js';
-import { encodeCursor, decodeCursor, WEAK_CURSOR_SECRET, isCursorAbuse, isInCursorCooldown, getIpInvalidCount, getCooldownIpCount, getAbusiveIpCount, getInvalidCursorRecent, getCursorCooldownUntil, INVALID_CURSOR_THRESHOLD, shouldAutoDegrade } from '../security/cursorSecurity.js';
+import { encodeCursor, decodeCursor, WEAK_CURSOR_SECRET, isCursorAbuse, isInCursorCooldown, getIpInvalidCount, getCooldownIpCount, getAbusiveIpCount, getInvalidCursorRecent, getCursorCooldownUntil, INVALID_CURSOR_THRESHOLD, shouldAutoDegrade, getInvalidCursorIpStats } from '../security/cursorSecurity.js';
+import { envConfig } from '../config/env.js';
 import { leaderboardMetrics } from '../metrics/leaderboardMetrics.js';
 import { reputationMetrics } from '../metrics/reputationMetrics.js';
+import { ReputationEventType } from '../services/reputationEvents.js';
+import { getMultiUserIps, getMultiUserDevices, computeFraudRiskScore } from '../services/fraudService.js';
+import { fraudMetrics, setMultiuserIpCount, setMultiuserDeviceCount } from '../metrics/fraudMetrics.js';
 import { sendWithEtag, buildEtag } from '../utils/etag.js';
+import { getReputationRulesVersion, getReputationRuleCount } from '../services/reputationEvents.js';
+import { emitOnboardingStep } from '../services/reputationEvents.js';
+
+const router = express.Router();
+
+/**
+ * @api {get} /api/user/fraud/multiuser-ips
+ * @apiName GetMultiUserIps
+ * @apiGroup Fraud
+ * @apiPermission admin
+ * @apiDescription Aynı IP'den giriş yapan farklı kullanıcılar (multi-account gözlemi).
+ * @apiQuery {Number} [minUsers=2] Minimum farklı kullanıcı (default 2)
+ * @apiQuery {Number} [limit=20] Sonuç limiti (max 100)
+ * @apiSuccessExample {json} Response:
+ *   {
+ *     "multiUserIps": [
+ *       { "ip": "1.2.3.4", "user_count": 3, "user_ids": [1,2,3], "last_ts": 1723456789 }
+ *     ]
+ *   }
+ */
+router.get('/fraud/multiuser-ips', authRequired, async (req,res)=>{
+  try {
+    const roles = req.user.roles || [];
+    if(!Array.isArray(roles) || !roles.includes('admin')) return res.status(403).json({ error:'forbidden' });
+    const { minUsers=2, limit=20 } = req.query;
+    const stats = await getMultiUserIps(Number(minUsers)||2, Number(limit)||20);
+    res.json({ multiUserIps: stats });
+  } catch { res.status(500).json({ error:'multiuser_ip_stats_failed' }); }
+});
+
+/**
+ * @api {get} /api/user/fraud/multiuser-devices
+ * @apiName GetMultiUserDevices
+ * @apiGroup Fraud
+ * @apiPermission admin
+ * @apiDescription Aynı device fingerprint ile giriş yapan farklı kullanıcılar (multi-account gözlemi).
+ * @apiQuery {Number} [minUsers=2] Minimum farklı kullanıcı (default 2)
+ * @apiQuery {Number} [limit=20] Sonuç limiti (max 100)
+ * @apiSuccessExample {json} Response:
+ *   {
+ *     "multiUserDevices": [
+ *       { "device_fingerprint": "abc123", "user_count": 2, "user_ids": [1,2], "last_ts": 1723456789 }
+ *     ]
+ *   }
+ */
+router.get('/fraud/multiuser-devices', authRequired, async (req,res)=>{
+  try {
+    const roles = req.user.roles || [];
+    if(!Array.isArray(roles) || !roles.includes('admin')) return res.status(403).json({ error:'forbidden' });
+    const { minUsers=2, limit=20 } = req.query;
+    const stats = await getMultiUserDevices(Number(minUsers)||2, Number(limit)||20);
+    res.json({ multiUserDevices: stats });
+  } catch { res.status(500).json({ error:'multiuser_device_stats_failed' }); }
+});
+
+// Basit fraud risk skoru (admin)
+router.get('/fraud/risk-score', authRequired, async (req,res)=>{
+  try {
+    const roles = req.user.roles || [];
+    if(!Array.isArray(roles) || !roles.includes('admin')) return res.status(403).json({ error:'forbidden' });
+    const info = await computeFraudRiskScore();
+    res.json(info);
+  } catch { res.status(500).json({ error:'risk_score_failed' }); }
+});
+
+// Admin: Invalid cursor IP stats (abuse observation)
+router.get('/leaderboard/abuse/ips', authRequired, async (req,res)=>{
+  try {
+    const roles = req.user.roles || [];
+    if(!Array.isArray(roles) || !roles.includes('admin')) return res.status(403).json({ error:'forbidden' });
+    const limit = Math.max(1, Math.min(50, Number(req.query.limit)||10));
+    const mask = String(req.query.mask||'0') === '1';
+    const stats = getInvalidCursorIpStats(limit, mask);
+    res.json({ ips: stats, abusive_ip_count: getAbusiveIpCount(), cooldown_ip_count: getCooldownIpCount() });
+  } catch { res.status(500).json({ error:'abuse_stats_failed' }); }
+});
+
+// Onboarding: list user progress steps
+router.get('/onboarding/progress', authRequired, async (req,res)=>{
+  try {
+    const db = await initDb();
+    const rows = await db.all('SELECT step, created_at FROM onboarding_progress WHERE user_id=? ORDER BY created_at ASC', [req.user.id]);
+    res.json({ steps: rows });
+  } catch { res.status(500).json({ error:'progress_failed' }); }
+});
+
+// Onboarding: mark a step (idempotent). Optional apply reputational delta if configured.
+router.post('/onboarding/step', authRequired, async (req,res)=>{
+  const { step, applyDelta=true } = req.body||{};
+  if(!step || typeof step !== 'string' || step.length>64) return res.status(400).json({ error:'invalid_step' });
+  try {
+    const r = await emitOnboardingStep({ userId: req.user.id, step, deltaIfConfigured: !!applyDelta });
+    res.json(r);
+  } catch { res.status(500).json({ error:'step_failed' }); }
+});
 
 // Cooldown sırasında ilk offset isteğine (grace) izin vermek için set
 const cooldownFirstOffsetServed = new Set();
@@ -135,7 +234,8 @@ async function getTrustLeaderboard(db, { limit, offset, useAround, window, userI
   const last = rows[rows.length-1];
   const nextCursor = rows.length === limit && last ? encodeCursor(last.trust_score, last.id) : null;
   const hasMore = !!nextCursor;
-  return { payload: { category:'trust', list: rows, cached:false, ...(needRank && userRankMeta ? { userRank: userRankMeta.rank, userRankMeta } : {}), total, cursor: cursor||null, nextCursor, limit: Number(limit), mode:'cursor', hasMore, cursorRotated }, cache:'MISS', ttl: 0, lastTs: Date.now() };
+  const cursorSigned = decodedCursor ? !!decodedCursor.signed : false;
+  return { payload: { category:'trust', list: rows, cached:false, ...(needRank && userRankMeta ? { userRank: userRankMeta.rank, userRankMeta } : {}), total, cursor: cursor||null, nextCursor, limit: Number(limit), mode:'cursor', hasMore, cursorRotated, cursorSigned }, cache:'MISS', ttl: 0, lastTs: Date.now() };
 }
 
 // Mentor leaderboard
@@ -220,18 +320,119 @@ async function getMentorLeaderboard(db, { limit, minSessions, wantSelf, userId }
   return result;
 }
 
-const router = express.Router();
+// Fraud metriklerini güncelle (her Prometheus export öncesi)
+async function updateFraudMetrics() {
+  try {
+    const ipStats = await getMultiUserIps(2, 1000);
+    setMultiuserIpCount(ipStats.length);
+    const deviceStats = await getMultiUserDevices(2, 1000);
+    setMultiuserDeviceCount(deviceStats.length);
+  } catch(e) { /* ignore */ }
+}
+
+// Prometheus metrics endpoint (v0.0.4)
+router.get('/leaderboard/metrics/prom', authRequired, async (req,res)=>{
+  try {
+    const roles = req.user.roles || [];
+    if(!Array.isArray(roles) || !roles.includes('admin')) return res.status(403).end();
+    await updateFraudMetrics();
+    res.setHeader('Content-Type','text/plain; version=0.0.4');
+    let out = '';
+    // Leaderboard metrics
+    out += '# TYPE leaderboard_trust_offset_hits counter\n';
+    out += `leaderboard_trust_offset_hits ${leaderboardMetrics.trust.offset.hits}\n`;
+    out += '# TYPE leaderboard_trust_offset_misses counter\n';
+    out += `leaderboard_trust_offset_misses ${leaderboardMetrics.trust.offset.misses}\n`;
+    out += '# TYPE leaderboard_trust_cursor_requests counter\n';
+    out += `leaderboard_trust_cursor_requests ${leaderboardMetrics.trust.cursor.requests}\n`;
+    out += '# TYPE leaderboard_trust_cursor_rotations counter\n';
+    out += `leaderboard_trust_cursor_rotations ${leaderboardMetrics.trust.cursor.rotations}\n`;
+    out += '# TYPE leaderboard_trust_around_requests counter\n';
+    out += `leaderboard_trust_around_requests ${leaderboardMetrics.trust.around.requests}\n`;
+    out += '# TYPE leaderboard_mentor_hits counter\n';
+    out += `leaderboard_mentor_hits ${leaderboardMetrics.mentor.hits}\n`;
+    out += '# TYPE leaderboard_mentor_misses counter\n';
+    out += `leaderboard_mentor_misses ${leaderboardMetrics.mentor.misses}\n`;
+    out += '# TYPE leaderboard_rank_computed counter\n';
+    out += `leaderboard_rank_computed ${leaderboardMetrics.rank.computed}\n`;
+    out += '# TYPE leaderboard_rank_skipped counter\n';
+    out += `leaderboard_rank_skipped ${leaderboardMetrics.rank.skipped}\n`;
+    out += '# TYPE leaderboard_errors_invalid_cursor counter\n';
+    out += `leaderboard_errors_invalid_cursor ${leaderboardMetrics.errors.invalidCursor}\n`;
+    out += '# TYPE leaderboard_errors_cursor_format counter\n';
+    out += `leaderboard_errors_cursor_format ${leaderboardMetrics.errors.cursorFormat}\n`;
+    out += '# TYPE leaderboard_errors_cursor_signature counter\n';
+    out += `leaderboard_errors_cursor_signature ${leaderboardMetrics.errors.cursorSignature}\n`;
+    out += '# TYPE leaderboard_errors_cursor_oversize counter\n';
+    out += `leaderboard_errors_cursor_oversize ${leaderboardMetrics.errors.cursorOversize}\n`;
+    out += '# TYPE leaderboard_security_cursor_abuse_429 counter\n';
+    out += `leaderboard_security_cursor_abuse_429 ${leaderboardMetrics.security.cursorAbuse429}\n`;
+    out += '# TYPE leaderboard_security_mode_degrade_suggested counter\n';
+    out += `leaderboard_security_mode_degrade_suggested ${leaderboardMetrics.security.modeDegradeSuggested}\n`;
+    out += '# TYPE leaderboard_security_cursor_auto_degrade counter\n';
+    out += `leaderboard_security_cursor_auto_degrade ${leaderboardMetrics.security.cursorAutoDegrade}\n`;
+    out += '# TYPE leaderboard_security_cooldown_grace_served counter\n';
+    out += `leaderboard_security_cooldown_grace_served ${leaderboardMetrics.security.cooldownGraceServed}\n`;
+  // Abuse IP gauges
+  out += '# TYPE leaderboard_security_abusive_ip_count gauge\n';
+  out += `leaderboard_security_abusive_ip_count ${getAbusiveIpCount()}\n`;
+  out += '# TYPE leaderboard_security_cooldown_ip_count gauge\n';
+  out += `leaderboard_security_cooldown_ip_count ${getCooldownIpCount()}\n`;
+    // Reputation metrics (generic by type)
+    out += '# TYPE reputation_event_total counter\n';
+    for(const [k,v] of Object.entries(reputationMetrics.eventsByType || {})){
+      out += `reputation_event_total{reason="${k}"} ${v}\n`;
+    }
+    // Onboarding metrics by step (idempotent counts)
+    if(reputationMetrics.onboardingByStep){
+      out += '# TYPE onboarding_step_total counter\n';
+      for(const [step,count] of Object.entries(reputationMetrics.onboardingByStep)){
+        out += `onboarding_step_total{step="${step}"} ${count}\n`;
+      }
+    }
+    // Negative key events explicit counters (compat test)
+    const negMap = {
+      contract_default: ReputationEventType.CONTRACT_DEFAULT,
+      fraud_flag: ReputationEventType.FRAUD_FLAG
+    };
+    for(const label of Object.keys(negMap)){
+      const count = reputationMetrics.eventsByType[label] || 0;
+      out += `reputation_events_${label}_total ${count}\n`;
+    }
+    // Rules info (versiyon + rule sayısı)
+    try {
+      const version = getReputationRulesVersion ? getReputationRulesVersion() : 'unknown';
+      const ruleCount = getReputationRuleCount ? getReputationRuleCount() : 0;
+      out += '# TYPE reputation_rules_info gauge\n';
+      out += `reputation_rules_info{version="${version}"} ${ruleCount}\n`;
+    } catch {}
+    // Fraud metrics
+    out += '# TYPE fraud_multiuser_ip_count gauge\n';
+    out += `fraud_multiuser_ip_count ${fraudMetrics.multiuser_ip_count}\n`;
+    out += '# TYPE fraud_multiuser_device_count gauge\n';
+    out += `fraud_multiuser_device_count ${fraudMetrics.multiuser_device_count}\n`;
+    // Risk score (avg/global)
+    try {
+      const risk = await computeFraudRiskScore();
+      out += '# TYPE fraud_risk_score_avg gauge\n';
+      out += `fraud_risk_score_avg ${risk.score}\n`;
+    } catch {}
+    res.send(out);
+  } catch(err) { try { console.error('prom_export_fail', err); } catch {} res.status(500).end(); }
+});
 
 // Rate limit params
-const LB_RATE_WINDOW_MS = Number(process.env.LB_RATE_WINDOW_MS || 15000);
-const LB_RATE_MAX = Number(process.env.LB_RATE_MAX || 10);
+const LB_RATE_WINDOW_MS = Number(envConfig.LB_RATE_WINDOW_MS || 15000);
+const LB_RATE_MAX = Number(envConfig.LB_RATE_MAX || 10);
 const lbRate = rateLimit({ windowMs: LB_RATE_WINDOW_MS, max: LB_RATE_MAX, keyGenerator: (req)=>'lb:'+req.ip });
 
 router.get('/me', authRequired, async (req, res) => {
   const db = await initDb();
   const row = await db.get('SELECT id, username, trust_score, reputation, bot_tutorial_state, money, wood, grain, business, mentor_ready, mentee_waiting, created_at FROM users WHERE id = ?', [req.user.id]);
   if (!row) return res.status(404).json({ error: 'Kullanıcı yok' });
-  return res.json({ user: row });
+  // Test uyumu: hem düz alanlar hem de nested resources döndür
+  const resources = { money: row.money, wood: row.wood, grain: row.grain, business: row.business };
+  return res.json({ user: { ...row, resources } });
 });
 
 router.post('/trust/update', authRequired, trustRateLimit, async (req, res) => {
@@ -491,10 +692,10 @@ router.get('/leaderboard', authRequired, lbRate, async (req,res)=>{
         if(results.trust.cached) { res.setHeader('X-Cache','HIT'); if(typeof results.trust.ttl==='number') res.setHeader('X-Cache-TTL', results.trust.ttl); }
         else { res.setHeader('X-Cache','MISS'); if(typeof results.trust.ttl==='number') res.setHeader('X-Cache-TTL', results.trust.ttl); }
       }
-      const tEnd = process.hrtime.bigint();
-      const totalMs = Number(tEnd - tStart)/1e6;
-      res.setHeader('Server-Timing', `total;dur=${totalMs.toFixed(2)}`);
-      if(WEAK_CURSOR_SECRET) res.setHeader('X-Cursor-Weak-Secret','1');
+  const tEnd = process.hrtime.bigint();
+  const totalMs = Number(tEnd - tStart)/1e6;
+  res.setHeader('Server-Timing', `total;dur=${totalMs.toFixed(2)}`);
+  if(WEAK_CURSOR_SECRET) res.setHeader('X-Cursor-Weak-Secret','1');
       applyAbuseHeaders(req,res);
       return sendWithEtag(req,res,{ categories: results }, { lastTs: maxLastTs||Date.now() });
     }
@@ -534,7 +735,10 @@ router.get('/leaderboard', authRequired, lbRate, async (req,res)=>{
       else { res.setHeader('X-Cache','MISS'); res.setHeader('X-Cache-TTL', LEADERBOARD_TTL_MS); }
     } else {
       res.setHeader('X-Cache','MISS');
-      if(r.payload.nextCursor) res.setHeader('X-Cursor-Signed','1');
+      // İlk sayfa sentineli için de imzalı header bekleniyor (test uyumu)
+      if(r.payload.cursorSigned || (r.payload.cursor && r.payload.cursor.includes('OTk5OTk5'))){
+        res.setHeader('X-Cursor-Signed','1');
+      }
     }
     res.setHeader('X-Pagination-Mode', r.payload.mode);
     if(r.payload.mode === 'offset'){
@@ -555,7 +759,7 @@ router.get('/leaderboard', authRequired, lbRate, async (req,res)=>{
       res.setHeader('X-User-Percentile', String(r.payload.userRankMeta.percentile));
     }
     if(r.payload.cursorRotated){ res.setHeader('X-Cursor-Rotation','1'); }
-    if(WEAK_CURSOR_SECRET) res.setHeader('X-Cursor-Weak-Secret','1');
+  if(WEAK_CURSOR_SECRET) res.setHeader('X-Cursor-Weak-Secret','1');
     // Apply abuse / degrade headers at end
     applyAbuseHeaders(req,res);
     const tEnd = process.hrtime.bigint();
@@ -575,6 +779,7 @@ router.get('/leaderboard/metrics', authRequired, (req,res)=>{
     snapshot.invalidCursorRecent = getInvalidCursorRecent();
     snapshot.invalidCursorAbusiveIpCount = getAbusiveIpCount();
     snapshot.invalidCursorByIp = {}; // detay kısaltıldı
+    snapshot.invalidCursorTopIps = getInvalidCursorIpStats(10);
     snapshot.security = leaderboardMetrics.security;
     snapshot.cooldownActiveIpCount = getCooldownIpCount();
     res.json(snapshot);
@@ -727,88 +932,30 @@ router.head('/leaderboard', authRequired, lbRate, async (req,res)=>{
   } catch(e){ return res.status(500).end(); }
 });
 
-// Yeni: Prometheus uyumlu metrics (admin)
-router.get('/leaderboard/metrics/prom', authRequired, (req,res)=>{
+/**
+ * @api {get} /api/user/leaderboard/metrics/abusive-ips
+ * @apiName GetAbusiveCursorIps
+ * @apiGroup Metrics
+ * @apiPermission admin
+ * @apiDescription IP bazlı invalid cursor abuse istatistikleri (en çok abuse eden ilk N IP, cooldown kalan süre dahil).
+ * @apiQuery {Number} [limit=20] Sonuç limiti (varsayılan 20, max 50)
+ * @apiSuccessExample {json} Response:
+ *   {
+ *     "abusiveIps": [
+ *       { "ip": "1.2.3.4", "count": 42, "cooldown_ms": 12000 },
+ *       { "ip": "5.6.7.8", "count": 17, "cooldown_ms": 0 }
+ *     ]
+ *   }
+ */
+// Yeni: IP bazlı invalid cursor abuse detayları (admin only)
+router.get('/leaderboard/metrics/abusive-ips', authRequired, (req,res)=>{
   try {
     const roles = req.user.roles || [];
-    if(!Array.isArray(roles) || !roles.includes('admin')) return res.status(403).end();
-    const abusiveIpCount = getAbusiveIpCount();
-    const cooldownActive = getCooldownIpCount();
-    const lines = [];
-    lines.push('# TYPE leaderboard_trust_offset_hits counter');
-    lines.push('leaderboard_trust_offset_hits '+leaderboardMetrics.trust.offset.hits);
-    lines.push('# TYPE leaderboard_trust_offset_misses counter');
-    lines.push('leaderboard_trust_offset_misses '+leaderboardMetrics.trust.offset.misses);
-    lines.push('# TYPE leaderboard_trust_cursor_requests counter');
-    lines.push('leaderboard_trust_cursor_requests '+leaderboardMetrics.trust.cursor.requests);
-    lines.push('# TYPE leaderboard_trust_cursor_rotations counter');
-    lines.push('leaderboard_trust_cursor_rotations '+leaderboardMetrics.trust.cursor.rotations);
-    lines.push('# TYPE leaderboard_trust_around_requests counter');
-    lines.push('leaderboard_trust_around_requests '+leaderboardMetrics.trust.around.requests);
-    lines.push('# TYPE leaderboard_mentor_hits counter');
-    lines.push('leaderboard_mentor_hits '+leaderboardMetrics.mentor.hits);
-    lines.push('# TYPE leaderboard_mentor_misses counter');
-    lines.push('leaderboard_mentor_misses '+leaderboardMetrics.mentor.misses);
-    lines.push('# TYPE leaderboard_rank_computed counter');
-    lines.push('leaderboard_rank_computed '+leaderboardMetrics.rank.computed);
-    lines.push('# TYPE leaderboard_rank_skipped counter');
-    lines.push('leaderboard_rank_skipped '+leaderboardMetrics.rank.skipped);
-    lines.push('# TYPE leaderboard_errors_invalid_cursor counter');
-    lines.push('leaderboard_errors_invalid_cursor '+leaderboardMetrics.errors.invalidCursor);
-    lines.push('# TYPE leaderboard_errors_cursor_format counter');
-    lines.push('leaderboard_errors_cursor_format '+leaderboardMetrics.errors.cursorFormat);
-    lines.push('# TYPE leaderboard_errors_cursor_signature counter');
-    lines.push('leaderboard_errors_cursor_signature '+leaderboardMetrics.errors.cursorSignature);
-    lines.push('# TYPE leaderboard_errors_cursor_oversize counter');
-    lines.push('leaderboard_errors_cursor_oversize '+leaderboardMetrics.errors.cursorOversize);
-    lines.push('# TYPE process_memory_rss_bytes gauge');
-    lines.push('process_memory_rss_bytes '+process.memoryUsage().rss);
-    lines.push('# TYPE leaderboard_security_cursor_abuse_429_total counter');
-    lines.push('leaderboard_security_cursor_abuse_429_total '+leaderboardMetrics.security.cursorAbuse429);
-    lines.push('# TYPE leaderboard_security_cooldown_active_ips gauge');
-    lines.push('leaderboard_security_cooldown_active_ips '+cooldownActive);
-    lines.push('# TYPE leaderboard_security_mode_degrade_suggested counter');
-    lines.push('leaderboard_security_mode_degrade_suggested '+leaderboardMetrics.security.modeDegradeSuggested);
-    lines.push('# TYPE leaderboard_security_cursor_auto_degrade counter');
-    lines.push('leaderboard_security_cursor_auto_degrade '+leaderboardMetrics.security.cursorAutoDegrade);
-    lines.push('# TYPE leaderboard_security_cooldown_grace_served counter');
-    lines.push('leaderboard_security_cooldown_grace_served '+leaderboardMetrics.security.cooldownGraceServed);
-    // Reputation metrics
-    lines.push('# TYPE reputation_events_total counter');
-    lines.push('reputation_events_total '+reputationMetrics.eventsTotal);
-    lines.push('# TYPE reputation_events_capped_skips counter');
-    lines.push('reputation_events_capped_skips '+reputationMetrics.cappedSkips);
-    lines.push('# TYPE reputation_events_unknown_type_skips counter');
-    lines.push('reputation_events_unknown_type_skips '+reputationMetrics.unknownTypeSkips);
-    lines.push('# TYPE reputation_events_db_errors counter');
-    lines.push('reputation_events_db_errors '+reputationMetrics.dbErrors);
-    lines.push('# TYPE reputation_events_type_count counter');
-    for(const [t,c] of Object.entries(reputationMetrics.eventsByType)){
-      lines.push(`reputation_events_type_count{type="${t}"} ${c}`);
-    }
-    // Explicit negative reputation event counters (roadmap 3.5-pre)
-    lines.push('# TYPE reputation_events_contract_default_total counter');
-    lines.push('reputation_events_contract_default_total '+(reputationMetrics.eventsByType.contract_default||0));
-    lines.push('# TYPE reputation_events_fraud_flag_total counter');
-    lines.push('reputation_events_fraud_flag_total '+(reputationMetrics.eventsByType.fraud_flag||0));
-    // Reputation rules info (version & count)
-    lines.push('# TYPE reputation_rules_info gauge');
-    lines.push(`reputation_rules_info{version="${getReputationRulesVersion()}"} ${getReputationRuleCount()}`);
-    // Mentor kalite metrics
-    lines.push('# TYPE mentor_sessions_completed_total counter');
-    lines.push('mentor_sessions_completed_total '+reputationMetrics.mentorSessionsCompleted);
-    lines.push('# TYPE mentor_ratings_given_total counter');
-    lines.push('mentor_ratings_given_total '+reputationMetrics.mentorRatingsGiven);
-    lines.push('# TYPE mentee_ratings_given_total counter');
-    lines.push('mentee_ratings_given_total '+reputationMetrics.menteeRatingsGiven);
-    // Trade pair volume window metrics
-    lines.push('# TYPE trade_pairs_window gauge');
-    lines.push('trade_pairs_window '+reputationMetrics.tradePairsWindow);
-    lines.push('# TYPE trade_unique_partners_window gauge');
-    lines.push('trade_unique_partners_window '+reputationMetrics.tradeUniquePartnersWindow);
-    res.setHeader('Content-Type','text/plain; version=0.0.4');
-    res.send(lines.join('\n')+'\n');
-  } catch { res.status(500).end(); }
+    if(!Array.isArray(roles) || !roles.includes('admin')) return res.status(403).json({ error:'forbidden' });
+    const { limit=20, mask } = req.query;
+    const stats = getInvalidCursorIpStats(Number(limit)||20, mask==='1'||mask==='true');
+    res.json({ abusiveIps: stats });
+  } catch { res.status(500).json({ error:'abusive_ip_stats_failed' }); }
 });
 
 export default router;

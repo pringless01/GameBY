@@ -1,0 +1,41 @@
+config:
+  target: "http://127.0.0.1:3100"
+  phases:
+    - duration: 20
+      arrivalRate: 2
+      name: smoke
+  plugins:
+    metrics-by-endpoint: {}
+  ensure:
+    maxErrorRate: 1
+  variables:
+    username: "perf_user_{{ $randomString(6) }}"
+    password: "perf_pass_123"
+scenarios:
+  - name: auth→activity→progress (smoke)
+    flow:
+      - post:
+          url: "/api/auth/register"
+          json:
+            username: "{{ username }}"
+            password: "{{ password }}"
+          capture:
+            - json: "$.user.id"
+              as: userId
+      - post:
+          url: "/api/auth/login"
+          json:
+            username: "{{ username }}"
+            password: "{{ password }}"
+          capture:
+            - json: "$.token"
+              as: jwt
+      - think: 0.2
+      - post:
+          url: "/api/activity/chop-wood"
+          headers:
+            Authorization: "Bearer {{ jwt }}"
+      - get:
+          url: "/api/user/onboarding/progress"
+          headers:
+            Authorization: "Bearer {{ jwt }}"

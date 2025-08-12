@@ -4,6 +4,7 @@
 // reputation_events tablosuna atomic kayıt + kullanıcı trust_score güncelleme tetiklemek.
 
 import { initDb } from '../config/database.js';
+import { envConfig } from '../config/env.js';
 import { invalidateOnTrustChange } from '../cache/trustCaches.js';
 import { incReputationEvent, incCappedSkip, incUnknownType, incReputationDbError } from '../metrics/reputationMetrics.js';
 import fs from 'fs';
@@ -42,7 +43,14 @@ function diffRules(oldObj, newObj){
   }
   return changes;
 }
-const RULES_PATH = path.resolve(process.cwd(), 'server', 'config', 'reputationRules.json');
+// Support running with cwd at repo root or at server/ directory
+let RULES_PATH = path.resolve(process.cwd(), 'server', 'config', 'reputationRules.json');
+try {
+  if(!fs.existsSync(RULES_PATH)){
+    const alt = path.resolve(process.cwd(), 'config', 'reputationRules.json');
+    if(fs.existsSync(alt)) RULES_PATH = alt;
+  }
+} catch { /* ignore */ }
 function loadRules(){
   try {
     const txt = fs.readFileSync(RULES_PATH, 'utf8');
@@ -55,6 +63,13 @@ function loadRules(){
       __RULES_VERSION = hashContent(txt);
       if(changes.length){
         try { console.warn(JSON.stringify({ level:'warn', ts:new Date().toISOString(), event:'reputation_rules_changed', version:__RULES_VERSION, changes })); } catch {}
+        // Audit DB insert (best-effort)
+        (async ()=>{
+          try {
+            const db = await initDb();
+            await db.run('INSERT OR IGNORE INTO reputation_rules_audit (version, changes_json, rule_count, created_at) VALUES (?,?,?,?)', [__RULES_VERSION, JSON.stringify(changes), Object.keys(DELTA_RULES).filter(k=>!k.startsWith('_')).length, new Date().toISOString()]);
+          } catch {/* ignore audit errors */}
+        })();
       }
       __LAST_RULES_RAW = txt;
     }
@@ -94,7 +109,13 @@ function computeDelta(userId, type){
     const used = getDailyCount(userId, type);
     if(used >= rule.dailyCap) return { delta:0, capped:true };
   }
-  return { delta: rule.delta, capped:false };
+  // Apply positive/negative weights
+  const posW = Number(envConfig.REPUTATION_POSITIVE_WEIGHT || 1);
+  const negW = Number(envConfig.REPUTATION_NEGATIVE_WEIGHT || 1);
+  let d = rule.delta;
+  if(d > 0) d = Math.round(d * posW);
+  else if(d < 0) d = Math.round(d * negW);
+  return { delta: d, capped:false };
 }
 
 // Günlük sayaç temizliği (basit gün değişiminde temizlik)
@@ -120,8 +141,8 @@ export async function emitReputationEvent({ userId, type, meta = {} }){
   // Transactional update
   await db.exec('BEGIN');
   try {
-    await db.run('INSERT INTO reputation_events (user_id, delta, reason, created_at) VALUES (?,?,?,?)',[userId, calc.delta, type, now]);
-    await db.run('UPDATE users SET trust_score = trust_score + ? WHERE id=?',[calc.delta, userId]);
+  await db.run('INSERT INTO reputation_events (user_id, delta, reason, created_at) VALUES (?,?,?,?)',[userId, calc.delta, type, now]);
+  await db.run('UPDATE users SET trust_score = trust_score + ?, last_decay_at = COALESCE(last_decay_at, ?) WHERE id=?',[calc.delta, now, userId]);
     await db.exec('COMMIT');
     incDailyCount(userId, type);
     invalidateOnTrustChange(userId);
@@ -141,8 +162,8 @@ export async function addManualPenalty({ userId, delta, reason }){
   const now = new Date().toISOString();
   await db.exec('BEGIN');
   try {
-    await db.run('INSERT INTO reputation_events (user_id, delta, reason, created_at) VALUES (?,?,?,?)',[userId, delta, reason||'manual']);
-    await db.run('UPDATE users SET trust_score = trust_score + ? WHERE id=?',[delta, userId]);
+  await db.run('INSERT INTO reputation_events (user_id, delta, reason, created_at) VALUES (?,?,?,?)',[userId, delta, reason||'manual']);
+  await db.run('UPDATE users SET trust_score = trust_score + ?, last_decay_at = COALESCE(last_decay_at, ?) WHERE id=?',[delta, new Date().toISOString(), userId]);
     await db.exec('COMMIT');
     invalidateOnTrustChange(userId);
     incReputationEvent(reason||'manual');
@@ -170,8 +191,8 @@ export async function applyDirectReputationDelta({ userId, delta, reason }){
   const now = new Date().toISOString();
   await db.exec('BEGIN');
   try {
-    await db.run('INSERT INTO reputation_events (user_id, delta, reason, created_at) VALUES (?,?,?,?)',[userId, delta, reason, now]);
-    await db.run('UPDATE users SET trust_score = trust_score + ? WHERE id=?',[delta, userId]);
+  await db.run('INSERT INTO reputation_events (user_id, delta, reason, created_at) VALUES (?,?,?,?)',[userId, delta, reason, now]);
+  await db.run('UPDATE users SET trust_score = trust_score + ?, last_decay_at = COALESCE(last_decay_at, ?) WHERE id=?',[delta, now, userId]);
     await db.exec('COMMIT');
     invalidateOnTrustChange(userId);
     incReputationEvent(reason);
@@ -187,9 +208,15 @@ export async function emitOnboardingStep({ userId, step, deltaIfConfigured=true 
   if(!userId || !step) return { success:false, error:'invalid_args' };
   const db = await initDb();
   // idempotent insert
+  let inserted = false;
   try {
-    await db.run('INSERT INTO onboarding_progress (user_id, step) VALUES (?,?)',[userId, step]);
+    const res = await db.run('INSERT INTO onboarding_progress (user_id, step) VALUES (?,?)',[userId, step]);
+    if(res && res.changes === 1) inserted = true;
   } catch { /* duplicate ignore */ }
+  // metrics for onboarding by step (only on first insert)
+  if(inserted){
+    try { const { incOnboardingStep } = await import('../metrics/reputationMetrics.js'); incOnboardingStep(step); } catch { /* ignore */ }
+  }
   // reputation rule optional (onboard_step or specific step key override)
   const rules = listDeltaRules();
   let reasonKey = 'onboard_step';

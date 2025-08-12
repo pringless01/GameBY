@@ -1,11 +1,12 @@
 import { initDb } from '../config/database.js';
+import { envConfig } from '../config/env.js';
 import { autoAdvanceOnEvent } from '../services/mentorService.js';
 import { emitReputationEvent, ReputationEventType } from '../services/reputationEvents.js';
 
 const onlineUsers = new Set();
 // Basit in-memory flood sayaçları (TODO: kalıcı / kaydırmalı pencere rate limit)
-const messageWindow = 10_000; // 10s pencere
-const maxMessagesPerWindow = 8;
+const messageWindow = Number(envConfig.CHAT_FLOOD_WINDOW_MS || 10000);
+const maxMessagesPerWindow = Number(envConfig.CHAT_FLOOD_MAX_MESSAGES || 8);
 const userMessageTimestamps = new Map(); // userId -> [timestamps]
 
 function prune(tsArr){

@@ -3,7 +3,8 @@ import { getIo } from '../sockets/io.js';
 import { autoAdvanceOnEvent } from '../services/mentorService.js';
 import { logAudit } from '../services/auditService.js';
 import { updateTrust } from '../services/userService.js';
-import { applyDirectReputationDelta, emitReputationEvent, ReputationEventType, emitOnboardingStep } from '../services/reputationEvents.js';
+import { applyDirectReputationDelta, emitReputationEvent, ReputationEventType, emitOnboardingStep, listDeltaRules } from '../services/reputationEvents.js';
+import { envConfig } from '../config/env.js';
 import { setTradeWindowMetrics } from '../metrics/reputationMetrics.js';
 
 export const DAILY_CONTRACT_TRUST_CAP = 40; // ileride .env'e taşınabilir
@@ -11,6 +12,30 @@ export const DAILY_CONTRACT_TRUST_CAP = 40; // ileride .env'e taşınabilir
 export const MICRO_PRICE_TRUST_THRESHOLD = 5; // Bu fiyatın altı: trust ödülü yok
 export const MAX_DAILY_PAIR_REWARDING = 3; // Aynı çift için günde en fazla ödül verilen kontrat sayısı
 export const CONTRACT_DEFAULT_AFTER_MS = 6 * 60 * 60 * 1000; // 6 saat ACTIVE kalırsa default say (taslak)
+
+// Escrow & Cancel spam (taslak heuristik)
+const CANCEL_SPAM_WINDOW_MS = 10 * 60 * 1000; // 10 dk penceresi
+const CANCEL_SPAM_THRESHOLD = 3; // pencere içinde iptal sayısı eşik
+const CANCEL_SPAM_FLAG_COOLDOWN_MS = 60 * 60 * 1000; // 1 saat aynı kullanıcıya yeniden flag verme
+const cancelWindowByUser = new Map(); // userId -> [ts,...]
+const lastCancelSpamFlagByUser = new Map(); // userId -> ts
+function recordCancelAndMaybeFlag(userId){
+  const now = Date.now();
+  const list = cancelWindowByUser.get(userId) || [];
+  const cutoff = now - CANCEL_SPAM_WINDOW_MS;
+  const pruned = list.filter(ts => ts >= cutoff);
+  pruned.push(now);
+  cancelWindowByUser.set(userId, pruned);
+  const count = pruned.length;
+  if(count > CANCEL_SPAM_THRESHOLD){ // strict > (eşik politikası)
+    const last = lastCancelSpamFlagByUser.get(userId) || 0;
+    if(now - last > CANCEL_SPAM_FLAG_COOLDOWN_MS){
+      lastCancelSpamFlagByUser.set(userId, now);
+      // Reputation negatifi: contract_cancel_spam (reputationRules.json'da konfigüre)
+      emitReputationEvent({ userId, type: 'contract_cancel_spam' }).catch(()=>{});
+    }
+  }
+}
 
 export async function getTodayContractTrustTotal(userId){
   const db = await initDb();
@@ -82,7 +107,11 @@ export async function actOnContract(id, userId, action) {
   if (newStatus !== contract.status) {
     await db.run('BEGIN');
     try {
-      if (newStatus === 'COMPLETED') {
+      // Escrow durum yönetimi
+      if (newStatus === 'ACTIVE') {
+        await db.run('UPDATE contracts SET escrow_status = ?, escrow_amount = ? WHERE id = ?', ['HELD', contract.price || 0, id]);
+      }
+  if (newStatus === 'COMPLETED') {
         // Para transferi (price)
         if (contract.price > 0) {
           const payer = await db.get('SELECT id, money, wood, grain, business FROM users WHERE id = ?', [contract.creator_id]);
@@ -119,8 +148,14 @@ export async function actOnContract(id, userId, action) {
         if (contract.counter_give_grain) { addUpdate('UPDATE users SET grain = grain - ? WHERE id=?', [contract.counter_give_grain, contract.counterparty_id]); addUpdate('UPDATE users SET grain = grain + ? WHERE id=?', [contract.counter_give_grain, contract.creator_id]); }
         if (contract.counter_give_business) { addUpdate('UPDATE users SET business = business - ? WHERE id=?', [contract.counter_give_business, contract.counterparty_id]); addUpdate('UPDATE users SET business = business + ? WHERE id=?', [contract.counter_give_business, contract.creator_id]); }
         await Promise.all(updates);
+        // Escrow release
+        await db.run('UPDATE contracts SET escrow_status = ? WHERE id = ?', ['RELEASED', id]);
       }
       await db.run('UPDATE contracts SET status = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?', [newStatus, id]);
+      // Cancel sonrası escrow refund (ACTIVE iken iptal edildiyse)
+      if (newStatus === 'CANCELLED' && contract.status === 'ACTIVE') {
+        await db.run('UPDATE contracts SET escrow_status = ? WHERE id = ?', ['REFUNDED', id]);
+      }
       await db.run('COMMIT');
     } catch (e) {
       if (['insufficient_funds','insufficient_resources','invalid_amount'].includes(e.message) === false) {
@@ -129,6 +164,11 @@ export async function actOnContract(id, userId, action) {
       if (['insufficient_funds','insufficient_resources','invalid_amount'].includes(e.message)) throw e;
     }
     const updated = await getContract(id);
+
+    // Cancel spam heuristik tetikleyici
+    if (newStatus === 'CANCELLED' && userId === contract.creator_id) {
+      recordCancelAndMaybeFlag(userId);
+    }
 
     if (newStatus === 'COMPLETED') {
       const flags = [];
@@ -142,25 +182,65 @@ export async function actOnContract(id, userId, action) {
           flags.push('pair_limit_exceeded');
         } else {
           dyn = calculateDynamicTrustReward(updated);
-          const [cTot, pTot] = await Promise.all([
-            getTodayContractTrustTotal(updated.creator_id),
-            getTodayContractTrustTotal(updated.counterparty_id)
+          // trade_completed bonus delta (rules + env weights)
+          let tradeDelta = 0;
+          try {
+            const rules = (typeof listDeltaRules === 'function') ? listDeltaRules() : {};
+            const rule = rules && rules['trade_completed'];
+            if(rule && typeof rule.delta === 'number'){
+              const posW = Number(envConfig.REPUTATION_POSITIVE_WEIGHT || 1);
+              const negW = Number(envConfig.REPUTATION_NEGATIVE_WEIGHT || 1);
+              let d = rule.delta;
+              if(d > 0) d = Math.round(d * posW);
+              else if(d < 0) d = Math.round(d * negW);
+              tradeDelta = d;
+            }
+          } catch {}
+          // Toplam günlük kazanç (tüm nedenler) – cap global uygulanır
+          const db2 = await initDb();
+          const [cSumRow, pSumRow] = await Promise.all([
+            db2.get(`SELECT COALESCE(SUM(delta),0) as total FROM reputation_events WHERE user_id = ? AND date(created_at)=date('now')`, [updated.creator_id]),
+            db2.get(`SELECT COALESCE(SUM(delta),0) as total FROM reputation_events WHERE user_id = ? AND date(created_at)=date('now')`, [updated.counterparty_id])
           ]);
-          const cRemaining = Math.max(0, DAILY_CONTRACT_TRUST_CAP - cTot);
-            const pRemaining = Math.max(0, DAILY_CONTRACT_TRUST_CAP - pTot);
-          cReward = Math.min(dyn, cRemaining);
-          pReward = (updated.counterparty_id !== updated.creator_id) ? Math.min(dyn, pRemaining) : 0;
+          const cRemaining = Math.max(0, DAILY_CONTRACT_TRUST_CAP - (cSumRow?.total||0));
+          const pRemaining = Math.max(0, DAILY_CONTRACT_TRUST_CAP - (pSumRow?.total||0));
+          const cDynCap = Math.max(0, cRemaining - Math.max(0, tradeDelta));
+          const pDynCap = Math.max(0, pRemaining - Math.max(0, tradeDelta));
+          cReward = Math.min(dyn, cDynCap);
+          pReward = (updated.counterparty_id !== updated.creator_id) ? Math.min(dyn, pDynCap) : 0;
         }
       }
       try {
+        // Apply dynamic rewards first
         if (cReward > 0) await applyDirectReputationDelta({ userId: updated.creator_id, delta: cReward, reason: 'contract_completed_dynamic' });
         if (pReward > 0) await applyDirectReputationDelta({ userId: updated.counterparty_id, delta: pReward, reason: 'contract_completed_dynamic' });
-        logAudit({ userId: null, action: 'contract_trust_reward_dynamic', detail: JSON.stringify({ contractId: id, dyn_base: dyn, creator_reward: cReward, counterparty_reward: pReward, cap: DAILY_CONTRACT_TRUST_CAP, flags, micro_threshold: MICRO_PRICE_TRUST_THRESHOLD, pair_limit: MAX_DAILY_PAIR_REWARDING, barter: barterValue(updated) }) });
+        // Then apply capped trade_completed bonus within remaining daily cap
+        // Recompute sums after dynamic application
+        const db3 = await initDb();
+        const [cSum2, pSum2] = await Promise.all([
+          db3.get(`SELECT COALESCE(SUM(delta),0) as total FROM reputation_events WHERE user_id = ? AND date(created_at)=date('now')`, [updated.creator_id]),
+          db3.get(`SELECT COALESCE(SUM(delta),0) as total FROM reputation_events WHERE user_id = ? AND date(created_at)=date('now')`, [updated.counterparty_id])
+        ]);
+        let tradeDelta = 0;
+        try {
+          const rules = (typeof listDeltaRules === 'function') ? listDeltaRules() : {};
+          const rule = rules && rules['trade_completed'];
+          if(rule && typeof rule.delta === 'number'){
+            const posW = Number(envConfig.REPUTATION_POSITIVE_WEIGHT || 1);
+            const negW = Number(envConfig.REPUTATION_NEGATIVE_WEIGHT || 1);
+            let d = rule.delta;
+            if(d > 0) d = Math.round(d * posW); else if(d < 0) d = Math.round(d * negW);
+            tradeDelta = d;
+          }
+        } catch {}
+        const cRemainAfterDyn = Math.max(0, DAILY_CONTRACT_TRUST_CAP - (cSum2?.total||0));
+        const pRemainAfterDyn = Math.max(0, DAILY_CONTRACT_TRUST_CAP - (pSum2?.total||0));
+        const cTrade = Math.min(tradeDelta, cRemainAfterDyn);
+        const pTrade = (updated.counterparty_id !== updated.creator_id) ? Math.min(tradeDelta, pRemainAfterDyn) : 0;
+        if (cTrade > 0) await applyDirectReputationDelta({ userId: updated.creator_id, delta: cTrade, reason: 'trade_completed' });
+        if (pTrade > 0) await applyDirectReputationDelta({ userId: updated.counterparty_id, delta: pTrade, reason: 'trade_completed' });
+        logAudit({ userId: null, action: 'contract_trust_reward_dynamic', detail: JSON.stringify({ contractId: id, dyn_base: dyn, creator_reward: cReward, counterparty_reward: pReward, trade_bonus_applied: { creator: cTrade, counterparty: pTrade }, cap: DAILY_CONTRACT_TRUST_CAP, flags, micro_threshold: MICRO_PRICE_TRUST_THRESHOLD, pair_limit: MAX_DAILY_PAIR_REWARDING, barter: barterValue(updated) }) });
       } catch (e) { /* ignore */ }
-      emitReputationEvent({ userId: updated.creator_id, type: ReputationEventType.TRADE_COMPLETED }).catch(()=>{});
-      if (updated.counterparty_id !== updated.creator_id) {
-        emitReputationEvent({ userId: updated.counterparty_id, type: ReputationEventType.TRADE_COMPLETED }).catch(()=>{});
-      }
       // onboarding: first completed contract per user
       try {
         const db2 = await initDb();
@@ -225,7 +305,7 @@ async function markDefaultExpiredContracts(){
   if(!rows.length) return 0;
   for(const r of rows){
     try {
-      await db.run(`UPDATE contracts SET status='DEFAULTED', updated_at=CURRENT_TIMESTAMP WHERE id=? AND status='ACTIVE'`, [r.id]);
+  await db.run(`UPDATE contracts SET status='DEFAULTED', escrow_status='REFUNDED', updated_at=CURRENT_TIMESTAMP WHERE id=? AND status='ACTIVE'`, [r.id]);
       logAudit({ userId:null, action:'contract_default_auto', detail: JSON.stringify({ contractId:r.id }) });
       // Negatif reputation (her iki taraf da etkilenir; ileride ağırlıklandırılabilir)
       emitReputationEvent({ userId: r.creator_id, type: ReputationEventType.CONTRACT_DEFAULT }).catch(()=>{});

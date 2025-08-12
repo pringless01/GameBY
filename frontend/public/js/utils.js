@@ -207,9 +207,12 @@ async function apiCall(url, options = {}) {
             return null;
         }
         
-        const data = await response.json();
+        const data = await response.json().catch(()=>({}));
         
         if (!response.ok) {
+            if(response.status === 429){
+                showToast('Çok fazla istek yaptınız. Lütfen bekleyin.', 'warning', 4000);
+            }
             throw new Error(data.error || `HTTP ${response.status}`);
         }
         

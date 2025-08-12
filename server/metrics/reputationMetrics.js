@@ -9,7 +9,8 @@ export const reputationMetrics = {
   mentorRatingsGiven: 0,
   menteeRatingsGiven: 0,
   tradePairsWindow: 0,
-  tradeUniquePartnersWindow: 0
+  tradeUniquePartnersWindow: 0,
+  onboardingByStep: {}
 };
 
 export function incReputationEvent(type){
@@ -23,3 +24,18 @@ export function incMentorSessionCompleted(){ reputationMetrics.mentorSessionsCom
 export function incMentorRatingGiven(){ reputationMetrics.mentorRatingsGiven++; }
 export function incMenteeRatingGiven(){ reputationMetrics.menteeRatingsGiven++; }
 export function setTradeWindowMetrics({ pairs, uniquePartners }){ reputationMetrics.tradePairsWindow = pairs; reputationMetrics.tradeUniquePartnersWindow = uniquePartners; }
+
+// TODO(metrics): onboarding step granular counters already covered by eventsByType (onboard_step, onboard_contract_first_completed)
+
+export function incOnboardingStep(step){
+  if(!step) return;
+  reputationMetrics.onboardingByStep[step] = (reputationMetrics.onboardingByStep[step]||0)+1;
+}
+
+// Decay metrics (N010)
+reputationMetrics.decayRuns = 0;
+reputationMetrics.decayAdjustedUsers = 0;
+reputationMetrics.decayErrors = 0;
+export function incDecayRun(){ reputationMetrics.decayRuns++; }
+export function incDecayAdjustedUsers(n){ reputationMetrics.decayAdjustedUsers += (n||0); }
+export function incDecayErrors(){ reputationMetrics.decayErrors++; }

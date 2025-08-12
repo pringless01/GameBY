@@ -1,0 +1,65 @@
+name: CI - Lint, Test, Coverage, Migrations
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build_test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install server deps
+        working-directory: server
+        run: |
+          if [ -f package-lock.json ]; then npm ci; else npm install; fi
+
+      - name: Unit tests + Integration tests
+        working-directory: server
+        run: npm run test
+
+      - name: Coverage artifacts
+        if: always()
+        working-directory: server
+        run: |
+          npm run coverage:save || true
+        
+      - name: Upload coverage
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-artifacts
+          path: |
+            logs/coverage-final.json
+            logs/lcov.info
+            logs/coverage-summary.txt
+
+  migrations_check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+      - name: Install deps
+        working-directory: server
+        run: |
+          if [ -f package-lock.json ]; then npm ci; else npm install; fi
+      - name: Run migrations and check pending
+        working-directory: server
+        run: |
+          npm run migrate
+          npm run check:migrations

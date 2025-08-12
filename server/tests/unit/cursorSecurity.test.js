@@ -33,16 +33,18 @@ const { encodeCursor, decodeCursor, WEAK_CURSOR_SECRET, INVALID_CURSOR_THRESHOLD
     const badDec = decodeCursor(badCursor, '2.2.2.2');
     assert(badDec === null, 'Bad signature should decode to null');
 
-    // 4. Abuse threshold not reached yet
-    assert(INVALID_CURSOR_THRESHOLD === 3, 'Threshold env not applied');
-    assert(!isCursorAbuse('2.2.2.2'), 'Should not be abuse before threshold');
-    // Generate 3 invalid decodes to reach threshold (>= threshold -> abuse)
-    for(let i=0;i<3;i++){ decodeCursor(badCursor, '9.9.9.9'); }
-    assert(isCursorAbuse('9.9.9.9'), 'IP should be marked abusive at threshold');
+  // 4. Abuse threshold logic (strict >). At threshold: still not abusive.
+  assert(INVALID_CURSOR_THRESHOLD === 3, 'Threshold env not applied');
+  assert(!isCursorAbuse('2.2.2.2'), 'Should not be abuse before threshold');
+  for(let i=0;i<3;i++){ decodeCursor(badCursor, '9.9.9.9'); }
+  assert(!isCursorAbuse('9.9.9.9'), 'Should NOT be abusive exactly at threshold (strict >)');
+  // exceed threshold by one more invalid decode
+  decodeCursor(badCursor, '9.9.9.9');
+  assert(isCursorAbuse('9.9.9.9'), 'Should be abusive after exceeding threshold');
 
-    // 5. Cooldown applied
-    const cdMs = isInCursorCooldown('9.9.9.9');
-    assert(cdMs > 0, 'Cooldown should be active after abuse detection');
+  // 5. Cooldown applied after exceeding threshold
+  const cdMs = isInCursorCooldown('9.9.9.9');
+  assert(cdMs > 0, 'Cooldown should be active after abuse detection (post-threshold)');
 
     // 6. getIpInvalidCount prunes old entries correctly: wait past cooldown window and ensure count shrinks
     await new Promise(r=>setTimeout(r, 600)); // > CURSOR_ABUSE_COOLDOWN_MS

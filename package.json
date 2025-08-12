@@ -1,0 +1,9 @@
+{
+  "name": "gameby-root",
+  "private": true,
+  "version": "0.0.1",
+  "type": "module",
+  "scripts": {
+    "codex:run": "node tools/codex-runner.js"
+  }
+}

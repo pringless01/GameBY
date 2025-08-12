@@ -6,6 +6,7 @@
   "spam_penalty": { "delta": -2, "dailyCap": 50 },
   "contract_default": { "delta": -5, "dailyCap": 10 },
   "fraud_flag": { "delta": -8, "dailyCap": 5 },
+  "contract_cancel_spam": { "delta": -3, "dailyCap": 10 },
   "onboard_step": { "delta": 1, "dailyCap": 30 },
   "onboard_contract_first_completed": { "delta": 5, "dailyCap": 5 }
 }

@@ -1,6 +1,8 @@
 import express from 'express';
 import { authRequired } from '../middleware/auth.js';
 import { getUserState, advanceState, getGuidance, setState, joinMentorQueue, leaveMentorQueue, requestMentor, getQueues, getActiveMentorship, canBeMentor, setMentorReady, setMenteeWaiting, completeMentorship, listActiveMentorship, getMentorshipById } from '../services/mentorService.js';
+import { rateLimit } from '../middleware/rateLimit.js';
+import { envConfig } from '../config/env.js';
 
 const router = express.Router();
 
@@ -35,9 +37,11 @@ router.post('/set', authRequired, async (req, res) => {
   }
 });
 
-router.post('/mentor/ready', authRequired, async (req,res)=>{ const r = await joinMentorQueue(req.user.id); if(!r.ok) return res.status(400).json(r); res.json(r); });
+const mentorLimiter = rateLimit({ windowMs: Number(envConfig.MENTOR_RATE_WINDOW_MS||10000), max: Number(envConfig.MENTOR_RATE_MAX||20), keyGenerator:(req)=> 'mentor:'+req.ip});
+
+router.post('/mentor/ready', authRequired, mentorLimiter, async (req,res)=>{ const r = await joinMentorQueue(req.user.id); if(!r.ok) return res.status(400).json(r); res.json(r); });
 router.post('/mentor/leave', authRequired, (req,res)=>{ leaveMentorQueue(req.user.id); res.json({ ok:true }); });
-router.post('/mentor/request', authRequired, async (req,res)=>{ const r = await requestMentor(req.user.id); if(!r.ok) return res.status(400).json(r); res.json(r); });
+router.post('/mentor/request', authRequired, mentorLimiter, async (req,res)=>{ const r = await requestMentor(req.user.id); if(!r.ok) return res.status(400).json(r); res.json(r); });
 router.get('/mentor/eligibility', authRequired, async (req,res)=>{ const e = await canBeMentor(req.user.id); res.json(e); });
 router.get('/queues', authRequired, (req,res)=>{ res.json(getQueues()); });
 router.get('/active', authRequired, async (req,res)=>{
@@ -47,13 +51,13 @@ router.get('/active', authRequired, async (req,res)=>{
     res.json({ active:true, mentorship:m });
   } catch(e){ res.status(500).json({ error:'active_failed' }); }
 });
-router.post('/mentor/toggle', authRequired, async (req,res)=>{
+router.post('/mentor/toggle', authRequired, mentorLimiter, async (req,res)=>{
   const { ready } = req.body;
   const r = await setMentorReady(req.user.id, !!ready);
   if(!r.ok) return res.status(400).json(r);
   res.json(r);
 });
-router.post('/mentee/toggle', authRequired, async (req,res)=>{
+router.post('/mentee/toggle', authRequired, mentorLimiter, async (req,res)=>{
   const { waiting } = req.body;
   const r = await setMenteeWaiting(req.user.id, !!waiting);
   if(!r.ok) return res.status(400).json(r);

@@ -33,35 +33,39 @@ function post(url, json, headers={}){
 // Basit server bootstrap (assumes JWT for admin not strictly required if bypass or create admin user) – here we skip full auth and just check format after start.
 // NOTE: For simplicity this test just starts the server and hits metrics with a placeholder token (server currently checks roles; skipping deep auth wiring for brevity).
 
-describe('Prometheus reputation new metrics presence', function(){
-  this.timeout(20000);
-  let proc; let token;
-  before(function(done){
-    proc = spawn('node',['server.js'],{ cwd: path.resolve(__dirname,'..','..'), env: { ...process.env, JWT_SECRET:'dev', PORT:'3456', DEV_ADMIN_USERNAME:'admin_prom' } });
-    proc.stdout.on('data',async d=>{
-      const line = d.toString();
-      if(line.includes('Server listening')){
-        try {
-          // register admin user (auto role assignment via DEV_ADMIN_USERNAME)
-          await post('http://localhost:3456/api/auth/register',{ username:'admin_prom', password:'pw' });
-          const login = await post('http://localhost:3456/api/auth/login',{ username:'admin_prom', password:'pw' });
-          const parsed = JSON.parse(login.body||'{}');
+// Mocha yok; diğer integration testleri gibi IIFE pattern.
+(async () => {
+  let proc; let token; let failed = false;
+  try {
+    proc = spawn('node',['server.js'],{ cwd: path.resolve(__dirname,'..','..'), env: { ...process.env, JWT_SECRET:'dev-temp-long-secret-1234567890123456', CURSOR_SECRET:'cursor-temp-long-secret-12345678', PORT:'3456', DEV_ADMIN_USERNAME:'admin_prom' } });
+    await new Promise((resolve,reject)=>{
+      const to = setTimeout(()=>reject(new Error('server_timeout')),12000);
+      proc.stdout.on('data',async d=>{
+        const line = d.toString();
+        if(line.includes('Server listening')){
+          try {
+            await post('http://localhost:3456/api/auth/register',{ username:'admin_prom', password:'pw' });
+            const login = await post('http://localhost:3456/api/auth/login',{ username:'admin_prom', password:'pw' });
+            const parsed = JSON.parse(login.body||'{}');
             token = parsed.token;
-        } catch(e){ /* ignore */ }
-        done();
-      }
+          } catch(e){ }
+          clearTimeout(to); resolve();
+        }
+      });
+      proc.stderr.on('data',()=>{});
     });
-    proc.stderr.on('data',()=>{});
-  });
-  after(function(){ if(proc) proc.kill(); });
-
-  it('should expose negative event counters & rules info metric', async function(){
-    assert.ok(token, 'Token missing');
-    const r = await get('http://localhost:3456/api/user/leaderboard/metrics/prom', { Authorization: 'Bearer '+token });
-    assert.equal(r.status, 200, 'Expected 200 with admin token');
+    assert.ok(token,'Token missing');
+    const r = await get('http://localhost:3456/api/user/leaderboard/metrics/prom', { Authorization:'Bearer '+token });
+    assert.equal(r.status,200,'Expected 200');
     const body = r.body;
     assert.ok(body.includes('reputation_events_contract_default_total'),'missing contract_default counter');
     assert.ok(body.includes('reputation_events_fraud_flag_total'),'missing fraud_flag counter');
     assert.ok(body.includes('reputation_rules_info'),'missing rules info metric');
-  });
-});
+    console.log('REPUTATION_PROM_NEW_METRICS_SUCCESS');
+    process.exit(0);
+  } catch(e){
+    failed = true;
+    console.error('REPUTATION_PROM_NEW_METRICS_FAIL', e);
+    process.exit(1);
+  } finally { if(proc) proc.kill(); }
+})();

@@ -1,0 +1,56 @@
+[
+  {
+    "id": "T001",
+    "title": "Integration testleri koştur ve coverage üret",
+    "desc": "Tüm mevcut testleri çalıştır. Eksikse ekle: auth happy-path, 401/403, 429 rate limit, socket join/send roundtrip. Coverage raporunu /logs altına bırak.",
+  "done": true
+  },
+  {
+    "id": "T002",
+    "title": "README: ortam değişkenleri tablosu",
+    "desc": "README'ye env tablo ekle (JWT_SECRET>=32, CURSOR_SECRET, CORS_ORIGIN, LB_RATE_WINDOW_MS, LB_RATE_MAX, DATABASE_URL vb.). Dev/Prod örnekleriyle.",
+  "done": true
+  },
+  {
+    "id": "T003",
+    "title": "CI: migration kontrolü",
+    "desc": "GitHub Actions'a `npm run check:migrations` adımı ekle. Pending migration varsa job fail et. Kısa özet log yaz.",
+  "done": true
+  },
+  {
+    "id": "T004",
+    "title": "Health endpoint'e istatistikler",
+    "desc": "Health JSON'a cache HIT/MISS, uptime, pendingMigrations ilk 5, rateLimit snapshot ekle.",
+  "done": true
+  },
+  {
+    "id": "T005",
+    "title": "Socket flood limitlerini env'e taşı",
+    "desc": "Mesaj pencere süresi ve max mesaj/30s limitlerini envConfig'ten okur hale getir. Varsayılanları belirle ve dokümante et.",
+  "done": true
+  },
+  {
+    "id": "T006",
+    "title": "Docker + Nginx + deploy",
+    "desc": "docker-compose.yml ve nginx.conf ekle (api ve socket.io upgrade). deploy.sh: build, up -d, health bekle, smoke testi.",
+  "done": true
+  },
+  {
+    "id": "T007",
+    "title": "Frontend MVP ekranları",
+    "desc": "Dashboard + Global Chat + Profil/İtibar + Pazar sayfaları. 401→login redirect, 429→uyarı. Socket client tokenlı bağlansın.",
+  "done": true
+  },
+  {
+    "id": "T008",
+    "title": "Prometheus temel metrikleri",
+    "desc": "HTTP request counter, error rate, socket bağlantı sayısı. /metrics altında isimlendirme standartlarıyla ve basit test.",
+  "done": true
+  },
+  {
+    "id": "T009",
+    "title": "CHANGELOG ve RC tag",
+    "desc": "CHANGELOG.md (v0.1.0-rc) oluştur. RC tag için hazırlık. Kalan risk ve bilinen kusurlar listesini yaz.",
+  "done": true
+  }
+]

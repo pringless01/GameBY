@@ -31,6 +31,21 @@ export async function initDb() {
 export async function runMigration(name, sql) {
   const row = await db.get('SELECT id FROM migrations WHERE name = ?', [name]);
   if (row) return false;
+  const hasExplicitTx = /\bBEGIN\b/i.test(sql);
+  if(hasExplicitTx){
+    try {
+      await db.exec(sql);
+      await db.run('INSERT INTO migrations (name) VALUES (?)', [name]);
+    } catch(e){
+      if (/duplicate column name: roles/i.test(e.message)) {
+        console.warn('Migration uyarı (roles zaten var) skip explicit tx:', name);
+        await db.run('INSERT INTO migrations (name) VALUES (?)', [name]);
+        return true;
+      }
+      throw e;
+    }
+    return true;
+  }
   await db.exec('BEGIN');
   try {
     await db.exec(sql);

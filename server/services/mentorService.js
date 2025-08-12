@@ -1,5 +1,6 @@
 import { initDb } from '../config/database.js';
 import { getIo } from '../sockets/io.js';
+import { envConfig } from '../config/env.js';
 import { invalidateMentorLeaderboards } from '../cache/mentorCaches.js';
 import { emitReputationEvent, ReputationEventType } from '../services/reputationEvents.js';
 import { incMentorSessionCompleted, incMentorRatingGiven, incMenteeRatingGiven } from '../metrics/reputationMetrics.js';
@@ -93,6 +94,16 @@ export async function autoAdvanceOnEvent(userId, event){
 // Basit in-memory queue (ileride kalıcı depolamaya taşınabilir)
 const mentorQueue = new Set(); // mentor olmaya hazır kullanıcılar
 const menteeQueue = new Set(); // eşleşme bekleyen kullanıcılar
+const lastMatchAttempt = new Map(); // userId -> ts
+
+function canAttempt(userId){
+  const cd = Number(envConfig.MENTOR_MATCH_COOLDOWN_MS || 30000);
+  const last = lastMatchAttempt.get(userId)||0;
+  const now = Date.now();
+  if(now - last < cd) return false;
+  lastMatchAttempt.set(userId, now);
+  return true;
+}
 
 export async function hasActiveMentorship(userId){
   const db = await initDb();
@@ -144,7 +155,10 @@ function tryMatch(){
     await db.run('UPDATE users SET mentor_ready=0 WHERE id=?',[mentorId]).catch(()=>{});
     const names = await fetchUsernames(mentorId, menteeId);
     const io = getIo();
-    if(io){ io.emit('mentor_assigned', { mentorId, menteeId, ...names }); }
+    if(io){
+      io.emit('mentor:match_found', { mentorId, menteeId, ...names });
+      io.emit('mentor:session_status', { mentorship: await db.get('SELECT * FROM mentorships WHERE mentor_id=? AND mentee_id=? ORDER BY id DESC LIMIT 1',[mentorId, menteeId]) });
+    }
   });
 }
 
@@ -179,14 +193,14 @@ export async function rehydrateQueues(){
 export async function setMentorReady(userId, ready){
   const db = await initDb();
   await db.run('UPDATE users SET mentor_ready=? WHERE id=?',[ready?1:0,userId]);
-  if(ready){ mentorQueue.add(userId); tryMatch(); } else { mentorQueue.delete(userId); }
+  if(ready){ mentorQueue.add(userId); const io = getIo(); if(io) io.emit('mentor:queue_update', getQueues()); tryMatch(); } else { mentorQueue.delete(userId); const io = getIo(); if(io) io.emit('mentor:queue_update', getQueues()); }
   return { ok:true, ready };
 }
 
 export async function setMenteeWaiting(userId, waiting){
   const db = await initDb();
   await db.run('UPDATE users SET mentee_waiting=? WHERE id=?',[waiting?1:0,userId]);
-  if(waiting){ menteeQueue.add(userId); tryMatch(); } else { menteeQueue.delete(userId); }
+  if(waiting){ menteeQueue.add(userId); const io = getIo(); if(io) io.emit('mentor:queue_update', getQueues()); tryMatch(); } else { menteeQueue.delete(userId); const io = getIo(); if(io) io.emit('mentor:queue_update', getQueues()); }
   return { ok:true, waiting };
 }
 

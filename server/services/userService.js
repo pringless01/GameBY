@@ -1,4 +1,19 @@
 import { initDb } from '../config/database.js';
+/**
+ * Kullanıcı login olayını kaydeder (fraud/multi-account gözlemi için).
+ * @param {number} userId
+ * @param {string} ip
+ * @param {string} userAgent
+ * @param {string} [deviceFingerprint]
+ * @returns {Promise<void>}
+ */
+export async function recordUserLogin(userId, ip, userAgent, deviceFingerprint = null) {
+  const db = await initDb();
+  await db.run(
+    `INSERT INTO user_login_events (user_id, ip, user_agent, device_fingerprint, ts) VALUES (?, ?, ?, ?, strftime('%s','now'))`,
+    [userId, ip, userAgent, deviceFingerprint]
+  );
+}
 import bcrypt from 'bcrypt';
 import { getIo } from '../sockets/io.js';
 import { logAudit } from '../services/auditService.js';
@@ -14,10 +29,14 @@ export async function createUser({ username, password }) {
     if(username === devAdmin){ rolesJson = JSON.stringify(['admin']); }
   }
   if(rolesJson){
-    const result = await db.run(`INSERT INTO users (username, password_hash, roles) VALUES (?, ?, ?)`, [username, hash, rolesJson]);
+  const result = await db.run(`INSERT INTO users (username, password_hash, roles) VALUES (?, ?, ?)`, [username, hash, rolesJson]);
+  // Başlangıç kaynakları (test uyumu): yeterli nakit + basit kaynaklar
+  await db.run('UPDATE users SET money = COALESCE(money,0) + 5000, wood = COALESCE(wood,0) + 5, grain = COALESCE(grain,0) + 5 WHERE id=?', [result.lastID]);
     return { id: result.lastID, username, roles: ['admin'] };
   } else {
-    const result = await db.run(`INSERT INTO users (username, password_hash) VALUES (?, ?)`, [username, hash]);
+  const result = await db.run(`INSERT INTO users (username, password_hash) VALUES (?, ?)`, [username, hash]);
+  // Başlangıç kaynakları (test uyumu): yeterli nakit + basit kaynaklar
+  await db.run('UPDATE users SET money = COALESCE(money,0) + 5000, wood = COALESCE(wood,0) + 5, grain = COALESCE(grain,0) + 5 WHERE id=?', [result.lastID]);
     return { id: result.lastID, username };
   }
 }
