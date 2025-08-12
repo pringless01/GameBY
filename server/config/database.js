@@ -35,8 +35,20 @@ export async function runMigration(name, sql) {
 
   const isIdempotentError = (msg='') => /duplicate column name|already exists/i.test(msg);
 
+  // Basit yorum temizleyici: /* */ blokları ve satır başı -- yorumları kaldır
+  function stripComments(sqlText){
+    // Remove /* block comments */ safely
+    let out = sqlText.replace(/\/\*[\s\S]*?\*\//g, '');
+    // Remove lines that start with -- (after optional whitespace)
+    out = out
+      .split('\n')
+      .filter(line => !/^\s*--/.test(line))
+      .join('\n');
+    return out;
+  }
+
   async function applyStatementsForgiving(sqlText){
-    const stmts = sqlText
+    const stmts = stripComments(sqlText)
       .split(';')
       .map(s => s.trim())
       .filter(Boolean);
