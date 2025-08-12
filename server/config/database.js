@@ -87,19 +87,6 @@ export async function runMigration(name, sql) {
     }
     return true;
   }
-  await db.exec('BEGIN');
-  try {
-    await db.exec(sql);
-    await db.run('INSERT INTO migrations (name) VALUES (?)', [name]);
-    await db.exec('COMMIT');
-  } catch (e) {
-    await db.exec('ROLLBACK');
-    if (isIdempotentError(e.message)) {
-      // Tek tek çalıştırıp duplicate'ları atla
-      console.warn('Migration uyarı (idempotent) retry forgiving apply:', name);
-      return await applyStatementsForgiving(sql);
-    }
-    throw e;
-  }
-  return true;
+  // Varsayılan yol: forgiving split ile uygula (idempotent)
+  return await applyStatementsForgiving(sql);
 }
