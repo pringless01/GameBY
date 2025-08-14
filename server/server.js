@@ -84,6 +84,20 @@ app.use(leaderboardHeader);
 
 const startTime = Date.now();
 let currentCommit = process.env.GIT_COMMIT || null;
+// Login variant tespiti için login.html ilk satırı okunur
+let loginVariant = null;
+try {
+  const loginFilePath = path.join(__dirname, '..', 'frontend', 'public', 'login.html');
+  const firstLine = fs.readFileSync(loginFilePath, 'utf8').split(/\r?\n/, 1)[0];
+  const m = firstLine.match(/LOGIN_VARIANT:([^ ]+)/);
+  if (m) loginVariant = m[1];
+} catch { /* ignore */ }
+// Tanılama header'ları
+app.use((req, res, next) => {
+  if (currentCommit) res.setHeader('X-App-Commit', currentCommit);
+  if (loginVariant) res.setHeader('X-Login-Variant', loginVariant);
+  next();
+});
 
 app.get('/health', async (req, res) => {
   const t0 = Date.now();
