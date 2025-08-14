@@ -1,164 +1,28 @@
-name: Deploy Backend
+name: Deploy to Server
 
 on:
   push:
-    branches: [ main ]
-  workflow_dispatch:
+    branches: [ "main" ]
+  workflow_dispatch: {}
 
 concurrency:
   group: deploy-main
   cancel-in-progress: true
 
-env:
-  DEPLOY_BASE: /home/musa/releases
-  CURRENT_SYMLINK: /home/musa/oyun
-  SERVER_USER: musa
-  SERVICE_NAME: oyun
-
 jobs:
-  test:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 1
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-      - name: Install backend deps (dev)
-        run: |
-          cd server
-          npm ci
-      - name: Run integration tests (all)
-        run: |
-          cd server
-          npm run test:integration:all
-      - name: Lint placeholder
-        run: echo "No lint yet"
   deploy:
     runs-on: ubuntu-latest
-    needs: test
     steps:
-      - name: Checkout
+      - name: "🧾 Checkout (for metadata only)"
         uses: actions/checkout@v4
+
+      - name: "🔐 SSH to Server and Deploy"
+        uses: appleboy/ssh-action@v1.2.0
         with:
-          fetch-depth: 1
-
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-
-      - name: Add SSH key
-        uses: webfactory/ssh-agent@v0.9.0
-        with:
-          ssh-private-key: ${{ secrets.SERVER_SSH_KEY }}
-
-      - name: Add known_hosts
-        run: |
-          ssh-keyscan -H ${{ secrets.SERVER_HOST }} >> ~/.ssh/known_hosts
-
-      - name: Prepare release metadata
-        id: meta
-        run: |
-          echo "sha=${GITHUB_SHA}" >> $GITHUB_OUTPUT
-          echo "release_dir=${GITHUB_SHA::7}" >> $GITHUB_OUTPUT
-
-      - name: Create rsync exclude file
-        run: |
-          cat > rsync-excludes.txt <<'EOF'
-          .git
-          node_modules
-          server/node_modules
-          frontend/node_modules
-          6000.1.14f1
-          .github
-          .husky
-          **/*.log
-          EOF
-
-      - name: Rsync code to server (new release dir)
-        run: |
-          ssh $SERVER_USER@${{ secrets.SERVER_HOST }} "mkdir -p $DEPLOY_BASE/${{ steps.meta.outputs.release_dir }}"
-          rsync -az --delete --exclude-from=rsync-excludes.txt ./ $SERVER_USER@${{ secrets.SERVER_HOST }}:$DEPLOY_BASE/${{ steps.meta.outputs.release_dir }}/
-
-      - name: Install, migrate & symlink switch
-        id: deploy_step
-        run: |
-          ssh $SERVER_USER@${{ secrets.SERVER_HOST }} <<'EOSSH'
-          set -e
-          RELEASE_DIR=${DEPLOY_BASE}/${{ steps.meta.outputs.release_dir }}
-          cd $RELEASE_DIR/server
-          if [ -f package-lock.json ]; then npm ci --omit=dev; else npm install --omit=dev; fi
-          mkdir -p $RELEASE_DIR/server/data
-          if [ -f $CURRENT_SYMLINK/server/data/game.db ]; then
-            cp $CURRENT_SYMLINK/server/data/game.db $RELEASE_DIR/server/data/game.db 2>/dev/null || true
-          fi
-          sqlite3 $RELEASE_DIR/server/data/game.db ".backup '$RELEASE_DIR/server/data/backup-pre-${{ steps.meta.outputs.release_dir }}.db'" || true
-          npm run migrate --prefix $RELEASE_DIR/server
-          ln -sfn $RELEASE_DIR $CURRENT_SYMLINK
-          echo '${{ steps.meta.outputs.sha }}' > $CURRENT_SYMLINK/COMMIT
-          EOSSH
-
-      - name: Restart service
-        run: |
-          ssh $SERVER_USER@${{ secrets.SERVER_HOST }} <<'EOSSH'
-          if systemctl list-units --type=service --all | grep -q "${SERVICE_NAME}.service"; then
-            sudo systemctl restart ${SERVICE_NAME}
-          elif command -v pm2 >/dev/null 2>&1; then
-            cd $CURRENT_SYMLINK/server
-            pm2 restart ${SERVICE_NAME} || pm2 start server.js --name ${SERVICE_NAME}
-            pm2 save
-          else
-            cd $CURRENT_SYMLINK/server
-            nohup env GIT_COMMIT=$(cat $CURRENT_SYMLINK/COMMIT) node server.js >/dev/null 2>&1 &
-          fi
-          EOSSH
-
-      - name: Health & Metrics Check
-        id: health
-        run: |
-          set -e
-          curl --fail --silent http://${{ secrets.SERVER_HOST }}:3000/health | tee health.json
-          node -e "const d=require('./health.json'); if(d.status!=='ok'){process.exit(1)}"
-          curl --fail --silent http://${{ secrets.SERVER_HOST }}:3000/metrics | tee metrics.json || echo '{"metrics":"unavailable"}' > metrics.json
-
-      - name: Dump last logs (best-effort)
-        if: always()
-        run: |
-          ssh $SERVER_USER@${{ secrets.SERVER_HOST }} "sudo journalctl -u ${SERVICE_NAME} -n 50 --no-pager" || echo 'Log alınamadı'
-
-      - name: Rollback on failure
-        if: failure() && steps.meta.outputs.release_dir
-        run: |
-          echo "Failure detected. Attempting rollback..."
-          ssh $SERVER_USER@${{ secrets.SERVER_HOST }} <<'EOSSH'
-          set -e
-          CUR=${{ steps.meta.outputs.release_dir }}
-          cd $DEPLOY_BASE
-          PREV=$(ls -1t | grep -v "$CUR" | head -n1 || true)
-          if [ -n "$PREV" ]; then
-            echo "Rolling back to $PREV";
-            ln -sfn $DEPLOY_BASE/$PREV $CURRENT_SYMLINK
-            if systemctl list-units --type=service --all | grep -q "${SERVICE_NAME}.service"; then
-              sudo systemctl restart ${SERVICE_NAME}
-            fi
-          else
-            echo 'No previous release found.'
-          fi
-          EOSSH
-
-      - name: Summary
-        if: always()
-        run: |
-          STATUS=${{ job.status }}
-          echo "Deploy durum: $STATUS" >> $GITHUB_STEP_SUMMARY
-          echo "Host: ${{ secrets.SERVER_HOST }}" >> $GITHUB_STEP_SUMMARY
-          echo "Commit: ${{ steps.meta.outputs.sha }}" >> $GITHUB_STEP_SUMMARY
-          echo "Release dir: ${{ steps.meta.outputs.release_dir }}" >> $GITHUB_STEP_SUMMARY
-          if [ "$STATUS" = "success" ]; then
-            echo 'Health:' >> $GITHUB_STEP_SUMMARY
-            cat health.json >> $GITHUB_STEP_SUMMARY || true
-            echo 'Metrics:' >> $GITHUB_STEP_SUMMARY
-            cat metrics.json >> $GITHUB_STEP_SUMMARY || true
-          fi
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          script_stop: true
+          script: |
+            set -e
+            bash /opt/gameby/deploy.sh
