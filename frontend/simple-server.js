@@ -20,6 +20,25 @@ const mimeTypes = {
 };
 
 const server = http.createServer((req, res) => {
+  // Basit proxy: /api veya /socket.io isteklerini backend'e yönlendir
+  const backend = process.env.API_ORIGIN || 'http://localhost:3000';
+  if(req.url.startsWith('/api/') || req.url.startsWith('/socket.io')){
+    const target = new URL(req.url, backend);
+    const opts = {
+      method: req.method,
+      headers: { ...req.headers, host: target.host }
+    };
+    const proxyReq = http.request(target, proxyRes => {
+      res.writeHead(proxyRes.statusCode, proxyRes.headers);
+      proxyRes.pipe(res);
+    });
+    proxyReq.on('error', err => {
+      res.writeHead(502);
+      res.end('Proxy error');
+    });
+    if(req.method !== 'GET' && req.method !== 'HEAD') req.pipe(proxyReq); else proxyReq.end();
+    return;
+  }
   // URL'yi temizle
   let filePath = path.join(PUBLIC_DIR, req.url === '/' ? 'index.html' : req.url);
   

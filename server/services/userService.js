@@ -20,7 +20,7 @@ import { logAudit } from '../services/auditService.js';
 import { invalidateOnTrustChange } from '../cache/trustCaches.js';
 import { incReputationEvent } from '../metrics/reputationMetrics.js';
 
-export async function createUser({ username, password }) {
+export async function createUser({ email, username, password }) {
   const db = await initDb();
   const hash = bcrypt.hashSync(password, 10);
   let rolesJson = null;
@@ -28,22 +28,25 @@ export async function createUser({ username, password }) {
     const devAdmin = process.env.DEV_ADMIN_USERNAME || 'admin';
     if(username === devAdmin){ rolesJson = JSON.stringify(['admin']); }
   }
-  if(rolesJson){
-  const result = await db.run(`INSERT INTO users (username, password_hash, roles) VALUES (?, ?, ?)`, [username, hash, rolesJson]);
-  // Başlangıç kaynakları (test uyumu): yeterli nakit + basit kaynaklar
+  const cols = ['username','password_hash'];
+  const vals = [username, hash];
+  if(email){ cols.push('email'); vals.push(email); }
+  if(rolesJson){ cols.push('roles'); vals.push(rolesJson); }
+  const placeholders = cols.map(()=>'?').join(',');
+  const sql = `INSERT INTO users (${cols.join(',')}) VALUES (${placeholders})`;
+  const result = await db.run(sql, vals);
   await db.run('UPDATE users SET money = COALESCE(money,0) + 5000, wood = COALESCE(wood,0) + 5, grain = COALESCE(grain,0) + 5 WHERE id=?', [result.lastID]);
-    return { id: result.lastID, username, roles: ['admin'] };
-  } else {
-  const result = await db.run(`INSERT INTO users (username, password_hash) VALUES (?, ?)`, [username, hash]);
-  // Başlangıç kaynakları (test uyumu): yeterli nakit + basit kaynaklar
-  await db.run('UPDATE users SET money = COALESCE(money,0) + 5000, wood = COALESCE(wood,0) + 5, grain = COALESCE(grain,0) + 5 WHERE id=?', [result.lastID]);
-    return { id: result.lastID, username };
-  }
+  return { id: result.lastID, username, email: email || null, roles: rolesJson ? JSON.parse(rolesJson) : [] };
 }
 
 export async function findUserByUsername(username) {
   const db = await initDb();
   return db.get('SELECT * FROM users WHERE username = ?', [username]);
+}
+
+export async function findByEmailOrUsername(identity){
+  const db = await initDb();
+  return db.get('SELECT * FROM users WHERE lower(email)=lower(?) OR lower(username)=lower(?)', [identity, identity]);
 }
 
 export async function findUserById(id) {
@@ -53,6 +56,10 @@ export async function findUserById(id) {
 
 export function validatePassword(user, password) {
   return bcrypt.compareSync(password, user.password_hash);
+}
+
+export function verifyPassword(password, hash){
+  return bcrypt.compareSync(password, hash);
 }
 
 export async function updateTrust(userId, delta, reason='manual_adjust', ip=null) {

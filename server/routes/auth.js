@@ -1,73 +1,111 @@
 import express from 'express';
-import jwt from 'jsonwebtoken';
-import { createUser, findUserByUsername, validatePassword, recordUserLogin, findUserById } from '../services/userService.js';
-import { revokeToken, isTokenRevoked } from '../security/tokenBlacklist.js';
-import { getClientIp } from '../utils/ipUtils.js';
-import { authRateLimit } from '../middleware/rateLimit.js';
-import { logAudit } from '../services/auditService.js';
+import { signToken } from '../config/jwt.js';
+import { authRequired } from '../middleware/auth.js';
+import { createUser, findUserByUsername, findUserById, findByEmailOrUsername, validatePassword, verifyPassword } from '../services/userService.js';
 
-const accessTtl = process.env.ACCESS_TOKEN_TTL || '15m';
-const refreshTtl = process.env.REFRESH_TOKEN_TTL || '7d';
+// Brute-force guard (in-memory) – PROD: merkezi store önerilir.
+const failedAttempts = new Map(); // key: identity|ip -> { count, lockUntil }
+const MAX_ATTEMPTS = parseInt(process.env.AUTH_MAX_ATTEMPTS || '5', 10);
+const LOCK_MS = parseInt(process.env.AUTH_LOCK_DURATION_MS || '60000', 10);
+function key(identity, ip){ return `${identity.toLowerCase()}|${ip}`; }
+function markFail(identity, ip){
+  const k = key(identity, ip);
+  const now = Date.now();
+  const entry = failedAttempts.get(k) || { count:0, lockUntil:0 };
+  entry.count++;
+  if(entry.count > MAX_ATTEMPTS) entry.lockUntil = now + LOCK_MS;
+  failedAttempts.set(k, entry);
+  return entry;
+}
+function clearFails(identity, ip){ failedAttempts.delete(key(identity, ip)); }
+function checkLocked(identity, ip){
+  const entry = failedAttempts.get(key(identity, ip));
+  if(!entry) return { locked:false };
+  if(entry.lockUntil && entry.lockUntil > Date.now()) return { locked:true, remainingMs: entry.lockUntil - Date.now(), count: entry.count };
+  if(entry.lockUntil && entry.lockUntil <= Date.now()) failedAttempts.delete(key(identity, ip));
+  return { locked:false };
+}
+
+// Error code -> message mapper
+function mapAuthError(code){
+  const dict = {
+    missing_fields: 'Eksik alanlar mevcut',
+    duplicate_email: 'E-posta zaten kayıtlı',
+    duplicate_username: 'Kullanıcı adı zaten kayıtlı',
+    invalid_credentials: 'Kimlik veya şifre hatalı',
+    locked: 'Çok fazla başarısız deneme. Lütfen biraz sonra tekrar deneyin.',
+    server_error: 'Sunucu hatası. Lütfen tekrar deneyin.'
+  };
+  return dict[code] || 'Bilinmeyen hata';
+}
 
 const router = express.Router();
 
-router.post('/register', authRateLimit, async (req, res) => {
-  const { username, password } = req.body;
-  if (!username || !password) return res.status(400).json({ error: 'Eksik alan' });
-  const existing = await findUserByUsername(username);
-  if (existing) return res.status(409).json({ error: 'Kullanıcı adı kullanımda' });
+// POST /api/auth/register
+router.post('/register', async (req, res) => {
+  const { email, username, password } = req.body || {};
+  if(!email || !username || !password){
+    return res.status(400).json({ error:'missing_fields', message: mapAuthError('missing_fields') });
+  }
   try {
-    const user = await createUser({ username, password });
-    logAudit({ userId: user.id, action: 'register', detail: JSON.stringify({ username }), ip: req.ip });
-    return res.json({ user });
-  } catch (e) {
-    logAudit({ action: 'register_failed', detail: JSON.stringify({ username }), ip: req.ip });
-    return res.status(500).json({ error: 'Kayıt başarısız' });
+  const existing = await findByEmailOrUsername(email) || await findUserByUsername(username) || await findByEmailOrUsername(username);
+    if(existing){
+      if(existing.email && existing.email.toLowerCase() === email.toLowerCase()){
+        return res.status(409).json({ error:'duplicate_email', message: mapAuthError('duplicate_email') });
+      }
+      if(existing.username.toLowerCase() === username.toLowerCase()){
+        return res.status(409).json({ error:'duplicate_username', message: mapAuthError('duplicate_username') });
+      }
+    }
+    const user = await createUser({ email, username, password });
+    const token = signToken(user.id, { username: user.username, email: user.email });
+    return res.status(201).json({ token, user: { id: user.id, email: user.email, username: user.username } });
+  } catch(e){
+    console.error('[auth/register] error', e);
+    return res.status(500).json({ error:'server_error', message: mapAuthError('server_error') });
   }
 });
 
-router.post('/login', authRateLimit, async (req, res) => {
-  const { username, password, deviceFingerprint } = req.body;
-  if (!username || !password) return res.status(400).json({ error: 'Eksik alan' });
-  const user = await findUserByUsername(username);
-  if (!user) { logAudit({ action: 'login_failed', detail: JSON.stringify({ username, reason: 'no_user' }), ip: req.ip }); return res.status(401).json({ error: 'Geçersiz bilgiler' }); }
-  if (!validatePassword(user, password)) { logAudit({ userId: user.id, action: 'login_failed', detail: JSON.stringify({ username, reason:'bad_password' }), ip: req.ip }); return res.status(401).json({ error: 'Geçersiz bilgiler' }); }
-  const accessToken = jwt.sign({ sub: user.id, username: user.username, roles: user.roles ? JSON.parse(user.roles||'[]'):[] }, process.env.JWT_SECRET || 'dev-secret', { expiresIn: accessTtl });
-  const refreshToken = jwt.sign({ sub: user.id, type:'refresh' }, process.env.REFRESH_SECRET || process.env.JWT_SECRET || 'dev-secret', { expiresIn: refreshTtl });
-  const clientIp = getClientIp(req);
-  logAudit({ userId: user.id, action: 'login_success', detail: JSON.stringify({ username }), ip: clientIp });
-  // Fraud/multi-account gözlemi için login event kaydı
+// POST /api/auth/login  body: { identity, password }
+router.post('/login', async (req, res) => {
+  const { identity, password } = req.body || {};
+  if(!identity || !password){
+    return res.status(400).json({ error:'missing_fields', message: mapAuthError('missing_fields') });
+  }
+  const ip = req.headers['x-forwarded-for']?.split(',')[0]?.trim() || req.socket.remoteAddress || 'unknown';
+  const locked = checkLocked(identity, ip);
+  if(locked.locked){
+    return res.status(429).json({ error:'locked', message: mapAuthError('locked'), retry_after_ms: locked.remainingMs });
+  }
   try {
-    await recordUserLogin(user.id, clientIp, req.headers['user-agent'] || '', deviceFingerprint);
-  } catch(e) { console.warn('recordUserLogin error', e); }
-  res.cookie('refreshToken', refreshToken, { httpOnly:true, sameSite:'strict', secure: process.env.NODE_ENV==='production', maxAge:7*24*60*60*1000 });
-  return res.json({ token: accessToken, user: { id: user.id, username: user.username, trust_score: user.trust_score, roles: user.roles ? JSON.parse(user.roles||'[]'):[] } });
+    const user = await findByEmailOrUsername(identity) || await findUserByUsername(identity);
+    if(!user){
+      const st = markFail(identity, ip);
+      return res.status(401).json({ error:'invalid_credentials', message: mapAuthError('invalid_credentials'), attempts: st.count });
+    }
+    const ok = validatePassword(user, password) || verifyPassword(password, user.password_hash);
+    if(!ok){
+      const st = markFail(identity, ip);
+      const status = st.count > MAX_ATTEMPTS ? 429 : 401;
+      return res.status(status).json({ error: st.count > MAX_ATTEMPTS ? 'locked' : 'invalid_credentials', message: mapAuthError(st.count > MAX_ATTEMPTS ? 'locked':'invalid_credentials'), attempts: st.count });
+    }
+    clearFails(identity, ip);
+    const token = signToken(user.id, { username: user.username, email: user.email });
+    return res.json({ token, user: { id: user.id, email: user.email, username: user.username } });
+  } catch(e){
+    console.error('[auth/login] error', e);
+    return res.status(500).json({ error:'server_error', message: mapAuthError('server_error') });
+  }
 });
 
-function getCookie(req, name){
-  const cookies = req.headers.cookie;
-  if(!cookies) return null;
-  const found = cookies.split(';').map(c=>c.trim()).find(c=>c.startsWith(name+'='));
-  return found ? decodeURIComponent(found.split('=')[1]) : null;
-}
-
-router.post('/refresh', async (req, res) => {
-  const token = getCookie(req, 'refreshToken');
-  if(!token) return res.status(401).json({ error:'Refresh yok' });
-  if(await isTokenRevoked(token)) return res.status(401).json({ error:'Token geçersiz' });
+// GET /api/auth/me
+router.get('/me', authRequired, async (req, res) => {
   try {
-    const payload = jwt.verify(token, process.env.REFRESH_SECRET || process.env.JWT_SECRET || 'dev-secret');
-    if(payload.type !== 'refresh') return res.status(401).json({ error:'Token tip yanlış' });
-    await revokeToken(token, Math.max(0, payload.exp*1000 - Date.now()));
-    const user = await findUserById(payload.sub);
-    if(!user) return res.status(401).json({ error:'Kullanıcı yok' });
-    const roles = user.roles ? JSON.parse(user.roles||'[]'):[];
-    const accessToken = jwt.sign({ sub:user.id, username:user.username, roles }, process.env.JWT_SECRET || 'dev-secret', { expiresIn: accessTtl });
-    const refreshToken = jwt.sign({ sub:user.id, type:'refresh' }, process.env.REFRESH_SECRET || process.env.JWT_SECRET || 'dev-secret', { expiresIn: refreshTtl });
-    res.cookie('refreshToken', refreshToken, { httpOnly:true, sameSite:'strict', secure: process.env.NODE_ENV==='production', maxAge:7*24*60*60*1000 });
-    return res.json({ token: accessToken });
+    const user = await findUserById(req.user.id);
+    if(!user) return res.status(404).json({ error:'not_found' });
+    return res.json({ id: user.id, email: user.email, username: user.username, trust_score: user.trust_score });
   } catch(e){
-    return res.status(401).json({ error:'Token geçersiz' });
+    return res.status(500).json({ error:'server_error' });
   }
 });
 

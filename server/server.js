@@ -2,6 +2,7 @@ import express from 'express';
 import http from 'http';
 import { Server } from 'socket.io';
 import cors from 'cors';
+import { corsMiddleware } from './config/cors.js';
 import morgan from 'morgan';
 // Ortam değişkenleri için merkezi yükleme & doğrulama
 import { envConfig } from './config/env.js';
@@ -51,19 +52,8 @@ const __dirname = path.dirname(__filename);
 
 const app = express();
 app.use(helmet({ crossOriginResourcePolicy: false }));
-const rawAllowed = (envConfig.ALLOWED_ORIGINS || '').split(',').map(s=>s.trim()).filter(Boolean);
-let allowed;
-if(process.env.NODE_ENV === 'production'){
-  allowed = rawAllowed.filter(o=>o !== '*');
-} else {
-  allowed = rawAllowed.length ? rawAllowed : ['http://localhost:5173','http://localhost:3000'];
-}
-app.use(cors({ origin: (origin, cb)=> {
-  if(!origin) return cb(null, true);
-  const list = allowed;
-  if(list.includes(origin)) return cb(null, true);
-  return cb(new Error('CORS blocked'), false);
-}, credentials: true }));
+// Yeni CORS middleware (CORS_ORIGIN env)
+app.use(corsMiddleware);
 app.use(express.json());
 app.use(morgan('dev'));
 app.use(idempotencyMiddleware);
@@ -241,7 +231,8 @@ app.use(express.static(path.join(__dirname, '..', 'frontend', 'public')));
     }
   }
   const server = http.createServer(app);
-  const io = new Server(server, { cors: { origin: allowed, credentials: true } });
+  const originEnv = (process.env.CORS_ORIGIN || 'http://localhost:8080').split(',').map(s=>s.trim());
+  const io = new Server(server, { cors: { origin: originEnv, credentials: true } });
   io.use(socketAuth);
   setIo(io);
   registerChatNamespace(io);
