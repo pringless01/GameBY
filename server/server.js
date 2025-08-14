@@ -56,6 +56,10 @@ app.use(helmet({ crossOriginResourcePolicy: false }));
 app.use(corsMiddleware);
 app.use(express.json());
 app.use(morgan('dev'));
+ codex/apply-phase-p1-for-secure-auth-ws-d7md7e
+app.use(express.static(path.join(__dirname, 'public')));
+
+ main
 app.use(idempotencyMiddleware);
 
 // HTTP metrics middleware
@@ -209,6 +213,9 @@ app.get('/metrics', async (req, res) => {
   appMetrics.http_errors_total++;
   res.status(500).send('metrics_failed');
   }
+});
+app.get('/login', (_req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'login.html'));
 });
 app.use('/api/auth', authRoutes);
 app.use('/api/user', userRoutes);
