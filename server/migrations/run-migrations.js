@@ -10,7 +10,7 @@ const __dirname = path.dirname(__filename);
   await initDb();
   const migrationsDir = __dirname;
   const files = fs.readdirSync(migrationsDir)
-    .filter(f => /^\d+_.*\.(sql|js)$/.test(f))
+    .filter(f => /^\d+.*\.(sql|js)$/.test(f))
     .sort();
   for (const file of files) {
     if(file.endsWith('.sql')) {
