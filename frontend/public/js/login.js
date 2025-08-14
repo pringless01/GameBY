@@ -221,10 +221,10 @@ class AuthManager {
 
         try {
             this.showLoading('Giriş yapılıyor...');
-            
-            // Simulate login API call
-            await this.simulateLogin(username, password);
-            
+
+            // Gerçek API'ye login isteği gönder
+            await this.loginUser(username, password);
+
             this.showSuccess('Giriş başarılı! Yönlendiriliyorsun...');
             
             setTimeout(() => {
@@ -242,7 +242,6 @@ class AuthManager {
         e.preventDefault();
         
         const username = document.getElementById('registerUsername').value;
-        const phone = document.getElementById('registerPhone').value;
         const password = document.getElementById('registerPassword').value;
         const confirmPassword = document.getElementById('confirmPassword').value;
         const acceptTerms = document.getElementById('acceptTerms').checked;
@@ -254,23 +253,26 @@ class AuthManager {
 
         try {
             this.showLoading('Hesap oluşturuluyor...');
-            
+
             // Add success animation to form
             this.registerForm.classList.add('registration-success');
-            
-            // Simulate registration API call
-            await this.simulateRegistration(username, phone, password);
-            
+
+            // Gerçek API'ye kayıt isteği gönder
+            await this.registerUser(username, password);
+
+            // Kayıt sonrası otomatik giriş yap
+            await this.loginUser(username, password);
+
             this.showSuccess('🎉 Hesap oluşturuldu! Yönlendiriliyorsun...');
-            
+
             setTimeout(() => {
                 window.location.href = 'index.html';
             }, 1500);
-            
+
         } catch (error) {
             this.hideLoading();
             this.registerForm.classList.remove('registration-success');
-            this.showError('Hesap oluşturulamadı. Lütfen tekrar dene.');
+            this.showError(error.message || 'Hesap oluşturulamadı. Lütfen tekrar dene.');
             this.shakeForm(this.registerForm);
         }
     }
@@ -299,104 +301,38 @@ class AuthManager {
         return true;
     }
 
-    async simulateLogin(username, password) {
-        const delay = 1500 + Math.random() * 1000;
-        
-        return new Promise((resolve, reject) => {
-            setTimeout(() => {
-                // Simulate some test accounts
-                const testAccounts = {
-                    'test': 'test123',
-                    'demo': 'demo123',
-                    'oyuncu': 'oyuncu123'
-                };
-                
-                if (testAccounts[username] === password) {
-                    // Create real user data and token
-                    const userData = {
-                        id: 'user-' + username + '-' + Date.now(),
-                        name: username,
-                        phone: '0555 000 00 00',
-                        trustScore: 120 + Math.floor(Math.random() * 80), // 120-200 arası
-                        resources: {
-                            money: 100 + Math.floor(Math.random() * 900), // 100-1000 arası
-                            wood: Math.floor(Math.random() * 100),
-                            grain: Math.floor(Math.random() * 100),
-                            business: Math.floor(Math.random() * 10)
-                        },
-                        mentorStatus: 'kimsesiz',
-                        registerDate: new Date().toISOString(),
-                        lastLoginDate: new Date().toISOString()
-                    };
-                    
-                    // Create JWT token (fake but working)
-                    const token = 'jwt-' + username + '-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9);
-                    
-                    // Store in localStorage
-                    localStorage.setItem('jwt_token', token);
-                    localStorage.setItem('user', JSON.stringify(userData));
-                    
-                    console.log('🔐 Login successful - Token created:', {
-                        token: token,
-                        user: userData
-                    });
-                    
-                    resolve({
-                        token: token,
-                        user: userData
-                    });
-                } else {
-                    reject(new Error('Invalid credentials'));
-                }
-            }, delay);
+    async loginUser(username, password) {
+        const res = await fetch('/api/auth/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+            body: JSON.stringify({ username, password })
         });
+
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok) {
+            throw new Error(data.error || 'Login failed');
+        }
+
+        if (data.token) localStorage.setItem('jwt_token', data.token);
+        if (data.user) localStorage.setItem('user', JSON.stringify(data.user));
+        return data;
     }
 
-    async simulateRegistration(username, phone, password) {
-        const delay = 2000 + Math.random() * 1000;
-        
-        return new Promise((resolve, reject) => {
-            setTimeout(() => {
-                // %95 success rate
-                if (Math.random() > 0.05) {
-                    // Create new user data
-                    const userData = {
-                        id: 'user-' + username + '-' + Date.now(),
-                        name: username,
-                        phone: phone || '0555 000 00 00',
-                        trustScore: 100, // Yeni kullanıcı başlangıç puanı
-                        resources: {
-                            money: 50, // Başlangıç parası
-                            wood: 0,
-                            grain: 0,
-                            business: 0
-                        },
-                        mentorStatus: 'kimsesiz', // Yeni kullanıcı
-                        registerDate: new Date().toISOString(),
-                        lastLoginDate: new Date().toISOString()
-                    };
-                    
-                    // Create JWT token
-                    const token = 'jwt-new-' + username + '-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9);
-                    
-                    // Store in localStorage
-                    localStorage.setItem('jwt_token', token);
-                    localStorage.setItem('user', JSON.stringify(userData));
-                    
-                    console.log('🌟 Registration successful - New user created:', {
-                        token: token,
-                        user: userData
-                    });
-                    
-                    resolve({
-                        token: token,
-                        user: userData
-                    });
-                } else {
-                    reject(new Error('Registration failed'));
-                }
-            }, delay);
+    async registerUser(username, password) {
+        const res = await fetch('/api/auth/register', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+            body: JSON.stringify({ username, password })
         });
+
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok) {
+            throw new Error(data.error || 'Registration failed');
+        }
+
+        return data;
     }
 
     showLoading(text = 'Yükleniyor...') {
