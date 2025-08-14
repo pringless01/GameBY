@@ -1,13 +1,16 @@
 import jwt from 'jsonwebtoken';
-import { findUserByUsername } from '../services/userService.js';
+import { isTokenRevoked } from '../security/tokenBlacklist.js';
 
-export function authRequired(req, res, next) {
+export async function authRequired(req, res, next) {
   const header = req.headers.authorization;
   if (!header || !header.startsWith('Bearer ')) {
     return res.status(401).json({ error: 'Yetkisiz' });
   }
   const token = header.slice(7);
   try {
+    if (await isTokenRevoked(token)) {
+      return res.status(401).json({ error: 'Token geçersiz' });
+    }
     const payload = jwt.verify(token, process.env.JWT_SECRET || 'dev-secret');
     req.user = { id: payload.sub, username: payload.username, roles: payload.roles || [] };
     return next();

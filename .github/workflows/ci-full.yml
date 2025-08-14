@@ -9,51 +9,110 @@ on:
 jobs:
   build_test:
     runs-on: ubuntu-latest
+    env:
+      JWT_SECRET: ${{ secrets.JWT_SECRET }}
+      REFRESH_SECRET: ${{ secrets.REFRESH_SECRET }}
+      CURSOR_SECRET: ${{ secrets.CURSOR_SECRET }}
+      ALLOWED_ORIGINS: ${{ secrets.ALLOWED_ORIGINS }}
+      REDIS_URL: ${{ secrets.REDIS_URL }}
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
-          fetch-depth: 1
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+          node-version: 20
+      - name: Cache npm
+        uses: actions/cache@v4
         with:
-          node-version: '18'
-
-      - name: Install server deps
+          path: ~/.npm
+          key: ${{ runner.os }}-npm-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-npm-
+      - name: Install deps
         working-directory: server
         run: |
           if [ -f package-lock.json ]; then npm ci; else npm install; fi
-
-      - name: Unit tests + Integration tests
+      - name: Run migrations
         working-directory: server
-        run: npm run test
-
-      - name: Coverage artifacts
-        if: always()
+        run: npm run migrate
+      - name: Lint
         working-directory: server
-        run: |
-          npm run coverage:save || true
-        
+        run: npm run lint
+      - name: Unit & integration tests
+        working-directory: server
+        run: npm test
+      - name: Coverage
+        working-directory: server
+        run: npm run test:coverage
       - name: Upload coverage
-        if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: coverage-artifacts
-          path: |
-            logs/coverage-final.json
-            logs/lcov.info
-            logs/coverage-summary.txt
+          name: coverage
+          path: server/coverage
+
+  smoke:
+    runs-on: ubuntu-latest
+    needs: build_test
+    env:
+      JWT_SECRET: ${{ secrets.JWT_SECRET }}
+      REFRESH_SECRET: ${{ secrets.REFRESH_SECRET }}
+      CURSOR_SECRET: ${{ secrets.CURSOR_SECRET }}
+      ALLOWED_ORIGINS: ${{ secrets.ALLOWED_ORIGINS }}
+      REDIS_URL: ${{ secrets.REDIS_URL }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Install deps
+        working-directory: server
+        run: |
+          if [ -f package-lock.json ]; then npm ci; else npm install; fi
+      - name: Run migrations
+        working-directory: server
+        run: npm run migrate
+      - name: Smoke (Artillery)
+        working-directory: server
+        run: npx --yes artillery@latest run perf/artillery-smoke.yml --output perf/smoke-report.json
+      - name: Upload smoke artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: smoke-report
+          path: server/perf/smoke-report.json
+
+  quarantine_tests:
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    env:
+      JWT_SECRET: ${{ secrets.JWT_SECRET }}
+      REFRESH_SECRET: ${{ secrets.REFRESH_SECRET }}
+      CURSOR_SECRET: ${{ secrets.CURSOR_SECRET }}
+      ALLOWED_ORIGINS: ${{ secrets.ALLOWED_ORIGINS }}
+      REDIS_URL: ${{ secrets.REDIS_URL }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Install deps
+        working-directory: server
+        run: |
+          if [ -f package-lock.json ]; then npm ci; else npm install; fi
+      - name: Run migrations
+        working-directory: server
+        run: npm run migrate
+      - name: Economy sink test (@quarantine)
+        working-directory: server
+        run: npm run test:unit:economy-sink
 
   migrations_check:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: 20
       - name: Install deps
         working-directory: server
         run: |

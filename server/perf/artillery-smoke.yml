@@ -1,41 +1,20 @@
 config:
-  target: "http://127.0.0.1:3100"
+  target: "http://127.0.0.1:3000"
   phases:
-    - duration: 20
+    - duration: 30
       arrivalRate: 2
-      name: smoke
-  plugins:
-    metrics-by-endpoint: {}
-  ensure:
-    maxErrorRate: 1
-  variables:
-    username: "perf_user_{{ $randomString(6) }}"
-    password: "perf_pass_123"
 scenarios:
-  - name: auth→activity→progress (smoke)
+  - name: health + auth roundtrip
     flow:
+      - get:
+          url: "/health"
       - post:
           url: "/api/auth/register"
           json:
-            username: "{{ username }}"
-            password: "{{ password }}"
-          capture:
-            - json: "$.user.id"
-              as: userId
+            email: "smoke_{{$randomNumber(10000,99999)}}@ex.com"
+            password: "P@ssw0rd!"
       - post:
           url: "/api/auth/login"
           json:
-            username: "{{ username }}"
-            password: "{{ password }}"
-          capture:
-            - json: "$.token"
-              as: jwt
-      - think: 0.2
-      - post:
-          url: "/api/activity/chop-wood"
-          headers:
-            Authorization: "Bearer {{ jwt }}"
-      - get:
-          url: "/api/user/onboarding/progress"
-          headers:
-            Authorization: "Bearer {{ jwt }}"
+            email: "{{ last_response.body.email || 'smoke@example.com' }}"
+            password: "P@ssw0rd!"

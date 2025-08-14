@@ -1,0 +1,50 @@
+/* Basit modern arayüz + mobil iyileştirmeler */
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  font-family: system-ui, sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+  background: #f0f0f0;
+  color: #111;
+  overscroll-behavior-y: contain;
+  -webkit-overflow-scrolling: touch;
+}
+@media (prefers-color-scheme: dark) {
+  body { background: #121212; color: #eee; }
+  .card { background: #1e1e1e; }
+}
+.card {
+  width: 90%;
+  max-width: 420px;
+  padding: 1.5rem;
+  border-radius: 8px;
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(0,0,0,.1);
+}
+.logo { width: 96px; margin: 0 auto 1rem; display: block; }
+.tabs { display: flex; margin-bottom: 1rem; }
+.tab {
+  flex: 1;
+  padding: .5rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+}
+.tab.is-active { border-color: #007bff; font-weight: bold; }
+.panels form { display: flex; flex-direction: column; gap: .75rem; }
+input, button { font-size: 1rem; padding: .5rem; }
+button { cursor: pointer; }
+.msg { margin-top: 1rem; min-height: 1.2rem; }
+.row { display: flex; align-items: center; gap: .5rem; }
+
+/* Scrollbar stilleri */
+body { scrollbar-width: thin; }
+body::-webkit-scrollbar { width: 8px; }
+body::-webkit-scrollbar-thumb { background: rgba(0,0,0,.3); border-radius: 4px; }
+
+.panels { cursor: grab; }

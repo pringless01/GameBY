@@ -18,8 +18,11 @@ export function loadEnv(){
 const schema = [
   { key:'NODE_ENV', default:'development' },
   { key:'PORT', default:'3000', validate:v=>!isNaN(Number(v)) && Number(v)>0 },
-  { key:'JWT_SECRET', required:true, secure:true, validate:v=>v && (process.env.NODE_ENV==='production'? v.length>=32 : v.length>=16) },
-  { key:'CURSOR_SECRET', required:true, secure:true, validate:v=>v && v.length>=16 },
+  { key:'JWT_SECRET', required:true, secure:true, default:'dev-secret-change-me-please', validate:v=>v && (process.env.NODE_ENV=='production'? v.length>=32 : v.length>=16) },
+  { key:'REFRESH_SECRET', required:true, secure:true, default:'dev-refresh-secret-change-me', validate:v=>v && (process.env.NODE_ENV=='production'? v.length>=32 : v.length>=16) },
+  { key:'ACCESS_TOKEN_TTL', default:'15m' },
+  { key:'REFRESH_TOKEN_TTL', default:'7d' },
+  { key:'CURSOR_SECRET', required:true, secure:true, default:'cursor-secret-change-me', validate:v=>v && v.length>=16 },
   { key:'CURSOR_SECRET_ROTATION' },
   { key:'CURSOR_INVALID_THRESHOLD', default:'5', validate:v=>!isNaN(Number(v)) && Number(v)>=1 },
   { key:'CURSOR_ABUSE_COOLDOWN_MS', default:'30000', validate:v=>!isNaN(Number(v)) && Number(v)>=1000 },

@@ -4,6 +4,7 @@ import { envConfig } from '../config/env.js';
 import { invalidateMentorLeaderboards } from '../cache/mentorCaches.js';
 import { emitReputationEvent, ReputationEventType } from '../services/reputationEvents.js';
 import { incMentorSessionCompleted, incMentorRatingGiven, incMenteeRatingGiven } from '../metrics/reputationMetrics.js';
+import { startMentorSession, endMentorSession } from '../metrics/mentorMetrics.js';
 
 // Tutorial adım tanımları (sade)
 export const TUTORIAL_STEPS = [
@@ -149,7 +150,8 @@ function tryMatch(){
   const menteeId = menteeQueue.values().next().value;
   mentorQueue.delete(mentorId); menteeQueue.delete(menteeId);
   initDb().then(async db=>{
-    await db.run(`INSERT INTO mentorships (mentor_id, mentee_id, status) VALUES (?,?, 'ACTIVE')`, [mentorId, menteeId]).catch(()=>{});
+    const result = await db.run(`INSERT INTO mentorships (mentor_id, mentee_id, status) VALUES (?,?, 'ACTIVE')`, [mentorId, menteeId]).catch(()=>({}));
+    startMentorSession(result?.lastID);
     // Kuyruk flag reset (mentee artık waiting değil, mentor hazır flag'i isteğe bağlı kaldırıyoruz)
     await db.run('UPDATE users SET mentee_waiting=0 WHERE id=?',[menteeId]).catch(()=>{});
     await db.run('UPDATE users SET mentor_ready=0 WHERE id=?',[mentorId]).catch(()=>{});
@@ -221,6 +223,7 @@ export async function completeMentorship(mentorshipId, userId, { mentor_rating=n
   const updated = await db.get('SELECT * FROM mentorships WHERE id=?',[mentorshipId]);
   const io = getIo();
   if(io) io.emit('mentorship_completed', { id: mentorshipId, mentor_id: m.mentor_id, mentee_id: m.mentee_id, mentor_rating: updated.mentor_rating, mentee_rating: updated.mentee_rating });
+  endMentorSession(mentorshipId);
   try { invalidateMentorLeaderboards(); } catch {}
   emitReputationEvent({ userId: m.mentor_id, type: ReputationEventType.MENTOR_SESSION_COMPLETE }).catch(()=>{});
   emitReputationEvent({ userId: m.mentee_id, type: ReputationEventType.MENTEE_SESSION_COMPLETE }).catch(()=>{});
