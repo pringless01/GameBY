@@ -1,202 +1,62 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <meta name="description" content="2D Online Ticaret Oyunu - Güven odaklı ticaret ekosistemi">
-    <meta name="theme-color" content="#43e97b">
-    <title>Giriş Yap - Ticaret Oyunu</title>
-    
-    <!-- Styles -->
-    <link rel="stylesheet" href="/css/style.css">
-    <link rel="stylesheet" href="/css/login.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    
-    <!-- PWA -->
-    <link rel="manifest" href="/manifest.json">
-    <link rel="apple-touch-icon" href="/assets/icon-192.png">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Giriş | Oyun</title>
+    <style>
+        body { font-family: system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif; background:#0e1116; color:#eee; margin:0; display:flex; align-items:center; justify-content:center; min-height:100vh; }
+        .card { background:#1b222c; padding:24px 28px; border-radius:14px; width:100%; max-width:380px; box-shadow:0 4px 18px -4px rgba(0,0,0,.6); }
+        h1 { margin:0 0 18px; font-size:22px; letter-spacing:.5px; }
+        label { display:block; font-size:13px; font-weight:600; margin:14px 0 6px; text-transform:uppercase; letter-spacing:.5px; color:#9fb3c8; }
+        input[type=text], input[type=password] { width:100%; padding:12px 14px; border:1px solid #2c3a49; border-radius:8px; background:#141a21; color:#f5f7fa; font-size:14px; transition:border .15s, background .15s; }
+        input:focus { outline:none; border-color:#3b82f6; background:#10161d; }
+        .row { position:relative; }
+        .toggle-pass { position:absolute; top:50%; right:10px; transform:translateY(-50%); background:none; border:none; color:#7d93a8; cursor:pointer; font-size:12px; padding:4px 6px; border-radius:4px; }
+        .toggle-pass:hover { color:#cfe0f5; }
+        .actions { margin-top:20px; display:flex; flex-direction:column; gap:10px; }
+        button { cursor:pointer; border:none; padding:12px 16px; border-radius:8px; font-size:15px; font-weight:600; letter-spacing:.3px; background:linear-gradient(135deg,#2563eb,#1d4ed8); color:#fff; display:flex; align-items:center; justify-content:center; gap:8px; box-shadow:0 2px 8px -2px rgba(0,0,0,.5); transition:background .2s, transform .15s; }
+        button:active { transform:translateY(1px); }
+        button:disabled { opacity:.55; cursor:wait; }
+        .muted { font-size:12px; color:#8092a3; margin-top:4px; }
+        .remember { display:flex; align-items:center; gap:8px; margin-top:10px; font-size:13px; }
+        .remember input { width:16px; height:16px; cursor:pointer; }
+        .status { margin-top:14px; padding:10px 12px; border-radius:8px; font-size:13px; line-height:1.4; display:none; }
+        .status.error { background:#3a1215; color:#fca5a5; border:1px solid #7f1d1d; }
+        .status.success { background:#122d1b; color:#86efac; border:1px solid #14532d; }
+        .status.info { background:#13283a; color:#93c5fd; border:1px solid #1e3a8a; }
+        a { color:#3b82f6; text-decoration:none; font-size:13px; }
+        a:hover { text-decoration:underline; }
+        .footer { margin-top:24px; text-align:center; font-size:12px; color:#5d6b78; }
+    </style>
+    <script src="./js/config.js" defer></script>
+    <script src="./js/auth.js" defer></script>
 </head>
-<body class="login-page">
-    <div class="login-container">
-        
-        <!-- Animated Background -->
-        <div class="login-bg">
-            <div class="bg-shape shape-1"></div>
-            <div class="bg-shape shape-2"></div>
-            <div class="bg-shape shape-3"></div>
-            <div class="floating-icons">
-                <span class="floating-icon">💰</span>
-                <span class="floating-icon">🌾</span>
-                <span class="floating-icon">🏪</span>
-                <span class="floating-icon">⭐</span>
-                <span class="floating-icon">🤝</span>
+<body>
+    <main class="card">
+        <h1>Giriş Yap</h1>
+        <form id="loginForm" autocomplete="on">
+            <label for="identity">E-posta veya Kullanıcı Adı</label>
+            <div class="row">
+                <input id="identity" name="identity" type="text" inputmode="email" placeholder="ornek@mail.com / kullanici" required autofocus />
             </div>
-        </div>
-
-        <!-- Login Card -->
-        <div class="login-card animate-slideUp">
-            
-            <!-- Game Logo & Title -->
-            <div class="game-brand">
-                <div class="game-logo">
-                    <span class="logo-icon">🏛️</span>
-                    <div class="logo-pulse"></div>
-                </div>
-                <h1 class="game-title">Ticaret Dünyası</h1>
-                <p class="game-subtitle">Güven Odaklı Online Ekonomi</p>
+            <label for="password">Şifre</label>
+            <div class="row">
+                <input id="password" name="password" type="password" placeholder="••••••••" required />
+                <button type="button" class="toggle-pass" id="togglePass">Göster</button>
             </div>
-
-            <!-- Welcome Message -->
-            <div class="welcome-section">
-                <h2 class="welcome-title">
-                    <span class="gradient-text">Hoş Geldin!</span> 👋
-                </h2>
-                <p class="welcome-text">
-                    İtibar sistemi ile güven dolu ticaret deneyimini başlat. 
-                    <br>Mentor rehberliğinde ekonomik dünyada yerini al!
-                </p>
+            <div class="remember">
+                <input type="checkbox" id="remember" />
+                <label for="remember" style="margin:0; font-weight:500; letter-spacing:.2px; text-transform:none; color:#c6d4e1;">Beni hatırla</label>
             </div>
-
-            <!-- Auth Tabs -->
-            <div class="auth-tabs">
-                <button class="auth-tab active" id="loginTab" onclick="switchTab('login')">
-                    🔐 Giriş Yap
-                </button>
-                <button class="auth-tab" id="registerTab" onclick="switchTab('register')">
-                    ✨ Kayıt Ol
-                </button>
+            <div id="statusBox" class="status info">Lütfen bilgilerinizi girin.</div>
+            <div class="actions">
+                <button type="submit" id="submitBtn">Giriş</button>
+                <div class="muted">Hesabın yok mu? <a href="register.html">Kayıt Ol (yakında)</a></div>
             </div>
-
-            <!-- Login Form -->
-            <form class="auth-form active" id="loginForm">
-                <div class="form-title">
-                    <h3>🚀 Oyuna Geri Dön</h3>
-                    <p>Mevcut hesabınla giriş yapın</p>
-                </div>
-
-                <div class="input-group">
-                    <label for="loginUsername" class="input-label">
-                        👤 Kullanıcı Adı
-                    </label>
-                    <div class="input-wrapper">
-                        <input 
-                            type="text" 
-                            id="loginUsername" 
-                            name="username"
-                            class="auth-input" 
-                            placeholder="kullanici_adi"
-                            maxlength="20"
-                            required
-                        >
-                        <div class="input-focus-line"></div>
-                    </div>
-                </div>
-
-                <div class="input-group">
-                    <label for="loginPassword" class="input-label">
-                        🔑 Şifre
-                    </label>
-                    <div class="input-wrapper">
-                        <input 
-                            type="password" 
-                            id="loginPassword" 
-                            name="password"
-                            class="auth-input" 
-                            placeholder="••••••••"
-                            required
-                        >
-                        <div class="input-focus-line"></div>
-                        <button type="button" class="password-toggle" onclick="togglePassword('loginPassword')">
-                            👁️
-                        </button>
-                    </div>
-                </div>
-
-                <button type="submit" class="auth-btn login-btn">
-                    <span class="btn-text">🎮 Oyuna Başla</span>
-                    <div class="btn-ripple"></div>
-                </button>
-
-                <div class="auth-links">
-                    <a href="#" class="forgot-link">🔄 Şifremi Unuttum</a>
-                </div>
-            </form>
-
-            <!-- Register Form -->
-            <form class="auth-form" id="registerForm">
-                <div class="form-title">
-                    <h3>🌟 Yeni Hesap Oluştur</h3>
-                    <p>Ticaret dünyasına katıl!</p>
-                </div>
-
-                <div class="input-group">
-                    <label for="registerUsername" class="input-label">
-                        👤 Kullanıcı Adı
-                    </label>
-                    <div class="input-wrapper">
-                        <input 
-                            type="text" 
-                            id="registerUsername" 
-                            name="username"
-                            class="auth-input" 
-                            placeholder="kullanici_adi"
-                            maxlength="20"
-                            required
-                        >
-                        <div class="input-focus-line"></div>
-                        <div class="input-status" id="usernameStatus"></div>
-                    </div>
-                    <span class="input-hint">
-                        3-20 karakter, sadece harf, rakam ve _ kullanın
-                    </span>
-                </div>
-
-                <div class="input-group">
-                    <label for="registerPhone" class="input-label">
-                        📱 Telefon Numarası <span class="optional">(İsteğe bağlı)</span>
-                    </label>
-                    <div class="input-wrapper">
-                        <input 
-                            type="tel" 
-                            id="registerPhone" 
-                            name="phone"
-                            class="auth-input" 
-                            placeholder="0555 123 45 67"
-                            maxlength="15"
-                        >
-                        <div class="input-focus-line"></div>
-                    </div>
-                    <span class="input-hint">
-                        SMS doğrulama için (güvenlik artışı)
-                    </span>
-                </div>
-
-                <div class="input-group">
-                    <label for="registerPassword" class="input-label">
-                        🔑 Şifre
-                    </label>
-                    <div class="input-wrapper">
-                        <input 
-                            type="password" 
-                            id="registerPassword" 
-                            name="password"
-                            class="auth-input" 
-                            placeholder="••••••••"
-                            required
-                        >
-                        <div class="input-focus-line"></div>
-                        <button type="button" class="password-toggle" onclick="togglePassword('registerPassword')">
-                            👁️
-                        </button>
-                    </div>
-                    <div class="password-strength" id="passwordStrength"></div>
-                </div>
-
-                <div class="input-group">
-                    <label for="confirmPassword" class="input-label">
-                        🔐 Şifre Tekrar
+        </form>
+        <div class="footer">&copy; 2025 Oyun Platformu</div>
+    </main>
                     </label>
                     <div class="input-wrapper">
                         <input 
