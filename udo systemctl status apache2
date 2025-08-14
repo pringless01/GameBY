@@ -1,0 +1,10 @@
+● nginx.service - A high performance web server and a reverse proxy server
+     Loaded: loaded (/lib/systemd/system/nginx.service; disabled; vendor preset: enabled)
+     Active: inactive (dead)
+       Docs: man:nginx(8)
+
+Aug 12 05:14:46 xmusaserver01 systemd[1]: Starting A high performance web server and a reverse proxy server...
+Aug 12 05:14:46 xmusaserver01 systemd[1]: Started A high performance web server and a reverse proxy server.
+Aug 12 05:32:12 xmusaserver01 systemd[1]: Stopping A high performance web server and a reverse proxy server...
+Aug 12 05:32:12 xmusaserver01 systemd[1]: nginx.service: Succeeded.
+Aug 12 05:32:12 xmusaserver01 systemd[1]: Stopped A high performance web server and a reverse proxy server.
