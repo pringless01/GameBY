@@ -29,7 +29,7 @@ async function authFetch(path, token, options={}){ return fetch(BASE+path,{...op
     assert(lastStatus===429,'Rate limit devreye girmedi');
 
     // trust_updated event testi
-    const socket = Client(BASE,{transports:['websocket']});
+    const socket = Client(BASE,{transports:['websocket'], auth:{ token: l.token }});
     const events=[];
     socket.on('trust_updated', d => events.push(d));
     await new Promise(resolve => socket.on('connect', resolve));

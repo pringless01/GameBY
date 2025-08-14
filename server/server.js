@@ -19,13 +19,21 @@ import adminRoutes from './routes/admin.js';
 import roleRoutes from './routes/role.js';
 import mentorRoutes from './routes/mentor.js';
 import activityRoutes from './routes/activity.js';
+import marketplaceRoutes from './routes/marketplace.js';
+import reputationRoutes from './routes/reputation.js';
 import { registerChatNamespace } from './sockets/chatSocket.js';
 import { setIo } from './sockets/io.js';
+import { initBlacklist } from './security/tokenBlacklist.js';
+import { socketAuth } from './middleware/socketAuth.js';
+import { idempotencyMiddleware } from './middleware/idempotency.js';
 import helmet from 'helmet';
 import { rehydrateQueues } from './services/mentorService.js';
 import { getIo } from './sockets/io.js';
 import { scheduleDecayIfEnabled } from './services/reputationDecayService.js';
 import { scheduleEconomySinkIfEnabled } from './services/economyService.js';
+import { httpRequestDuration, getPercentiles } from './metrics/latencyMetrics.js';
+import { register } from 'prom-client';
+import { leaderboardHeader } from './middleware/leaderboardHeader.js';
 
 // Basic Prometheus-like app metrics (T008)
 const appMetrics = {
@@ -43,24 +51,33 @@ const __dirname = path.dirname(__filename);
 
 const app = express();
 app.use(helmet({ crossOriginResourcePolicy: false }));
-const allowed = (envConfig.ALLOWED_ORIGINS || '*').split(',').map(s=>s.trim());
+const rawAllowed = (envConfig.ALLOWED_ORIGINS || '').split(',').map(s=>s.trim()).filter(Boolean);
+let allowed;
+if(process.env.NODE_ENV === 'production'){
+  allowed = rawAllowed.filter(o=>o !== '*');
+} else {
+  allowed = rawAllowed.length ? rawAllowed : ['http://localhost:5173','http://localhost:3000'];
+}
 app.use(cors({ origin: (origin, cb)=> {
-  if(!origin || allowed.includes('*') || allowed.includes(origin)) return cb(null, true);
+  if(!origin) return cb(null, true);
+  const list = allowed;
+  if(list.includes(origin)) return cb(null, true);
   return cb(new Error('CORS blocked'), false);
-}}));
+}, credentials: true }));
 app.use(express.json());
 app.use(morgan('dev'));
+app.use(idempotencyMiddleware);
 
 // HTTP metrics middleware
 app.use((req, res, next) => {
   appMetrics.http_requests_total++;
+  const endHist = httpRequestDuration.startTimer();
   const t0 = Date.now();
   const orig = res.writeHead;
   res.writeHead = function(statusCode, ...args){
     if(statusCode >= 500) appMetrics.http_errors_total++;
     const dur = Date.now() - t0;
     appMetrics.http_request_duration_sum_ms += dur;
-    // bucketize
     const b = appMetrics.http_request_duration_buckets;
     const c = appMetrics.http_request_duration_counts;
     let placed = false;
@@ -68,10 +85,12 @@ app.use((req, res, next) => {
       if(dur <= b[i]){ c[i]++; placed = true; break; }
     }
     if(!placed){ c[c.length-1]++; }
+    endHist();
     return orig.call(this, statusCode, ...args);
   };
   next();
 });
+app.use(leaderboardHeader);
 
 const startTime = Date.now();
 let currentCommit = process.env.GIT_COMMIT || null;
@@ -171,8 +190,15 @@ app.get('/metrics', async (req, res) => {
     body += '# TYPE app_economy_total_deducted counter\n';
     body += `app_economy_total_deducted ${economyMetrics.total_deducted||0}\n`;
     body += '# TYPE app_economy_errors counter\n';
-    body += `app_economy_errors ${economyMetrics.errors||0}\n`;
+  body += `app_economy_errors ${economyMetrics.errors||0}\n`;
   } catch { /* ignore */ }
+  const prom = await register.metrics();
+  const { httpP95, httpP99, wsP95, wsP99 } = getPercentiles();
+  body += prom;
+  body += `http_request_duration_ms_p95 ${httpP95}\n`;
+  body += `http_request_duration_ms_p99 ${httpP99}\n`;
+  body += `ws_message_duration_ms_p95 ${wsP95}\n`;
+  body += `ws_message_duration_ms_p99 ${wsP99}\n`;
   res.setHeader('Content-Type','text/plain; version=0.0.4');
   res.end(body);
   } catch (e) {
@@ -187,6 +213,8 @@ app.use('/api/admin', adminRoutes);
 app.use('/api/role', roleRoutes);
 app.use('/api/mentor', mentorRoutes);
 app.use('/api/activity', activityRoutes);
+app.use('/api/marketplace', marketplaceRoutes);
+app.use('/api/reputation', reputationRoutes);
 
 // Serve frontend (optional quick integration)
 app.use(express.static(path.join(__dirname, '..', 'frontend', 'public')));
@@ -197,6 +225,7 @@ app.use(express.static(path.join(__dirname, '..', 'frontend', 'public')));
 (async () => {
   await initDb();
   try { await initRedisIfEnabled(); } catch { /* ignore */ }
+  try { await initBlacklist(); } catch { /* ignore */ }
   if(envConfig.MIGRATIONS_AUTO_APPLY === '1'){
     try {
       const migrationsDir = path.join(__dirname, 'migrations');
@@ -212,7 +241,8 @@ app.use(express.static(path.join(__dirname, '..', 'frontend', 'public')));
     }
   }
   const server = http.createServer(app);
-  const io = new Server(server, { cors: { origin: '*' } });
+  const io = new Server(server, { cors: { origin: allowed, credentials: true } });
+  io.use(socketAuth);
   setIo(io);
   registerChatNamespace(io);
   await rehydrateQueues();

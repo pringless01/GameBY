@@ -41,7 +41,7 @@ async function authFetch(path, token, options={}){
     async function me(tok){ const r = await authFetch('/api/user/me', tok); return r.json(); }
     const me1 = await me(l1.token); const me2 = await me(l2.token);
 
-    const socket1 = Client(BASE, { transports:['websocket'] });
+    const socket1 = Client(BASE, { transports:['websocket'], auth:{ token: l1.token } });
     const events = { created: [], updated: [], tutorial: [], trust: [] };
     socket1.on('contract_created', c => events.created.push(c));
     socket1.on('contract_updated', c => events.updated.push(c));
