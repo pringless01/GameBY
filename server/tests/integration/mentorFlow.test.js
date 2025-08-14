@@ -25,7 +25,7 @@ async function authFetch(path, token, options={}){ return fetch(BASE+path,{...op
     await fetch(BASE+'/api/admin/audit'); // touch
 
   // connect socket first
-  const s = Client(BASE, { transports:['websocket'] });
+  const s = Client(BASE, { transports:['websocket'], auth:{ token: lMentor.token } });
     const events = { queue:0, match:0, status:0 };
     s.on('mentor:queue_update', ()=>{ events.queue++; });
     s.on('mentor:match_found', ()=>{ events.match++; });

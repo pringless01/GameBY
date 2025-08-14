@@ -46,6 +46,11 @@ export async function findUserByUsername(username) {
   return db.get('SELECT * FROM users WHERE username = ?', [username]);
 }
 
+export async function findUserById(id) {
+  const db = await initDb();
+  return db.get('SELECT * FROM users WHERE id = ?', [id]);
+}
+
 export function validatePassword(user, password) {
   return bcrypt.compareSync(password, user.password_hash);
 }

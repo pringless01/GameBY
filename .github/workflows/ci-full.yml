@@ -9,6 +9,12 @@ on:
 jobs:
   build_test:
     runs-on: ubuntu-latest
+    env:
+      JWT_SECRET: ${{ secrets.JWT_SECRET }}
+      REFRESH_SECRET: ${{ secrets.REFRESH_SECRET }}
+      CURSOR_SECRET: ${{ secrets.CURSOR_SECRET }}
+      ALLOWED_ORIGINS: ${{ secrets.ALLOWED_ORIGINS }}
+      REDIS_URL: ${{ secrets.REDIS_URL }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -25,16 +31,43 @@ jobs:
         run: |
           if [ -f package-lock.json ]; then npm ci; else npm install; fi
 
-      - name: Unit tests + Integration tests
+      - name: Run migrations
         working-directory: server
-        run: npm run test
+        run: npm run migrate
+
+      - name: Lint
+        working-directory: server
+        run: npm run lint
+
+      - name: Unit & integration tests
+        working-directory: server
+        run: npm test
+
+      - name: Chat & telemetry tests
+        working-directory: server
+        run: |
+          node tests/integration/chatSanitize.test.js
+          node tests/integration/chatSpamPenalty.test.js
+          node tests/integration/reputationCap.test.js
+          node tests/integration/metricsEndpoint.test.js
+          node tests/integration/leaderboardHeader.test.js
+
+      - name: Smoke test
+        working-directory: server
+        run: npm run perf:smoke -- --output smoke-report.json
+
+      - name: Upload smoke report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: smoke-report
+          path: server/smoke-report.json
 
       - name: Coverage artifacts
         if: always()
         working-directory: server
-        run: |
-          npm run coverage:save || true
-        
+        run: npm run coverage:save || true
+
       - name: Upload coverage
         if: always()
         uses: actions/upload-artifact@v4
@@ -44,6 +77,39 @@ jobs:
             logs/coverage-final.json
             logs/lcov.info
             logs/coverage-summary.txt
+
+  quarantine_tests:
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    env:
+      JWT_SECRET: ${{ secrets.JWT_SECRET }}
+      REFRESH_SECRET: ${{ secrets.REFRESH_SECRET }}
+      CURSOR_SECRET: ${{ secrets.CURSOR_SECRET }}
+      ALLOWED_ORIGINS: ${{ secrets.ALLOWED_ORIGINS }}
+      REDIS_URL: ${{ secrets.REDIS_URL }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install server deps
+        working-directory: server
+        run: |
+          if [ -f package-lock.json ]; then npm ci; else npm install; fi
+
+      - name: Run migrations
+        working-directory: server
+        run: npm run migrate
+
+      - name: Economy sink test (@quarantine)
+        working-directory: server
+        run: npm run test:unit:economy-sink
 
   migrations_check:
     runs-on: ubuntu-latest
