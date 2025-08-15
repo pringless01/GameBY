@@ -62,7 +62,7 @@
     "jsonwebtoken": "^9.0.2",
     "morgan": "^1.10.0",
     "prom-client": "^14.2.0",
-    "redis": "^4.7.0",
+    "redis": "^5.8.1",
     "socket.io": "^4.7.5",
     "sqlite": "^5.1.1",
     "sqlite3": "^5.1.7"
