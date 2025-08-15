@@ -182,7 +182,8 @@ async function getTrustLeaderboard(db, { limit, offset, useAround, window, userI
       const end = userRank + window;
       rows = rows.filter(r=> r.r >= start && r.r <= end);
     } catch(err){
-      const many = await db.all('SELECT id, username, trust_score FROM users ORDER BY trust_score DESC, id ASC LIMIT 500');
+      const { fetchTopN } = await import('../src/modules/leaderboard/services/trustQueries.js');
+      const many = await fetchTopN(db, 500);
       rows = many.map((r,i)=>({ ...r, r: i+1 })).filter(r=> r.r >= userRank-window && r.r <= userRank+window);
     }
     trustAroundCache.set(aroundKey, { ts: Date.now(), userRank, list: rows });
@@ -220,13 +221,8 @@ async function getTrustLeaderboard(db, { limit, offset, useAround, window, userI
     return { payload: { category:'trust', list, cached:false, ...(needRank && userRankMeta ? { userRank: userRankMeta.rank, userRankMeta } : {}), total, offset: Number(offset), limit: Number(limit), hasMore, mode:'offset' }, cache:'MISS', ttl: LEADERBOARD_TTL_MS, lastTs: now };
   }
   // Cursor mode
-  const params = [];
-  let where = '';
-  if(decodedCursor){
-    where = 'WHERE (trust_score < ? OR (trust_score = ? AND id > ?))';
-    params.push(decodedCursor.score, decodedCursor.score, decodedCursor.id);
-  }
-  const rows = await db.all(`SELECT id, username, trust_score FROM users ${where} ORDER BY trust_score DESC, id ASC LIMIT ?`, [...params, limit]);
+  const { fetchTrustAfterCursor } = await import('../src/modules/leaderboard/services/trustQueries.js');
+  const rows = await fetchTrustAfterCursor(db, decodedCursor, limit);
   const totalRow = await db.get('SELECT COUNT(*) as c FROM users');
   const total = totalRow.c;
   let userRankMeta = null;
