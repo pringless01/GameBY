@@ -485,10 +485,8 @@ router.get('/leaderboard', authRequired, lbRate, async (req,res)=>{
     if(cdMs > 0){
       const untilTs = getCursorCooldownUntil(req.ip);
       if(potentialCursorRequest){
-        if(process.env.CURSOR_AUTO_DEGRADE==='1'){
-          const cnt = getIpInvalidCount(req.ip);
-          if(cnt > INVALID_CURSOR_THRESHOLD){ cursor = null; offset='0'; req._autoDegrade = true; }
-        }
+        const cnt = getIpInvalidCount(req.ip);
+        if(shouldAutoDegrade(cnt)){ cursor = null; offset='0'; req._autoDegrade = true; }
       } else {
         const key = req.ip+':'+untilTs;
         if(!cooldownFirstOffsetServed.has(key)){
@@ -531,9 +529,9 @@ router.get('/leaderboard', authRequired, lbRate, async (req,res)=>{
         if(cat === 'trust'){
           let r = await getTrustLeaderboard(db,{ limit, offset, useAround, window, userId, cursor, needRank: useAround ? true : wantRank, ip: req.ip });
           if(r.error === 'invalid_cursor'){
-            const cnt = getIpInvalidCount(req.ip);
-            if(process.env.CURSOR_AUTO_DEGRADE==='1' && cnt > INVALID_CURSOR_THRESHOLD){
-              req._autoDegrade = true; cursor = null; offset='0';
+        const cnt = getIpInvalidCount(req.ip);
+        if(shouldAutoDegrade(cnt)){
+          req._autoDegrade = true; cursor = null; offset='0';
               r = await getTrustLeaderboard(db,{ limit, offset, useAround, window, userId, cursor:null, needRank: useAround ? true : wantRank, ip: req.ip });
             }
           }
@@ -675,10 +673,8 @@ router.head('/leaderboard', authRequired, lbRate, async (req,res)=>{
     if(cdMs > 0){
       const untilTs = getCursorCooldownUntil(req.ip);
       if(potentialCursorRequest){
-        if(process.env.CURSOR_AUTO_DEGRADE==='1'){
-          const cnt = getIpInvalidCount(req.ip);
-          if(cnt > INVALID_CURSOR_THRESHOLD){ cursor = null; offset='0'; req._autoDegrade = true; }
-        }
+        const cnt = getIpInvalidCount(req.ip);
+        if(shouldAutoDegrade(cnt)){ cursor = null; offset='0'; req._autoDegrade = true; }
       } else {
         const key = req.ip+':'+untilTs;
         if(!cooldownFirstOffsetServed.has(key)){
@@ -788,7 +784,7 @@ router.head('/leaderboard', authRequired, lbRate, async (req,res)=>{
     let r = await getTrustLeaderboard(db,{ limit, offset, useAround, window, userId, cursor, needRank: useAround ? true : wantRank, ip: req.ip });
     if(r.error === 'invalid_cursor'){
       const cnt = getIpInvalidCount(req.ip);
-      if(process.env.CURSOR_AUTO_DEGRADE==='1' && cnt > INVALID_CURSOR_THRESHOLD){
+      if(shouldAutoDegrade(cnt)){
         req._autoDegrade = true; cursor = null; offset='0';
         const rDegraded = await getTrustLeaderboard(db,{ limit, offset, useAround, window, userId, cursor:null, needRank: useAround ? true : wantRank, ip: req.ip });
         if(!rDegraded.error){ r = rDegraded; }
