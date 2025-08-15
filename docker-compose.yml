@@ -10,8 +10,8 @@ services:
       JWT_SECRET: ${JWT_SECRET}
       CURSOR_SECRET: ${CURSOR_SECRET}
       CURSOR_SECRET_ROTATION: ${CURSOR_SECRET_ROTATION}
-      DB_PATH: /data/game.db
-      ALLOWED_ORIGINS: "*"
+  CORS_ORIGIN: ${CORS_ORIGIN}
+  DB_PATH: /data/game.db
     volumes:
       - api-data:/data
     ports:
