@@ -214,6 +214,10 @@ app.get('/metrics', async (req, res) => {
   res.status(500).send('metrics_failed');
   }
 });
+// Lightweight liveness probe (no DB touch)
+app.get('/healthz', (req, res) => {
+  res.type('text/plain').send('ok');
+});
 app.get('/login', (_req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'login.html'));
 });
