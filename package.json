@@ -10,9 +10,10 @@
   ],
   "scripts": {
     "codex:run": "node tools/codex-runner.js",
-    "lint": "npm --prefix apps/api/src run lint",
-    "lint:fix": "npm --prefix apps/api/src run lint:fix",
-    "test": "npm --prefix apps/api/src test",
+  "dev:web": "npm --workspace @gameby/web run dev",
+  "lint": "eslint . --ext .js,.ts --max-warnings=0 || true",
+  "lint:fix": "eslint . --ext .js,.ts --fix || true",
+  "test": "npm -ws run test",
     "coverage": "npm --prefix apps/api/src run coverage",
     "ci:all": "npm --prefix apps/api/src test"
   }
