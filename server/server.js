@@ -56,10 +56,7 @@ app.use(helmet({ crossOriginResourcePolicy: false }));
 app.use(corsMiddleware);
 app.use(express.json());
 app.use(morgan('dev'));
- codex/apply-phase-p1-for-secure-auth-ws-d7md7e
 app.use(express.static(path.join(__dirname, 'public')));
-
- main
 app.use(idempotencyMiddleware);
 
 // HTTP metrics middleware
