@@ -1,0 +1,31 @@
+musasrvr@xmusasrvr:~$ curl -s https://tcrtsmlatronline.app/
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Error</title>
+</head>
+<body>
+<pre>Cannot GET /</pre>
+</body>
+</html>
+musasrvr@xmusasrvr:~$ curl -s https://tcrtsmlatronline.app/api/user/bootstrap
+{"error":"unauthorized"}musasrvr@xmusasrvr:~$ curl -s https://tcrtsmlatronline.app/api/user/leaderboard?limit=3
+{"error":"unauthorized"}musasrvr@xmusasrvr:~$ curl -s -X POST https://tcrtsmlatronline.app/api/auth/login -H "Content-Type: application/json" -d '{"username":"test","password":"test"}'
+{"error":"missing_fields","message":"Eksik alanlar mevcut"}musasrvr@xmusasrvr:~$ curl -s https://tcrtsmlatronline.app/api/
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Error</title>
+</head>
+<body>
+<pre>Cannot GET /api/</pre>
+</body>
+</html>
+musasrvr@xmusasrvr:~$
+
+
+
+
+
