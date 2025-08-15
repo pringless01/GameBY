@@ -1,0 +1,51 @@
+# Exclude VCS
+.git
+.gitignore
+.husky
+
+# Node deps (re-installed in stages)
+node_modules
+server/node_modules
+frontend/node_modules
+
+# Env / secrets
+.env
+*.env.local
+server/.env
+.env.*
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Test / coverage
+coverage
+.nyc_output
+server/coverage
+server/.nyc_output
+
+# Build artifacts not needed in context (frontend built in stage)
+/build
+/tmp
+.cache
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode
+.idea
+
+# SQLite runtime data (mounted or persisted outside image)
+server/data/*.db
+server/data/*.db-journal
+server/data/*.sqlite
+server/data/backup*
+
+# Dockerfile itself (optional, but usually fine to send; keep for clarity)
+# Dockerfile
+
+dist
+/frontend/dist
