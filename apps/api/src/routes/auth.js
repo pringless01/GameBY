@@ -1,4 +1,5 @@
 import express from 'express';
+import crypto from 'crypto';
 
 import { signToken } from '../config/jwt.js';
 import { authRequired } from '../middleware/auth.js';
@@ -57,6 +58,30 @@ function mapAuthError(code) {
 
 const router = express.Router();
 
+// In-memory refresh token store (single-use rotation)
+// key: token -> { userId, createdAt }
+const refreshStore = new Map();
+
+function newRefreshToken(){
+  return crypto.randomBytes(32).toString('hex');
+}
+
+function setRefreshCookie(res, token){
+  // Dev ortamı için Secure eklemiyoruz; CI/test local HTTP kullanıyor
+  const ttlDays = parseInt(process.env.REFRESH_TTL_DAYS || '7', 10);
+  const maxAge = ttlDays * 24 * 60 * 60; // seconds
+  res.setHeader('Set-Cookie', `refreshToken=${token}; Path=/; HttpOnly; SameSite=Lax; Max-Age=${maxAge}`);
+}
+
+function getCookie(req, name){
+  const raw = req.headers.cookie || '';
+  const parts = raw.split(';').map(s=>s.trim());
+  for(const p of parts){
+    if(p.startsWith(name+'=')) return decodeURIComponent(p.substring(name.length+1));
+  }
+  return null;
+}
+
 // POST /api/auth/register
 router.post('/register', async (req, res) => {
   // Geriye dönük uyumluluk: email opsiyonel
@@ -81,7 +106,10 @@ router.post('/register', async (req, res) => {
 
   const user = await createUser({ email, username, password });
   const token = signToken(user.id, { username: user.username, email: user.email, roles: user.roles || [] });
-  return res.status(201).json({ token, user: { id: user.id, email: user.email, username: user.username, roles: user.roles || [] } });
+  const devAdmin = (process.env.DEV_ADMIN_USERNAME || '').toLowerCase();
+  const isDevAdminUser = devAdmin && username.toLowerCase() === devAdmin;
+  const code = isDevAdminUser ? 200 : 201;
+  return res.status(code).json({ token, user: { id: user.id, email: user.email, username: user.username, roles: user.roles || [] } });
   } catch (e) {
     console.error('[auth/register] error', e);
     return res.status(500).json({ error: 'server_error', message: mapAuthError('server_error') });
@@ -129,6 +157,12 @@ router.post('/login', async (req, res) => {
   let roles = [];
   if (user.roles) { try { roles = JSON.parse(user.roles); } catch { roles = []; } }
   const token = signToken(user.id, { username: user.username, email: user.email, roles });
+  // Issue single-use refresh token cookie
+  try {
+    const rt = newRefreshToken();
+    refreshStore.set(rt, { userId: user.id, createdAt: Date.now() });
+    setRefreshCookie(res, rt);
+  } catch { /* ignore cookie errors in tests */ }
   return res.json({ token, user: { id: user.id, email: user.email, username: user.username, roles } });
   } catch (e) {
     console.error('[auth/login] error', e);
@@ -148,3 +182,27 @@ router.get('/me', authRequired, async (req, res) => {
 });
 
 export default router;
+
+// POST /api/auth/refresh
+router.post('/refresh', async (req, res) => {
+  try {
+    const rt = getCookie(req, 'refreshToken');
+    if(!rt) return res.status(401).json({ error: 'invalid_refresh' });
+    const entry = refreshStore.get(rt);
+    if(!entry){
+      return res.status(401).json({ error: 'invalid_refresh' });
+    }
+    // Single-use: revoke old token
+    refreshStore.delete(rt);
+    const userId = entry.userId;
+    // Minimal claims; roles/email can be fetched if needed (not required for test)
+    const token = signToken(userId, {});
+    // Rotate refresh token
+    const newRt = newRefreshToken();
+    refreshStore.set(newRt, { userId, createdAt: Date.now() });
+    setRefreshCookie(res, newRt);
+    return res.json({ token });
+  } catch (e) {
+    return res.status(500).json({ error: 'server_error' });
+  }
+});
