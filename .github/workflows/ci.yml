@@ -1,4 +1,4 @@
-name: CI - Migrations Check
+name: CI
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
     branches: [ main ]
 
 jobs:
-  migrations:
+  build-and-test:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -16,21 +16,17 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: '20'
+          cache: 'npm'
 
-      - name: Install dependencies (server)
-        working-directory: server
-        run: |
-          if [ -f package-lock.json ]; then
-            npm ci
-          else
-            npm install
-          fi
+      - name: Install dependencies (root workspaces)
+        run: npm i
 
-      - name: Run migrations
-        working-directory: server
-        run: npm run migrate
+      - name: Lint
+        run: npm run lint
 
-      - name: Check pending migrations
-        working-directory: server
-        run: npm run check:migrations
+      - name: Unit tests
+        run: npm run test --workspaces=false --if-present
+
+      - name: Coverage (optional)
+        run: npm run coverage --if-present

@@ -3,12 +3,16 @@
   "private": true,
   "version": "0.0.1",
   "type": "module",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
   "scripts": {
-  "codex:run": "node tools/codex-runner.js",
-  "lint": "npm --prefix server run lint",
-  "lint:fix": "npm --prefix server run lint:fix",
-  "test": "npm --prefix server test",
-  "coverage": "npm --prefix server run coverage",
-  "ci:all": "npm --prefix server ci --silent || npm --prefix server test"
+    "codex:run": "node tools/codex-runner.js",
+    "lint": "npm --prefix apps/api run lint",
+    "lint:fix": "npm --prefix apps/api run lint:fix",
+    "test": "npm --prefix apps/api test",
+    "coverage": "npm --prefix apps/api run coverage",
+    "ci:all": "npm --prefix apps/api test"
   }
 }
