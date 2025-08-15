@@ -210,9 +210,9 @@ async function getTrustLeaderboard(db, { limit, offset, useAround, window, userI
       return { payload: { category:'trust', list: cached.data, cached:true, ttl_ms: ttl, ...(needRank && userRankMeta ? { userRank: userRankMeta.rank, userRankMeta } : {}), total, offset: Number(offset), limit: Number(limit), hasMore, mode:'offset' }, cache:'HIT', ttl, lastTs: cached.ts };
     }
     leaderboardMetrics.trust.offset.misses++;
-    const list = await db.all('SELECT id, username, trust_score FROM users ORDER BY trust_score DESC, id ASC LIMIT ? OFFSET ?', [limit, offset]);
-    const totalRow = await db.get('SELECT COUNT(*) as c FROM users');
-    const total = totalRow.c;
+  const { fetchTrustPage, countUsers } = await import('../src/modules/leaderboard/services/trustQueries.js');
+  const list = await fetchTrustPage(db, limit, offset);
+  const total = await countUsers(db);
     leaderboardCache.set(limit+':'+offset, { ts: now, data: list, total });
     let userRankMeta = null;
     if(needRank){ userRankMeta = await computeUserRankMeta(db, userId); }
