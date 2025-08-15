@@ -162,76 +162,23 @@ async function computeUserRankMeta(db, userId){
   return { rank, total, percentile };
 }
 
-// Trust leaderboard (offset / cursor / around)
+// Trust leaderboard (offset / cursor / around) – facade sarmalayıcı
 async function getTrustLeaderboard(db, { limit, offset, useAround, window, userId, cursor, needRank, ip }){
-  const now = Date.now();
-  if(useAround){
+  const { getTrustLeaderboardFacade } = await import('../src/modules/leaderboard/index.js');
+  const r = await getTrustLeaderboardFacade(db, {
+    limit, offset, useAround, window, userId, cursor, needRank, ip,
+    caches: { leaderboardCache, trustAroundCache, LEADERBOARD_TTL_MS }
+  });
+  // Metrikleri eski davranışa göre koru
+  if (useAround) {
     leaderboardMetrics.trust.around.requests++;
-    const aroundKey = userId + ':' + window;
-    const aroundCached = trustAroundCache.get(aroundKey);
-    if(aroundCached && (now - aroundCached.ts) < LEADERBOARD_TTL_MS){
-      return { payload: { category:'trust', around:true, cached:true, ttl_ms: LEADERBOARD_TTL_MS - (now - aroundCached.ts), userRank: aroundCached.userRank, window, list: aroundCached.list }, cache:'HIT', ttl: LEADERBOARD_TTL_MS - (now - aroundCached.ts), lastTs: aroundCached.ts };
-    }
-    const userRankMeta = await computeUserRankMeta(db, userId);
-    if(!userRankMeta) return { error:'user_not_found' };
-    const userRank = userRankMeta.rank;
-    let rows = [];
-    try {
-      rows = await db.all(`SELECT id, username, trust_score, ROW_NUMBER() OVER (ORDER BY trust_score DESC, id ASC) AS r FROM users`);
-      const start = Math.max(1, userRank - window);
-      const end = userRank + window;
-      rows = rows.filter(r=> r.r >= start && r.r <= end);
-    } catch(err){
-      const { fetchTopN } = await import('../src/modules/leaderboard/services/trustQueries.js');
-      const many = await fetchTopN(db, 500);
-      rows = many.map((r,i)=>({ ...r, r: i+1 })).filter(r=> r.r >= userRank-window && r.r <= userRank+window);
-    }
-    trustAroundCache.set(aroundKey, { ts: Date.now(), userRank, list: rows });
-    return { payload: { category:'trust', around:true, userRank, userRankMeta, window, list: rows, cached:false, total: userRankMeta.total }, cache:'MISS', ttl: LEADERBOARD_TTL_MS, lastTs: Date.now() };
-  }
-  // paged veya cursor
-  const useCursor = !!cursor;
-  let decodedCursor = null; let cursorRotated = false;
-  if(useCursor){
-    decodedCursor = decodeCursor(cursor, ip);
-    if(!decodedCursor){ return { error:'invalid_cursor' }; }
-    cursorRotated = !!decodedCursor.rotated;
+  } else if (cursor) {
     leaderboardMetrics.trust.cursor.requests++;
-    if(cursorRotated) leaderboardMetrics.trust.cursor.rotations++;
+    if (r?.payload?.cursorRotated) leaderboardMetrics.trust.cursor.rotations++;
+  } else {
+    if (r?.cache === 'HIT') leaderboardMetrics.trust.offset.hits++; else leaderboardMetrics.trust.offset.misses++;
   }
-  if(!useCursor){
-    const cacheKey = limit+':'+offset;
-    const cached = leaderboardCache.get(cacheKey);
-    if(cached && (now - cached.ts) < LEADERBOARD_TTL_MS){
-      leaderboardMetrics.trust.offset.hits++;
-      const ttl = LEADERBOARD_TTL_MS - (now - cached.ts);
-      let userRankMeta = null;
-      if(needRank){ userRankMeta = await computeUserRankMeta(db, userId); }
-      const total = cached.total; const hasMore = offset + (cached.data?.length||0) < total;
-      return { payload: { category:'trust', list: cached.data, cached:true, ttl_ms: ttl, ...(needRank && userRankMeta ? { userRank: userRankMeta.rank, userRankMeta } : {}), total, offset: Number(offset), limit: Number(limit), hasMore, mode:'offset' }, cache:'HIT', ttl, lastTs: cached.ts };
-    }
-    leaderboardMetrics.trust.offset.misses++;
-  const { fetchTrustPage, countUsers } = await import('../src/modules/leaderboard/services/trustQueries.js');
-  const list = await fetchTrustPage(db, limit, offset);
-  const total = await countUsers(db);
-    leaderboardCache.set(limit+':'+offset, { ts: now, data: list, total });
-    let userRankMeta = null;
-    if(needRank){ userRankMeta = await computeUserRankMeta(db, userId); }
-    const hasMore = Number(offset) + list.length < total;
-    return { payload: { category:'trust', list, cached:false, ...(needRank && userRankMeta ? { userRank: userRankMeta.rank, userRankMeta } : {}), total, offset: Number(offset), limit: Number(limit), hasMore, mode:'offset' }, cache:'MISS', ttl: LEADERBOARD_TTL_MS, lastTs: now };
-  }
-  // Cursor mode
-  const { fetchTrustAfterCursor } = await import('../src/modules/leaderboard/services/trustQueries.js');
-  const rows = await fetchTrustAfterCursor(db, decodedCursor, limit);
-  const totalRow = await db.get('SELECT COUNT(*) as c FROM users');
-  const total = totalRow.c;
-  let userRankMeta = null;
-  if(needRank){ userRankMeta = await computeUserRankMeta(db, userId); }
-  const last = rows[rows.length-1];
-  const nextCursor = rows.length === limit && last ? encodeCursor(last.trust_score, last.id) : null;
-  const hasMore = !!nextCursor;
-  const cursorSigned = decodedCursor ? !!decodedCursor.signed : false;
-  return { payload: { category:'trust', list: rows, cached:false, ...(needRank && userRankMeta ? { userRank: userRankMeta.rank, userRankMeta } : {}), total, cursor: cursor||null, nextCursor, limit: Number(limit), mode:'cursor', hasMore, cursorRotated, cursorSigned }, cache:'MISS', ttl: 0, lastTs: Date.now() };
+  return r;
 }
 
 // Mentor leaderboard
