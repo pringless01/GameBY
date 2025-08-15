@@ -297,3 +297,5 @@ REPUTATION_NEGATIVE_WEIGHT=1
 ---
 
 **Not:** Bu README v3.5-pre teknik durumunu yansıtır; roadmap güncellemeleri Ana Oyun Dokümanı ile senkron tutulacaktır.
+# Test commit Fri 15 Aug 2025 08:49:31 PM UTC
+# Deploy test Fri 15 Aug 2025 08:54:18 PM UTC
