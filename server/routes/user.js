@@ -237,8 +237,9 @@ async function getTrustLeaderboard(db, { limit, offset, useAround, window, userI
 // Mentor leaderboard
 async function getMentorLeaderboard(db, { limit, minSessions, wantSelf, userId }){
   try {
-    const tbl = await db.all("PRAGMA table_info(mentorships)");
-    if(!Array.isArray(tbl) || tbl.length===0){
+    const { hasMentorshipsTable } = await import('../src/modules/leaderboard/services/mentorQueries.js');
+    const ok = await hasMentorshipsTable(db);
+    if(!ok){
       return { payload: { category:'mentor', list:[], total:0, cached:false, ttl_ms:0, selfRank:null, unavailable:true }, cache:'MISS', ttl:0, lastTs: Date.now() };
     }
   } catch {
@@ -257,30 +258,17 @@ async function getMentorLeaderboard(db, { limit, minSessions, wantSelf, userId }
       if(age < MENTOR_LB_TTL_MS){ list = cached.data; totalQualified = cached.total; listCached = true; ttlMs = MENTOR_LB_TTL_MS - age; }
     }
     if(!listCached){
-      list = await db.all(`SELECT m.mentor_id as id, u.username, COUNT(m.id) as sessions, ROUND(AVG(m.mentor_rating),2) as avg_rating
-        FROM mentorships m
-        JOIN users u ON u.id = m.mentor_id
-        WHERE m.status='COMPLETED' AND m.mentor_rating IS NOT NULL
-        GROUP BY m.mentor_id
-        HAVING sessions >= ?
-        ORDER BY avg_rating DESC, sessions DESC, id ASC
-        LIMIT ?`, [minSessions, limit]);
-      const totalRow = await db.get(`SELECT COUNT(*) as total FROM (
-          SELECT m.mentor_id
-          FROM mentorships m
-          WHERE m.status='COMPLETED' AND m.mentor_rating IS NOT NULL
-          GROUP BY m.mentor_id
-          HAVING COUNT(m.id) >= ?
-        ) x`, [minSessions]);
-      totalQualified = totalRow.total;
+      const { fetchMentorAgg, countMentorsQualified } = await import('../src/modules/leaderboard/services/mentorQueries.js');
+      list = await fetchMentorAgg(db, minSessions, limit);
+      totalQualified = await countMentorsQualified(db, minSessions);
       mentorsLbCache.set(cacheKey, { ts: now, data: list, total: totalQualified });
       ttlMs = MENTOR_LB_TTL_MS;
     }
   }
   let selfRank = null;
   if(wantSelf){
-    const selfRow = await db.get(`SELECT COUNT(id) as sessions, ROUND(AVG(mentor_rating),2) as avg_rating
-      FROM mentorships WHERE mentor_id=? AND status='COMPLETED' AND mentor_rating IS NOT NULL`, [userId]);
+    const { fetchSelfMentorStats, fetchMentorAggAll } = await import('../src/modules/leaderboard/services/mentorQueries.js');
+    const selfRow = await fetchSelfMentorStats(db, userId);
     if(!selfRow || !selfRow.sessions || selfRow.sessions < minSessions || selfRow.avg_rating === null){
       selfRank = { ranked:false, reason: selfRow && selfRow.sessions < minSessions ? 'min_sessions' : 'no_rating', sessions: selfRow?.sessions||0, minSessions };
     } else {
@@ -288,13 +276,7 @@ async function getMentorLeaderboard(db, { limit, minSessions, wantSelf, userId }
       let aggAge; let aggTtl;
       if(agg){ aggAge = now - agg.ts; if(aggAge > MENTOR_LB_TTL_MS) agg = null; else aggTtl = MENTOR_LB_TTL_MS - aggAge; }
       if(!agg){
-        const rows = await db.all(`SELECT m.mentor_id as id, u.username, COUNT(m.id) as sessions, ROUND(AVG(m.mentor_rating),2) as avg_rating
-          FROM mentorships m
-          JOIN users u ON u.id = m.mentor_id
-          WHERE m.status='COMPLETED' AND m.mentor_rating IS NOT NULL
-          GROUP BY m.mentor_id
-          HAVING sessions >= ?
-          ORDER BY avg_rating DESC, sessions DESC, id ASC`, [minSessions]);
+        const rows = await fetchMentorAggAll(db, minSessions);
         agg = { ts: now, rows, total: rows.length };
         mentorsRankCache.set(minSessions, agg);
         aggTtl = MENTOR_LB_TTL_MS;
