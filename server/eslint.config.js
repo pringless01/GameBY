@@ -32,9 +32,9 @@ export default [
       }
     },
     rules: {
-      'no-unused-vars': ['warn', { argsIgnorePattern: '^_', varsIgnorePattern: '^_' }],
+      'no-unused-vars': ['warn', { argsIgnorePattern: '^_|^e$|^err$', varsIgnorePattern: '^_' , caughtErrors: 'none' }],
       'no-console': 'off',
-      'import/order': ['warn', { 'newlines-between': 'always' }],
+      'import/order': ['warn', { 'newlines-between': 'always', alphabetize: { order: 'asc', caseInsensitive: true } }],
       'n/no-process-env': 'off',
       // allow empty catch blocks, but still warn on other empty blocks
       'no-empty': ['error', { allowEmptyCatch: true }]
