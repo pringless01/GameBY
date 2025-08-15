@@ -26,6 +26,10 @@
 
 # GameBY - 2D Mobil Online Ticaret Oyunu
 
+[![CI](https://github.com/pringless01/GameBY/actions/workflows/ci-full.yml/badge.svg)](https://github.com/pringless01/GameBY/actions/workflows/ci-full.yml)
+[![Deploy](https://github.com/pringless01/GameBY/actions/workflows/deploy.yml/badge.svg)](https://github.com/pringless01/GameBY/actions/workflows/deploy.yml)
+[![Docker](https://github.com/pringless01/GameBY/actions/workflows/docker-publish.yml/badge.svg)](https://github.com/pringless01/GameBY/actions/workflows/docker-publish.yml)
+
 **Web-based PWA | İtibar Odaklı Sosyal Ekonomi Simülasyonu**
 
 ## 🎯 Proje Özeti
@@ -123,6 +127,12 @@ Not: Prod’da güçlü secret’lar sağlamayı unutmayın (ENV: JWT_SECRET, CU
 ## 🛠 Operasyon
 - CI: PR ve main push’larında lint (placeholder), tüm unit/integration testleri, coverage artifact’ları ve migrations check koşturulur.
 - Deploy: Windows’ta `./deploy.ps1` tek komut akışı; Docker ortamında `docker compose up -d` ile healthcheck 200 doğrulanır.
+## 🔍 Kalite Güvencesi
+- Lint: ESLint (node/import/promise) profili
+- Format: Prettier 3
+- Commit: commitlint + husky
+- Test: Unit + Integration + Smoke (Artillery)
+
 - Leaderboard sistemi (trust + mentor + security): ~97%
 - Reputation otomasyon (event pipeline): ~68% (kalan: onboarding, ileri risk heuristics)
 - Mentor akışı (bot→gerçek, ödül/limit, kalite metriği): ~45%

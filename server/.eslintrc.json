@@ -1,0 +1,27 @@
+{
+  "env": {
+    "es2022": true,
+    "node": true
+  },
+  "extends": [
+    "eslint:recommended",
+    "plugin:import/recommended",
+    "plugin:n/recommended",
+    "plugin:promise/recommended"
+  ],
+  "parserOptions": {
+    "ecmaVersion": 2022,
+    "sourceType": "module"
+  },
+  "rules": {
+    "no-unused-vars": ["warn", { "argsIgnorePattern": "^_", "varsIgnorePattern": "^_" }],
+    "no-console": "off",
+    "import/order": ["warn", { "newlines-between": "always" }],
+    "n/no-process-env": "off"
+  },
+  "ignorePatterns": [
+    "migrations/**",
+    "coverage/**",
+    "node_modules/**"
+  ]
+}

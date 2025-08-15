@@ -1,0 +1,5 @@
+# Default code owners
+*       @pringless01
+
+/server/ @pringless01
+/frontend/ @pringless01
