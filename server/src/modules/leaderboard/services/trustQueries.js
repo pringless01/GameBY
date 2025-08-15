@@ -28,3 +28,13 @@ export async function fetchTopN(db, n) {
     [n]
   );
 }
+
+export async function computeUserRankMeta(db, userId) {
+  const scoreRow = await db.get('SELECT trust_score FROM users WHERE id=?',[userId]);
+  if(!scoreRow) return null;
+  const rankRow = await db.get('SELECT COUNT(*) + 1 AS rank FROM users WHERE trust_score > ?', [scoreRow.trust_score]);
+  const totalRow = await db.get('SELECT COUNT(*) AS c FROM users');
+  const rank = rankRow.rank; const total = totalRow.c || 1;
+  const percentile = Math.round(((total - rank + 1)/ total) * 10000)/100; // üstten yüzde
+  return { rank, total, percentile };
+}

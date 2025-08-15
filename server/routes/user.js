@@ -692,12 +692,14 @@ router.get('/leaderboard', authRequired, lbRate, async (req,res)=>{
       res.setHeader('Server-Timing', `total;dur=${(Number(tEnd - tStart)/1e6).toFixed(2)}`);
       return sendWithEtag(req,res,r.payload, { lastTs: r.lastTs });
     }
-    let r = await getTrustLeaderboard(db,{ limit, offset, useAround, window, userId, cursor, needRank: useAround ? true : wantRank, ip: req.ip });
+  // Modül facade: davranış eşdeğeri sonuç döndürür
+  const { getTrustLeaderboardFacade } = await import('../src/modules/leaderboard/index.js');
+  let r = await getTrustLeaderboard(db,{ limit, offset, useAround, window, userId, cursor, needRank: useAround ? true : wantRank, ip: req.ip });
     if(r.error === 'invalid_cursor'){
       const cnt = getIpInvalidCount(req.ip);
       if(process.env.CURSOR_AUTO_DEGRADE==='1' && cnt > INVALID_CURSOR_THRESHOLD){
         req._autoDegrade = true; cursor = null; offset='0';
-        const rDegraded = await getTrustLeaderboard(db,{ limit, offset, useAround, window, userId, cursor:null, needRank: useAround ? true : wantRank, ip: req.ip });
+  const rDegraded = await getTrustLeaderboard(db,{ limit, offset, useAround, window, userId, cursor:null, needRank: useAround ? true : wantRank, ip: req.ip });
         if(!rDegraded.error){ r = rDegraded; }
       }
     }
