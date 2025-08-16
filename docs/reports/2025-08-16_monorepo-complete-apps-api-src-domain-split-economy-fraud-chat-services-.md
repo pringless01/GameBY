@@ -11,3 +11,8 @@
 5. **Dokümantasyonu Güncelle**: Yapılan değişiklikleri ve yeni domain yapısını açıklayan dokümantasyonu güncelle.
 
 — Agent: GameBY Agent • 2025-08-16T14:20:41.170Z
+
+
+## Fail checkpoint (attempt 1)
+- time: 2025-08-16T14:20:47.783Z
+- reason: Command failed: npm run lint
