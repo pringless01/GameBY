@@ -1,3 +1,4 @@
+- 2025-08-16: PR templates, CODEOWNERS, compose-smoke, perf stub eklendi (no behavior change).
 \n## CI Weekly Automation – memory & sweep
 - 2025-08-16: memory-rollup (Node 20) haftalık cron + manual dispatch ile etkinleştirildi; sweep artifact workflow’u eklendi.
 # Long-term Memory (roll-up 2025-08-16)
