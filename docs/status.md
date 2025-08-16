@@ -1,40 +1,38 @@
-# Durum (tek gerçek kaynak- [ ] MVP: Hafıza dosyaları + roll-up action + PR şablonları
-- [ ] Gelişim: Auto-task issue template ile iş akışı## Context
+# Durum (tek gerçek kaynak)
+
+Last activity: 2025-08-16T11:21:35.123Z
+
+## Context
 - Repo: pringless01/GameBY
 - Ortamlar: dev (varsayılan)
 - Önemli dosyalar: agent/prompt.md, agent/memory/*, docs/reports/
 
 ## Decisions
-- 2025-08-16: Hafıza altyapısı kurulsun; roll-up günlük çalışsın.
+- 2025-08-16: STOP DOCUMENTATION TASKS - FOCUS ON REAL CODE DEVELOPMENT
+- 2025-08-16: Agent must work on backend/frontend code, not docs/memory
 
 ## Assumptions
-- Assumption: Python 3.11 GitHub Actions runner'da mevcut ve scripts/memory_rollup.py sorunsuz çalışacak.
-- Assumption: CI için temel komutlar root'ta `npm run lint` ve backend için `npm --prefix apps/api/src test` olarak kullanılacak.
-- Assumption: Lint/test kırıkları mevcut olabilir; bu çalışma davranışı değiştirmeyecek, yalnızca bellek/raporlama altyapısı ekler.
+- Assumption: Agent will now focus on real development tasks only
+- Assumption: Documentation tasks are BANNED until core features are built
+- Assumption: Token usage must provide real value through code changes
 
 ## Next Actions
-- ~~Fraud: service-level unit test (repo stub) + boundary sweep~~ ✅
-- ~~Chat: service-level unit test (flood/penalty) (repo stub) + boundary sweep~~ ✅
-- ~~Docs: runbooks (auth refresh, leaderboard metrics, fraud scoring, chat flood) → docs/runbooks/*~~ ✅
-- ~~Shared utils: cursor utils (safeEncode/Decode no-op) ve dates(msToDays, clamp) refactor’leri — non-invasive~~ ✅
-- ~~CI: memory-rollup.yml haftalık cron + raporu PR açıklamasına ekle.~~ ✅
-- ~~CI: sweep-report.json artifact (scripts/sweep.mjs + workflow).~~ ✅
-- ~~compose smoke: dc:up → smoke:local → dc:down opsiyonel job.~~ ✅
-- ~~PR templates: .github/PULL_REQUEST_TEMPLATE.md + docs/contributing.md.~~ ✅
-- ~~CODEOWNERS + Renovate (draft PR, schedule haftalık).~~ ✅
-- ~~Shared utils/types: cursor utils + dates + pagination (non-invasive).~~ ✅
-- ~~Perf placeholder: docs/perf.md + k6 smoke stub + npm script.~~ ✅
-- ~~Test: Performance analysis ve optimization için leaderboard cursor sisteminde complex algorithm geliştir~~ ✅
-- [ ] MVP: Hafıza dosyaları + roll-up action + PR şablonları
-- [ ] Gelişim: Auto-task issue template ile iş akışı
-- [x] ESLint module boundaries: no-cycle ve no-restricted-imports ihlallerini düzelt (doğrulama tamam)
+- Backend API: Add marketplace bidding system endpoints (/api/marketplace/bid)
+- Backend API: Implement reputation decay scheduler job (CRON based)
+- Backend API: Add contract dispute resolution endpoints (/api/contracts/dispute)  
+- Frontend PWA: Build real-time chat interface (WebSocket + UI)
+- Frontend PWA: Add marketplace listing management UI (CRUD interface)
+- Backend: Optimize leaderboard cursor performance (SQL index + cache)
+- Backend: Add user preference settings API (/api/user/preferences)
+- Frontend: Implement trust score visualization (Chart.js integration)
+- Backend: Add mentor matching algorithm (recommendation engine)
+- Frontend: Build onboarding progress tracker (step-by-step UI)
 
-### Next Actions (Phase-2)
-- ESLint module boundaries düzelt
-- Shared utils/types (non-invasive) genişlet
-- ~~Env rehberi + scripts/print-env-check.js (rapor-only)~~ ✅
-- CI: memory-rollup + sweep artifact
-- Haftalık rapor oluştur
+## BANNED TASKS (Agent must skip these):
+- ~~MVP: Hafıza dosyaları + roll-up action + PR şablonları~~ ❌ BANNED
+- ~~Gelişim: Auto-task issue template ile iş akışı~~ ❌ BANNED
+- ~~Any docs/memory tasks~~ ❌ BANNED
+- ~~Any CI/CD documentation tasks~~ ❌ BANNED
 
 ## Blocked
-- memory-rollup workflow ‘workflow_dispatch’ tetiklenmesi gerekli (GitHub Actions UI). Bu yerel araçlarla çalıştırılamaz.
+- All documentation tasks are now blocked - FOCUS ON CODE DEVELOPMENT ONLY
