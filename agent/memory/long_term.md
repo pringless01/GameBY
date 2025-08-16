@@ -10,3 +10,4 @@ Bu dosya uzun dönem özetlerin ve önemli kararların sıkıştırılmış hali
  - Roll-up: memory-rollup workflow var; manuel tetik gerektirdiği için Blocked olarak not edilip ilerlemeye devam edildi.
  - Project Facts genişletildi; workspaces/scripts/CI özetleri eklendi.
  - README’ye hafıza sistemi bölümü eklendi; süreç şeffaflaştırıldı.
+ - Kapanış: status Next Actions boşaltıldı; final rapor (2025-08-16_final.md) ile oturum kapatıldı; tüm kontroller yeşil.
