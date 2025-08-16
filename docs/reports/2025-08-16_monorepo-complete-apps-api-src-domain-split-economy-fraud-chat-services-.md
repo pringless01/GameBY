@@ -1,15 +1,26 @@
 # Next Action: Monorepo: Complete apps/api/src domain split (economy/fraud/chat services)
 
-1. **Analiz ve Planlama**: Mevcut apps/api/src yapısını incele, gerekli domain'leri belirle ve her bir domain için gerekli dosya ve dizin yapısını planla.
+Alt Adım 1: **Ekonomi Servisini Ayırma**
+- apps/api/src/economy dizini oluşturulacak.
+- Mevcut ekonomi ile ilgili kodlar bu dizine taşınacak.
+- Ekonomi servisi için gerekli bağımlılıklar güncellenecek.
 
-2. **Dizin Oluşturma**: Yeni domain'ler için dizin yapısını oluştur. economy, fraud ve chat dizinlerini apps/api/src altında oluştur.
+Alt Adım 2: **Dolandırıcılık Servisini Ayırma**
+- apps/api/src/fraud dizini oluşturulacak.
+- Mevcut dolandırıcılık ile ilgili kodlar bu dizine taşınacak.
+- Dolandırıcılık servisi için gerekli bağımlılıklar güncellenecek.
 
-3. **Kod Taşıma**: Mevcut kodları uygun domain dizinlerine taşı. Her domain için ilgili dosyaları ve bağımlılıkları taşı.
+Alt Adım 3: **Sohbet Servisini Ayırma**
+- apps/api/src/chat dizini oluşturulacak.
+- Mevcut sohbet ile ilgili kodlar bu dizine taşınacak.
+- Sohbet servisi için gerekli bağımlılıklar güncellenecek.
 
-4. **Bağımlılık Yönetimi**: Taşınan kodların bağımlılıklarını güncelle ve her domain için bağımlılık yönetimini sağla.
+Alt Adım 4: **Yapılandırma Dosyalarını Güncelleme**
+- Her bir servis için yapılandırma dosyaları güncellenecek.
+- Servislerin bağımsız çalışabilmesi için gerekli ayarlar yapılacak.
 
-5. **Test ve Doğrulama**: Her domain için test senaryolarını oluştur ve mevcut testleri çalıştırarak her domain'in doğru şekilde çalıştığından emin ol. 
+Alt Adım 5: **Test ve Doğrulama**
+- Yeni dizin yapısında her servisin testleri çalıştırılacak.
+- Tüm servislerin düzgün çalıştığından emin olunacak ve gerekli düzeltmeler yapılacak.
 
-Bu adımlar tamamlandığında, domain'lerin başarılı bir şekilde ayrıldığını doğrulamak için bir rapor hazırla.
-
-— Agent: GameBY Agent • 2025-08-16T12:06:41.825Z
+— Agent: GameBY Agent • 2025-08-16T12:07:31.843Z
