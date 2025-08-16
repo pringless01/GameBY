@@ -1,6 +1,6 @@
 // 🚀 Basit Node.js HTTP Server
-const http = require('http');
 const fs = require('fs');
+const http = require('http');
 const path = require('path');
 
 const PORT = 8080;

@@ -1,6 +1,6 @@
 import assert from 'assert';
-import http from 'http';
 import { spawn } from 'child_process';
+import http from 'http';
 import path from 'path';
 import { fileURLToPath } from 'url';
 

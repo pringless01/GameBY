@@ -1,5 +1,6 @@
 // @quarantine
 import assert from 'assert';
+
 import { initDb } from '../../config/database.js';
 import { runEconomySinkOnce } from '../../services/economyService.js';
 import '../migrations/run-migrations.js';

@@ -1,5 +1,7 @@
 import assert from 'assert';
+
 import fetch from 'node-fetch';
+
 import { initDb } from '../../config/database.js';
 import '../migrations/run-migrations.js';
 

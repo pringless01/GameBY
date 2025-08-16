@@ -1,7 +1,8 @@
 import assert from 'assert';
+
 import { initDb } from '../../config/database.js';
-import { emitOnboardingStep } from '../../services/reputationEvents.js';
 import { reputationMetrics } from '../../metrics/reputationMetrics.js';
+import { emitOnboardingStep } from '../../services/reputationEvents.js';
 
 (async function(){
   const db = await initDb();

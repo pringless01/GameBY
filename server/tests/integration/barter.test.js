@@ -1,5 +1,6 @@
 // Barter contract flow + insufficient_resources + dynamic trust reward estimation
 import assert from 'assert';
+
 import fetch from 'node-fetch';
 import '../migrations/run-migrations.js';
 

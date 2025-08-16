@@ -1,8 +1,9 @@
-import express from 'express';
 import crypto from 'crypto';
-import { getRefreshStore } from '../core/refreshStore.js';
+
+import express from 'express';
 
 import { signToken } from '../config/jwt.js';
+import { getRefreshStore } from '../core/refreshStore.js';
 import { authRequired } from '../middleware/auth.js';
 import {
   createUser,
@@ -17,6 +18,8 @@ import {
 const failedAttempts = new Map(); // key: identity|ip -> { count, lockUntil }
 const MAX_ATTEMPTS = parseInt(process.env.AUTH_MAX_ATTEMPTS || '5', 10);
 const LOCK_MS = parseInt(process.env.AUTH_LOCK_DURATION_MS || '60000', 10);
+const REFRESH_TTL_DAYS = parseInt(process.env.REFRESH_TTL_DAYS || '7', 10);
+const REFRESH_TTL_MS = REFRESH_TTL_DAYS * 24 * 60 * 60 * 1000;
 
 function key(identity, ip) { return `${identity.toLowerCase()}|${ip}`; } // <-- fix
 
@@ -68,8 +71,7 @@ function newRefreshToken(){
 }
 
 function setRefreshCookie(res, token){
-  const ttlDays = parseInt(process.env.REFRESH_TTL_DAYS || '7', 10);
-  const maxAge = ttlDays * 24 * 60 * 60; // seconds
+  const maxAge = REFRESH_TTL_DAYS * 24 * 60 * 60; // seconds
   const isProd = process.env.NODE_ENV === 'production';
   const parts = [
     `refreshToken=${token}`,
@@ -169,7 +171,7 @@ router.post('/login', async (req, res) => {
   // Issue single-use refresh token cookie
   try {
     const rt = newRefreshToken();
-  await refreshStore.set(rt, { userId: user.id, createdAt: Date.now() }, ttlDays*24*60*60*1000);
+  await refreshStore.set(rt, { userId: user.id, createdAt: Date.now() }, REFRESH_TTL_MS);
     setRefreshCookie(res, rt);
   } catch { /* ignore cookie errors in tests */ }
   return res.json({ token, user: { id: user.id, email: user.email, username: user.username, roles } });
@@ -208,7 +210,7 @@ router.post('/refresh', async (req, res) => {
     const token = signToken(userId, {});
     // Rotate refresh token
     const newRt = newRefreshToken();
-  await refreshStore.set(newRt, { userId, createdAt: Date.now() }, ttlDays*24*60*60*1000);
+  await refreshStore.set(newRt, { userId, createdAt: Date.now() }, REFRESH_TTL_MS);
     setRefreshCookie(res, newRt);
     return res.json({ token });
   } catch (e) {

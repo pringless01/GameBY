@@ -1,4 +1,5 @@
 import jwt from 'jsonwebtoken';
+
 import { isTokenRevoked } from '../security/tokenBlacklist.js';
 
 export async function socketAuth(socket, next){

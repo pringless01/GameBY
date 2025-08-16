@@ -1,5 +1,6 @@
 // Test: Prometheus metrics format doğrulama
 import assert from 'assert';
+
 import fetch from 'node-fetch';
 
 const BASE = 'http://localhost:3000';

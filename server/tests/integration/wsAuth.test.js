@@ -1,5 +1,6 @@
-import { io as Client } from 'socket.io-client';
 import assert from 'assert';
+
+import { io as Client } from 'socket.io-client';
 import '../migrations/run-migrations.js';
 
 const BASE = 'http://localhost:3000';

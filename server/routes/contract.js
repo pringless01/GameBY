@@ -1,4 +1,5 @@
 import express from 'express';
+
 import { authRequired } from '../middleware/auth.js';
 import { createContract, listUserContracts, actOnContract, getContract, listUserContractsFiltered } from '../services/contractService.js';
 

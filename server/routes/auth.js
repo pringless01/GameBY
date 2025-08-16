@@ -1,4 +1,5 @@
 import express from 'express';
+
 import { signToken } from '../config/jwt.js';
 import { authRequired } from '../middleware/auth.js';
 import {

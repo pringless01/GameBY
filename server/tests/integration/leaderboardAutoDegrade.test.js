@@ -1,5 +1,6 @@
 // Test: CURSOR_AUTO_DEGRADE=1 ile cooldown sırasında otomatik offset fallback
 import assert from 'assert';
+
 import fetch from 'node-fetch';
 
 const BASE = 'http://localhost:3000';

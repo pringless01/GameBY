@@ -1,7 +1,9 @@
 process.env.CHAT_FLOOD_WINDOW_MS='1000';
 process.env.CHAT_FLOOD_MAX_MESSAGES='3';
-import { io as Client } from 'socket.io-client';
 import assert from 'assert';
+
+import { io as Client } from 'socket.io-client';
+
 import '../migrations/run-migrations.js';
 import { initDb } from '../../config/database.js';
 

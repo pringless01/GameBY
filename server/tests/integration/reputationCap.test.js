@@ -1,4 +1,5 @@
 import assert from 'assert';
+
 import '../migrations/run-migrations.js';
 import { emitReputationEvent, ReputationEventType } from '../../services/reputationEvents.js';
 

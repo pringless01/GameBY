@@ -3,7 +3,6 @@ import http from 'http';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
-import cors from 'cors';
 import express from 'express';
 import helmet from 'helmet';
 import morgan from 'morgan';
@@ -17,27 +16,25 @@ import { corsMiddleware } from './config/cors.js';
 // Ortam değişkenleri için merkezi yükleme & doğrulama
 import { initDb, runMigration } from './config/database.js';
 import { envConfig } from './config/env.js';
-import { httpRequestDuration, getPercentiles } from './metrics/latencyMetrics.js';
-import { idempotencyMiddleware } from './middleware/idempotency.js';
-import { leaderboardHeader } from './middleware/leaderboardHeader.js';
-import { socketAuth } from './middleware/socketAuth.js';
 import activityRoutes from './http/routes/activity.js';
 import adminRoutes from './http/routes/admin.js';
 import authRoutes from './http/routes/auth.js';
 import contractRoutes from './http/routes/contract.js';
+import marketplaceRoutes from './http/routes/marketplace.js';
+import mentorRoutes from './http/routes/mentor.js';
+import reputationRoutes from './http/routes/reputation.js';
 import roleRoutes from './http/routes/role.js';
 import userRoutes from './http/routes/user.js';
-import mentorRoutes from './http/routes/mentor.js';
-import marketplaceRoutes from './http/routes/marketplace.js';
-import reputationRoutes from './http/routes/reputation.js';
+import { httpRequestDuration, getPercentiles } from './metrics/latencyMetrics.js';
+import { idempotencyMiddleware } from './middleware/idempotency.js';
+import { leaderboardHeader } from './middleware/leaderboardHeader.js';
+import { socketAuth } from './middleware/socketAuth.js';
 import { initBlacklist } from './security/tokenBlacklist.js';
 import { scheduleEconomySinkIfEnabled } from './services/economyService.js';
 import { rehydrateQueues } from './services/mentorService.js';
 import { scheduleDecayIfEnabled } from './services/reputationDecayService.js';
 import { registerChatNamespace } from './sockets/chatSocket.js';
 import { setIo } from './sockets/io.js';
-
-
 import { getIo } from './sockets/io.js';
 
 

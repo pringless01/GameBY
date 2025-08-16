@@ -1,6 +1,7 @@
-import { fileURLToPath } from 'url';
-import path from 'path';
 import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
 import { initDb, runMigration } from '../../config/database.js';
 
 const __filename = fileURLToPath(import.meta.url);

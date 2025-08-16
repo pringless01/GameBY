@@ -1,4 +1,5 @@
 import assert from 'assert';
+
 import fetch from 'node-fetch';
 import { io as Client } from 'socket.io-client';
 import '../migrations/run-migrations.js';

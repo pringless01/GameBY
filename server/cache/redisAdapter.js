@@ -1,4 +1,5 @@
 import { createClient } from 'redis';
+
 import { envConfig } from '../config/env.js';
 
 let client = null;

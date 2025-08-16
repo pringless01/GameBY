@@ -1,8 +1,9 @@
 import express from 'express';
-import { authRequired } from '../middleware/auth.js';
+
 import { initDb } from '../config/database.js';
-import { getIo } from '../sockets/io.js';
+import { authRequired } from '../middleware/auth.js';
 import { logResource } from '../services/auditService.js';
+import { getIo } from '../sockets/io.js';
 
 const router = express.Router();
 

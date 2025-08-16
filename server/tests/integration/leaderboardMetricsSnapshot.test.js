@@ -1,5 +1,6 @@
 // Test: metrics snapshot counters (modeDegradeSuggested, cursorAutoDegrade, cooldownGraceServed, cursorAbuse429)
 import assert from 'assert';
+
 import fetch from 'node-fetch';
 
 const BASE = 'http://localhost:3000';

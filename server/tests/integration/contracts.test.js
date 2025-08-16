@@ -1,8 +1,9 @@
 // Basic integration test for contract real-time flow + tutorial + audit
-import http from 'http';
-import { io as Client } from 'socket.io-client';
 import assert from 'assert';
+import http from 'http';
+
 import fetch from 'node-fetch';
+import { io as Client } from 'socket.io-client';
 import '../migrations/run-migrations.js';
 
 const BASE = 'http://localhost:3000';

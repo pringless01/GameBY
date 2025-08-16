@@ -1,4 +1,5 @@
 import express from 'express';
+
 import { authRequired, roleRequired } from '../middleware/auth.js';
 import { ensureRole, findUserByUsername } from '../services/userService.js';
 

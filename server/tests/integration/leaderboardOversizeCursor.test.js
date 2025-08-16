@@ -1,5 +1,6 @@
 // Test: oversize cursor -> cursor_oversize metric increment
 import assert from 'assert';
+
 import fetch from 'node-fetch';
 
 const BASE = 'http://localhost:3000';

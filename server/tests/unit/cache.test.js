@@ -1,6 +1,7 @@
 import assert from 'assert';
-import { dailyTrustCache, leaderboardCache, trustAroundCache, pruneTrustCachesOnce, LEADERBOARD_TTL_MS } from '../../cache/trustCaches.js';
+
 import { mentorsLbCache, mentorsRankCache, pruneMentorCachesOnce, MENTOR_LB_TTL_MS } from '../../cache/mentorCaches.js';
+import { dailyTrustCache, leaderboardCache, trustAroundCache, pruneTrustCachesOnce, LEADERBOARD_TTL_MS } from '../../cache/trustCaches.js';
 
 function seed(map, n, ageMs){
   const now = Date.now();

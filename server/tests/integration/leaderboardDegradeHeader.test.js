@@ -1,5 +1,6 @@
 // Test: X-Cursor-Degrade header ve modeDegradeSuggested metriği (200 + 429 senaryosu)
 import assert from 'assert';
+
 import fetch from 'node-fetch';
 
 const BASE = 'http://localhost:3000';

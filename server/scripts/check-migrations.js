@@ -1,6 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+
 import { initDb } from '../config/database.js';
 import '../config/env.js';
 

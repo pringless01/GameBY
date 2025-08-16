@@ -1,8 +1,9 @@
 // Leaderboard advanced features integration test
 // Genişletildi: weak secret, rotated cursor, metrics invalidCursor
 import assert from 'assert';
-import fetch from 'node-fetch';
 import crypto from 'crypto';
+
+import fetch from 'node-fetch';
 
 const BASE = 'http://localhost:3000';
 const CURSOR_SECRET = process.env.CURSOR_SECRET || 'dev_cursor_secret_change_me';

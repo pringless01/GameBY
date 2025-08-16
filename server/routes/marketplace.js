@@ -1,4 +1,5 @@
 import express from 'express';
+
 import { authRequired } from '../middleware/auth.js';
 import { createListing, buyListing, listListings } from '../services/marketplaceService.js';
 

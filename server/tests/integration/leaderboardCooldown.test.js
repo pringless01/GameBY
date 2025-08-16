@@ -1,5 +1,6 @@
 // Test: per-IP cursor abuse cooldown -> 200 (abuse headers) then 429 within cooldown
 import assert from 'assert';
+
 import fetch from 'node-fetch';
 
 const BASE = 'http://localhost:3000';
