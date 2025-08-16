@@ -13,14 +13,6 @@
 - Assumption: Lint/test kırıkları mevcut olabilir; bu çalışma davranışı değiştirmeyecek, yalnızca bellek/raporlama altyapısı ekler.
 
 ## Next Actions
-- Security: CodeQL + Trivy + SBOM (report-only)
-- Release: standard-version scripts + release.yml (no tag push)
-- Prod cookies: strict flags via feature flag (default OFF)
-- RefreshStore: redis adapter feature-flag stub (default OFF)
-- GHCR: docker metadata + buildx tag standardization (no push)
-- Docs: runbooks index + architecture note (no behavior change)
-- Weekly: memory-rollup check + sweep trigger
-
 - ~~Fraud: service-level unit test (repo stub) + boundary sweep~~ ✅
 - ~~Chat: service-level unit test (flood/penalty) (repo stub) + boundary sweep~~ ✅
 - ~~Docs: runbooks (auth refresh, leaderboard metrics, fraud scoring, chat flood) → docs/runbooks/*~~ ✅
