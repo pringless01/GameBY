@@ -3661,3 +3661,14 @@ Rapor: docs/reports/2025-08-16_bootstrap.md'ye eklendi.
 5. Dokümantasyon güncellemeleri gerçekleştirildi, README'ye hafıza sistemi bilgileri eklendi.
 
 — Agent: GameBY Agent • 2025-08-16T11:13:13.333Z
+
+
+1. Proje, hafıza dosyaları, roll-up eylemleri ve PR şablonları üzerinde MVP geliştirmeyi planlıyor.
+2. Python 3.11 ve belirli CI komutları kullanılacak; lint/test süreci mevcut hatalara rağmen devam edecek.
+3. Öncelikli görevler, auto-task issue template ve haftalık hafıza raporlarının oluşturulması.
+4. Modül sınırları ve shared utils/tipleri üzerinde iyileştirmeler yapılacak, bu süreçte davranış değişikliği olmayacak.
+5. Memory roll-up workflow'u, manuel tetikleme gerektirdiğinden şu an için engellenmiş durumda. 
+
+Rapor güncellenecek ve hafıza dosyalarına eklenecek.
+
+— Agent: GameBY Agent • 2025-08-16T11:14:00.232Z
