@@ -11,3 +11,8 @@
 5. **Bağımlılıkların Yüklenmesi ve CI'nin Çalıştırılması**: Tüm bağımlılıkları kur ve ardından `ci:all` komutunu çalıştırarak sürekli entegrasyon sürecini başlat.
 
 — Agent: GameBY Agent • 2025-08-16T22:35:54.271Z
+
+
+## Fail checkpoint (attempt 1)
+- time: 2025-08-16T22:35:58.256Z
+- reason: Command failed: npm run lint
