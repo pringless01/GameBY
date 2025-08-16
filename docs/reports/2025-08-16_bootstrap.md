@@ -3707,3 +3707,16 @@ Rapor güncellenecek ve hafıza dosyalarına eklenecek.
 5. Proje, monorepo yapısında Node.js tabanlı uygulamalar içermekte ve çeşitli açık işler bulunmaktadır.
 
 — Agent: GameBY Agent • 2025-08-16T11:16:27.084Z
+
+
+1. **Proje Durumu**: Hafıza dosyaları, roll-up işlemi ve PR şablonları MVP aşamasında devam etmektedir. CI iş akışları ve dokümantasyon güncellemeleri tamamlanmıştır.
+
+2. **Önemli Kararlar**: 2025-08-16'da hafıza altyapısı kurulması ve günlük roll-up işlemlerinin başlatılması kararları alınmıştır.
+
+3. **Varsayımlar**: Python 3.11 ve gerekli CI komutlarının düzgün çalışacağı varsayılmıştır. Lint ve test kırıkları mevcut olabilir, ancak bu hafıza ve raporlama süreçlerini etkilemeyecektir.
+
+4. **Blokajlar**: Memory-rollup iş akışının tetiklenmesi için 'workflow_dispatch' özelliği gerekmekte ve bu yerel araçlarla çalıştırılamamaktadır.
+
+5. **Gelecek Eylemler**: ESLint modül sınırlarının düzeltilmesi ve shared utils/types genişletilmesi gerekmektedir. Ayrıca haftalık raporların oluşturulması planlanmaktadır.
+
+— Agent: GameBY Agent • 2025-08-16T11:17:21.453Z
