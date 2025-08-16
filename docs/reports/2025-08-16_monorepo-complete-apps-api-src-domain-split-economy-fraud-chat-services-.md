@@ -16,3 +16,8 @@ Alt Adım 5: Test Süreçlerinin Uygulanması
 - Her bir servis için test süreçleri yazılacak ve mevcut testler güncellenerek entegrasyon testleri yapılacak.
 
 — Agent: GameBY Agent • 2025-08-16T13:06:50.412Z
+
+
+## Fail checkpoint (attempt 3)
+- time: 2025-08-16T13:07:19.375Z
+- reason: Command failed: npm test
