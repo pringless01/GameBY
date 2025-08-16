@@ -323,3 +323,4 @@ Bu dosya uzun dönem özetlerin ve önemli kararların sıkıştırılmış hali
 - [2025-08-16] Haftalık özet: monorepo-verify-workspaces-and-package-json-test-scripts-across-apps-and-packages- ilerledi
 - [2025-08-16] Haftalık özet: monorepo-verify-workspaces-and-package-json-test-scripts-across-apps-and-packages- ilerledi
 - [2025-08-16] Haftalık özet: monorepo-verify-workspaces-and-package-json-test-scripts-across-apps-and-packages- ilerledi
+- [2025-08-16] Haftalık özet: monorepo-verify-workspaces-and-package-json-test-scripts-across-apps-and-packages- ilerledi
