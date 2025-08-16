@@ -1,0 +1,25 @@
+<!doctype html><html lang="tr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Oyun • Giriş</title><link rel="stylesheet" href="/v2/css/base.css"><link rel="stylesheet" href="/css/codara-intro.css"></head><body>
+<div id="codara-intro" class="codara-intro hidden" role="dialog" aria-modal="true" aria-label="CODARA intro"><div class="stage"><canvas id="spark"></canvas><div class="halo top"></div><div class="halo bottom"></div><div class="stack"><div class="mark" aria-label="Codara mark"><span class="brace">{</span><span class="c">C</span><span class="brace">}</span></div><div class="word" aria-label="Codara wordmark"><div id="brand" class="brand" data-text="CODARA">CODARA</div><div class="tag">GAME</div></div></div><div class="skip">Devam etmek için tıklayın</div></div></div>
+<div class="center">
+  <div class="container" style="text-align:center">
+    <h1 style="margin:0 0 10px">Oyun Platformu</h1>
+    <p class="small" style="margin:0 0 18px">Güven odaklı sosyal ticaret oyunu</p>
+    <a id="enterBtn" class="btn" href="#">Girişe Geç</a>
+  </div>
+</div>
+<script>window.__CODARA_INTRO_NO_AUTO__=true;</script>
+<script src="/js/codara-intro.js"></script>
+<script src="/v2/js/app.js"></script>
+<script>
+  (async function(){
+    // Splash’ı kullanıcı kapatana kadar açık tut
+    try{ await startCodaraIntro({ autoFinish:false }); }catch(e){}
+    // Kapandıktan sonra login’e yönlendir
+    window.location.href = '/v2/login.html';
+  })();
+  document.getElementById('enterBtn').addEventListener('click', async (e)=>{
+    e.preventDefault();
+    // Splash zaten açık, kullanıcı zaten tıklayınca kapanacak; yedek olarak hiçbir şey yapma
+  });
+</script>
+</body></html>

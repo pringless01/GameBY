@@ -1,0 +1,22 @@
+<!doctype html><html lang="tr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Giriş • V2</title><link rel="stylesheet" href="/v2/css/base.css"><link rel="stylesheet" href="/v2/css/auth.css"></head><body>
+<div class="center">
+  <div class="card auth-card">
+    <h1>Giriş Yap</h1>
+    <label class="label" for="identity">E-Posta / Kullanıcı Adı</label>
+    <input id="identity" class="input" type="text" autocomplete="username" autofocus>
+    <label class="label" for="password">Şifre</label>
+    <input id="password" class="input" type="password" autocomplete="current-password">
+    <div class="actions">
+      <button class="btn" id="loginBtn">Giriş</button>
+      <div class="small">Hesabın yok mu? Kayıt (yakında)</div>
+    </div>
+  </div>
+</div>
+<script src="/v2/js/app.js"></script>
+<script>
+  document.getElementById('loginBtn').addEventListener('click',()=>{
+    // Burada mevcut login akışına bağlanılabilir. Şimdilik index’e dönelim.
+    window.location.href = '/';
+  });
+</script>
+</body></html>

@@ -1,8 +1,9 @@
 // Controller-first shim: mount selected handlers from controllers, then fall back to legacy router.
 import express from 'express';
 
-import { authRequired } from '../../middleware/auth.js';
+import { authRequired, roleRequired } from '../../middleware/auth.js';
 import legacyRouter from '../../routes/user.js';
+import * as Lb from '../controllers/leaderboardController.js';
 import * as UserController from '../controllers/userController.js';
 
 const router = express.Router();
@@ -23,6 +24,12 @@ router.get('/trust/daily-earned', authRequired, UserController.getDailyTrustEarn
 router.get('/bootstrap', authRequired, UserController.getBootstrap);
 router.get('/trust/history', authRequired, UserController.getTrustHistory);
 router.get('/mentorship/history', authRequired, UserController.getMentorshipHistory);
+
+// Leaderboard endpoints controller-first
+router.get('/leaderboard', authRequired, Lb.getLeaderboard);
+router.head('/leaderboard', authRequired, Lb.headLeaderboard);
+router.get('/leaderboard/metrics', roleRequired('admin'), Lb.getMetricsSummary);
+router.get('/leaderboard/metrics/prom', roleRequired('admin'), Lb.getMetricsPrometheus);
 
 // Fallback to legacy routes for the rest
 router.use(legacyRouter);

@@ -1,0 +1,6 @@
+.auth-card{width:100%;max-width:380px}
+.auth-card h1{margin:0 0 14px;font-size:22px;letter-spacing:.3px}
+.label{display:block;font-size:12px;font-weight:700;letter-spacing:.4px;color:#9fb3c8;text-transform:uppercase;margin:12px 0 6px}
+.input{width:100%;padding:12px 14px;border:1px solid #2c3a49;border-radius:8px;background:#11161d;color:#f5f7fa;font-size:14px}
+.row{display:flex;gap:8px}
+.actions{margin-top:14px;display:flex;flex-direction:column;gap:10px}
