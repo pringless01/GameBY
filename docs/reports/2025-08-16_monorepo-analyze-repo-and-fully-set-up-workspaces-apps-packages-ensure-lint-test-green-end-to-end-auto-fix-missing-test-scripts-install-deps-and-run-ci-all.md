@@ -1,18 +1,23 @@
 # Next Action: Monorepo: Analyze repo and fully set up workspaces (apps/*, packages/*), ensure lint/test green end-to-end; auto-fix missing test scripts; install deps and run ci:all
 
-1. **Repo Analizi ve Workspace Kurulumu**: Monorepo'daki tüm uygulama ve paket dizinlerini analiz ederek gerekli workspace yapılandırmalarını oluştur.
+1. **Repo Analizi ve Workspace Kurulumu**: 
+   - Monorepo içindeki `apps/*` ve `packages/*` dizinleri analiz edilecek. 
+   - Gerekli workspace yapılandırmaları oluşturulacak.
 
-2. **Lint ve Test Kontrolü**: Tüm kodun linting ve test süreçlerinden geçmesini sağla. Hataları düzelt ve testlerin başarılı olduğundan emin ol.
+2. **Lint ve Test Kontrolü**: 
+   - Tüm workspace'lerde lint ve testlerin geçerli olup olmadığı kontrol edilecek. 
+   - Eğer hatalar varsa, düzeltme adımları belirlenecek.
 
-3. **Eksik Test Scriptlerini Otomatik Düzeltme**: Proje içerisinde eksik olan test scriptlerini tespit et ve otomatik olarak oluştur veya düzelt.
+3. **Eksik Test Scriptlerinin Otomatik Düzeltmesi**: 
+   - Eksik olan test script'leri otomatik olarak eklenecek veya düzeltilecek. 
+   - Test script'leri eksik olan tüm projeler kontrol edilecek.
 
-4. **Bağımlılıkların Yüklenmesi**: Projedeki tüm bağımlılıkları yükle. Bu adım, uygulama ve paketlerin düzgün çalışabilmesi için gerekli.
+4. **Bağımlılıkların Yüklenmesi**: 
+   - Tüm workspace'ler için gerekli bağımlılıklar yüklenecek. 
+   - npm veya yarn gibi paket yöneticileri kullanılacak.
 
-5. **CI Süreçlerinin Çalıştırılması**: `ci:all` komutunu çalıştırarak sürekli entegrasyon süreçlerini başlat. Tüm süreçlerin başarılı bir şekilde tamamlandığından emin ol.
+5. **CI Sürecinin Çalıştırılması**: 
+   - `ci:all` komutu çalıştırılarak sürekli entegrasyon süreci başlatılacak. 
+   - Tüm proje bileşenlerinin uyumlu ve çalışır durumda olduğundan emin olunacak.
 
-— Agent: GameBY Agent • 2025-08-16T22:44:05.157Z
-
-
-## Fail checkpoint (attempt 3)
-- time: 2025-08-16T22:44:09.480Z
-- reason: Command failed: npm run lint
+— Agent: GameBY Agent • 2025-08-16T22:44:28.126Z
