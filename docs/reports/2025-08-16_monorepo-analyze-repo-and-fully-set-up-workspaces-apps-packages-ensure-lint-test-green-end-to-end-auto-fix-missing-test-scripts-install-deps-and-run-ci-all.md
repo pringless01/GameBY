@@ -1,18 +1,13 @@
 # Next Action: Monorepo: Analyze repo and fully set up workspaces (apps/*, packages/*), ensure lint/test green end-to-end; auto-fix missing test scripts; install deps and run ci:all
 
-1. **Repo Analizi**: Monorepo'yu incele, mevcut uygulama ve paket dizinlerini belirle.
+1. **Repo Analizi ve Workspace Ayarları**: Monorepo'daki tüm uygulama (apps/*) ve paket (packages/*) dizinlerini analiz et ve gerekli workspace ayarlarını oluştur.
 
-2. **Workspace Kurulumu**: `apps/*` ve `packages/*` dizinleri için gerekli workspace yapılandırmalarını oluştur.
+2. **Lint ve Test Kontrolü**: Yapılandırılan workspace'lerde lint ve test işlemlerini gerçekleştirin, tüm testlerin geçmesini sağlayın.
 
-3. **Lint Kontrolü**: Tüm kodların lint kontrollerini gerçekleştir ve hataları düzelt.
+3. **Eksik Test Scriptlerini Düzeltme**: Projede eksik olan test scriptlerini otomatik olarak düzeltin ve gerekli scriptleri ekleyin.
 
-4. **Test Senaryoları**: Eksik test senaryolarını otomatik olarak belirle ve ekle.
+4. **Bağımlılıkların Kurulumu**: Tüm bağımlılıkları kurun ve gerektiğinde güncelleyerek projenin düzgün çalışmasını sağlayın.
 
-5. **Bağımlılıkların Yüklenmesi ve CI Çalıştırma**: Gerekli bağımlılıkları kur ve `ci:all` komutunu çalıştırarak tüm testlerin geçmesini sağla.
+5. **CI İşlemlerinin Çalıştırılması**: `ci:all` komutunu çalıştırarak sürekli entegrasyon işlemlerinin başarılı bir şekilde tamamlandığından emin olun.
 
-— Agent: GameBY Agent • 2025-08-16T22:25:32.496Z
-
-
-## Fail checkpoint (attempt 2)
-- time: 2025-08-16T22:25:36.481Z
-- reason: Command failed: npm run lint
+— Agent: GameBY Agent • 2025-08-16T22:25:46.525Z
