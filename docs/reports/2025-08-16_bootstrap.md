@@ -5080,3 +5080,12 @@ Rapor: docs/reports/2025-08-16_bootstrap.md.
 5. **Gelişim Süreci**: Ekonomik ve dolandırıcılık hizmetlerinin hizmet/repo katmanlarına indirilmesi ve CI/CD süreçlerinin optimize edilmesi öncelikli hedeflerdir.
 
 — Agent: GameBY Agent • 2025-08-16T13:03:06.633Z
+
+
+1. Proje, yalnızca kod geliştirmeye odaklanacak; dokümantasyon ve hafıza görevleri yasaklandı.
+2. Monorepo'daki uygulama ve API kaynakları, ekonomi, dolandırıcılık ve sohbet hizmetleri olarak ayrılacak.
+3. Paylaşılan iş mantığı, `packages/shared-business` dizinine taşınacak.
+4. Veritabanı araçları ve modelleri için `packages/shared-db` oluşturulacak.
+5. Servisler arası iletişim ve doğrulama için uygun desenler uygulanacak; `packages/shared-validation` eklenecek.
+
+— Agent: GameBY Agent • 2025-08-16T13:03:47.342Z
