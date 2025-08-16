@@ -1,18 +1,13 @@
 # Next Action: Monorepo: Complete apps/api/src domain split (economy/fraud/chat services)
 
-1. **Domain Yapısı Tasarımı**: apps/api/src içinde ekonomi, dolandırıcılık ve sohbet hizmetleri için yeni klasör yapısını oluşturun. Her bir hizmetin alt klasörlerini ve gerekli dosya yapısını planlayın.
+1. **Domain Analizi**: Apps/api/src içindeki mevcut domain yapısını ve bağımlılıkları analiz et. Her bir domain (economy, fraud, chat) için gereken dosyaları ve bileşenleri belirle.
 
-2. **Kod Ayrıştırma**: Mevcut kodları ekonomi, dolandırıcılık ve sohbet hizmetlerine göre ayrıştırın. Her bir hizmet için ilgili sınıflar ve fonksiyonlar yeni dosyalara taşınmalıdır.
+2. **Klasör Yapısı Oluşturma**: Yeni domainler için klasör yapısını oluştur. apps/api/src altında economy, fraud ve chat klasörlerini oluştur ve gerekli dosya şablonlarını ekle.
 
-3. **Bağımlılık Yönetimi**: Her yeni hizmet için gerekli bağımlılıkları belirleyin ve bunları ayrı bir şekilde yönetin. Bağımlılıkların her hizmet için doğru bir şekilde tanımlandığından emin olun.
+3. **Kod Taşıma**: Mevcut kodları uygun domain klasörlerine taşı. Her bir domain için ilgili fonksiyonları ve bileşenleri doğru klasöre yerleştir.
 
-4. **API Arayüzlerinin Güncellenmesi**: Ayrıştırılan hizmetlerin API arayüzlerini güncelleyerek her bir hizmetin kendi API'sine sahip olmasını sağlayın. Gerekli dokümantasyonu oluşturun.
+4. **Bağımlılık Güncellemeleri**: Taşınan kodların bağımlılıklarını güncelle. Her domainin ihtiyaç duyduğu kütüphaneleri ve modülleri kontrol et ve güncelle.
 
-5. **Testlerin Güncellenmesi ve Doğrulama**: Ayrıştırılan kodlar için yeni testler yazın ve mevcut testleri güncelleyin. Tüm testlerin başarılı bir şekilde geçmesini sağlayın.
+5. **Test ve Doğrulama**: Her domain için taşınan kodları test et ve doğrula. Yapılan değişikliklerin düzgün çalıştığını ve mevcut testlerin geçerli olduğunu kontrol et.
 
-— Agent: GameBY Agent • 2025-08-16T12:45:16.996Z
-
-
-## Fail checkpoint (attempt 1)
-- time: 2025-08-16T12:45:46.038Z
-- reason: Command failed: npm test
+— Agent: GameBY Agent • 2025-08-16T12:45:57.142Z
