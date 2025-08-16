@@ -1,18 +1,23 @@
 # Next Action: Monorepo: Complete apps/api/src domain split (economy/fraud/chat services)
 
-1. **Domain Yapısını Planla**: apps/api/src dizinindeki mevcut yapıyı analiz et ve ekonomi, dolandırıcılık ve sohbet hizmetleri için uygun bir domain yapısı oluştur.
+### Alt Adım 1: Proje Yapısını Gözden Geçir
+- Mevcut `apps/api/src` dizin yapısını incele.
+- `economy`, `fraud` ve `chat` servislerinin gereksinimlerini belirle.
 
-2. **Kod Yapısını Taşı**: Mevcut kodları uygun domain dizinlerine taşı ve her domain için ayrı bir dizin oluştur. Bu, uygulamanın daha modüler hale gelmesine yardımcı olacak.
+### Alt Adım 2: Yeni Dizini Oluştur
+- `apps/api/src/economy`, `apps/api/src/fraud`, ve `apps/api/src/chat` dizinlerini oluştur.
+- Her bir dizin için gerekli başlangıç dosyalarını ekle.
 
-3. **Bağımlılıkları Güncelle**: Her domain için gerekli bağımlılıkları kontrol et ve güncelle. Bu, yeni dizin yapısında çalışabilmesi için gereklidir.
+### Alt Adım 3: Kodun Taşınması
+- Mevcut kodları uygun servis dizinlerine taşımaya başla.
+- Her taşınma işlemi sonrası dosyaların doğru çalıştığını test et.
 
-4. **Testleri Güncelle**: Her domain için mevcut testleri gözden geçir ve yeni dizin yapısına uygun hale getir. Testlerin geçerli olduğundan emin ol.
+### Alt Adım 4: Bağımlılıkları Güncelle
+- Her yeni servis için gerekli bağımlılıkları belirle ve güncelle.
+- `package.json` dosyalarını kontrol et ve güncellemeleri yap.
 
-5. **Dokümantasyonu Güncelle**: Yeni domain yapısını ve değişiklikleri yansıtacak şekilde dokümantasyonu güncelle. Kullanıcılar ve diğer geliştiriciler için net bir rehber sağlayacak.
+### Alt Adım 5: Test Süreçlerini Güncelle
+- Taşınan kodlar için uygun test senaryolarını oluştur.
+- Testleri çalıştır ve geçip geçmediğini kontrol et.
 
-— Agent: GameBY Agent • 2025-08-16T14:19:09.332Z
-
-
-## Fail checkpoint (attempt 3)
-- time: 2025-08-16T14:19:13.538Z
-- reason: Command failed: npm run lint
+— Agent: GameBY Agent • 2025-08-16T14:19:34.526Z
