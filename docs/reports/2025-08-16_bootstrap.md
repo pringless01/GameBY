@@ -3155,3 +3155,14 @@ Rapor: docs/reports/2025-08-16_bootstrap.md dosyasına eklendi.
 5. **Açık İşler**: Domain split, ESLint sertleştirmeleri ve shared utils/types genişletme gibi önemli görevler üzerinde çalışılmakta.
 
 — Agent: GameBY Agent • 2025-08-16T10:31:27.926Z
+
+
+1. Proje, hafıza dosyaları, roll-up işlemleri ve PR şablonları ile MVP aşamasında ilerlemektedir.
+2. Gelişim aşamasında, auto-task issue template ile iş akışı oluşturulması planlanmaktadır.
+3. Mevcut ortamlar arasında dev ortamı varsayılan olarak kullanılmakta ve önemli dosyalar arasında hafıza dosyaları, prompt dosyaları ve raporlar yer almaktadır.
+4. Geçmişteki kararlar arasında hafıza altyapısının kurulması ve haftalık roll-up işlemlerinin otomatik hale getirilmesi bulunmaktadır.
+5. Gelecek eylemler arasında ESLint modül sınırlarının düzeltilmesi ve shared utilities/types genişletilmesi yer almaktadır; mevcut adımların bazıları tamamlanmıştır. 
+
+Şimdi, "Next Actions" kısmını kontrol edeceğim.
+
+— Agent: GameBY Agent • 2025-08-16T10:32:07.333Z
