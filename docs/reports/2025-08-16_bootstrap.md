@@ -3263,3 +3263,16 @@ Rapor: **docs/reports/2025-08-16_bootstrap.md** güncellendi.
 Şimdi sonraki adımları işleyeceğim. 
 
 — Agent: GameBY Agent • 2025-08-16T10:38:19.047Z
+
+
+1. **Repo Bilgisi**: Proje, `pringless01/GameBY` adı altında bir monorepo içerisinde yer almakta, Node >=18 ve ESM kullanıyor. Ana branch "main".
+
+2. **Durum ve Gelişim**: MVP, hafıza dosyaları, roll-up eylemi ve PR şablonları için çalışmalara devam ediliyor. Auto-task issue template ile iş akışı geliştirilmekte.
+
+3. **Test ve Lint Durumu**: Lint ve test süreçleri başarıyla geçilmiştir; lint sonrası 0 uyarı bulunmaktadır. CI süreçleri de doğrulanmış ve çalışır durumdadır.
+
+4. **Açık İşler**: Domain bölünmesi, ESLint modül sınırlarının sertleştirilmesi ve shared utils/types genişletme gibi açık işler mevcut.
+
+5. **Engeller**: Memory-rollup workflow'u, 'workflow_dispatch' tetiklenmesi gerektirdiğinden dolayı şu an için engellenmiştir.
+
+— Agent: GameBY Agent • 2025-08-16T10:38:57.027Z
