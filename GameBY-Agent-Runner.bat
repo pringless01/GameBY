@@ -1,67 +1,45 @@
+:: filepath: C:\Users\Musa\Documents\GitHub\GameBY\GameBY-Agent-Runner.bat
 @echo off
-title GameBY Agent Runner - Otomatik Calisma ve Log Takip
-color 0A
-chcp 65001 >nul
+setlocal enableextensions enabledelayedexpansion
 
-echo.
-echo ===================================================
-echo    GameBY Agent Runner - Otomatik Baslama
-echo ===================================================
-echo.
+REM Repo köküne geç
+cd /d "%~dp0"
 
-:: Ana dizine git
-cd /d "C:\Users\Musa\Documents\GitHub\GameBY"
-echo [%TIME%] Dizin: %CD%
+REM Klasörler
+if not exist "tools\agent-runner\logs" mkdir "tools\agent-runner\logs"
+if not exist "agent" mkdir "agent"
 
-:: Lock dosyalarini temizle
-echo [%TIME%] Lock dosyalari temizleniyor...
-if exist "agent\STOP" del /f /q "agent\STOP" >nul 2>&1
-if exist "agent\agent.lock" del /f /q "agent\agent.lock" >nul 2>&1
-if exist "tools\agent-runner\agent.lock" del /f /q "tools\agent-runner\agent.lock" >nul 2>&1
+REM Çalışma ortamı (gerekirse düzenleyebilirsin)
+set REQUIRE_OPENAI=1
+set MODEL_PRIMARY=gpt-4o
+set MODEL_THINK=gpt-5
+set USE_GPT5_ON=refactor,security,release,infra,migration,controller,service,repo,auth,cookie,redis
+set ANNOUNCE=1
+set ANNOUNCE_TO=pr:16
+set MAX_COMMITS_PER_HOUR=60
+set MAX_IDLE_SECONDS=0
+set ALLOW_PROD=0
 
-:: Agent durumunu kontrol et
-echo [%TIME%] Agent durumu kontrol ediliyor...
-tasklist /FI "IMAGENAME eq node.exe" 2>nul | find /i "node.exe" >nul
-if %errorlevel% EQU 0 (
-    echo [%TIME%] UYARI: Node.js zaten calisiyor!
-    echo [%TIME%] Mevcut node islemlerini durduruyor...
-    taskkill /f /im node.exe >nul 2>&1
-    timeout /t 2 >nul
+REM STOP temizle (graceful start)
+if exist "agent\STOP" del /f /q "agent\STOP"
+
+REM Bağımlılıklar (ilk kurulum için)
+if not exist "node_modules" (
+  echo [bootstrap] npm ci calistiriliyor...
+  call npm ci
 )
 
-:: Agent'i baslat
-echo [%TIME%] Agent baslatiliyor...
-echo [%TIME%] Komut: npm run agent:loop
-echo.
-echo ===================================================
-echo    AGENT LOG CIKTI BASLADI - CANLI TAKIP
-echo ===================================================
-echo.
+REM Lock varsa ikinci instance baslatma
+if exist "agent\agent.lock" (
+  echo [runner] agent.lock var; yeni instance baslatilmiyor. Log izleniyor...
+) else (
+  echo [runner] baslatiliyor...
+  start "GameBY Agent Runner" cmd /c "node tools\agent-runner\runner.js --loop"
+  timeout /t 2 >nul
+)
 
-:: Agent'i calistir ve log'u goster
-npm run agent:loop
+echo [logs] tools\agent-runner\logs\runner.log izleniyor (Crtl+C ile cik)
+powershell -NoProfile -ExecutionPolicy Bypass -Command ^
+  "if(!(Test-Path 'tools/agent-runner/logs/runner.log')){New-Item -ItemType File -Path 'tools/agent-runner/logs/runner.log' | Out-Null}; Get-Content -Path 'tools/agent-runner/logs/runner.log' -Wait -Tail 80"
 
-:: Eger buraya gelirse agent durmus demektir
-echo.
-echo ===================================================
-echo    AGENT DURDU!
-echo ===================================================
-echo.
-echo [%TIME%] Agent beklenmedik sekilde durdu!
-echo [%TIME%] 10 saniye sonra yeniden baslatilacak...
-timeout /t 10
-
-:: Yeniden baslatma dongusu
-:restart_loop
-echo.
-echo [%TIME%] Yeniden baslatiliyor...
-:: Lock dosyalarini temizle
-if exist "agent\STOP" del /f /q "agent\STOP" >nul 2>&1
-if exist "agent\agent.lock" del /f /q "agent\agent.lock" >nul 2>&1
-if exist "tools\agent-runner\agent.lock" del /f /q "tools\agent-runner\agent.lock" >nul 2>&1
-
-npm run agent:loop
-
-echo [%TIME%] Agent yine durdu! 5 saniye sonra tekrar deneniyor...
-timeout /t 5
-goto restart_loop
+endlocal
