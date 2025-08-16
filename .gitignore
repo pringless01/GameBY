@@ -1,3 +1,7 @@
+# agent/cache & local stuff
+/.venv
+/.env
+**/__pycache__/
 # Unity Engine (büyük dosyalar - oyun projesi değil)
 6000.1.14f1/
 

@@ -35,6 +35,16 @@ export default [
       'no-unused-vars': ['warn', { argsIgnorePattern: '^_|^e$|^err$', varsIgnorePattern: '^_' , caughtErrors: 'none' }],
       'no-console': 'off',
       'import/order': ['warn', { 'newlines-between': 'always', alphabetize: { order: 'asc', caseInsensitive: true } }],
+      // Boundary hygiene
+      'import/no-cycle': ['warn', { ignoreExternal: true, maxDepth: 2 }],
+      // Disallow cross-layer shortcuts: controllers -> services -> repos
+      'import/no-restricted-paths': ['warn', {
+        zones: [
+          { target: './http', from: './modules/**/*.repo.js', message: 'Controllers must not import repos directly' },
+          { target: './http', from: './modules/**/users.repo.js', message: 'Controllers must not import repos directly' },
+          { target: './modules', from: './modules/**/users.repo.js', except: ['./modules/**/users.service.js'], message: 'Only services can import repos within same domain' }
+        ]
+      }],
       'n/no-process-env': 'off',
       // allow empty catch blocks, but still warn on other empty blocks
       'no-empty': ['error', { allowEmptyCatch: true }]

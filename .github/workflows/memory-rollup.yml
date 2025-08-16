@@ -1,0 +1,22 @@
+name: memory-rollup
+on:
+  schedule:
+    - cron: '0 21 * * *' # GitHub Actions CRON UTC. 21:00 UTC ~ gece.
+  workflow_dispatch: {}
+jobs:
+  rollup:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Roll-up memory
+        run: python scripts/memory_rollup.py
+      - name: Commit changes
+        run: |
+          git config user.name "auto-memory"
+          git config user.email "auto@users.noreply.github.com"
+          git add -A
+          git commit -m "chore(memory): daily roll-up" || echo "no changes"
+          git push || true

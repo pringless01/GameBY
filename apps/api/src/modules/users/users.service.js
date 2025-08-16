@@ -15,6 +15,11 @@ export function __setUsersRepoForTests(mod) { repoImpl = mod; }
 export function __setMentorServiceForTests(mod) { mentorSvcImpl = mod; }
 export function __setUserServiceForTests(mod) { userSvcImpl = mod; }
 
+// Soft invariant: sadece uyarı verir, davranışı değiştirmez
+function assertSoft(cond, msg) {
+	if (!cond) console.warn('[invariant]', msg);
+}
+
 export async function getMe(userId) {
 	const db = await initDb();
 	const row = await repoImpl.getUserSummaryById(db, userId);
@@ -37,6 +42,7 @@ export async function search(username) {
 }
 
 export async function getDailyTrustEarned(userId, { force = false } = {}) {
+	assertSoft(userId !== undefined && userId !== null, 'getDailyTrustEarned: userId missing');
 	const today = new Date().toISOString().slice(0, 10);
 	const cacheKey = userId;
 	const now = Date.now();
@@ -79,6 +85,7 @@ export async function getBootstrap(userId) {
 	const rank = higherRow.c + 1;
 	const totalUsers = totalRow.c || 1;
 	const percentile = totalUsers ? Math.round((lowerEqRow.c / totalUsers) * 10000) / 100 : 0;
+		assertSoft(rank >= 1 && rank <= totalUsers, `bootstrap: rank out of range rank=${rank} total=${totalUsers}`);
 	const trendKey = userId + ':7';
 	let trendObj = trustTrendCache.get(trendKey);
 	if (!trendObj || (now - trendObj.ts) > TRUST_TREND_TTL_MS) {
@@ -90,6 +97,7 @@ export async function getBootstrap(userId) {
 		trendObj = { ts: now, data: series };
 		trustTrendCache.set(trendKey, trendObj);
 	}
+		assertSoft(Array.isArray(trendObj.data) && trendObj.data.length === 7, 'bootstrap: trend series must have 7 days');
 	return {
 		user: userRow,
 		dailyTrust: daily,

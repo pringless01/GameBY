@@ -46,6 +46,13 @@ server/
 
 Durum (güncel): apps/api altında users ve leaderboard domainleri controller→service→repo katmanlarıyla ayrıştırıldı; legacy passthrough ve admin zinciri korunuyor.
 
+### Modül Sınırları ve Testler
+- Controller katmanı yalnızca service katmanını çağırır; repo doğrudan import edilmez (lint kuralı ile izlenir).
+- Service katmanı domain mantığını içerir ve yalnızca kendi repo modülünü kullanır.
+- Repo katmanı yalnızca DB erişimi yapar.
+- ESLint: import/no-cycle ve import/no-restricted-paths kuralları uyarı seviyesinde aktiftir.
+- Service-level unit testler: users.service ve leaderboard.service için hafif stub’larla davranış korunarak eklendi.
+
 ## Riskler ve Önlemler
 - Göreli import bozulması → Adapter/facade ile eski yollar korunur; import path değişiklikleri küçük adımlarla.
 - Döngüsel bağımlılık → shared/* ve modules/* sınırları net tutulur; import linter kuralı ile izlenir.
