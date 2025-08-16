@@ -1,24 +1,17 @@
 # Next Action: MVP: Hafıza dosyaları + roll-up action + PR şablonları
 
-1. **Hafıza Dosyalarını Oluşturma:**
-   - Proje için gerekli olan hafıza dosyalarını oluştur ve yapılandır. Bu dosyaların proje bilgilerini ve uzun dönemli bilgileri saklayacak şekilde düzenlendiğinden emin ol.
+Aşağıdaki alt adımları belirledim:
 
-2. **Roll-Up Action Belirleme:**
-   - Herhangi bir roll-up (derleme) işlemi gerektiren aksiyonları belirle. Bu aksiyonlar, hafıza dosyalarının güncel ve düzenli tutulmasını sağlamalıdır.
+1. **Hafıza Dosyalarının Oluşturulması**: Proje için gerekli hafıza dosyalarını oluştur ve ilgili bilgileri ekle.
+   
+2. **Roll-up Action Planının Tasarımı**: Roll-up action için gerekli planı tasarla ve sürecin nasıl işleyeceğine dair açıklamaları belirle.
 
-3. **Roll-Up Action Uygulama:**
-   - Belirlenen roll-up aksiyonlarını sistematik bir şekilde uygula. Bu işlem, hafıza dosyalarının güncellenmesi ve optimize edilmesini içerebilir.
+3. **PR Şablonlarının Tasarlanması**: Proje için kullanılacak PR şablonlarını oluştur ve gerekli alanları tanımla.
 
-4. **PR Şablonlarının Hazırlanması:**
-   - Projenin kod katkıları için çekme isteği (PR) şablonlarını oluştur. Bu şablonlar, kod incelemeleri için gerekli bilgileri ve kontrol listelerini içermelidir.
+4. **Dokümantasyonun Güncellenmesi**: Oluşturulan hafıza dosyaları ve şablonları dokümantasyona ekle.
 
-5. **PR Şablonlarının Entegrasyonu:**
-   - Hazırlanan PR şablonlarını sürüm kontrol sistemine entegre et. Bu, şablonların doğru bir şekilde kullanılmasını ve tüm çekme isteklerinde uygulanmasını garanti eder.
+5. **Revizyon ve Geri Bildirim**: Oluşturulan dosyaları ve şablonları gözden geçir, ekibin geri bildirimlerini topla ve gerekli revizyonları yap. 
 
-Hafıza: agent/memory/project_facts.md ve agent/memory/long_term.md dosyalarına bu bilgileri ekleyin.
+Her adımda gerçek değişiklikler yapılacaktır. Şimdi ilk adım olan hafıza dosyalarının oluşturulmasına geçiyorum.
 
-Rapor: docs/reports/YYYY-MM-DD_mvp_memory_rollup_pr_templates.md dosyasını oluşturun.
-
-Agent: GameBY Agent
-
-— Agent: GameBY Agent • 2025-08-16T09:02:51.579Z
+— Agent: GameBY Agent • 2025-08-16T09:11:39.366Z
