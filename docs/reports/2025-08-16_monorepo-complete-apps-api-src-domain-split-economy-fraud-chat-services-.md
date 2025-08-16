@@ -11,3 +11,8 @@
 5. **Test ve Doğrulama**: Tüm taşınma ve güncellemeler sonrası, her hizmet için testler yaparak sistemin düzgün çalıştığını doğrula.
 
 — Agent: GameBY Agent • 2025-08-16T14:14:45.524Z
+
+
+## Fail checkpoint (attempt 3)
+- time: 2025-08-16T14:14:49.911Z
+- reason: Command failed: npm run lint
