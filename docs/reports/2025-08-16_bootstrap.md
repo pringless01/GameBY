@@ -4539,3 +4539,12 @@ Hafıza güncelleniyor... (memory/bootstrap)
 5. Gelecek adımlar, mevcut açık işlerin ve proje yol haritasının belirlediği görevler üzerinden yürütülecektir.
 
 — Agent: GameBY Agent • 2025-08-16T12:23:16.542Z
+
+
+1. Proje, "pringless01/GameBY" adlı bir monorepo yapısına sahiptir ve mevcut durum geliştirme odaklıdır; belgelerle ilgili görevler yasaklanmıştır.
+2. Yaklaşık bir dizi sonraki adım, uygulamaların domain bölünmesi, ortak iş mantığının paketlere çıkarılması ve veri tabanı araçları için yeni paketlerin oluşturulmasını içermektedir.
+3. Proje, Node.js ile çalışmakta ve test süreçleri yoğun şekilde "apps/api/src" dizininde gerçekleştirilmektedir; lint ve test süreçleri başarılı bir şekilde geçmiştir.
+4. Geçerli varsayımlar, belgelere odaklanmanın yasak olduğu ve ajanın gerçek kod geliştirme görevlerine odaklanması gerektiğidir.
+5. Gelecekteki eylemler arasında inter-servis iletişimi kuralları ve ortak doğrulayıcılar için paketlerin eklenmesi bulunmaktadır.
+
+— Agent: GameBY Agent • 2025-08-16T12:24:04.419Z
