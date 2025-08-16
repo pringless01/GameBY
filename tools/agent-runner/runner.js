@@ -189,8 +189,9 @@ function failCheckpoint(slug, attempt, reason) {
 
 function tryCreateDraftPR(slug, reportPath) {
   try {
-    if (DRY) return null;
-    const hasToken = !!process.env.GH_TOKEN;
+  if (DRY) return null;
+  const hasToken = !!process.env.GH_TOKEN;
+  if (!hasToken) { log('PR create skipped: GH_TOKEN not set'); return null; }
     // Prefer gh if available; will fail fast if not installed
     const title = `chore(agent): ${slug} by GameBY Agent`;
     const body = [
