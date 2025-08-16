@@ -5421,3 +5421,12 @@ Rapor: docs/reports/2025-08-16_bootstrap.md'ye eklenecek.
 5. **Yasaklanan Görevler**: Tüm dokümantasyon ve hafıza görevleri geçici olarak durdurulmuş, yalnızca kod geliştirme önceliklendirilmiştir.
 
 — Agent: GameBY Agent • 2025-08-16T13:27:37.996Z
+
+
+1. Proje, pringless01/GameBY adıyla bir monorepo yapısında geliştirilmekte ve odak noktası gerçek kod geliştirme olarak belirlenmiştir.
+2. Belgelendirme ve hafıza dosyaları gibi görevler yasaklanmış, öncelik gerçek geliştirme görevlerine verilmiştir.
+3. Öncelikli eylemler arasında ekonomi, dolandırıcılık ve sohbet hizmetleri için alan bölünmesi, paylaşılan iş mantığı paketlerine çıkarılması ve veritabanı yardımcıları için paketler oluşturulması yer almaktadır.
+4. CI/CD süreçlerinin geliştirilmesi ve hizmetler arası iletişim kalıplarının uygulanması da önemli bir hedef olarak belirlenmiştir.
+5. Projenin mevcut durumu lint ve testler açısından başarılı olup, güvenlik açığı ile ilgili izlemeler yapılmaktadır.
+
+— Agent: GameBY Agent • 2025-08-16T13:28:23.522Z
