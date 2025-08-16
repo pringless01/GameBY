@@ -1,17 +1,13 @@
 # Next Action: MVP: Hafıza dosyaları + roll-up action + PR şablonları
 
-Next Action'ı 5 alt adıma böldüm:
+1. **Hafıza Dosyalarının Oluşturulması**: Proje ile ilgili kritik bilgilerin toplandığı hafıza dosyaları oluşturulacak. Bu dosyalar, proje süresince referans alınacak önemli bilgileri içerecek.
 
-1. **Hafıza Dosyalarının Yapılandırılması**: Projenin hafıza dosyalarının yapılandırmasını belirle ve gerekli şablonları oluştur.
+2. **Roll-up Action Belirlenmesi**: Projede yapılacak eylemlerin ve görevlerin genel bir özetini oluşturacak bir roll-up action belirlenecek. Bu, ekibin genel ilerlemesini takip etmesine yardımcı olacak.
 
-2. **Roll-up Action Tanımlaması**: Roll-up action için gerekli olan adımları ve süreçleri tanımla, hangi bilgilerin toplanacağını belirle.
+3. **PR Şablonlarının Tasarlanması**: Pull request (PR) süreçlerini standartlaştırmak için kullanılacak PR şablonları tasarlanacak. Bu şablonlar, geliştiricilerin PR'larını daha düzenli ve anlaşılır bir şekilde hazırlamalarını sağlayacak.
 
-3. **PR Şablonları Geliştirilmesi**: Proje için etkili PR şablonları oluştur; bu şablonların içermesi gereken başlıkları ve formatları belirle.
+4. **Dokümantasyonun Güncellenmesi**: Oluşturulan hafıza dosyaları ve PR şablonları ile ilgili dokümantasyon güncellenecek. Bu, ekibin yeni süreçlere kolayca adapte olmasını sağlayacak.
 
-4. **Hafıza Dosyalarının Oluşturulması**: Belirlenen yapıya göre hafıza dosyalarını oluştur ve içerik eklemeye başla.
+5. **Geri Bildirim Toplanması**: Oluşturulan hafıza dosyaları ve PR şablonları hakkında ekipten geri bildirim toplanacak. Bu geri bildirimler, süreçlerin iyileştirilmesi için değerlendirilecektir.
 
-5. **Roll-up Action ve PR Şablonlarının Entegrasyonu**: Oluşturulan roll-up action ve PR şablonlarını hafıza dosyalarına entegre et, böylece süreçler birbirine bağlı hale gelsin.
-
-Bu adımların her birini sırayla gerçekleştireceğim. İlk adım olan hafıza dosyalarının yapılandırılmasını başlatıyorum.
-
-— Agent: GameBY Agent • 2025-08-16T11:29:01.247Z
+— Agent: GameBY Agent • 2025-08-16T11:29:47.116Z
