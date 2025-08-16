@@ -11,3 +11,8 @@
 5. **CI/CD Ayarları**: Sürekli Entegrasyon ve Sürekli Dağıtım süreçlerini güncelle; her bir domain için ayrı pipeline'lar oluştur ve testlerin başarılı olduğundan emin ol.
 
 — Agent: GameBY Agent • 2025-08-16T13:03:13.015Z
+
+
+## Fail checkpoint (attempt 1)
+- time: 2025-08-16T13:03:42.168Z
+- reason: Command failed: npm test
