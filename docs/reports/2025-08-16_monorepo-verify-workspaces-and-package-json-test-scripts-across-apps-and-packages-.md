@@ -1,22 +1,23 @@
 # Next Action: Monorepo: verify workspaces and package.json test scripts across apps/* and packages/*
 
-Aşağıdaki alt adımları belirledim:
+Adım 1: Uygulama ve paket dizinlerini kontrol et
+- `apps/` ve `packages/` dizinlerini incele.
+- Her bir alt dizinin varlığını ve içindeki dosyaları doğrula.
 
-1. **Workspace'ları Kontrol Et**: Monorepo'daki tüm workspace'leri belirle ve mevcut olanları listele.
-   - Çıktı: "Workspace'lar tespit edildi: [list of workspaces]."
+Adım 2: workspace ayarlarını kontrol et
+- `package.json` dosyalarını açarak `workspaces` bölümünü gözden geçir.
+- Her bir uygulama ve paket için doğru yol tanımlamalarını kontrol et.
 
-2. **package.json Dosyalarını İncele**: Her bir uygulama ve paket için package.json dosyasını aç ve test scriptlerini kontrol et.
-   - Çıktı: "package.json dosyaları incelendi: [list of apps and packages with their test scripts]."
+Adım 3: test scriptlerini incele
+- Her `package.json` dosyasında `scripts` bölümünü kontrol et.
+- `test` komutunun varlığını ve doğru yapılandırıldığını doğrula.
 
-3. **Test Scriptlerini Geçerlilik Kontrolü**: Her package.json dosyasındaki test scriptlerini geçerlilik açısından kontrol et.
-   - Çıktı: "Test scriptleri kontrol edildi: [list of valid/invalid test scripts]."
+Adım 4: test scriptlerini çalıştır
+- Her bir uygulama ve paketteki `test` komutunu sırayla çalıştır.
+- Çalıştırılan testlerin sonuçlarını kaydet.
 
-4. **Hata Raporu Oluştur**: Geçersiz veya eksik test scriptleri için bir hata raporu oluştur.
-   - Çıktı: "Hata raporu oluşturuldu: [list of issues found]."
+Adım 5: sonuçları raporla
+- Test sonuçlarını ve yapılan kontrolleri içeren bir rapor oluştur.
+- Raporu uygun dizine kaydet.
 
-5. **Düzeltme Planı Hazırla**: Geçersiz veya eksik test scriptlerinin düzeltilmesi için bir plan hazırla.
-   - Çıktı: "Düzeltme planı hazırlandı: [list of actions to fix issues]."
-
-Bu adımları sırayla gerçekleştireceğim. İlk adım ile başlayalım.
-
-— Agent: GameBY Agent • 2025-08-16T23:53:14.028Z
+— Agent: GameBY Agent • 2025-08-16T23:54:00.724Z
