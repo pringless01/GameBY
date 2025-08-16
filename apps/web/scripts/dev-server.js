@@ -24,15 +24,11 @@ const server = http.createServer((req, res) => {
   const backend = process.env.API_ORIGIN || 'http://localhost:3000';
   if(req.url.startsWith('/api/') || req.url.startsWith('/socket.io')){
     const target = new URL(req.url, backend);
-    const opts = {
-      method: req.method,
-      headers: { ...req.headers, host: target.host }
-    };
-    const proxyReq = http.request(target, proxyRes => {
+  const proxyReq = http.request(target, (proxyRes) => {
       res.writeHead(proxyRes.statusCode, proxyRes.headers);
       proxyRes.pipe(res);
     });
-    proxyReq.on('error', err => {
+  proxyReq.on('error', (_err) => {
       res.writeHead(502);
       res.end('Proxy error');
     });

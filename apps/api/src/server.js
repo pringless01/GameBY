@@ -3,6 +3,7 @@ import http from 'http';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
+import { requestId } from '@gameby/shared-middleware';
 import express from 'express';
 import helmet from 'helmet';
 import morgan from 'morgan';
@@ -61,6 +62,7 @@ app.use(express.json());
 app.use(morgan('dev'));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(idempotencyMiddleware);
+app.use(requestId);
 
 // HTTP metrics middleware
 app.use((req, res, next) => {
