@@ -11,3 +11,8 @@
 5. **CI Sürecinin Çalıştırılması**: Tüm değişikliklerden sonra CI sürecini çalıştırarak (`ci:all`) tüm testlerin ve lint kontrollerinin başarısını doğrulayacağım.
 
 — Agent: GameBY Agent • 2025-08-16T22:40:05.493Z
+
+
+## Fail checkpoint (attempt 2)
+- time: 2025-08-16T22:40:09.689Z
+- reason: Command failed: npm run lint
