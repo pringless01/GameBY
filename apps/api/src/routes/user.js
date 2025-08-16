@@ -1,23 +1,23 @@
 import express from 'express';
 
-import { mentorsLbCache, mentorsRankCache, MENTOR_LB_TTL_MS } from '../cache/mentorCaches';
-import { dailyTrustCache, leaderboardCache, trustTrendCache, DAILY_TRUST_TTL_MS, LEADERBOARD_TTL_MS, TRUST_TREND_TTL_MS, trustAroundCache } from '../cache/trustCaches';
-import { initDb } from '../config/database';
-import { envConfig } from '../config/env';
-import { authRequired } from '../http/routes/auth';
-import { fraudMetrics, setMultiuserIpCount, setMultiuserDeviceCount } from '../metrics/fraudMetrics';
-import { leaderboardMetrics } from '../metrics/leaderboardMetrics';
-import { reputationMetrics } from '../metrics/reputationMetrics';
-import { trustRateLimit, rateLimit } from '../middleware/rateLimit';
-import { encodeCursor, decodeCursor, WEAK_CURSOR_SECRET, isCursorAbuse, isInCursorCooldown, getIpInvalidCount, getCooldownIpCount, getAbusiveIpCount, getInvalidCursorRecent, getCursorCooldownUntil, INVALID_CURSOR_THRESHOLD, shouldAutoDegrade, getInvalidCursorIpStats } from '../security/cursorSecurity';
-import { DAILY_CONTRACT_TRUST_CAP } from '../services/contractService';
-import { getMultiUserIps, getMultiUserDevices, computeFraudRiskScore } from '../services/fraudService';
-import { canBeMentor, getActiveMentorship, getQueues, computeMentorQualityScore } from '../services/mentorService';
-import { ReputationEventType } from '../services/reputationEvents';
-import { getReputationRulesVersion, getReputationRuleCount } from '../services/reputationEvents';
-import { emitOnboardingStep } from '../services/reputationEvents';
-import { updateTrust, getUserMetrics, findUserByUsername } from '../services/userService';
-import { sendWithEtag, buildEtag } from '../utils/etag';
+import { mentorsLbCache, mentorsRankCache, MENTOR_LB_TTL_MS } from '../cache/mentorCaches.js';
+import { dailyTrustCache, leaderboardCache, trustTrendCache, DAILY_TRUST_TTL_MS, LEADERBOARD_TTL_MS, TRUST_TREND_TTL_MS, trustAroundCache } from '../cache/trustCaches.js';
+import { initDb } from '../config/database.js';
+import { envConfig } from '../config/env.js';
+import { authRequired } from '../http/routes/auth.js';
+import { fraudMetrics, setMultiuserIpCount, setMultiuserDeviceCount } from '../metrics/fraudMetrics.js';
+import { leaderboardMetrics } from '../metrics/leaderboardMetrics.js';
+import { reputationMetrics } from '../metrics/reputationMetrics.js';
+import { trustRateLimit, rateLimit } from '../middleware/rateLimit.js';
+import { encodeCursor, decodeCursor, WEAK_CURSOR_SECRET, isCursorAbuse, isInCursorCooldown, getIpInvalidCount, getCooldownIpCount, getAbusiveIpCount, getInvalidCursorRecent, getCursorCooldownUntil, INVALID_CURSOR_THRESHOLD, shouldAutoDegrade, getInvalidCursorIpStats } from '../security/cursorSecurity.js';
+import { DAILY_CONTRACT_TRUST_CAP } from '../services/contractService.js';
+import { getMultiUserIps, getMultiUserDevices, computeFraudRiskScore } from '../services/fraudService.js';
+import { canBeMentor, getActiveMentorship, getQueues, computeMentorQualityScore } from '../services/mentorService.js';
+import { ReputationEventType } from '../services/reputationEvents.js';
+import { getReputationRulesVersion, getReputationRuleCount } from '../services/reputationEvents.js';
+import { emitOnboardingStep } from '../services/reputationEvents.js';
+import { updateTrust, getUserMetrics, findUserByUsername } from '../services/userService.js';
+import { sendWithEtag, buildEtag } from '../utils/etag.js';
 
 const router = express.Router();
 

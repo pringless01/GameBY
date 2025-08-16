@@ -2,9 +2,9 @@
 // Exponential decay towards baseline over time since last_decay_at
 // trust_score := baseline + (trust_score - baseline) * 2^(-dt/halflife)
 
-import { initDb } from '../config/database';
-import { envConfig } from '../config/env';
-import { incDecayRun, incDecayAdjustedUsers, incDecayErrors } from '../metrics/reputationMetrics';
+import { initDb } from '../config/database.js';
+import { envConfig } from '../config/env.js';
+import { incDecayRun, incDecayAdjustedUsers, incDecayErrors } from '../metrics/reputationMetrics.js';
 
 function nowIso(){ return new Date().toISOString(); }
 

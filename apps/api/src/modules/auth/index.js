@@ -1,3 +1,3 @@
-export * from './auth.controller';
-export * from './auth.service';
-export { default as registerAuthRoutes } from './routes';
+export * from './auth.controller.js';
+export * from './auth.service.js';
+export { default as registerAuthRoutes } from './routes.js';

@@ -1,9 +1,9 @@
 import express from 'express';
 
-import { initDb } from '../config/database';
-import { authRequired } from '../http/routes/auth';
-import { logResource } from '../services/auditService';
-import { getIo } from '../sockets/io';
+import { initDb } from '../config/database.js';
+import { authRequired } from '../http/routes/auth.js';
+import { logResource } from '../services/auditService.js';
+import { getIo } from '../sockets/io.js';
 
 const router = express.Router();
 

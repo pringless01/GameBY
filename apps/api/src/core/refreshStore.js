@@ -1,4 +1,4 @@
-import { namespace, isRedisEnabled } from '../cache/redisAdapter';
+import { namespace, isRedisEnabled } from '../cache/redisAdapter.js';
 
 const memory = new Map();
 

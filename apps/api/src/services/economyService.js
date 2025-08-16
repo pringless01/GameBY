@@ -1,6 +1,6 @@
 // Economy sink cron: simple progressive tax on money as a sink
-import { initDb } from '../config/database';
-import { incRun, addUsersCharged, addTotalDeducted, incErrors } from '../metrics/economyMetrics';
+import { initDb } from '../config/database.js';
+import { incRun, addUsersCharged, addTotalDeducted, incErrors } from '../metrics/economyMetrics.js';
 
 function getEnv(name, def){ const v = process.env[name]; return (v==null||v==='')?def:v; }
 

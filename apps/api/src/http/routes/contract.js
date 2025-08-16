@@ -1,1 +1,1 @@
-export { default } from './contract';
+export { default } from './contract.js';

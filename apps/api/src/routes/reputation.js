@@ -1,8 +1,8 @@
 import { Router } from 'express';
 
-import { initDb } from '../config/database';
-import { authRequired } from '../http/routes/auth';
-import { listDeltaRules } from '../services/reputationEvents';
+import { initDb } from '../config/database.js';
+import { authRequired } from '../http/routes/auth.js';
+import { listDeltaRules } from '../services/reputationEvents.js';
 
 const router = Router();
 

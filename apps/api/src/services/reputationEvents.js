@@ -7,10 +7,10 @@ import crypto from 'crypto';
 import fs from 'fs';
 import path from 'path';
 
-import { invalidateOnTrustChange } from '../cache/trustCaches';
-import { initDb } from '../config/database';
-import { envConfig } from '../config/env';
-import { incReputationEvent, incCappedSkip, incUnknownType, incReputationDbError } from '../metrics/reputationMetrics';
+import { invalidateOnTrustChange } from '../cache/trustCaches.js';
+import { initDb } from '../config/database.js';
+import { envConfig } from '../config/env.js';
+import { incReputationEvent, incCappedSkip, incUnknownType, incReputationDbError } from '../metrics/reputationMetrics.js';
 
 
 // Event tipleri (genişletilebilir)

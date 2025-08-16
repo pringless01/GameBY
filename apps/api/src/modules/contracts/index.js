@@ -1,2 +1,2 @@
-export * from './contracts.controller';
-export * from './contracts.service';
+export * from './contracts.controller.js';
+export * from './contracts.service.js';

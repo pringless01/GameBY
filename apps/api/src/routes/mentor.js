@@ -1,9 +1,9 @@
 import express from 'express';
 
-import { envConfig } from '../config/env';
-import { authRequired } from '../http/routes/auth';
-import { rateLimit } from '../middleware/rateLimit';
-import { getUserState, advanceState, getGuidance, setState, joinMentorQueue, leaveMentorQueue, requestMentor, getQueues, getActiveMentorship, canBeMentor, setMentorReady, setMenteeWaiting, completeMentorship, listActiveMentorship, getMentorshipById } from '../services/mentorService';
+import { envConfig } from '../config/env.js';
+import { authRequired } from '../http/routes/auth.js';
+import { rateLimit } from '../middleware/rateLimit.js';
+import { getUserState, advanceState, getGuidance, setState, joinMentorQueue, leaveMentorQueue, requestMentor, getQueues, getActiveMentorship, canBeMentor, setMentorReady, setMenteeWaiting, completeMentorship, listActiveMentorship, getMentorshipById } from '../services/mentorService.js';
 
 const router = express.Router();
 

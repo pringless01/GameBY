@@ -1,4 +1,4 @@
-import { initDb } from '../config/database';
+import { initDb } from '../config/database.js';
 
 export async function getIdempotency(key){
   const db = await initDb();

@@ -1,6 +1,6 @@
 // Çoklu hesap/fraud gözlemi için: user_login_events tablosundan analiz fonksiyonları
-import { initDb } from '../config/database';
-import { envConfig } from '../config/env';
+import { initDb } from '../config/database.js';
+import { envConfig } from '../config/env.js';
 
 /**
  * Aynı IP'den giriş yapan farklı kullanıcıları (multi-account) listeler.

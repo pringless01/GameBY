@@ -1,4 +1,4 @@
-import { initDb } from '../config/database';
+import { initDb } from '../config/database.js';
 
 export async function logChatSpam({ userId, ip }) {
   try {

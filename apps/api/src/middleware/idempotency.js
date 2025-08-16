@@ -1,4 +1,4 @@
-import { getIdempotency, saveIdempotency } from '../services/idempotencyService';
+import { getIdempotency, saveIdempotency } from '../services/idempotencyService.js';
 
 export async function idempotencyMiddleware(req, res, next){
   const key = req.headers['x-idempotency-key'];

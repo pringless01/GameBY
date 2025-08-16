@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 // Basit audit trim scripti: son N kaydı bırakır
-import { initDb } from '../config/database';
+import { initDb } from '../config/database.js';
 
 const KEEP = parseInt(process.env.AUDIT_KEEP || '5000', 10);
 

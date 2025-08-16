@@ -1,2 +1,2 @@
-export * from './economy.controller';
-export * from './economy.service';
+export * from './economy.controller.js';
+export * from './economy.service.js';

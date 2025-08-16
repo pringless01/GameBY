@@ -1,7 +1,7 @@
 import express from 'express';
 
-import { authRequired } from '../http/routes/auth';
-import { createContract, listUserContracts, actOnContract, getContract, listUserContractsFiltered } from '../services/contractService';
+import { authRequired } from '../http/routes/auth.js';
+import { createContract, listUserContracts, actOnContract, getContract, listUserContractsFiltered } from '../services/contractService.js';
 
 const router = express.Router();
 

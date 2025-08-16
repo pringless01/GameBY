@@ -1,11 +1,11 @@
-import { invalidateMentorLeaderboards } from '../cache/mentorCaches';
-import { initDb } from '../config/database';
-import { envConfig } from '../config/env';
-import { startMentorSession, endMentorSession } from '../metrics/mentorMetrics';
-import { incMentorSessionCompleted, incMentorRatingGiven, incMenteeRatingGiven } from '../metrics/reputationMetrics';
-import { getIo } from '../sockets/io';
+import { invalidateMentorLeaderboards } from '../cache/mentorCaches.js';
+import { initDb } from '../config/database.js';
+import { envConfig } from '../config/env.js';
+import { startMentorSession, endMentorSession } from '../metrics/mentorMetrics.js';
+import { incMentorSessionCompleted, incMentorRatingGiven, incMenteeRatingGiven } from '../metrics/reputationMetrics.js';
+import { getIo } from '../sockets/io.js';
 
-import { emitReputationEvent, ReputationEventType } from './reputationEvents';
+import { emitReputationEvent, ReputationEventType } from './reputationEvents.js';
 
 // Tutorial adım tanımları (sade)
 export const TUTORIAL_STEPS = [

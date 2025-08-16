@@ -1,1 +1,1 @@
-export { default } from './mentor';
+export { default } from './mentor.js';
