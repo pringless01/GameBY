@@ -1,9 +1,10 @@
-const express = require('express');
+import express from 'express';
+
 const router = express.Router();
 
 // In-memory demo state (per ip)
 const store = new Map();
-function getKey(req){ return (req.ip || req.connection?.remoteAddress || 'local') }
+function getKey(req){ return (req.ip || req.connection?.remoteAddress || 'local'); }
 function getState(req){
   const k = getKey(req);
   const now = Date.now();
@@ -24,4 +25,4 @@ router.post('/action', express.json(), (req,res)=>{
   return res.status(400).json({ error:'invalid_action' });
 });
 
-module.exports = router;
+export default router;

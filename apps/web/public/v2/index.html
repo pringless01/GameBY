@@ -14,8 +14,8 @@
   (async function(){
     // Splash’ı kullanıcı kapatana kadar açık tut
     try{ await startCodaraIntro({ autoFinish:false }); }catch(e){}
-    // Kapandıktan sonra login’e yönlendir
-    window.location.href = '/v2/login.html';
+    // Kapandıktan sonra dashboard’a geç
+    window.location.href = '/v2/dashboard.html';
   })();
   document.getElementById('enterBtn').addEventListener('click', async (e)=>{
     e.preventDefault();
