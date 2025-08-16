@@ -1,3 +1,4 @@
+\n[2025-08-16] CI roll-up ve sweep artifact workflow’ları eklendi; haftalık hafıza özetleri otomatikleşti.
 # Project Facts
 - Repo: pringless01/GameBY
 - Ana branch: main

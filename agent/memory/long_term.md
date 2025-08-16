@@ -1,3 +1,5 @@
+\n## CI Weekly Automation – memory & sweep
+- 2025-08-16: memory-rollup (Node 20) haftalık cron + manual dispatch ile etkinleştirildi; sweep artifact workflow’u eklendi.
 # Long-term Memory (roll-up 2025-08-16)
 
 ## Facts
