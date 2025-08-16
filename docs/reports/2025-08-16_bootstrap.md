@@ -3443,3 +3443,12 @@ Rapor: docs/reports/2025-08-16_bootstrap.md dosyasına eklenmiştir.
 5. Repo, monorepo yapısında organize edilmiş ve ana branch "main" olarak belirlenmiş; çeşitli uygulama ve test alanları içeriyor.
 
 — Agent: GameBY Agent • 2025-08-16T10:48:58.413Z
+
+
+1. Proje, hafıza dosyaları, roll-up eylemleri ve PR şablonları ile MVP üzerinde çalışıyor.
+2. Python 3.11 ve GitHub Actions ile CI işlemleri için temel komutlar belirlenmiş; lint/test kırıkları mevcut olabilir.
+3. Sonraki adımlar arasında ESLint modül sınırlarının düzeltilmesi, shared utils/types genişletilmesi ve haftalık rapor oluşturulması var.
+4. CI işlemleri için hafıza roll-up ve sweep artifact workflow’ları eklenmiş; bunlar haftalık olarak otomatikleştirilecek.
+5. Projede bazı testler yeşil durumda; güvenlik açısından düşük şiddette iki zafiyet izleniyor.
+
+— Agent: GameBY Agent • 2025-08-16T10:49:39.290Z
