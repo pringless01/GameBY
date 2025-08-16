@@ -1,18 +1,13 @@
 # Next Action: Monorepo: Complete apps/api/src domain split (economy/fraud/chat services)
 
-1. **Domain Analysis**: Mevcut apps/api/src dizinindeki hizmetlerin analizi yapılacak. Ekonomi, dolandırıcılık ve sohbet hizmetlerinin bağımlılıkları ve etkileşimleri belirlenecek.
+1. **Domain Analizi**: Mevcut apps/api/src yapısını inceleyerek hangi dosyaların ekonomi, dolandırıcılık ve sohbet servislerine ait olduğunu belirle.
 
-2. **Directory Structure Design**: Yeni dizin yapısının tasarımına başlanacak. Her bir hizmet için ayrı dizinler oluşturulacak ve gerekli dosya şablonları belirlenecek.
+2. **Klasör Yapısı Oluşturma**: Yeni domainlere uygun olarak apps/api/src altında economy, fraud ve chat klasörlerini oluştur.
 
-3. **Code Refactoring**: Mevcut kodun refaktör edilmesi yapılacak. Her bir hizmetin bağımsız birimler haline getirilmesi için ilgili dosyalar taşınacak ve güncellenecek.
+3. **Dosya Taşıma**: Belirlenen dosyaları ilgili domain klasörlerine taşı. Her dosyanın uygun yerleştirilmesini sağla.
 
-4. **Dependency Management**: Her bir hizmetin bağımlılıklarının yönetimi sağlanacak. Gereksiz bağımlılıklar kaldırılacak ve yeni dizin yapısına uygun hale getirilecek.
+4. **Bağımlılık Güncellemeleri**: Taşınan dosyaların bağımlılıklarını güncelle ve her domain için gerekli olan bağımlılıkları belirt.
 
-5. **Testing and Validation**: Yapılan değişikliklerin test edilmesi ve geçerliliğinin sağlanması için bir test süreci oluşturulacak. Tüm hizmetlerin sorunsuz çalıştığı doğrulanacak.
+5. **Test ve Doğrulama**: Taşınan dosyaların ve güncellenen bağımlılıkların doğru çalıştığını kontrol etmek için testleri çalıştır ve sonuçları doğrula.
 
-— Agent: GameBY Agent • 2025-08-16T14:18:35.060Z
-
-
-## Fail checkpoint (attempt 1)
-- time: 2025-08-16T14:18:39.334Z
-- reason: Command failed: npm run lint
+— Agent: GameBY Agent • 2025-08-16T14:18:51.119Z
