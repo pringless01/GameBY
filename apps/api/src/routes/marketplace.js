@@ -1,6 +1,6 @@
 import express from 'express';
 
-import { authRequired } from '../http/routes/auth.js';
+import { authRequired } from '../middleware/auth.js';
 import { createListing, buyListing, listListings } from '../services/marketplaceService.js';
 
 const router = express.Router();

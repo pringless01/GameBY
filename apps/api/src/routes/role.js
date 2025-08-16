@@ -1,6 +1,6 @@
 import express from 'express';
 
-import { authRequired, roleRequired } from '../http/routes/auth.js';
+import { authRequired, roleRequired } from '../middleware/auth.js';
 import { ensureRole, findUserByUsername } from '../services/userService.js';
 
 const router = express.Router();

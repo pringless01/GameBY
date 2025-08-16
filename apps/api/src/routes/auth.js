@@ -4,7 +4,7 @@ import express from 'express';
 
 import { signToken } from '../config/jwt.js';
 import { getRefreshStore } from '../core/refreshStore.js';
-import { authRequired } from '../http/routes/auth.js';
+import { authRequired } from '../middleware/auth.js';
 import {
   createUser,
   findUserByUsername,

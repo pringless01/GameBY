@@ -1,7 +1,7 @@
 import express from 'express';
 
 import { initDb } from '../config/database.js';
-import { authRequired } from '../http/routes/auth.js';
+import { authRequired } from '../middleware/auth.js';
 import { logResource } from '../services/auditService.js';
 import { getIo } from '../sockets/io.js';
 

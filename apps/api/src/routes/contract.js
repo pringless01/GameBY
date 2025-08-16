@@ -1,6 +1,6 @@
 import express from 'express';
 
-import { authRequired } from '../http/routes/auth.js';
+import { authRequired } from '../middleware/auth.js';
 import { createContract, listUserContracts, actOnContract, getContract, listUserContractsFiltered } from '../services/contractService.js';
 
 const router = express.Router();
