@@ -1,23 +1,13 @@
 # Next Action: Monorepo: Complete apps/api/src domain split (economy/fraud/chat services)
 
-Alt Adım 1: **Kullanıcı Araştırması ve Gereksinim Analizi**
-- Ekonomi, dolandırıcılık ve sohbet hizmetleri için mevcut API yapılarını analiz et ve hangi bileşenlerin hangi alana ait olduğunu belirle.
+1. **Domain Analysis**: Uygulamanın mevcut yapılarını ve bağımlılıklarını analiz et. Ekonomi, dolandırıcılık ve sohbet hizmetleri için gerekli olan özelliklerin belirlenmesi.
 
-Alt Adım 2: **Dizin Yapısının Planlanması**
-- Yeni dizin yapısını oluştur ve her hizmet için ayrı dizinler (economy, fraud, chat) tasarla.
+2. **Directory Structure Creation**: Yeni dizin yapısını oluştur. `apps/api/src/economy`, `apps/api/src/fraud`, ve `apps/api/src/chat` dizinlerini oluştur ve ilgili dosyaları bu dizinlere taşımaya hazırla.
 
-Alt Adım 3: **Kodun Taşınması ve Organizasyonu**
-- Mevcut kodu uygun dizinlere taşı, her hizmet için gereken bağımlılıkları güncelle ve yapılandırmaları ayarla.
+3. **Code Refactoring**: Her domain için gerekli olan mevcut kod parçalarını refactor et. Ekonomi, dolandırıcılık ve sohbet hizmetleri için bağımsız modüller oluştur.
 
-Alt Adım 4: **Test ve Doğrulama**
-- Taşınan kodun işlevselliğini doğrulamak için test senaryoları oluştur ve çalıştır. Tüm testlerin başarılı olduğundan emin ol.
+4. **Dependency Management**: Her bir domain için bağımlılıkları güncelle ve yönet. İlgili kütüphaneleri ve API'leri her domain dizinine uygun şekilde entegre et.
 
-Alt Adım 5: **Dokümantasyon ve Değişiklik Yönetimi**
-- Yapılan değişiklikleri belgeleyerek güncellenmiş API belgelerini oluştur ve versiyon kontrol sistemine gerekli değişiklikleri kaydet.
+5. **Testing and Validation**: Her domain için kapsamlı testler hazırla ve çalıştır. Tüm birim testlerinin geçerli olduğundan emin ol ve herhangi bir hata durumunda düzeltmeleri yap.
 
-— Agent: GameBY Agent • 2025-08-16T13:04:42.091Z
-
-
-## Fail checkpoint (attempt 3)
-- time: 2025-08-16T13:05:11.511Z
-- reason: Command failed: npm test
+— Agent: GameBY Agent • 2025-08-16T13:05:27.876Z
