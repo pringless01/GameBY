@@ -4,9 +4,10 @@ import { execSync } from "child_process";
 import OpenAI from "openai";
 import dotenv from "dotenv";
 import { fileURLToPath } from "url";
-dotenv.config({ override: true });
 
 const here = path.dirname(fileURLToPath(import.meta.url));
+dotenv.config({ path: path.join(here, '.env'), override: true });
+
 const repoRoot = path.resolve(here, "..", "..");
 const logsDir = path.join(repoRoot, "logs");
 const logFile = path.join(logsDir, "runner.log");
