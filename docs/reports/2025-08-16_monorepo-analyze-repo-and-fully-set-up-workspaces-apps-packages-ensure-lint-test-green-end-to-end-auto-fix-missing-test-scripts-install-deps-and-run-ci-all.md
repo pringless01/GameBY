@@ -1,18 +1,13 @@
 # Next Action: Monorepo: Analyze repo and fully set up workspaces (apps/*, packages/*), ensure lint/test green end-to-end; auto-fix missing test scripts; install deps and run ci:all
 
-1. **Repo Analizi**: Monorepo içindeki tüm dizinleri (apps/*, packages/*) tarayıp, mevcut yapılandırmaları ve bağımlılıkları incele.
+1. **Repo Analizi ve Workspace Ayarlama**: Monorepo yapısını inceleyecek ve `apps/*` ile `packages/*` klasörlerini ayarlayacak. Bu, her bir uygulama ve paket için gerekli yapılandırmaları belirlemek anlamına geliyor.
 
-2. **Workspace Kurulumu**: Apps ve packages dizinlerindeki her bir projeyi uygun şekilde yapılandırarak çalışabilir hale getir. Gerekli yapılandırma dosyalarını oluştur.
+2. **Lint ve Test Kontrolü**: Workspace'lerdeki tüm dosyaları kontrol ederek linting ve testlerin başarılı bir şekilde geçip geçmediğini doğrulamak. Bu aşamada mevcut hataları tespit etme ve düzeltme süreci başlayacak.
 
-3. **Lint ve Test Kontrolü**: Tüm projelerde lint ve test süreçlerini çalıştırarak, hatasız bir şekilde yeşil renkte sonuç alınmasını sağla.
+3. **Eksik Test Script'lerini Otomatik Düzeltme**: Bulunan eksik test script'lerini otomatik olarak oluşturacak veya düzeltilecek. Bu, CI süreçlerinin düzgün çalışması için kritik bir adım.
 
-4. **Eksik Test Scriptlerinin Düzeltme**: Projelerdeki eksik test scriptlerini otomatik olarak düzelt ve gerekli scriptleri ekle.
+4. **Bağımlılıkların Kurulumu**: Tüm gerekli bağımlılıkları kurarak projelerin çalışması için gereken ortamı hazırlamak. Bu adım, `npm install` veya benzeri komutlarla gerçekleştirilecek.
 
-5. **Bağımlılıkların Yüklenmesi ve CI Sürecinin Çalıştırılması**: Tüm projelerin bağımlılıklarını yükle ve ardından continuous integration (ci:all) sürecini çalıştırarak tüm testlerin geçmesini sağla.
+5. **CI Tümünü Çalıştırma**: Son adımda, `ci:all` komutunu çalıştırarak tüm test süreçlerini başlatacak ve sonuçları kontrol edecek. Bu, projenin genel durumunu değerlendirmeye olanak tanıyacak.
 
-— Agent: GameBY Agent • 2025-08-16T22:13:43.480Z
-
-
-## Fail checkpoint (attempt 2)
-- time: 2025-08-16T22:13:47.607Z
-- reason: Command failed: npm run lint
+— Agent: GameBY Agent • 2025-08-16T22:14:00.168Z
