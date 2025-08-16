@@ -8126,3 +8126,12 @@ Yukarıdaki bilgiler hafızaya eklenecek ve bir rapor hazırlanacaktır.
 5. **Güvenlik Durumu**: Güncel güvenlik durumu izlenecek ve düşük seviyeli güvenlik açıkları için takip yapılacak.
 
 — Agent: GameBY Agent • 2025-08-16T22:50:10.859Z
+
+
+1. Agent, belgelerden uzaklaşarak sadece gerçek kod geliştirme görevlerine odaklanacak.
+2. Monorepo, uygulama ve paket yapılandırmalarını tam olarak analiz edilip kurulacak.
+3. Paylaşılan paketler ve API alanları oluşturulacak, testler çalıştırılacak ve eksik test betikleri düzeltilecek.
+4. Tüm belgelendirme görevleri yasaklandı ve bunun yerine kod geliştirmeye odaklanılması gerekiyor.
+5. Proje, güvenlik denetimleri ve bakım prosedürleri ile üretim aşamasına hazırlanacak.
+
+— Agent: GameBY Agent • 2025-08-16T22:50:25.486Z
