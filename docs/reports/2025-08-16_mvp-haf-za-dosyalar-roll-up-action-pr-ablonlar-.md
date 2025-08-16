@@ -1,6 +1,9 @@
 # Next Action: MVP: Hafıza dosyaları + roll-up action + PR şablonları
 
-- [stub] LLM erişimi başarısız; offline fallback kullanıldı
-- [stub] Plan ve özet yerel üretildi
+- [stub] Next Action: "MVP: Hafıza dosyaları + roll-up action + PR şablonları" Bu aksiyonu en fazla 5 alt adıma böl; her alt adım için kısa çıktı üret (davranış değiştir
+- [stub] Yerel özet (DRY/no-key)
+- [stub] Plan oluşturuldu
+- [stub] Dosyalar güncellenecek
+- [stub] Lint/Test korunur
 
-— Agent: GameBY Agent • 2025-08-16T08:33:46.227Z
+— Agent: GameBY Agent • 2025-08-16T08:44:32.624Z
