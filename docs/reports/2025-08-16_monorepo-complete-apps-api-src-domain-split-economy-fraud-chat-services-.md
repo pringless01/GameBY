@@ -1,20 +1,13 @@
 # Next Action: Monorepo: Complete apps/api/src domain split (economy/fraud/chat services)
 
-1. **Ekonomi Servisi Ayırma**: apps/api/src içerisinde yer alan ekonomi ile ilgili kod ve bileşenleri, ayrı bir ekonomi servisine taşıyın. Bu işlem, mevcut kodun analizi ve yeni dizin yapısının oluşturulmasını içerir.
+1. **Domain Split Planlaması**: Uygulama dizin yapısının ve alt alanların (economy, fraud, chat) belirlenmesi ve planlanması.
 
-2. **Dolandırıcılık Servisi Ayırma**: Dolandırıcılık ile ilgili kod ve bileşenleri, uygun dizin yapısına yerleştirerek ayrı bir dolandırıcılık servisi oluşturun. Bu, ilgili dosyaların taşınması ve bağımlılıkların güncellenmesini gerektirir.
+2. **Kod Tabanının Analizi**: Mevcut kod tabanının incelenmesi, hangi dosyaların hangi alt alanlara ait olduğunun belirlenmesi.
 
-3. **Sohbet Servisi Ayırma**: Sohbet ile ilgili kod ve bileşenleri ayrı bir sohbet servisine taşıyın. Bu adım, sohbet servisinin işlevselliğini koruma ve yeni dizin yapısını oluşturmayı içerir.
+3. **Alt Alan Dizini Oluşturma**: Yeni dizin yapısının oluşturulması ve gerekli alt dizinlerin (economy, fraud, chat) eklenmesi.
 
-4. **Bağımlılıkları Güncelleme**: Her bir yeni servis için gerekli bağımlılıkları güncelleyin ve her bir servisin düzgün çalıştığından emin olun. Bu, kodun entegrasyonunu ve uyumluluğunu sağlamak için önemlidir.
+4. **Kodun Taşınması**: Mevcut kodun, belirlenen alt alanlara göre yeniden yapılandırılması ve taşınması.
 
-5. **Test ve Doğrulama**: Taşınan her bir servisin işlevselliğini test edin. Tüm servislerin beklendiği gibi çalıştığından emin olun ve gerekirse düzeltmeler yapın. 
+5. **Test ve Doğrulama**: Taşınan kodun düzgün çalıştığından emin olmak için testlerin yapılması ve gerekli düzeltmelerin uygulanması.
 
-Bu adımlar, monorepo içerisindeki uygulama kodlarının düzgün bir şekilde ayrıştırılmasını sağlayacaktır.
-
-— Agent: GameBY Agent • 2025-08-16T13:09:53.128Z
-
-
-## Fail checkpoint (attempt 1)
-- time: 2025-08-16T13:10:22.102Z
-- reason: Command failed: npm test
+— Agent: GameBY Agent • 2025-08-16T13:10:38.591Z
