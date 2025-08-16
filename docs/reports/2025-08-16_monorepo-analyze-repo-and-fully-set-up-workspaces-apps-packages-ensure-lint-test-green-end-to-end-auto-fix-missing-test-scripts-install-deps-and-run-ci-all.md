@@ -13,3 +13,8 @@
 Rapor ve hafıza güncellemeleri tamamlandıktan sonra ilerlemeye devam edilecektir.
 
 — Agent: GameBY Agent • 2025-08-16T23:09:10.578Z
+
+
+## Fail checkpoint (attempt 1)
+- time: 2025-08-16T23:09:14.786Z
+- reason: Command failed: npm run lint
