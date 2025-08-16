@@ -57,6 +57,34 @@ function mapAuthError(code) {
 
 const router = express.Router();
 
+// In-memory refresh token store (unit test scope). PROD: persistent store/Redis önerilir.
+const refreshStore = new Map(); // token -> { userId, revoked: boolean }
+const REFRESH_TTL_SECONDS = parseInt(process.env.REFRESH_TTL_SECONDS || '604800', 10); // 7 gün
+
+function generateRefreshToken() {
+  // Basit rastgele token; PROD: ek imza/rotasyon eklenebilir.
+  return (Math.random().toString(36).slice(2) + Math.random().toString(36).slice(2)).slice(0, 48);
+}
+
+function setRefreshCookie(res, token) {
+  const parts = [
+    `refreshToken=${token}`,
+    'HttpOnly',
+    'Path=/api/auth',
+    'SameSite=Lax',
+    `Max-Age=${REFRESH_TTL_SECONDS}`
+  ];
+  if (process.env.NODE_ENV === 'production') parts.push('Secure');
+  res.setHeader('Set-Cookie', parts.join('; '));
+}
+
+function parseRefreshCookie(req) {
+  const raw = req.headers['cookie'] || req.headers['Cookie'];
+  if (!raw) return null;
+  const seg = raw.split(';').map(s => s.trim()).find(s => s.startsWith('refreshToken='));
+  return seg ? seg.substring('refreshToken='.length) : null;
+}
+
 // POST /api/auth/register
 router.post('/register', async (req, res) => {
   // Geriye dönük uyumluluk: email opsiyonel
@@ -128,6 +156,9 @@ router.post('/login', async (req, res) => {
   clearFails(identity, ip);
   let roles = [];
   if (user.roles) { try { roles = JSON.parse(user.roles); } catch { roles = []; } }
+  const rt = generateRefreshToken();
+  refreshStore.set(rt, { userId: user.id, revoked: false });
+  setRefreshCookie(res, rt);
   const token = signToken(user.id, { username: user.username, email: user.email, roles });
   return res.json({ token, user: { id: user.id, email: user.email, username: user.username, roles } });
   } catch (e) {
@@ -148,3 +179,23 @@ router.get('/me', authRequired, async (req, res) => {
 });
 
 export default router;
+
+// POST /api/auth/refresh
+router.post('/refresh', async (req, res) => {
+  try {
+    const rt = parseRefreshCookie(req);
+    if (!rt) return res.status(401).json({ error: 'no_refresh' });
+    const meta = refreshStore.get(rt);
+    if (!meta || meta.revoked) return res.status(401).json({ error: 'revoked' });
+    // Rotate
+    meta.revoked = true; // eskiyi iptal et
+    refreshStore.set(rt, meta);
+    const newRt = generateRefreshToken();
+    refreshStore.set(newRt, { userId: meta.userId, revoked: false });
+    setRefreshCookie(res, newRt);
+    const token = signToken(meta.userId, {});
+    return res.json({ token });
+  } catch (e) {
+    return res.status(500).json({ error: 'refresh_failed' });
+  }
+});
