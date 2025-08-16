@@ -11,3 +11,8 @@
 5. **Bağımlılıkların Kurulumu ve CI Çalıştırma**: Gerekli bağımlılıkları kur ve `ci:all` komutunu çalıştırarak tüm testlerin ve yapıların başarılı bir şekilde geçmesini sağla.
 
 — Agent: GameBY Agent • 2025-08-16T22:30:22.227Z
+
+
+## Fail checkpoint (attempt 1)
+- time: 2025-08-16T22:30:26.365Z
+- reason: Command failed: npm run lint
