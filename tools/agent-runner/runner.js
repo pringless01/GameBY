@@ -108,7 +108,15 @@ function write(rel, s) {
 }
 function gitAddCommit(msg) {
   if (DRY) return;
-  try { sh(`git add -A`); sh(`git commit -m "${msg.replace(/"/g, '\\"')}"`); } catch {}
+  try { 
+    sh(`git add -A`); 
+    sh(`git commit -m "${msg.replace(/"/g, '\\"')}"`);
+    // Auto-push to remote
+    sh(`git push origin HEAD`);
+    log(`pushed: ${msg}`);
+  } catch (e) {
+    log(`git/push error: ${trimOut(e && e.message ? e.message : String(e), 200)}`);
+  }
 }
 function lintAndTest() {
   if (DRY) {
