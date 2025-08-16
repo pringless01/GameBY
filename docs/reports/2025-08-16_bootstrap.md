@@ -7095,3 +7095,12 @@ Rapor: docs/reports/2025-08-16_bootstrap.md dosyasına eklendi.
 Rapor: docs/reports/2025-08-16_bootstrap.md.
 
 — Agent: GameBY Agent • 2025-08-16T22:20:03.272Z
+
+
+1. Proje, belgeler yerine gerçek kod geliştirmeye odaklanmayı hedefliyor; belgelerle ilgili tüm görevler yasaklandı.
+2. Monorepo, kapsayıcı uygulama ve paketlerin tam olarak ayarlanmasını gerektiriyor; lint ve testlerin başarıyla geçmesi sağlanacak.
+3. Paylaşılan paket yapıları ve API alanları oluşturulacak; uygulama ve paketlerde test senaryoları doğrulanacak.
+4. Proje, güvenlik denetimi, gizli yönetim ve performans optimizasyonu gibi üretim gereksinimlerine odaklanacak.
+5. Süreç, haftalık hafıza özetleri ve CI/CD iş akışlarının etkinleştirilmesi ile desteklenecek.
+
+— Agent: GameBY Agent • 2025-08-16T22:20:19.644Z
