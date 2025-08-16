@@ -17,7 +17,7 @@
 - [x] Shared utils/types: pagination, dates, hmac yardımcılarını non-invasive ekle
 - [x] ESLint module boundaries: no-cycle ve no-restricted-imports ihlallerini düzelt
 - [x] Docs: architecture/index/security güncelle ve haftalık raporu oluştur
-- [ ] CI: sweep raporu artifact, compose smoke ve memory roll-up workflow doğrulaması (raporlamalı)
+- [x] CI: sweep raporu artifact, compose smoke ve memory roll-up workflow doğrulaması (raporlamalı)
 
 ## Blocked
 - memory-rollup workflow ‘workflow_dispatch’ tetiklenmesi gerekli (GitHub Actions UI). Bu yerel araçlarla çalıştırılamaz.
