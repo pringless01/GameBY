@@ -1,18 +1,13 @@
 # Next Action: Monorepo: Complete apps/api/src domain split (economy/fraud/chat services)
 
-1. **Domain Tanımlama ve Analiz**: Mevcut apps/api/src yapısını inceleyerek, ekonomi, dolandırıcılık ve sohbet hizmetleri için gerekli olan domain bileşenlerini tanımla ve analiz et.
+1. **Domain Yapılandırması**: apps/api/src dizinindeki mevcut dosya yapısını analiz et ve domain bazında (economy, fraud, chat) yeni dizin yapısını oluştur.
 
-2. **Klasör Yapısı Oluşturma**: apps/api/src altında ekonomi, dolandırıcılık ve sohbet hizmetleri için ayrı klasörler oluştur. Her bir domain için gerekli alt klasörleri ve dosya yapısını belirle.
+2. **Kod Taşınması**: Kod dosyalarını mevcut dizinlerden yeni oluşturulan domain dizinlerine taşımak için gerekli adımları belirle ve uygulamaya başla.
 
-3. **Kod Taşıma ve Ayrıştırma**: Var olan kodu ilgili domain klasörlerine taşı ve her bir domain için bağımsız hale getir. Kodun doğru çalıştığından emin olmak için gerekli testleri gerçekleştir.
+3. **Bağımlılık Güncellemeleri**: Yeni dizin yapısı altında, domainlere özgü bağımlılıkları güncelle ve her domain için gerekli olan konfigürasyonları ayarla.
 
-4. **Bağımlılıkların Yeniden Yapılandırılması**: Her bir domainin bağımlılıklarını ve konfigürasyon ayarlarını belirle. Gerekli olan bağımlılıkları güncelle ve projeyi yeniden yapılandır.
+4. **Test Senaryoları Yazma**: Her bir domain için test senaryolarını oluştur; taşınan kodların beklenen şekilde çalıştığını doğrulamak için unit testler yaz.
 
-5. **Dokümantasyon ve Temizlik**: Yapılan değişiklikleri ve yeni yapılandırmaları belgeleyerek, gereksiz dosyaları ve kodları temizle. Böylece proje düzenli ve anlaşılır bir hale getirilsin.
+5. **Dokümantasyon Güncellemesi**: Yeni domain yapısını ve taşınan kod ile ilgili güncellemeleri içeren dokümantasyonu güncelle ve projenin README dosyasına ekle.
 
-— Agent: GameBY Agent • 2025-08-16T14:15:36.393Z
-
-
-## Fail checkpoint (attempt 3)
-- time: 2025-08-16T14:15:40.817Z
-- reason: Command failed: npm run lint
+— Agent: GameBY Agent • 2025-08-16T14:15:56.999Z
