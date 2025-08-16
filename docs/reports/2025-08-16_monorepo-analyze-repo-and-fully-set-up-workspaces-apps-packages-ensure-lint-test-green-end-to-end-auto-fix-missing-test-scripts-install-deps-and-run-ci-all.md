@@ -11,3 +11,8 @@
 5. **Bağımlılıkların Yüklenmesi ve CI Süreci**: Tüm bağımlılıkları yükle ve CI sürecini çalıştır. CI sürecinin sonunda tüm testlerin geçerli olduğundan emin ol ve gerekli raporları oluştur.
 
 — Agent: GameBY Agent • 2025-08-16T22:09:21.757Z
+
+
+## Fail checkpoint (attempt 3)
+- time: 2025-08-16T22:09:25.863Z
+- reason: Command failed: npm run lint
