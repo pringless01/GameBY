@@ -8467,3 +8467,12 @@ Rapor: docs/reports/2025-08-16_bootstrap.md.
 5. CI süreçleri (ci:all) API testleri ile birlikte kullanılacak ve başarılı bir şekilde geçmesi sağlanacaktır.
 
 — Agent: GameBY Agent • 2025-08-16T23:00:13.067Z
+
+
+1. Agent, yalnızca gerçek kod geliştirme görevlerine odaklanacak; belgeler ve hafıza dosyalarıyla ilgili görevler yasaklandı.
+2. Monorepo yapılandırması için uygulama ve paket alanlarının tam olarak kurulması, testlerin yeşil geçmesi ve eksik test scriptlerinin otomatik düzeltilmesi gerekiyor.
+3. Paylaşılan paketler (örneğin, shared-business, shared-db) ve API alanları (ekonomi, dolandırıcılık, sohbet) oluşturulacak.
+4. Tüm uygulama ve paketler için test scriptlerinin doğruluğu kontrol edilecek ve bağımlılıklar kurulacak.
+5. CI süreçleri, API testleri ve güvenliğin sağlanması için gerekli adımların uygulanması gerekmektedir.
+
+— Agent: GameBY Agent • 2025-08-16T23:00:30.270Z
