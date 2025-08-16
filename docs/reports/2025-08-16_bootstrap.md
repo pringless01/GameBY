@@ -6567,3 +6567,12 @@ Rapor: docs/reports/2025-08-16_bootstrap.md'ye eklendi.
 Şimdi, Next Actions'ı sırayla işleme alıyorum.
 
 — Agent: GameBY Agent • 2025-08-16T14:57:27.351Z
+
+
+1. Agent, belgelerden ziyade gerçek kod geliştirme görevlerine odaklanmalıdır.
+2. Monorepo'da uygulama ve API katmanlarının ayrılmasını tamamlamak, paylaşılan iş mantığını paketlere çıkarmak ve veritabanı araçları için paketler oluşturmak gerekmektedir.
+3. Doğru hizmetler arası iletişim desenleri uygulanmalı ve ortak doğrulayıcılar için paketler eklenmelidir.
+4. Tüm belgeler ve bellek görevleri yasaklanmıştır; yalnızca kod geliştirilmesine odaklanılmalıdır.
+5. Geçerli eylemler, monorepo yapılandırmasını tamamlamak ve paylaşılan iş mantığını paketlemek üzerine yoğunlaşmaktadır.
+
+— Agent: GameBY Agent • 2025-08-16T14:58:13.560Z
