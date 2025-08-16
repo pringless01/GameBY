@@ -5520,3 +5520,12 @@ Rapor: docs/reports/2025-08-16_bootstrap.md.
 5. **Proje Yapısı:** Monorepo, `apps/api`, `apps/web`, `packages/shared-*` gibi farklı çalışma alanlarına ve test süreçlerine sahiptir; CI/CD süreçleri de dahil olmak üzere kapsamlı bir yapılandırma mevcuttur.
 
 — Agent: GameBY Agent • 2025-08-16T13:34:12.888Z
+
+
+1. Mevcut durumda, belge geliştirme görevleri durdurulmuş ve odak, gerçek kod geliştirmeye yönlendirilmiştir.
+2. Monorepo üzerinde, ekonomi, dolandırıcılık ve sohbet hizmetleri için domain ayrımı tamamlanmalıdır.
+3. Ortak iş mantığı `packages/shared-business` dizinine çıkarılmalı ve veri tabanı yardımcıları için `packages/shared-db` oluşturulmalıdır.
+4. Hizmetler arası iletişim düzenleri kurulmalı ve ortak doğrulayıcılar için `packages/shared-validation` eklenmelidir.
+5. Tüm belge ve hafıza ile ilgili görevler yasaklanmış ve yalnızca kod geliştirme ön planda tutulmaktadır.
+
+— Agent: GameBY Agent • 2025-08-16T13:34:52.044Z
