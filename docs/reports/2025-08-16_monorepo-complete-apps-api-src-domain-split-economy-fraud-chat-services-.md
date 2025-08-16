@@ -11,3 +11,8 @@
 5. **Entegrasyon ve Dağıtım**: Split işleminin ardından tüm alanların entegrasyon testlerinin yapılması ve monorepo yapılandırmasının güncellenerek dağıtım işleminin gerçekleştirilmesi.
 
 — Agent: GameBY Agent • 2025-08-16T14:09:18.867Z
+
+
+## Fail checkpoint (attempt 1)
+- time: 2025-08-16T14:09:48.048Z
+- reason: Command failed: npm test
