@@ -1,18 +1,13 @@
 # Next Action: MVP: Hafıza dosyaları + roll-up action + PR şablonları
 
-1. **MVP: Hafıza dosyalarının Oluşturulması**  
-   Hafıza dosyaları için gerekli şablonların ve içeriklerin oluşturulması. Bu dosyalar, projenin ilerleyişini ve önemli bilgileri saklayacak.
+1. **Hafıza Dosyalarının Oluşturulması**: Proje hakkında önemli bilgileri ve kararları içeren hafıza dosyalarının oluşturulması. Bu dosyalar, proje tarihçesi ve gelişim sürecinin belgeleneceği alanları kapsayacak.
 
-2. **Roll-up Action Planının Geliştirilmesi**  
-   Proje sürecinde yapılacak tüm roll-up aksiyonlarını içeren bir plan oluşturulması. Bu plan, projeye dair önemli kararların ve aksiyonların bir araya getirilmesini sağlayacak.
+2. **Roll-up Action Tasarımı**: Proje sürecinde gerçekleştirilecek olan roll-up action'ların belirlenmesi ve tasarlanması. Bu, proje ilerleyişini ve önemli aşamaları özetleyen bir yapı oluşturulmasını sağlayacak.
 
-3. **PR Şablonlarının Tasarlanması**  
-   Pull Request (PR) süreçlerinin standardizasyonu için uygun şablonların tasarlanması. Bu şablonlar, geliştirme sürecini daha düzenli ve verimli hale getirecek.
+3. **PR Şablonlarının Geliştirilmesi**: Pull request (PR) süreçlerini kolaylaştıracak ve standardize edecek PR şablonlarının oluşturulması. Bu şablonlar, PR'ların nasıl hazırlanacağı ve inceleneceği konusunda rehberlik edecek.
 
-4. **Hafıza Dosyalarının İncelenmesi ve Revizyonu**  
-   Oluşturulan hafıza dosyalarının gözden geçirilmesi ve gerekirse revize edilmesi. Bu adım, dosyaların güncel ve doğru bilgileri içerdiğinden emin olmak için önemlidir.
+4. **Hafıza Dosyalarının Güncellenmesi**: Proje süresince elde edilen yeni bilgilerle hafıza dosyalarının düzenli olarak güncellenmesi. Bu, belgelere sürekli erişim ve doğruluk sağlayacak.
 
-5. **Roll-up Planının ve PR Şablonlarının Uygulanması**  
-   Hazırlanan roll-up planının ve PR şablonlarının uygulamaya konulması. Bu adım, projenin uygulamalı aşamasına geçilmesini sağlayacak.
+5. **Roll-up Action'ların Uygulanması**: Belirlenen roll-up action'ların proje sürecine entegre edilmesi ve uygulanması. Bu, projenin ilerleyişinin izlenmesine ve raporlanmasına yardımcı olacak.
 
-— Agent: GameBY Agent • 2025-08-16T10:08:21.898Z
+— Agent: GameBY Agent • 2025-08-16T10:09:03.773Z
