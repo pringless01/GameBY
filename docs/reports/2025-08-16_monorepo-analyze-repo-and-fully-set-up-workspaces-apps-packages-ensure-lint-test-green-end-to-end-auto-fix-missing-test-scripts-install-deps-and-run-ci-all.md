@@ -11,3 +11,8 @@
 5. **CI Sürecinin Çalıştırılması**: CI sürecini başlatarak tüm projelerin sürekli entegrasyon testlerinin başarıyla geçmesini sağla.
 
 — Agent: GameBY Agent • 2025-08-16T23:21:48.773Z
+
+
+## Fail checkpoint (attempt 3)
+- time: 2025-08-16T23:21:52.951Z
+- reason: Command failed: npm run lint
