@@ -5708,3 +5708,16 @@ Rapor: docs/reports/2025-08-16_bootstrap.md.
 Şimdi "Next Actions" kısmına geçiyorum.
 
 — Agent: GameBY Agent • 2025-08-16T13:47:09.538Z
+
+
+1. **Son Durum**: 2025-08-16 tarihinde, belgeler yerine gerçek kod geliştirmeye odaklanma kararı alındı; belgelendirme görevleri yasaklandı.
+   
+2. **Geliştirme Görevleri**: Monorepo içinde uygulama ve API kaynaklarının ayrılması, paylaşılan iş mantığının paketlere çıkarılması ve veritabanı araçları için yeni paketler oluşturulması gibi görevler önceliklidir.
+
+3. **Engellenen Görevler**: Tüm belgeler, bellek görevleri ve CI/CD belgeleri yapmaktan kaçınılmalıdır.
+
+4. **Proje Durumu**: Lint ve test sonuçları başarılı; mevcut projede bazı düşük seviyeli güvenlik açıkları tespit edildi.
+
+5. **Gelecek Adımlar**: Monorepo'da ekonomik, dolandırıcılık ve sohbet hizmetlerinin alan ayrımını tamamlama gibi görevler öncelikli olarak belirtilmiştir.
+
+— Agent: GameBY Agent • 2025-08-16T13:47:51.233Z
