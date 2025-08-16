@@ -1,28 +1,13 @@
 # Next Action: Monorepo: Analyze repo and fully set up workspaces (apps/*, packages/*), ensure lint/test green end-to-end; auto-fix missing test scripts; install deps and run ci:all
 
-Alt Adım 1: Repo Analizi
-- Repo yapısı incelenecek, `apps/*` ve `packages/*` dizinleri kontrol edilecek.
-- Gerekli dosya ve dizinlerin mevcut olup olmadığı belirlenecek.
+1. **Repo Analizi**: Monorepo'yu analiz ederek mevcut yapıların ve bağımlılıkların incelenmesi. Bu aşamada, apps/* ve packages/* dizinlerindeki tüm dosyaların gözden geçirilmesi sağlanacak.
 
-Alt Adım 2: Workspace Ayarları
-- `apps/*` ve `packages/*` dizinleri için gerekli workspace yapılandırmaları yapılacak.
-- Her bir workspace için bağımlılıkların doğru şekilde tanımlandığı ve yapılandırıldığı kontrol edilecek.
+2. **Workspace Ayarları**: Gerekli yapılandırmaların yapılması ve her uygulama ve paket için workspace'lerin oluşturulması. Bu, monorepo'nun düzgün çalışabilmesi için gerekli olan yapılandırma dosyalarını içerir.
 
-Alt Adım 3: Lint ve Test Kontrolü
-- Mevcut kodun lint kontrolü yapılacak ve tüm hatalar düzeltilecek.
-- Testlerin çalıştırılması ve sonuçların yeşil (PASS) olduğunun doğrulanması sağlanacak.
+3. **Lint ve Test Kontrolleri**: Projede yer alan tüm kodların lint kontrollerinin yapılması ve testlerin çalıştırılması. Tüm testlerin başarılı olduğu ve lint hatalarının giderildiğinden emin olunacak.
 
-Alt Adım 4: Eksik Test Scriptlerini Düzeltme
-- Projede eksik olan test scriptleri otomatik olarak düzeltilecek ve eklenecek.
-- Test scriptlerinin doğru çalıştığından emin olunacak.
+4. **Eksik Test Scriptlerinin Otomatik Düzeltmesi**: Mevcut test scriptlerinin eksik olduğu yerlerin tespit edilmesi ve otomatik olarak düzeltme işlemlerinin yapılması. Bu, test süreçlerinin düzgün işleyebilmesi için kritik bir adımdır.
 
-Alt Adım 5: Bağımlılıkların Yüklenmesi ve CI Çalıştırma
-- Tüm bağımlılıklar yüklenecek.
-- `ci:all` komutu çalıştırılarak sürekli entegrasyon süreci başlatılacak.
+5. **Bağımlılıkların Kurulumu ve CI Süreçlerinin Çalıştırılması**: Tüm bağımlılıkların yüklenmesi ve CI süreçlerinin (ci:all) başlatılması. Bu aşamada, her şeyin düzgün çalıştığından emin olmak için tüm sürecin sonunda testler ve lint kontrolleri tekrar yapılacak.
 
-— Agent: GameBY Agent • 2025-08-16T23:16:19.318Z
-
-
-## Fail checkpoint (attempt 3)
-- time: 2025-08-16T23:16:23.501Z
-- reason: Command failed: npm run lint
+— Agent: GameBY Agent • 2025-08-16T23:16:41.638Z
