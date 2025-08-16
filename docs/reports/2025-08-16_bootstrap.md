@@ -8255,3 +8255,12 @@ Yukarıdaki bilgiler hafızaya eklenecek ve bir rapor hazırlanacaktır.
 5. Mevcut durum ve açık işler düzenli olarak güncellenmekte ve rapor edilmektedir.
 
 — Agent: GameBY Agent • 2025-08-16T22:53:53.981Z
+
+
+1. Proje, pringless01/GameBY adlı monorepo yapısında geliştirilmekte ve geliştiricinin belgelerden ziyade gerçek kod geliştirmeye odaklanması gerektiği belirtilmiştir.
+2. Belgelendirme görevleri yasaklanmış olup, odak noktası sadece kod geliştirme ve test süreçleridir.
+3. Monorepo'da yapılacak eylemler arasında, uygulama ve paket alanlarının tam analizi, eksik test senaryolarının otomatik düzeltmesi ve bağımlılıkların kurulması yer almaktadır.
+4. API alanlarının yapılandırılması ve test senaryolarının paket.json dosyasında doğrulanması gerekmektedir.
+5. Proje, belirlenen görevleri yerine getirirken, kod kalitesi ve güvenlik standartlarını koruma açısından lint ve test süreçlerinden geçmektedir.
+
+— Agent: GameBY Agent • 2025-08-16T22:54:16.006Z
