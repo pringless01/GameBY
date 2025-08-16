@@ -5303,3 +5303,12 @@ Agent: GameBY Agent
 5. **Yasaklı Görevler**: Daha fazla dokümantasyon, hafıza güncellemesi veya CI/CD ile ilgili görevler yapılmayacak; odak, çekirdek özelliklerin geliştirilmesi olacak.
 
 — Agent: GameBY Agent • 2025-08-16T13:18:39.034Z
+
+
+1. Agent, yalnızca gerçek kod geliştirme görevlerine odaklanacak; dokümantasyon görevleri yasaklandı.
+2. Monorepo'da mevcut görevler, uygulama ve API katmanlarının ayrılması ve paylaşılan iş mantığının paketlenmesi üzerine yoğunlaşmaktadır.
+3. Öncelikli olarak, ekonomi, dolandırıcılık ve sohbet hizmetleri için alan ayrımının tamamlanması gerekmektedir.
+4. Gelecek adımlar, veritabanı yardımcı programları ve modelleri için paketlerin oluşturulmasını da içermektedir.
+5. Projenin kalite durumu olumlu; lint ve testler başarılı bir şekilde geçmiştir.
+
+— Agent: GameBY Agent • 2025-08-16T13:19:22.019Z
