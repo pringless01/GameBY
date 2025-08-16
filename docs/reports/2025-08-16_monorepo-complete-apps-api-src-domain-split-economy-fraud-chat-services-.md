@@ -1,18 +1,13 @@
 # Next Action: Monorepo: Complete apps/api/src domain split (economy/fraud/chat services)
 
-1. **Domain Yapılandırması**: apps/api/src klasöründe mevcut domain yapısını gözden geçir ve her bir domain için (economy, fraud, chat) ayrı klasörler oluştur.
+1. **Domain Analysis**: Mevcut apps/api/src yapısını incele ve domain'leri (economy, fraud, chat) tanımla. Gerekli bağımlılıkları ve etkileşimleri belirle.
 
-2. **Kod Taşıma**: İlgili servislerin kodlarını, mevcut yapıdan yeni oluşturulan domain klasörlerine taşı. Her bir servisin mantıksal ayrımını sağla.
+2. **Directory Structure Creation**: Yeni domain'ler için gerekli dizin yapısını oluştur. economy, fraud ve chat için ayrı klasörler ve temel dosya yapıları oluşturulacak.
 
-3. **Bağımlılık Yönetimi**: Yeni domain klasörleri için gerekli bağımlılıkları tanımla ve güncelle. Her domain için gerekli olan kütüphaneleri ayır.
+3. **Code Refactoring**: Mevcut kodu, belirlenen domain'lere göre yeniden yapılandır. Her domain'in kendi işlevselliğini ve bağımlılıklarını koruyarak kodu böl.
 
-4. **Test Güncellemeleri**: Taşınan kodlar için mevcut testleri gözden geçir ve güncellemeler yap. Her domain için testlerin geçerli olduğundan emin ol.
+4. **Testing**: Yeniden yapılandırılan kod için birim testleri yaz. Her domain'in bağımsız çalıştığını doğrulamak için testleri çalıştır ve tüm testlerin geçmesini sağla.
 
-5. **Dokümantasyon Güncellemesi**: Yeni domain yapısını ve her domainin işlevselliğini açıklayan dokümantasyonu güncelle. Kullanıcıların ve geliştiricilerin yeni yapıyı anlamasını sağla.
+5. **Documentation Update**: Yeni domain yapısını ve yapılan değişiklikleri belgelerle güncelle. Kullanıcıların ve geliştiricilerin yeni yapıyı anlamaları için gerekli notları ekle.
 
-— Agent: GameBY Agent • 2025-08-16T13:37:00.442Z
-
-
-## Fail checkpoint (attempt 2)
-- time: 2025-08-16T13:37:29.622Z
-- reason: Command failed: npm test
+— Agent: GameBY Agent • 2025-08-16T13:37:42.213Z
