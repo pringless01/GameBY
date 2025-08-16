@@ -1,13 +1,13 @@
 # Next Action: MVP: Hafıza dosyaları + roll-up action + PR şablonları
 
-1. **Hafıza Dosyalarının Oluşturulması**: Proje için gerekli hafıza dosyalarının yapısını belirle ve oluştur. Bu dosyalar, proje bilgilerini ve kararlarını saklamak için kullanılacak.
+1. **Hafıza Dosyalarını Gözden Geçirme**: Mevcut hafıza dosyalarını incele ve güncellenmesi gereken bilgileri belirle. Bu, eski verilerin temizlenmesi veya yeni bilgilerin eklenmesini içerebilir.
 
-2. **Roll-up Aksiyonlarının Tanımlanması**: Roll-up aksiyonlarının ne şekilde uygulanacağını belirle. Bu, görevlerin ve alt görevlerin nasıl bir araya getirileceğini içerecek.
+2. **Roll-Up Action Planı Oluşturma**: Projede yapılması gereken görevleri birleştiren ve önceliklendiren bir roll-up action planı oluştur. Bu plan, odaklanılması gereken alanları netleştirecektir.
 
-3. **PR Şablonlarının Tasarlanması**: Proje için kullanılacak PR (Pull Request) şablonlarını oluştur. Şablonlar, katkıda bulunanların PR'lerini standart bir formatta sunmalarını sağlayacak.
+3. **PR Şablonları Tasarlama**: Pull request (PR) süreçlerini kolaylaştırmak için uygun PR şablonlarının taslağını oluştur. Bu şablonlar, geliştirme süreçlerinde tutarlılığı artıracaktır.
 
-4. **Hafıza Dosyalarının İçeriğinin Belirlenmesi**: Oluşturulan hafıza dosyalarındaki bilgilerin neler olacağını belirle. Bu, proje geçmişi, önemli kararlar ve ilerlemeleri içerecek.
+4. **Güncellemeleri Uygulama**: Belirlenen güncellemeleri hafıza dosyalarına, roll-up action planına ve PR şablonlarına uygulayıp, her birinin güncel ve kullanıma uygun olduğundan emin ol.
 
-5. **Roll-up Aksiyonlarının Uygulanması**: Tanımlanan roll-up aksiyonlarını uygulamaya koy. Bu, belirlenen görevlerin ve alt görevlerin birleştirilmesini içerir.
+5. **Değerlendirme ve Geri Bildirim Toplama**: Uygulanan değişikliklerin etkinliğini değerlendirmek için ekip üyelerinden geri bildirim topla. Bu, gelecekteki iyileştirmeler için değerli bilgiler sağlayacaktır.
 
-— Agent: GameBY Agent • 2025-08-16T11:24:01.820Z
+— Agent: GameBY Agent • 2025-08-16T11:24:54.212Z
