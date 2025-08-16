@@ -6877,3 +6877,12 @@ Rapor: `docs/reports/2025-08-16_bootstrap.md` dosyasına eklendi.
 5. **Hafıza Güncellemeleri**: Proje ile ilgili hafıza ve raporlar güncellenerek, mevcut durum ve açık işler belgelendi.
 
 — Agent: GameBY Agent • 2025-08-16T22:13:54.152Z
+
+
+1. 2025-08-16 itibarıyla, belgelendirme görevleri durdurulmuş, ajanın yalnızca gerçek kod geliştirme görevlerine odaklanması gerektiği belirtilmiştir.
+2. Monorepo'da, uygulama ve paket yapılarının tam olarak analiz edilmesi ve yapılandırılması gerekmektedir; lint ve testlerin uçtan uca yeşil olması sağlanmalıdır.
+3. Paylaşılan paketler (shared-business, shared-db, shared-validation vb.) ve API alanları (economy, fraud, chat) oluşturulmalıdır.
+4. Ajan, tüm uygulamalar ve paketler için test betiklerini doğrulamalı ve bağımlılıkları yüklemeli, tam lint/test uygulamalıdır.
+5. Süreç boyunca belgelendirme ve hafıza görevleri yasaklanmıştır; odak kod geliştirme üzerindedir.
+
+— Agent: GameBY Agent • 2025-08-16T22:14:14.700Z
