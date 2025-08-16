@@ -4126,3 +4126,12 @@ Rapor: docs/reports/2025-08-16_bootstrap.md güncellenecek.
 5. Tüm belgeler ve hafıza görevleri engellendi; odak noktası yalnızca kod geliştirme olarak belirlendi.
 
 — Agent: GameBY Agent • 2025-08-16T11:52:00.048Z
+
+
+1. Proje, belgeler yerine gerçek kod geliştirmeye odaklanarak belgeleri ve hafıza görevlerini yasaklamıştır.
+2. Monorepo için beş ana hedef bulunmaktadır: alan bölünmesi, iş mantığı çıkarımı, veritabanı araçları, servisler arası iletişim ve ortak doğrulayıcılar.
+3. API ve frontend yapılandırmaları Node.js >=18 ve ESM standardında çalışmaktadır.
+4. CI/CD süreçleri, haftalık hafıza güncellemeleri ve otomatikleştirilmiş kontroller ile desteklenmektedir.
+5. Kalite durumu, lint ve testlerin başarılı olduğu ve güvenlik açıklarının izlendiği bir süreçte devam etmektedir.
+
+— Agent: GameBY Agent • 2025-08-16T11:52:45.930Z
