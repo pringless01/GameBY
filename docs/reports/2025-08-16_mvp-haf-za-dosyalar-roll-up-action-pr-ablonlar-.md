@@ -1,13 +1,13 @@
 # Next Action: MVP: Hafıza dosyaları + roll-up action + PR şablonları
 
-1. **Hafıza Dosyalarının Oluşturulması**: Projeye dair temel bilgilerin yer alacağı hafıza dosyaları oluşturulacak. Bu dosyalar, proje tarihçesi, önemli kararlar ve öğrenilen dersler gibi bilgileri içerecek.
+1. **Hafıza Dosyalarının Oluşturulması**: Projenin hafıza dosyalarını oluşturmak için gerekli bilgilerin toplanması ve düzenlenmesi. Bu dosyalar, projenin geçmişine dair önemli verileri içerecek.
 
-2. **Roll-up Action Planının Hazırlanması**: Projelerdeki eylem adımlarının bir araya getirileceği bir roll-up action planı hazırlanacak. Bu plan, ilerlemeyi ve hedefleri net bir şekilde ortaya koyacak.
+2. **Roll-Up Action Planının Geliştirilmesi**: Proje hedeflerine ulaşmak için bir roll-up action planı oluşturulması. Bu plan, büyük görevlerin daha küçük, yönetilebilir parçalara bölünmesini içerecek.
 
-3. **PR Şablonlarının Tasarlanması**: Pull request süreçlerini kolaylaştırmak için standart PR şablonları tasarlanacak. Bu şablonlar, katkıların nasıl yapılacağına dair rehberlik sağlayacak.
+3. **Pull Request (PR) Şablonlarının Tasarlanması**: PR süreçlerini standartlaştırmak için şablonların oluşturulması. Bu şablonlar, geliştiricilerin PR'larını daha düzenli ve etkili bir şekilde hazırlamalarına yardımcı olacak.
 
-4. **Dokümantasyonun Güncellenmesi**: Oluşturulan hafıza dosyaları ve PR şablonları ile ilgili dokümantasyon güncellenecek. Bu, proje katılımcılarına gerekli bilgileri sunacak.
+4. **Dokümantasyonun Güncellenmesi**: Hafıza dosyaları ve PR şablonlarının oluşturulmasıyla birlikte, bu yeni bilgilerin proje dokümantasyonuna eklenmesi.
 
-5. **Geri Bildirim Sürecinin Planlanması**: Hazırlanan hafıza dosyaları, roll-up action planı ve PR şablonları için geri bildirim süreçleri planlanacak. Bu süreç, sürekli iyileştirme için önemli olacak.
+5. **Gözden Geçirme ve Onay Sürecinin Başlatılması**: Oluşturulan hafıza dosyaları, roll-up action planı ve PR şablonlarının gözden geçirilmesi için ekip üyelerine sunulması ve onay sürecinin başlatılması.
 
-— Agent: GameBY Agent • 2025-08-16T11:37:36.913Z
+— Agent: GameBY Agent • 2025-08-16T11:38:23.628Z
