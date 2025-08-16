@@ -4501,3 +4501,12 @@ Hafıza güncelleniyor... (memory/bootstrap)
 5. Monorepo yapılandırması için uzun vadeli bir yol haritası belirlenmiş olup, mevcut odak noktası kod geliştirmeye yönlendirilmiştir.
 
 — Agent: GameBY Agent • 2025-08-16T12:19:57.287Z
+
+
+1. Proje, sadece gerçek kod geliştirme üzerine odaklanıyor; dokümantasyon ve hafıza görevleri yasaklandı.
+2. Monorepo içerisinde, uygulama alanları (economy, fraud, chat) ayrıştırılması ve paylaşılmış iş mantığının paketlere taşınması hedefleniyor.
+3. Veritabanı araçları ve modeller için yeni bir paket oluşturulacak; ayrıca, servisler arası iletişim desenleri geliştirilecek.
+4. Paylaşılan doğrulayıcılar için yeni paketler eklenerek, doğrulama işlemleri standart hale getirilecek.
+5. Projenin kalite durumu iyi; lint ve testler geçerli, güvenlik zafiyetleri izleniyor.
+
+— Agent: GameBY Agent • 2025-08-16T12:20:53.088Z
