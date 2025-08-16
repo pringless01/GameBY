@@ -5230,3 +5230,16 @@ Rapor oluşturulacak.
 5. **Gelecek Adımlar**: Monorepo'da hizmetler arası iletişim desenlerinin uygulanması, paylaşılan doğrulayıcı paketlerin eklenmesi ve iş mantığının paketlenmesi üzerine çalışılacak.
 
 — Agent: GameBY Agent • 2025-08-16T13:13:24.321Z
+
+
+1. **Proje Durumu**: Proje, pringless01/GameBY reposu altında, yalnızca gerçek kod geliştirme görevlerine odaklanmıştır; dokümantasyon görevleri yasaklanmıştır.
+
+2. **Ana Hedefler**: Monorepo'da ekonomi, dolandırıcılık ve sohbet hizmetleri için uygulama/alan bölme, paylaşılmış iş mantığını çıkarma ve veri tabanı yardımcı programları oluşturma gibi teknik görevler planlanmıştır.
+
+3. **Geliştirme Prensipleri**: Yalnızca işlevsel kod geliştirmeye odaklanılması gerektiği ve token kullanımının gerçek değer sağlaması gerektiği varsayılmaktadır.
+
+4. **Kalite Kontrolü**: Proje lint ve test süreçleri başarılı bir şekilde geçmiştir, bazı güvenlik zafiyetleri izlenmeye alınmıştır.
+
+5. **Yasaklı Görevler**: Tüm dokümantasyon ve hafıza görevleri yasaklanmış, yalnızca kod geliştirme önceliklendirilmiştir.
+
+— Agent: GameBY Agent • 2025-08-16T13:14:11.631Z
