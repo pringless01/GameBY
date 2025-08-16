@@ -1,28 +1,15 @@
 # Next Action: Monorepo: Complete apps/api/src domain split (economy/fraud/chat services)
 
-### Alt Adım 1: Proje Yapısını Gözden Geçirme
-- `apps/api/src` dizinindeki mevcut yapı incelenecek. 
-- Hangi dosyaların hangi domainlere ait olduğu belirlenecek.
+1. **Domain Analizi ve Planlama**: Uygulamanın mevcut yapısını incele ve her bir domain (economy, fraud, chat) için gerekli olan bileşenleri ve bağımlılıkları belirle.
 
-### Alt Adım 2: Domain Split Planı Hazırlama
-- Ekonomi, dolandırıcılık ve sohbet hizmetleri için ayrı dizin yapıları oluşturulacak.
-- Her domain için gerekli dosya ve klasör listesi oluşturulacak.
+2. **Klasör Yapısını Oluşturma**: Yeni domainler için uygun klasör yapılarını oluştur. `apps/api/src/economy`, `apps/api/src/fraud`, ve `apps/api/src/chat` dizinlerini oluştur.
 
-### Alt Adım 3: Kodun Taşınması
-- Mevcut kodlar, belirlenen yeni dizin yapısına taşınacak.
-- Taşınma sırasında dosya referansları güncellenecek.
+3. **Kod Taşıma**: Mevcut kodları ilgili domain klasörlerine taşı. Her domain için gerekli olan dosyaları ve modülleri yeni konumlarına yerleştir.
 
-### Alt Adım 4: Testlerin Güncellenmesi
-- Yeni dizin yapısına uygun olarak test dosyaları güncellenecek.
-- Her domain için bağımsız test senaryoları oluşturulacak.
+4. **Bağımlılık Güncellemesi**: Her domain için bağımlılıkları güncelle ve gerekli olan konfigürasyonları yap. Yeni yapılandırmaların doğru çalıştığından emin olmak için testleri güncelle.
 
-### Alt Adım 5: Dokümantasyon ve Raporlama
-- Yapılan değişiklikler için güncellenmiş dokümantasyon hazırlanacak.
-- Proje durumu ve yapılan işlemler hakkında bir rapor oluşturulacak.
+5. **Dokümantasyon ve Raporlama**: Yapılan değişiklikleri belgelemek için güncellenmiş dokümantasyonu oluştur. Ayrıca, yapılan işlemleri ve gelecekteki yönlendirmeleri içeren bir rapor hazırla. 
 
-— Agent: GameBY Agent • 2025-08-16T14:21:19.149Z
+Her adımda gerekli değişiklikler yapılacak ve hafızaya eklenecek.
 
-
-## Fail checkpoint (attempt 3)
-- time: 2025-08-16T14:21:23.463Z
-- reason: Command failed: npm run lint
+— Agent: GameBY Agent • 2025-08-16T14:21:41.368Z
