@@ -1,23 +1,13 @@
 # Next Action: Monorepo: verify workspaces and package.json test scripts across apps/* and packages/*
 
-1. **Workspace Kontrolü**: Monorepo içerisindeki tüm `apps/*` ve `packages/*` dizinlerinde bulunan workspace'leri kontrol et. Her bir dizinde `package.json` dosyasının varlığını ve içeriğini doğrula.
+1. **Workspace Kontrolü**: Tüm `apps/*` ve `packages/*` dizinlerindeki `package.json` dosyalarını kontrol et ve mevcut workspace yapılandırmalarını not al.
 
-   Çıktı: "Workspace kontrolü tamamlandı. Tüm dizinlerde `package.json` dosyaları mevcut."
+2. **Test Scriptleri İncelemesi**: Her `package.json` dosyasındaki `test` scriptlerini incele ve bunların geçerliliğini değerlendirmek için örnek bir test çalıştır.
 
-2. **Test Scriptleri İncelemesi**: Her `package.json` dosyasında bulunan `test` scriptlerini incele. Scriptlerin doğru biçimde tanımlandığından ve beklenen test komutlarını içerdiğinden emin ol.
+3. **Hataları Belirleme**: Test scriptleri çalışmadığı takdirde, hataları tespit et ve hangi `package.json` dosyalarında sorunlar olduğunu kaydet.
 
-   Çıktı: "Test scriptleri incelemesi tamamlandı. Tüm `package.json` dosyalarında test scriptleri doğru tanımlanmış."
+4. **Düzeltme Önerileri**: Belirlenen hatalar için düzeltme önerileri oluştur ve her bir `package.json` dosyası için önerilen değişiklikleri not al.
 
-3. **Senkronizasyon Kontrolü**: `packages/*` ve `apps/*` arasındaki bağımlılıkların senkronize olup olmadığını kontrol et. Her iki bölümde de aynı versiyonların kullanıldığından emin ol.
+5. **Raporlama**: Yapılan inceleme ve düzeltme önerilerini içeren bir rapor hazırla ve bunu `docs/reports/YYYY-MM-DD_verify_workspaces.md` şeklinde kaydet.
 
-   Çıktı: "Senkronizasyon kontrolü yapıldı. Tüm bağımlılıklar doğru versiyonlarla senkronize."
-
-4. **Script Çalıştırma**: Her `test` scriptini çalıştırarak, testlerin başarılı bir şekilde tamamlandığını doğrula.
-
-   Çıktı: "Tüm test scriptleri çalıştırıldı ve sonuçlar başarılı."
-
-5. **Raporlama**: Yapılan kontroller ve testlerin sonuçları hakkında bir rapor oluştur. Rapor, gerçekleştirilen adımları ve elde edilen sonuçları içermelidir.
-
-   Çıktı: "Raporlama tamamlandı. Tüm adımlar ve sonuçlar raporlandı."
-
-— Agent: GameBY Agent • 2025-08-16T23:56:21.010Z
+— Agent: GameBY Agent • 2025-08-16T23:57:06.362Z
