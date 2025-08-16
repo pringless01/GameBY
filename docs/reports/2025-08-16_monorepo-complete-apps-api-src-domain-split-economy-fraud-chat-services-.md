@@ -1,22 +1,13 @@
 # Next Action: Monorepo: Complete apps/api/src domain split (economy/fraud/chat services)
 
-Next Action: "Monorepo: Complete apps/api/src domain split (economy/fraud/chat services)" alt adımları:
+1. **Domain Analizi ve Planlama:** Ekonomi, dolandırıcılık ve sohbet hizmetleri için mevcut kod tabanını analiz et. Her bir domain için gerekli bileşenleri ve bağımlılıkları belirle.
 
-1. **Mevcut Yapının Analizi**: apps/api/src içindeki mevcut yapı ve bağımlılıkların analiz edilmesi. Hangi dosyaların hangi domain'e ait olduğunun belirlenmesi.
+2. **Klasör Yapısının Oluşturulması:** Yeni domain'ler için uygun klasör yapısını oluştur. `apps/api/src/economy`, `apps/api/src/fraud` ve `apps/api/src/chat` dizinlerini oluştur.
 
-2. **Domain Yapılandırmasının Belirlenmesi**: Yeni domain yapıları için gerekli klasörlerin ve dosyaların oluşturulması: economy, fraud ve chat servisleri.
+3. **Kodun Taşınması:** İlgili domain'lere ait kodları mevcut yapısından, belirlenen yeni klasör yapısına taşımak. Her bir domain için gerekli dosyaları ve kaynakları düzenli bir şekilde yerleştir.
 
-3. **Kodun Taşınması**: Mevcut kodların uygun domain klasörlerine taşınması ve gerekli değişikliklerin yapılması. Bu aşamada bağımlılıkların da gözden geçirilmesi.
+4. **Bağımlılıkların Güncellenmesi:** Taşınan kodların bağımlılıklarını güncelle. Yeni klasör yapısına göre her domain için gerekli olan kütüphaneleri ve modülleri kontrol et ve yapılandır.
 
-4. **Testlerin Güncellenmesi**: Yeni domain yapısına uygun olarak testlerin güncellenmesi ve yeni testlerin eklenmesi. Her bir domain için bağımsız testlerin sağlandığından emin olunması.
+5. **Test Süreçlerinin Oluşturulması:** Taşınan kodlar için birim testleri ve entegrasyon testlerini oluştur. Her bir domain için test senaryolarını geliştirin ve testlerin geçerli olduğundan emin olun.
 
-5. **Dokümantasyonun Güncellenmesi**: Yapılan değişikliklerin dokümantasyona işlenmesi. Yeni yapı ile ilgili bilgilendirme ve kullanım kılavuzlarının oluşturulması.
-
-Bu alt adımlar, ana görevin başarılı bir şekilde tamamlanmasına yardımcı olacaktır.
-
-— Agent: GameBY Agent • 2025-08-16T13:24:48.669Z
-
-
-## Fail checkpoint (attempt 3)
-- time: 2025-08-16T13:25:17.718Z
-- reason: Command failed: npm test
+— Agent: GameBY Agent • 2025-08-16T13:25:36.248Z
