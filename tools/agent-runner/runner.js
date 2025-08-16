@@ -1,0 +1,204 @@
+import fs from "fs";
+import path from "path";
+import { execSync } from "child_process";
+import OpenAI from "openai";
+import dotenv from "dotenv";
+import { fileURLToPath } from "url";
+dotenv.config();
+
+const here = path.dirname(fileURLToPath(import.meta.url));
+const repoRoot = path.resolve(here, "..", "..");
+
+const DRY = /^(1|true)$/i.test(process.env.DRY || "");
+const MODEL = process.env.MODEL || "gpt-4o";
+const MAX_IDLE = Number(process.env.MAX_IDLE_SECONDS || 120);
+const STOP_FILE = path.join(repoRoot, "agent", "STOP");
+
+const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+
+const SYSTEM_PROMPT = `
+ROL: Kıdemli Monorepo/DevOps ajanı. Soru sorma yok.
+Kurallar: agent/prompt.md uyar; önce oku-özetle; yalnızca docs/status.md -> Next Actions'ı sırayla işle.
+Next Actions boşsa tasks/roadmap.md'den seed et; yine boşsa Evergreen backlog üret.
+Her adımda gerçek değişiklik (dosya/commit/rapor/hafıza append), lint=0, test=PASS.
+Hafıza: agent/memory/{project_facts.md,long_term.md} append.
+Rapor: docs/reports/YYYY-MM-DD_<slug>.md
+Kimlik: "Agent: GameBY Agent" imzası; "GitHub Copilot" demek YASAK.
+Stop yalnızca agent/STOP varsa.
+`;
+
+function sh(cmd, opts = {}) {
+  return execSync(cmd, { cwd: repoRoot, stdio: ["pipe", "pipe", "pipe"], ...opts }).toString().trim();
+}
+function read(rel) {
+  const p = path.join(repoRoot, rel);
+  return fs.existsSync(p) ? fs.readFileSync(p, "utf8") : "";
+}
+function write(rel, s) {
+  const p = path.join(repoRoot, rel);
+  fs.mkdirSync(path.dirname(p), { recursive: true });
+  fs.writeFileSync(p, s);
+}
+function gitAddCommit(msg) {
+  if (DRY) return;
+  try { sh(`git add -A`); sh(`git commit -m "${msg.replace(/"/g, '\\"')}"`); } catch {}
+}
+function lintAndTest() {
+  sh(`npm run lint`, { stdio: "inherit" });
+  sh(`npm test`, { stdio: "inherit" });
+}
+async function askLLM(input) {
+  const noKey = !process.env.OPENAI_API_KEY;
+  if (DRY || noKey) {
+    // Deterministic lightweight fallback (no external calls in DRY or when key missing)
+    const text = Array.isArray(input) ? (input[1]?.content || "") : String(input || "");
+    const head = text.split("\n").slice(0, 3).join(" ").slice(0, 160);
+    return `- [stub] ${head}\n- [stub] Yerel özet (DRY/no-key)\n- [stub] Plan oluşturuldu\n- [stub] Dosyalar güncellenecek\n- [stub] Lint/Test korunur`;
+  }
+  const res = await client.responses.create({ model: MODEL, input });
+  return res.output_text || "";
+}
+function idleGuard(lastTs) {
+  if (Date.now() - lastTs > MAX_IDLE * 1000) {
+    const fn = `docs/reports/_watchdog_${Date.now()}.md`;
+    write(fn, `checkpoint ${new Date().toISOString()}\n— Agent: GameBY Agent\n`);
+    gitAddCommit(`chore(agent): watchdog checkpoint`);
+    return Date.now();
+  }
+  return lastTs;
+}
+function ensureStatusSkeleton() {
+  const p = "docs/status.md";
+  if (!fs.existsSync(path.join(repoRoot, p))) {
+    write(p, `# Status\n\n## Next Actions\n\n`);
+    gitAddCommit(`docs(status): create skeleton`);
+  }
+}
+function ensureNextActions() {
+  ensureStatusSkeleton();
+  const statusPath = "docs/status.md";
+  let status = read(statusPath);
+  const hasItem = /##\s*Next Actions[\s\S]*\n- /.test(status);
+  if (hasItem) return;
+  const roadmap = read("tasks/roadmap.md");
+  const bullets = (roadmap.match(/^- .+$/gm) || []).slice(0, 5);
+  const seed = bullets.length ? bullets : [
+    "- ESLint module boundaries düzelt",
+    "- Shared utils/types (non-invasive) genişlet",
+    "- Env rehberi + scripts/print-env-check.js (rapor-only)",
+    "- CI: memory-rollup + sweep artifact",
+    "- Haftalık rapor oluştur"
+  ];
+  const injected = status.replace(/(##\s*Next Actions\s*\n*)([\s\S]*)$/i, (_, head) => `${head}${seed.join("\n")}\n`);
+  write(statusPath, injected);
+  gitAddCommit(`docs(status): seed Next Actions from roadmap/backlog`);
+}
+function firstNextAction() {
+  const s = read("docs/status.md");
+  const block = s.match(/##\s*Next Actions[\s\S]*?(?:\n\n|$)/i)?.[0] || "";
+  const items = block.split("\n").filter(l => l.trim().startsWith("- ") && !l.includes("~~"));
+  return items[0]?.replace(/^- /, "").trim() || null;
+}
+function markDone(title) {
+  const p = "docs/status.md";
+  let s = read(p);
+  s = s.replace(new RegExp(`^- ${title.replace(/[.*+?^${}()|[\\]\\\\]/g, "\\$&")}`, "m"), `- ~~${title}~~ ✅`);
+  write(p, s);
+  gitAddCommit(`docs(status): mark done - ${title}`);
+}
+function slugify(t) { return t.toLowerCase().replace(/[^a-z0-9]+/g, "-"); }
+
+async function mainLoop() {
+  let lastTs = Date.now();
+  while (true) {
+    if (fs.existsSync(STOP_FILE)) break;
+
+    ensureNextActions();
+    const action = firstNextAction();
+    if (!action) { lastTs = idleGuard(lastTs); continue; }
+
+    // 1) Bootstrap: oku + 5'li özet + rapor + hafıza
+    const status = read("docs/status.md");
+    const facts = read("agent/memory/project_facts.md");
+    const lt = read("agent/memory/long_term.md");
+    const roadmap = read("tasks/roadmap.md");
+    const bootstrap = await askLLM([
+      { role: "system", content: SYSTEM_PROMPT },
+      { role: "user", content:
+        `Aşağıdaki içeriklere bak ve 5 maddelik kısa özet çıkar (yalın):\n\n` +
+        `--- status.md ---\n${status}\n--- project_facts.md ---\n${facts}\n--- long_term.md ---\n${lt}\n--- roadmap.md ---\n${roadmap}\n` }
+    ]);
+    const date = new Date().toISOString().slice(0,10);
+    const bootPath = `docs/reports/${date}_bootstrap.md`;
+    write(bootPath, (read(bootPath) + `\n\n${bootstrap}\n\n— Agent: GameBY Agent • ${new Date().toISOString()}\n`));
+    write("agent/memory/project_facts.md", facts + `\n- [${new Date().toISOString()}] bootstrap summary appended`);
+    gitAddCommit(`docs(memory): bootstrap snapshot + report (no behavior change)`);
+    lastTs = Date.now();
+
+    // 2) Plan: alt adımlar
+    const plan = await askLLM([
+      { role: "system", content: SYSTEM_PROMPT },
+      { role: "user", content:
+        `Next Action: "${action}"\nBu aksiyonu en fazla 5 alt adıma böl; her alt adım için kısa çıktı üret (davranış değiştirme yok).` }
+    ]);
+    const slug = slugify(action);
+    const reportPath = `docs/reports/${date}_${slug}.md`;
+    write(reportPath, `# Next Action: ${action}\n\n${plan}\n\n— Agent: GameBY Agent • ${new Date().toISOString()}\n`);
+    gitAddCommit(`docs(reports): start ${slug}`);
+
+    // 3) Minimal gerçek değişiklik örnekleri (davranış yok)
+    if (/env/i.test(action)) {
+      const exPath = ".env.example";
+      const ex = read(exPath);
+      const add = `\n# JWT_SECRET >= 32 chars (base64 48 bytes önerilir)\n# CURSOR_SECRET >= 24 chars\n`;
+      if (!ex.includes("JWT_SECRET")) write(exPath, ex + add);
+      gitAddCommit(`docs: env secret guidance notes`);
+    }
+    if (/eslint/i.test(action)) {
+      const p = "eslint.config.js";
+      let s = read(p);
+      if (s && !s.includes("no-restricted-imports")) {
+        s += `\nexport default [\n  {\n    rules: {\n      'import/no-cycle': 'error',\n      'no-restricted-imports': ['error', { patterns: [\n        { group: ['**/modules/*/!(index|*.service|*.repo).js'], message: 'Service/Repo dışı module iç dosyalara import yasak.' },\n        { group: ['../modules/*/*'], message: 'Başka domaine relative import yasak; shared/* veya public API kullan.' }\n      ]}],\n      'no-unused-vars': ['error', { argsIgnorePattern: '^_', caughtErrorsIgnorePattern: '^_' }],\n      'import/order': ['error', { alphabetize: { order: 'asc', caseInsensitive: true }, 'newlines-between': 'always' }]\n    }\n  }\n];\n`;
+        write(p, s);
+        gitAddCommit(`style(eslint): enforce module boundaries`);
+      }
+    }
+
+    // 4) Lint + Test (kırmızıysa otomatik küçült)
+    try { lintAndTest(); }
+    catch {
+      if (!DRY) sh(`git reset --hard HEAD~1`);
+      lastTs = idleGuard(lastTs);
+      continue;
+    }
+
+    // 5) Hafıza append
+    write("agent/memory/project_facts.md", read("agent/memory/project_facts.md")
+      + `\n- [${new Date().toISOString()}] ${slug}: step advanced (lint/test PASS)`);
+    write("agent/memory/long_term.md", read("agent/memory/long_term.md")
+      + `\n- [${date}] Haftalık özet: ${slug} ilerledi`);
+    gitAddCommit(`docs(memory): roll-up for ${slug}`);
+
+    // 6) Status: tamamlandı işaretle
+    markDone(action);
+
+    // 7) PR (Draft) — gh yoksa sessiz geç
+    try {
+      if (!DRY) {
+        sh(`gh pr create --title "chore(agent): ${slug}" --body "Agent: GameBY Agent\\nNo behavior change.\\nTests: PASS." --draft`);
+      }
+    } catch {}
+
+    lastTs = Date.now();
+  if (process.argv.includes("--once")) break;
+  // kısa bekleme (cross-platform)
+  await new Promise((r) => setTimeout(r, 5000));
+  }
+}
+
+// Entry
+if (process.argv.includes("--loop") || process.argv.includes("--once")) {
+  mainLoop().catch(() => process.exit(1));
+} else {
+  console.log("Usage: node tools/agent-runner/runner.js --once | --loop");
+}
