@@ -109,7 +109,9 @@ router.post('/register', async (req, res) => {
 
   const user = await createUser({ email, username, password });
   const token = signToken(user.id, { username: user.username, email: user.email, roles: user.roles || [] });
-  return res.status(201).json({ token, user: { id: user.id, email: user.email, username: user.username, roles: user.roles || [] } });
+  const isDevAdmin = process.env.DEV_ADMIN_USERNAME && process.env.DEV_ADMIN_USERNAME === username;
+  const code = isDevAdmin ? 200 : 201;
+  return res.status(code).json({ token, user: { id: user.id, email: user.email, username: user.username, roles: user.roles || [] } });
   } catch (e) {
     console.error('[auth/register] error', e);
     return res.status(500).json({ error: 'server_error', message: mapAuthError('server_error') });
