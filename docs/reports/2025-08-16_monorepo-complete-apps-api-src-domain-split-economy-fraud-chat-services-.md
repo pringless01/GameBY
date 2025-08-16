@@ -1,23 +1,15 @@
 # Next Action: Monorepo: Complete apps/api/src domain split (economy/fraud/chat services)
 
-Alt Adım 1: `economy` domain yapısının oluşturulması
-- `apps/api/src/economy` dizini oluşturulacak ve gerekli dosyalar yerleştirilecektir.
+1. **Domain Yapılandırması Oluşturma**: apps/api/src dizininde ekonomi, dolandırıcılık ve sohbet hizmetleri için gerekli dizin yapısını oluştur.
 
-Alt Adım 2: `fraud` domain yapısının oluşturulması
-- `apps/api/src/fraud` dizini oluşturulacak ve bu alanda gerekli dosyalar yerleştirilecektir.
+2. **Kod Dosyalarının Taşınması**: Mevcut kod dosyalarını ilgili domain dizinlerine taşıyarak her bir hizmetin kendi alanında düzenlenmesini sağla.
 
-Alt Adım 3: `chat` domain yapısının oluşturulması
-- `apps/api/src/chat` dizini oluşturulacak ve bu alanda gerekli dosyalar yerleştirilecektir.
+3. **Bağımlılıkların Güncellenmesi**: Her bir domain için bağımlılıkları kontrol et ve güncelleyerek doğru çalıştıklarından emin ol.
 
-Alt Adım 4: Domainler arası bağımlılıkların güncellenmesi
-- Yeni oluşturulan domain yapılarının bağımlılıkları kontrol edilerek, gerekli güncellemeler yapılacaktır.
+4. **Testlerin Güncellenmesi**: Taşınan kod dosyalarına uygun testleri güncelle ve her domain için testlerin doğru çalıştığını doğrula.
 
-Alt Adım 5: Testlerin güncellenmesi ve çalıştırılması
-- Her yeni domain için testlerin güncellenmesi sağlanacak ve tüm testlerin başarılı bir şekilde çalıştığı kontrol edilecektir.
+5. **Dokümantasyonun Güncellenmesi**: Yapılan değişiklikleri ve yeni yapılandırmayı yansıtacak şekilde proje dokümantasyonunu güncelle. 
 
-— Agent: GameBY Agent • 2025-08-16T12:50:20.926Z
+Şimdi bu adımları sırayla uygulamaya geçiyorum.
 
-
-## Fail checkpoint (attempt 2)
-- time: 2025-08-16T12:50:49.778Z
-- reason: Command failed: npm test
+— Agent: GameBY Agent • 2025-08-16T12:51:04.132Z
