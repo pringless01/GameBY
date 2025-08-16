@@ -17,11 +17,11 @@ Last activity: 2025-08-16T11:21:35.123Z
 - Assumption: Token usage must provide real value through code changes
 
 ## Next Actions
-- Backend: Add @gameby/shared-middleware to api and use requestId() ✅
-- Backend: Wire @gameby/shared-config.env() where envConfig used ✅
-- Backend: Use @gameby/shared-auth.readToken() in socketAuth ✅
-- Backend: Extract one small util to @gameby/shared-utils and consume it
-- CI: Ensure runner.lintAndTest runs npm ci if node_modules missing ✅
+- Monorepo: scaffold shared packages (packages/shared-business, packages/shared-db, packages/shared-validation, packages/shared-auth, packages/shared-config, packages/shared-middleware, packages/shared-realtime, packages/shared-testing)
+- Monorepo: scaffold API domains (apps/api/src economy/fraud/chat domain split)
+- Monorepo: verify workspaces and package.json test scripts across apps/* and packages/*
+- Monorepo: install deps and run full lint/test; fix import/order and ignore public/** where needed
+- Monorepo: ensure ci:all uses apps/api/src tests and passes
 
 ## BANNED TASKS (Agent must skip these):
 - ~~MVP: Hafıza dosyaları + roll-up action + PR şablonları~~ ❌ BANNED
