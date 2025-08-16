@@ -8952,3 +8952,12 @@ Agent: GameBY Agent
 5. **Kalite Kontrolü:** Lint ve testlerin tümü yeşil durumda; güvenlik açıkları takip ediliyor.
 
 — Agent: GameBY Agent • 2025-08-16T23:14:30.841Z
+
+
+1. **Durum ve Amaç**: Proje, pringless01/GameBY, belgelendirme görevlerini durdurmuş ve gerçek kod geliştirme üzerine odaklanmıştır.
+2. **Next Actions**: Monorepo'da uygulama ve paketlerin tam kurulumu, testlerin yeşil hale getirilmesi ve eksik test scriptlerinin otomatik düzeltilmesi gerekmektedir.
+3. **Önemli Dosyalar**: agent/prompt.md, agent/memory/* ve docs/reports/ dosyaları proje için kritik öneme sahiptir.
+4. **Kısıtlamalar**: Belgelendirme ve hafıza ile ilgili tüm görevler yasaklanmış, yalnızca kod geliştirme üzerine odaklanılması istenmiştir.
+5. **Kalite Kontrolü**: Lint ve test süreçleri başarılı bir şekilde geçilmiş, güvenlik durumları izlenmeye alınmıştır.
+
+— Agent: GameBY Agent • 2025-08-16T23:14:49.614Z
