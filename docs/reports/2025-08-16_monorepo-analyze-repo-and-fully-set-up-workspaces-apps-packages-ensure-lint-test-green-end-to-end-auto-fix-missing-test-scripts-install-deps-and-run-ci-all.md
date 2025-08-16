@@ -11,3 +11,8 @@
 5. **CI Tüm Süreçlerinin Çalıştırılması**: `ci:all` komutunu çalıştırarak tüm entegrasyon süreçlerini test edecek ve sonuçları gözden geçireceğim.
 
 — Agent: GameBY Agent • 2025-08-16T23:31:34.446Z
+
+
+## Fail checkpoint (attempt 2)
+- time: 2025-08-16T23:31:38.951Z
+- reason: Command failed: npm run lint
