@@ -1,0 +1,17 @@
+name: Auto Task
+description: Ajanın yürüteceği görev
+labels: [auto]
+body:
+  - type: input
+    id: goal
+    attributes: { label: Amaç, placeholder: "Ne elde edeceğiz?" }
+    validations: { required: true }
+  - type: textarea
+    id: context
+    attributes: { label: Bağlam, description: "İlgili link/dosyalar" }
+  - type: textarea
+    id: acceptance
+    attributes: { label: Kabul Kriterleri (DoD), value: "- [ ] Testler yeşil\n- [ ] Lint 0 uyarı" }
+  - type: textarea
+    id: plan
+    attributes: { label: Önerilen Adımlar }
