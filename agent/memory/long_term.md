@@ -224,3 +224,4 @@ Bu dosya uzun dönem özetlerin ve önemli kararların sıkıştırılmış hali
 - [2025-08-16] Haftalık özet: mvp-haf-za-dosyalar-roll-up-action-pr-ablonlar- ilerledi
 - [2025-08-16] Haftalık özet: mvp-haf-za-dosyalar-roll-up-action-pr-ablonlar- ilerledi
 - [2025-08-16] Haftalık özet: backend-api-add-marketplace-bidding-system-endpoints-api-marketplace-bid- ilerledi
+- [2025-08-16] Haftalık özet: monorepo-complete-apps-api-src-domain-split-economy-fraud-chat-services- ilerledi
