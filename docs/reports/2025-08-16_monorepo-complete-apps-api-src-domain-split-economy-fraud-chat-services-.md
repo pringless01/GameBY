@@ -1,18 +1,13 @@
 # Next Action: Monorepo: Complete apps/api/src domain split (economy/fraud/chat services)
 
-1. **Domain Split Planı Oluşturma**: Mevcut uygulama yapılarını inceleyerek, ekonomi, dolandırıcılık ve sohbet servislerine dair ayrı yapıların nasıl oluşturulacağına dair bir plan hazırlayın.
+1. **Domain Yapılandırması**: Mevcut uygulama yapısını incele ve domain'leri (economy, fraud, chat) belirle. Her bir domain için gerekli olan dosya ve klasör yapılarını oluştur.
 
-2. **Kod Tabanını Hazırlama**: Uygulama kod tabanını analiz edin ve hangi dosya ve bileşenlerin hangi yeni domaine ait olacağını belirleyin.
+2. **Kod Ayrıştırma**: apps/api/src içindeki mevcut kodu analiz et ve her domain'e ait parçaları (servisler, model, controller vb.) ayır. Her domain için ayrı dosyalara taşı.
 
-3. **Yeni Domain Yapılandırmalarını Oluşturma**: Ekonomi, dolandırıcılık ve sohbet servisleri için ayrı dizinler oluşturun ve gerekli yapılandırma dosyalarını ekleyin.
+3. **Bağımlılık Yönetimi**: Domain'ler arasındaki bağımlılıkları gözden geçir ve her bir domain için gerekli bağımlılıkları güncelle. Geçiş sonrası uyumsuzlukları çözüme kavuştur.
 
-4. **Kod Taşımaları ve Refaktörizasyon**: Belirlenen bileşenleri yeni dizinlere taşıyın ve her bir domain için gerekli olan refaktörizasyonu yapın.
+4. **Test Güncellemesi**: Her domain için ayrıştırılan kod parçalarının testlerini güncelle ve yeni test senaryoları ekle. Testlerin geçerliliğini sağlamak için tüm testleri çalıştır.
 
-5. **Test ve Doğrulama**: Her bir yeni domain için testler yazın ve mevcut testlerin çalıştığından emin olun, ardından değişikliklerin doğru bir şekilde uygulandığından emin olun.
+5. **Dokümantasyon ve Dağıtım**: Yapılan değişiklikleri belgelendir ve her domain için güncellenmiş dokümantasyonu oluştur. Yeni yapı ile ilgili dağıtım adımlarını planla ve uygulamaya geçir.
 
-— Agent: GameBY Agent • 2025-08-16T13:12:49.217Z
-
-
-## Fail checkpoint (attempt 2)
-- time: 2025-08-16T13:13:18.264Z
-- reason: Command failed: npm test
+— Agent: GameBY Agent • 2025-08-16T13:13:30.444Z
