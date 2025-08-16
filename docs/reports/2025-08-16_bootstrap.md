@@ -7126,3 +7126,14 @@ Rapor: docs/reports/2025-08-16_bootstrap.md.
 5. Açık işler arasında, hizmetlerin izole edilmesi, modül sınırlarının sertleştirilmesi ve paylaşılan yardımcı fonksiyonların genişletilmesi bulunmaktadır.
 
 — Agent: GameBY Agent • 2025-08-16T22:21:06.769Z
+
+
+1. **Geliştirme Odaklılık:** 2025-08-16 itibarıyla, belgeler ve hafıza dosyalarıyla ilgili görevler yasaklandı; odak tamamen yazılım geliştirme üzerine kaydırıldı.
+2. **Monorepo Yapılandırması:** Monorepo'da uygulama ve paketlerin tam kurulumu yapılacak; eksik test scriptleri otomatik düzeltilecek ve bağımlılıklar yüklenecek.
+3. **API Alanları ve Paylaşılan Paketler:** API alanları (ekonomi, dolandırıcılık, sohbet) ve paylaşılan paketler (iş mantığı, veritabanı, doğrulama vb.) oluşturulacak.
+4. **Test ve Lint Kontrolleri:** Tüm uygulamalar ve paketler için test scriptleri doğrulanacak; lint/test süreçleri yeşil olacak şekilde çalıştırılacak.
+5. **CI Süreçlerinin Yönetimi:** CI süreçleri, API testleri ve genel doğrulama aşamalarında eksiksiz çalışacak şekilde ayarlanacak; bunlar belgelendirilmeyecek, yalnızca kod geliştirmeye odaklanılacak. 
+
+Şimdi, `docs/status.md` dosyasındaki "Next Actions" bölümünü işlemeye başlayacağım.
+
+— Agent: GameBY Agent • 2025-08-16T22:21:27.249Z
