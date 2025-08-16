@@ -126,7 +126,17 @@ function ensureFile(rel, content) {
   if (!fs.existsSync(p)) fs.writeFileSync(p, content);
 }
 function pkgJson(name) {
-  return JSON.stringify({ name, version: "0.0.1", type: "module", main: "src/index.js", exports: "./src/index.js" }, null, 2) + "\n";
+  return JSON.stringify({
+    name,
+    version: "0.0.1",
+    private: false,
+    type: "module",
+    main: "src/index.js",
+    exports: "./src/index.js",
+    scripts: {
+      test: "echo \"no tests\" && exit 0"
+    }
+  }, null, 2) + "\n";
 }
 function scaffoldPackage(pkg, files = {}) {
   const base = `packages/${pkg}`;
