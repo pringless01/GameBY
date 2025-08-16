@@ -4937,3 +4937,12 @@ Rapor: docs/reports/2025-08-16_bootstrap.md.
 5. **Uzun Dönem Hedefler**: Projenin uzun vadeli hedefleri arasında hizmet izolasyonu, bağımsız servis modülleri oluşturma ve kapsamlı belgeler oluşturma bulunmaktadır.
 
 — Agent: GameBY Agent • 2025-08-16T12:53:11.314Z
+
+
+1. Agent, artık yalnızca gerçek kod geliştirme görevlerine odaklanacak; dokümantasyon görevleri yasaklandı.
+2. Monorepo'da, uygulama ve API kaynaklarının ekonomi, dolandırıcılık ve sohbet hizmetlerine ayrılması gerekiyor.
+3. Paylaşılan iş mantığının, veritabanı araçları ve modellerle birlikte paketlere çıkarılması planlanıyor.
+4. Servisler arası iletişim için uygun iletişim desenleri uygulanacak.
+5. Ortak doğrulayıcılar için bir `packages/shared-validation` oluşturulacak.
+
+— Agent: GameBY Agent • 2025-08-16T12:54:01.083Z
