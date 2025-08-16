@@ -1,20 +1,15 @@
 # Next Action: Monorepo: Complete apps/api/src domain split (economy/fraud/chat services)
 
-1. **Domain Analizi ve Planlama**: Uygulamanın mevcut yapısını incele ve her bir domain (economy, fraud, chat) için gerekli olan bileşenleri ve bağımlılıkları belirle.
+1. **Domain Analysis**: Mevcut apps/api/src yapısını analiz et. Hangi bileşenlerin ekonomi, dolandırıcılık ve sohbet hizmetlerine ait olduğunu belirle.
 
-2. **Klasör Yapısını Oluşturma**: Yeni domainler için uygun klasör yapılarını oluştur. `apps/api/src/economy`, `apps/api/src/fraud`, ve `apps/api/src/chat` dizinlerini oluştur.
+2. **Directory Structure Creation**: Yeni dizin yapısını oluştur. apps/api/src altında economy, fraud ve chat dizinlerini oluştur.
 
-3. **Kod Taşıma**: Mevcut kodları ilgili domain klasörlerine taşı. Her domain için gerekli olan dosyaları ve modülleri yeni konumlarına yerleştir.
+3. **Code Refactoring**: Mevcut kodu ilgili dizinlere taşımak için gerekli refaktoring işlemlerini yap. Her hizmetin kodunu uygun dizine yerleştir.
 
-4. **Bağımlılık Güncellemesi**: Her domain için bağımlılıkları güncelle ve gerekli olan konfigürasyonları yap. Yeni yapılandırmaların doğru çalıştığından emin olmak için testleri güncelle.
+4. **Dependency Management**: Her yeni dizin için gerekli bağımlılıkları güncelle ve yönet. Her hizmetin kendi bağımlılıklarını ve yapılandırmalarını kontrol et.
 
-5. **Dokümantasyon ve Raporlama**: Yapılan değişiklikleri belgelemek için güncellenmiş dokümantasyonu oluştur. Ayrıca, yapılan işlemleri ve gelecekteki yönlendirmeleri içeren bir rapor hazırla. 
+5. **Testing and Validation**: Taşınan kodun işlevselliğini test et. Her hizmetin düzgün çalıştığından emin olmak için birim testleri ve entegrasyon testleri gerçekleştir. 
 
-Her adımda gerekli değişiklikler yapılacak ve hafızaya eklenecek.
+Bu adımların her biri sonrasında raporlar oluşturulacak.
 
-— Agent: GameBY Agent • 2025-08-16T14:21:41.368Z
-
-
-## Fail checkpoint (attempt 1)
-- time: 2025-08-16T14:21:45.503Z
-- reason: Command failed: npm run lint
+— Agent: GameBY Agent • 2025-08-16T14:21:56.570Z
