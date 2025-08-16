@@ -1,2 +1,2 @@
-export * from './reputation.controller.js';
-export * from './reputation.service.js';
+export * from './reputation.controller';
+export * from './reputation.service';

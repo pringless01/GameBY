@@ -1,10 +1,10 @@
-import { initDb } from '../config/database.js';
-import { envConfig } from '../config/env.js';
-import { wsMessageDuration } from '../metrics/latencyMetrics.js';
-import { isTokenRevoked } from '../security/tokenBlacklist.js';
-import { logChatSpam } from '../services/chatSpamService.js';
-import { autoAdvanceOnEvent } from '../services/mentorService.js';
-import { emitReputationEvent, ReputationEventType } from '../services/reputationEvents.js';
+import { initDb } from '../config/database';
+import { envConfig } from '../config/env';
+import { wsMessageDuration } from '../metrics/latencyMetrics';
+import { isTokenRevoked } from '../security/tokenBlacklist';
+import { logChatSpam } from '../services/chatSpamService';
+import { autoAdvanceOnEvent } from '../services/mentorService';
+import { emitReputationEvent, ReputationEventType } from '../services/reputationEvents';
 
 const onlineUsers = new Set();
 // Basit in-memory flood sayaçları (TODO: kalıcı / kaydırmalı pencere rate limit)

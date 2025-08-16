@@ -1,1 +1,1 @@
-export { default } from '../../routes/contract.js';
+export { default } from './contract';

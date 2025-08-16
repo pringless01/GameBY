@@ -1,2 +1,2 @@
-export * from './chat.controller.js';
-export * from './chat.service.js';
+export * from './chat.controller';
+export * from './chat.service';

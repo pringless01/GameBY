@@ -1,4 +1,4 @@
-import { initDb } from '../config/database.js';
+import { initDb } from '../config/database';
 
 export async function logAudit({ userId = null, action, detail = null, ip = null }) {
   try {

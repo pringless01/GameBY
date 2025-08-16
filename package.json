@@ -11,14 +11,15 @@
   "scripts": {
     "codex:run": "node tools/codex-runner.js",
     "dev:web": "npm --workspace @gameby/web run dev",
-  "lint": "eslint . --ext .js,.ts --max-warnings=0",
-  "lint:fix": "eslint . --ext .js,.ts --fix",
+    "lint": "eslint . --ext .js,.ts --max-warnings=0",
+    "lint:fix": "eslint . --ext .js,.ts --fix",
     "test": "npm -ws run test",
     "coverage": "npm --prefix apps/api/src run coverage",
     "ci:all": "npm --prefix apps/api/src test"
   },
   "devDependencies": {
     "@eslint/js": "^9.33.0",
-    "eslint-plugin-import": "^2.32.0"
+    "eslint-plugin-import": "^2.32.0",
+    "fast-glob": "^3.3.3"
   }
 }

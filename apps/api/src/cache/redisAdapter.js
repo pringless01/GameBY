@@ -1,6 +1,6 @@
 import { createClient } from 'redis';
 
-import { envConfig } from '../config/env.js';
+import { envConfig } from '../config/env';
 
 let client = null;
 let enabled = false;

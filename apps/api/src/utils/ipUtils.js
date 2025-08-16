@@ -1,5 +1,5 @@
 // IP normalization helpers (IPv4/IPv6) and X-Forwarded-For parsing
-import { envConfig } from '../config/env.js';
+import { envConfig } from '../config/env';
 
 export function normalizeIp(ip){
   if(!ip) return '';

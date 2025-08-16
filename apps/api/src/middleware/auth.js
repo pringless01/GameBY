@@ -1,4 +1,4 @@
-import { verifyToken } from '../config/jwt.js';
+import { verifyToken } from '../config/jwt';
 
 let _isTokenRevoked = null;
 // Lazily try to load optional blacklist module once.

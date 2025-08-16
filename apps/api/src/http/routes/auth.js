@@ -1,1 +1,1 @@
-export { default } from '../../routes/auth.js';
+export { default } from './auth';

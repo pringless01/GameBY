@@ -1,2 +1,2 @@
-export * from './fraud.controller.js';
-export * from './fraud.service.js';
+export * from './fraud.controller';
+export * from './fraud.service';

@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken';
 
-import { isTokenRevoked } from '../security/tokenBlacklist.js';
+import { isTokenRevoked } from '../security/tokenBlacklist';
 
 export async function socketAuth(socket, next){
   let token = socket.handshake.auth?.token;

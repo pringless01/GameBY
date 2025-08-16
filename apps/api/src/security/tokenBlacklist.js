@@ -1,4 +1,4 @@
-import { namespace, isRedisEnabled } from '../cache/redisAdapter.js';
+import { namespace, isRedisEnabled } from '../cache/redisAdapter';
 
 const memorySet = new Set();
 let redisNs = null;

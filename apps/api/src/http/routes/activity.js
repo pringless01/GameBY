@@ -1,1 +1,1 @@
-export { default } from '../../routes/activity.js';
+export { default } from './activity';

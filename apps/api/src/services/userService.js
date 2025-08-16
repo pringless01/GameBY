@@ -1,10 +1,10 @@
 import bcrypt from 'bcrypt';
 
-import { invalidateOnTrustChange } from '../cache/trustCaches.js';
-import { initDb } from '../config/database.js';
-import { incReputationEvent } from '../metrics/reputationMetrics.js';
-import { logAudit } from '../services/auditService.js';
-import { getIo } from '../sockets/io.js';
+import { invalidateOnTrustChange } from '../cache/trustCaches';
+import { initDb } from '../config/database';
+import { incReputationEvent } from '../metrics/reputationMetrics';
+import { logAudit } from './auditService';
+import { getIo } from '../sockets/io';
 
 // Opsiyonel: login event kaydı (tablo yoksa migration eklemek gerekir)
 export async function recordUserLogin(userId, ip, userAgent, deviceFingerprint = null) {

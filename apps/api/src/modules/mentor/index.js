@@ -1,2 +1,2 @@
-export * from './mentor.controller.js';
-export * from './mentor.service.js';
+export * from './mentor.controller';
+export * from './mentor.service';

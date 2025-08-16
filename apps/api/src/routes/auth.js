@@ -2,9 +2,9 @@ import crypto from 'crypto';
 
 import express from 'express';
 
-import { signToken } from '../config/jwt.js';
-import { getRefreshStore } from '../core/refreshStore.js';
-import { authRequired } from '../middleware/auth.js';
+import { signToken } from '../config/jwt';
+import { getRefreshStore } from '../core/refreshStore';
+import { authRequired } from '../http/routes/auth';
 import {
   createUser,
   findUserByUsername,

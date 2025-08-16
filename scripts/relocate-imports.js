@@ -13,10 +13,11 @@ const codeGlobs = [
   "!apps/api/src/tests/**",
   "!apps/api/src/perf/**",
   "!apps/api/src/migrations/**",
+  "!apps/api/src/node_modules/**",
 ];
 
 // Build an index of files by basename for fuzzy lookup
-const allFiles = fg.sync("apps/api/src/**/*.{js,ts,cts,mts,cjs,mjs}", { dot: false });
+const allFiles = fg.sync("apps/api/src/**/*.{js,ts,cts,mts,cjs,mjs}", { dot: false, ignore: ["**/node_modules/**", "**/tests/**", "**/perf/**", "**/migrations/**"] });
 const byBase = new Map();
 for (const f of allFiles) {
   const base = path.basename(f);

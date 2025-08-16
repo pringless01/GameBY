@@ -1,11 +1,11 @@
-import { initDb } from '../config/database.js';
-import { envConfig } from '../config/env.js';
-import { setTradeWindowMetrics } from '../metrics/reputationMetrics.js';
-import { logAudit } from '../services/auditService.js';
-import { autoAdvanceOnEvent } from '../services/mentorService.js';
-import { applyDirectReputationDelta, emitReputationEvent, ReputationEventType, emitOnboardingStep, listDeltaRules } from '../services/reputationEvents.js';
-import { updateTrust } from '../services/userService.js';
-import { getIo } from '../sockets/io.js';
+import { initDb } from '../config/database';
+import { envConfig } from '../config/env';
+import { setTradeWindowMetrics } from '../metrics/reputationMetrics';
+import { logAudit } from './auditService';
+import { autoAdvanceOnEvent } from './mentorService';
+import { applyDirectReputationDelta, emitReputationEvent, ReputationEventType, emitOnboardingStep, listDeltaRules } from './reputationEvents';
+import { updateTrust } from './userService';
+import { getIo } from '../sockets/io';
 
 export const DAILY_CONTRACT_TRUST_CAP = 40; // ileride .env'e taşınabilir
 // Anti-abuse parametreleri

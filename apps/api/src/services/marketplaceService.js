@@ -1,4 +1,4 @@
-import { initDb } from '../config/database.js';
+import { initDb } from '../config/database';
 
 export async function createListing(sellerId, item, price){
   const db = await initDb();

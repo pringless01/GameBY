@@ -1,8 +1,8 @@
 import express from 'express';
 
-import { initDb } from '../config/database.js';
-import { authRequired, roleRequired } from '../middleware/auth.js';
-import { emitReputationEvent, ReputationEventType } from '../services/reputationEvents.js';
+import { initDb } from '../config/database';
+import { authRequired, roleRequired } from '../http/routes/auth';
+import { emitReputationEvent, ReputationEventType } from '../services/reputationEvents';
 
 const router = express.Router();
 
