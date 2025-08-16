@@ -62,25 +62,29 @@ function mapAuthError(code) {
 
 const router = express.Router();
 
-// In-memory refresh token store (single-use rotation)
+// Refresh token store (in-memory by default, Redis if configured)
 // key: token -> { userId, createdAt }
-const refreshStore = getRefreshStore();
+let _refreshStorePromise = null;
+async function refreshStore() {
+  if (!_refreshStorePromise) _refreshStorePromise = getRefreshStore();
+  return _refreshStorePromise;
+}
 
 function newRefreshToken(){
   return crypto.randomBytes(32).toString('hex');
 }
 
 function setRefreshCookie(res, token){
-  const maxAge = REFRESH_TTL_DAYS * 24 * 60 * 60; // seconds
+  const maxAge = Math.floor(REFRESH_TTL_MS / 1000); // seconds
   const isProd = process.env.NODE_ENV === 'production';
   const parts = [
     `refreshToken=${token}`,
     'Path=/',
     'HttpOnly',
-    isProd ? 'SameSite=Strict' : 'SameSite=Lax',
+    'SameSite=Strict',
     `Max-Age=${maxAge}`
   ];
-  if(isProd) parts.push('Secure');
+  if (isProd) parts.push('Secure');
   res.setHeader('Set-Cookie', parts.join('; '));
 }
 
@@ -171,7 +175,8 @@ router.post('/login', async (req, res) => {
   // Issue single-use refresh token cookie
   try {
     const rt = newRefreshToken();
-  await refreshStore.set(rt, { userId: user.id, createdAt: Date.now() }, REFRESH_TTL_MS);
+    const rs = await refreshStore();
+    await rs.set(rt, { userId: user.id, createdAt: Date.now() }, REFRESH_TTL_MS);
     setRefreshCookie(res, rt);
   } catch { /* ignore cookie errors in tests */ }
   return res.json({ token, user: { id: user.id, email: user.email, username: user.username, roles } });
@@ -199,18 +204,19 @@ router.post('/refresh', async (req, res) => {
   try {
     const rt = getCookie(req, 'refreshToken');
     if(!rt) return res.status(401).json({ error: 'invalid_refresh' });
-  const entry = await refreshStore.get(rt);
+  const rs = await refreshStore();
+  const entry = await rs.get(rt);
     if(!entry){
       return res.status(401).json({ error: 'invalid_refresh' });
     }
     // Single-use: revoke old token
-  await refreshStore.del(rt);
+  await rs.del(rt);
     const userId = entry.userId;
     // Minimal claims; roles/email can be fetched if needed (not required for test)
     const token = signToken(userId, {});
     // Rotate refresh token
     const newRt = newRefreshToken();
-  await refreshStore.set(newRt, { userId, createdAt: Date.now() }, REFRESH_TTL_MS);
+  await rs.set(newRt, { userId, createdAt: Date.now() }, REFRESH_TTL_MS);
     setRefreshCookie(res, newRt);
     return res.json({ token });
   } catch (e) {
