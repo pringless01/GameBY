@@ -13,6 +13,13 @@
 - Assumption: Lint/test kırıkları mevcut olabilir; bu çalışma davranışı değiştirmeyecek, yalnızca bellek/raporlama altyapısı ekler.
 
 ## Next Actions
+- CI: memory-rollup.yml haftalık cron + raporu PR açıklamasına ekle.
+- CI: sweep-report.json artifact (scripts/sweep.mjs + workflow).
+- compose smoke: dc:up → smoke:local → dc:down opsiyonel job.
+- PR templates: .github/PULL_REQUEST_TEMPLATE.md + docs/contributing.md.
+- CODEOWNERS + Renovate (draft PR, schedule haftalık).
+- Shared utils/types: cursor utils + dates + pagination (non-invasive).
+- Perf placeholder: docs/perf.md + k6 smoke stub + npm script.
 - [ ] MVP: Hafıza dosyaları + roll-up action + PR şablonları
 - [ ] Gelişim: Auto-task issue template ile iş akışı
 - [x] ESLint module boundaries: no-cycle ve no-restricted-imports ihlallerini düzelt (doğrulama tamam)
