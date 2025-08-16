@@ -1,1 +1,1 @@
-export { default } from './reputation.js';
+export { default } from '../../routes/reputation.js';

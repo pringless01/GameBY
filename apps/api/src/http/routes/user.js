@@ -1,1 +1,1 @@
-export { default } from './user.js';
+export { default } from '../../routes/user.js';

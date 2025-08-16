@@ -1,1 +1,1 @@
-export { default } from './role.js';
+export { default } from '../../routes/role.js';

@@ -1,1 +1,1 @@
-export { default } from './mentor.js';
+export { default } from '../../routes/mentor.js';

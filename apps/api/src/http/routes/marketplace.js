@@ -1,1 +1,1 @@
-export { default } from './marketplace.js';
+export { default } from '../../routes/marketplace.js';
