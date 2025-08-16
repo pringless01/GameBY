@@ -11,3 +11,8 @@
 5. **Dokümantasyonun Güncellenmesi**: Domain split işlemi ile ilgili olarak dokümantasyonu güncelleyip, değişikliklerin ve yeni yapının açıklamalarını ekle.
 
 — Agent: GameBY Agent • 2025-08-16T14:38:01.251Z
+
+
+## Fail checkpoint (attempt 3)
+- time: 2025-08-16T14:38:32.804Z
+- reason: Command failed: npm test
