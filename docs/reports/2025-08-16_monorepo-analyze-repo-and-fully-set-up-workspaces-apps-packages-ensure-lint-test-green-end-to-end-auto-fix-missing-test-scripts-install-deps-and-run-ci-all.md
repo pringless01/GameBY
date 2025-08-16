@@ -11,3 +11,8 @@
 5. **Bağımlılıkların Kurulumu ve CI Süreçleri**: Tüm bağımlılıkları kur ve CI (Continuous Integration) süreçlerini başlat. `ci:all` komutunu çalıştırarak her şeyin düzgün çalıştığını doğrula.
 
 — Agent: GameBY Agent • 2025-08-16T22:47:50.866Z
+
+
+## Fail checkpoint (attempt 3)
+- time: 2025-08-16T22:47:54.862Z
+- reason: Command failed: npm run lint
