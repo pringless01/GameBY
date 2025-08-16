@@ -220,11 +220,22 @@ function performMonorepoAction(act) {
   }
   return didWork;
 }
+// Çalıştırmadan önce bağımlılıkları garanti altına al (temiz ortamlar için)
+function ensureDependencies() {
+  const nm = path.join(repoRoot, 'node_modules');
+  if (!fs.existsSync(nm)) {
+    log('node_modules bulunamadı; npm ci çalıştırılıyor');
+    // npm ci tüm workspaceler için kökten kurulum yapar
+    sh(`npm ci`, { stdio: 'inherit' });
+  }
+}
 function lintAndTest() {
   if (DRY) {
     sh(`npm run lint --silent`, { stdio: "inherit" });
     return;
   }
+  // Temiz makinelerde otomatik kurulum
+  ensureDependencies();
   sh(`npm run lint`, { stdio: "inherit" });
   sh(`npm test`, { stdio: "inherit" });
 }
