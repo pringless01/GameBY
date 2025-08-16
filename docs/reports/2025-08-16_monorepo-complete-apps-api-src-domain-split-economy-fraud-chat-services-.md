@@ -1,22 +1,13 @@
 # Next Action: Monorepo: Complete apps/api/src domain split (economy/fraud/chat services)
 
-Alt Adımlar:
+1. **Domain Analizi:** Mevcut `apps/api/src` dizinindeki kod yapısını ve bağımlılıkları incele. Hangi dosyaların ekonomi, dolandırıcılık ve sohbet hizmetlerine ait olduğunu belirle.
 
-1. **Domain Analizi**: Mevcut apps/api/src yapısını analiz ederek ekonomi, dolandırıcılık ve sohbet hizmetleri için gereken domain sınırlarını belirle.
+2. **Dizin Yapısı Oluşturma:** Yeni dizin yapısını oluştur. `apps/api/src/economy`, `apps/api/src/fraud` ve `apps/api/src/chat` dizinlerini oluştur ve uygun alt dizinleri ekle.
 
-2. **Kod Yapısını Ayırma**: Belirlenen domainler doğrultusunda mevcut kodu alt dizinlere (economy, fraud, chat) ayır. Her bir domain için ayrı klasör yapısı oluştur.
+3. **Kod Taşıma:** Belirlenen dosyaları ve ilgili kod parçalarını uygun yeni dizinlere taşı. Her bir hizmet için gerekli olan dosyaları doğru şekilde yerleştir.
 
-3. **Bağımlılık Yönetimi**: Her domain için bağımlılıkları güncelle ve yönet. İlgili kütüphaneleri ve modülleri doğru dizinlere taşı.
+4. **Bağımlılıkları Güncelleme:** Taşınan dosyaların bağımlılıklarını güncelle. Yeni dizin yapısına uygun şekilde import ve export ifadelerini düzenle.
 
-4. **Testlerin Güncellenmesi**: Her domain için mevcut test senaryolarını güncelleyerek yeni yapıya uyumlu hale getir. Yeni test senaryoları ekle.
+5. **Testleri Güncelleme ve Çalıştırma:** Her hizmet için gerekli testleri güncelleyip çalıştır. Tüm testlerin başarılı olduğundan emin ol ve varsa hataları düzelt.
 
-5. **Dokümantasyon Güncellemesi**: Yapılan değişiklikleri ve yeni yapılandırmaları içerecek şekilde dokümantasyonu güncelle. Kullanıcı ve geliştirici belgelerini gözden geçir.
-
-Her alt adım tamamlandığında, gerekli değişiklikler yapılacak ve raporlanacaktır.
-
-— Agent: GameBY Agent • 2025-08-16T13:22:33.827Z
-
-
-## Fail checkpoint (attempt 3)
-- time: 2025-08-16T13:23:02.878Z
-- reason: Command failed: npm test
+— Agent: GameBY Agent • 2025-08-16T13:23:21.775Z
