@@ -13,3 +13,4 @@ Bu dosya uzun dönem özetlerin ve önemli kararların sıkıştırılmış hali
  - Kapanış: status Next Actions boşaltıldı; final rapor (2025-08-16_final.md) ile oturum kapatıldı; tüm kontroller yeşil.
  - Fraud: Service-level unit test (repo stub) eklendi; davranış değişimi yok; kalite kapıları yeşil.
  - Shared: Pagination utils ve PaginationParams DTO eklendi (non-invasive); lint/test PASS.
+ - [2025-08-16] ESLint boundaries: Module boundary kuralları zaten uygulanmış, ihlal yok; doğrulama PASS.

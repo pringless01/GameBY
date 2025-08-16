@@ -15,7 +15,7 @@
 ## Next Actions
 - [x] Fraud service: repo stub ile 1 adet service-level unit test ekle (davranış değiştirme yok)
 - [x] Shared utils/types: pagination, dates, hmac yardımcılarını non-invasive ekle
-- [ ] ESLint module boundaries: no-cycle ve no-restricted-imports ihlallerini düzelt
+- [x] ESLint module boundaries: no-cycle ve no-restricted-imports ihlallerini düzelt
 - [ ] Docs: architecture/index/security güncelle ve haftalık raporu oluştur
 - [ ] CI: sweep raporu artifact, compose smoke ve memory roll-up workflow doğrulaması (raporlamalı)
 
