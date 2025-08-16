@@ -80,3 +80,5 @@ Bu dosya uzun dönem özetlerin ve önemli kararların sıkıştırılmış hali
 - [2025-08-16] Haftalık özet: ESLint boundary doğrulaması ve hafıza/rapor akışı başlatıldı; davranış değişimi olmadan sürdürüldü.
 
 - [2025-08-16] Env: report-only env checker script eklendi; status Phase-2 madde tamamlandı.
+
+- [2025-08-16] Haftalık özet: mvp-haf-za-dosyalar-roll-up-action-pr-ablonlar- ilerledi
