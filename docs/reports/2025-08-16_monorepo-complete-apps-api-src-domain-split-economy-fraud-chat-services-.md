@@ -11,3 +11,8 @@
 5. **Dokümantasyon Güncellemesi**: Yeni domain yapısını ve taşınan kod ile ilgili güncellemeleri içeren dokümantasyonu güncelle ve projenin README dosyasına ekle.
 
 — Agent: GameBY Agent • 2025-08-16T14:15:56.999Z
+
+
+## Fail checkpoint (attempt 1)
+- time: 2025-08-16T14:16:01.349Z
+- reason: Command failed: npm run lint
