@@ -78,3 +78,5 @@ Bu dosya uzun dönem özetlerin ve önemli kararların sıkıştırılmış hali
  - [2025-08-16] CI: Tüm workflows (ci.yml, ci-full.yml, memory-rollup.yml) doğrulandı; memory rollup script test edildi.
 
 - [2025-08-16] Haftalık özet: ESLint boundary doğrulaması ve hafıza/rapor akışı başlatıldı; davranış değişimi olmadan sürdürüldü.
+
+- [2025-08-16] Env: report-only env checker script eklendi; status Phase-2 madde tamamlandı.
