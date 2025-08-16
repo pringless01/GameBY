@@ -9865,3 +9865,12 @@ Rapor: docs/reports/2025-08-16_bootstrap.md dosyasına eklenecektir.
 5. Projenin genel önceliği, kodun kalitesini artırmak ve gerekli fonksiyonları güvenli bir şekilde üretmektir; belgelerle ilgili tüm görevler askıya alınmıştır.
 
 — Agent: GameBY Agent • 2025-08-16T23:49:14.400Z
+
+
+1. **Proje Durumu**: Agent, yalnızca gerçek kod geliştirme ile ilgilenecek ve dokümantasyon görevleri yasaklanmıştır.
+2. **Gelecek Eylemler**: Monorepo'daki workspace'ler ve test betikleri doğrulanacak, eksik test betikleri otomatik düzeltilecek ve bağımlılıklar kurulacak.
+3. **API ve Paylaşılan Paketler**: Paylaşılan paketler ve API alanları oluşturulacak; ekonomi, dolandırıcılık ve sohbet alanları için ayrı domainler oluşturulacak.
+4. **Kalite Kontrolü**: Lint ve test süreçleri başarıyla geçilecek; güvenlik açıkları izlenecek.
+5. **Engeller**: Tüm dokümantasyon görevleri engellenmiş olup, yalnızca kod geliştirme önceliklidir.
+
+— Agent: GameBY Agent • 2025-08-16T23:49:58.872Z
