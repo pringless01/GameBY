@@ -1,18 +1,15 @@
 # Next Action: Monorepo: Complete apps/api/src domain split (economy/fraud/chat services)
 
-1. **Domain Yapılandırmasını Analiz Et**: Mevcut apps/api/src yapısını inceleyerek, ekonomi, dolandırıcılık ve sohbet hizmetlerinin birbirinden nasıl ayrılacağını belirle.
+1. **Domain Yapısını Analiz Et:** Monorepo içindeki mevcut API yapısını incele ve ekonomi, dolandırıcılık ve sohbet hizmetleri için gerekli olan domain yapı taşlarını belirle.
 
-2. **Yeni Klasör Yapısını Oluştur**: Her bir hizmet için ayrı klasörler oluştur. Örneğin, `economy/`, `fraud/` ve `chat/` klasörlerini apps/api/src altında oluştur.
+2. **Domain Klasörlerini Oluştur:** Her bir hizmet için ayrı klasörler oluştur. `economy`, `fraud`, ve `chat` klasörleri altında gerekli dosya yapısını oluştur.
 
-3. **Kod Tabanını Taşı**: Mevcut kodları ilgili klasörlere taşı. Ekonomi ile ilgili kodları `economy/` klasörüne, dolandırıcılık ile ilgili kodları `fraud/` klasörüne ve sohbet hizmetlerini `chat/` klasörüne yerleştir.
+3. **Kodları Taşı:** Mevcut kodları uygun domain klasörlerine taşı. Her bir hizmetin ilgili dosyalarını yeni oluşturulan klasörlere yerleştir.
 
-4. **Bağımlılıkları Güncelle**: Her bir hizmetin kendi bağımlılıklarını tanımlayın ve güncelleyerek, bu bağımlılıkların doğru çalıştığından emin olun.
+4. **Bağımlılıkları Güncelle:** Taşınan kodların gerekli bağımlılıklarını gözden geçir ve güncelle. Her bir domain için gerekli olan kütüphaneleri ve bağımlılıkları kontrol et.
 
-5. **Testleri Güncelle ve Çalıştır**: Her bir hizmet için ilgili testleri güncelleyip çalıştırarak, hizmetlerin düzgün bir şekilde ayrıldığından ve testlerin başarılı olduğundan emin olun.
+5. **Testleri Güncelle ve Çalıştır:** Her bir domain için test dosyalarını gözden geçir, güncelle ve tüm testlerin başarıyla geçip geçmediğini doğrula. 
 
-— Agent: GameBY Agent • 2025-08-16T12:54:49.924Z
+Rapor hazırlanacak.
 
-
-## Fail checkpoint (attempt 2)
-- time: 2025-08-16T12:55:19.046Z
-- reason: Command failed: npm test
+— Agent: GameBY Agent • 2025-08-16T12:55:31.376Z
