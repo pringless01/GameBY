@@ -1,17 +1,13 @@
 # Next Action: MVP: Hafıza dosyaları + roll-up action + PR şablonları
 
-Aşağıda belirtilen aksiyonu 5 alt adıma böldüm:
+1. **Hafıza Dosyalarının Oluşturulması**: Projeye özgü hafıza dosyaları oluşturulacak. Bu dosyalar, projeye dair önemli bilgileri ve kararları içerecek şekilde hazırlanacak.
 
-1. **Hafıza Dosyaları Oluşturma**: Projeye ait hafıza dosyalarını oluşturmak için gerekli şablonları ve içerikleri belirle.
+2. **Roll-Up Aksiyonlarının Tanımlanması**: Roll-up aksiyonları, projedeki genel ilerlemeyi ve önemli olayları özetleyen adımlar olarak tanımlanacak. Bu aksiyonlar, proje yönetimini kolaylaştıracak.
 
-2. **Roll-up Action Planı Hazırlama**: Roll-up action için bir plan oluştur. Bu plan, hangi bilgilerin toplanacağı ve nasıl raporlanacağına dair detayları içermelidir.
+3. **PR Şablonlarının Tasarlanması**: Pull Request (PR) şablonları oluşturulacak. Bu şablonlar, kod değişikliklerinin nasıl sunulacağını ve inceleyeceğini standartlaştıracak.
 
-3. **PR Şablonları Tasarımı**: Proje için kullanılacak PR (Pull Request) şablonlarını tasarla. Bu şablonlar, PR'ların nasıl oluşturulacağını ve hangi bilgilerin sağlanması gerektiğini belirtmelidir.
+4. **İlgili Dokümantasyonun Güncellenmesi**: Hafıza dosyaları ve PR şablonları ile ilgili dokümantasyon güncellenecek. Bu, ekip üyelerinin bu araçları nasıl kullanacaklarına dair bilgi sahibi olmalarını sağlayacak.
 
-4. **Hafıza Dosyalarını Güncelleme**: Oluşturulan hafıza dosyalarını güncelleyerek, yeni eklenen bilgileri ve değişiklikleri kaydet.
+5. **Geri Bildirim Sürecinin Başlatılması**: Oluşturulan hafıza dosyaları, roll-up aksiyonları ve PR şablonları için ekipten geri bildirim toplanacak. Bu geri bildirimler, ilerleyen süreçlerde yapılacak iyileştirmeler için değerlendirilecek.
 
-5. **Dokümantasyon ve Raporlama**: Tüm bu adımların sonuçlarını ve süreçlerini dokümante et. Raporu ilgili dosyaya ekle.
-
-Her adımda gerçek değişiklikler yapılacak ve sonuçlar kaydedilecektir.
-
-— Agent: GameBY Agent • 2025-08-16T10:34:50.695Z
+— Agent: GameBY Agent • 2025-08-16T10:35:36.431Z
