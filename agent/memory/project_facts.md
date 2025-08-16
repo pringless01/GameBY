@@ -56,6 +56,9 @@
 
 - [2025-08-16 14:10] memory/bootstrap: Rapor güncellendi; Next Actions roadmap'tan seed edildi (docs/reports/2025-08-16_bootstrap.md)
 
+ - [2025-08-16T06:52:00Z] env/check: scripts/print-env-check.js eklendi (rapor-only); status Phase-2 madde tamamlandı.
+ - [2025-08-16T06:52:10Z] memory: env rehberi raporu oluşturuldu (docs/reports/2025-08-16_env-rehberi-scripts-print-env-check-js-rapor-only.md).
+
 - [2025-08-16T06:37:28.367Z] bootstrap summary appended
 - [2025-08-16T06:37:30.480Z] bootstrap summary appended
 - [2025-08-16T06:37:32.586Z] bootstrap summary appended
