@@ -1,18 +1,13 @@
 # Next Action: Monorepo: Complete apps/api/src domain split (economy/fraud/chat services)
 
-1. **Domain Analizi**: Uygulamanın mevcut yapısını inceleyerek, ekonomi, dolandırıcılık ve sohbet hizmetleri için gerekli olan bileşenleri ve bağımlılıkları belirle.
+1. **Domain Yapılandırmasını Analiz Et**: Mevcut apps/api/src yapısını inceleyerek, ekonomi, dolandırıcılık ve sohbet hizmetlerinin birbirinden nasıl ayrılacağını belirle.
 
-2. **Klasör Yapısı Oluşturma**: Yeni domain'ler için uygun klasör yapısını oluştur. `apps/api/src/economy`, `apps/api/src/fraud`, ve `apps/api/src/chat` klasörlerini ekle.
+2. **Yeni Klasör Yapısını Oluştur**: Her bir hizmet için ayrı klasörler oluştur. Örneğin, `economy/`, `fraud/` ve `chat/` klasörlerini apps/api/src altında oluştur.
 
-3. **Kod Taşınması**: Mevcut kodu uygun domain klasörlerine taşımak için kodu yeniden düzenle. Her domain için ilgili dosyaları ve kaynakları doğru klasöre yerleştir.
+3. **Kod Tabanını Taşı**: Mevcut kodları ilgili klasörlere taşı. Ekonomi ile ilgili kodları `economy/` klasörüne, dolandırıcılık ile ilgili kodları `fraud/` klasörüne ve sohbet hizmetlerini `chat/` klasörüne yerleştir.
 
-4. **Bağımlılıkların Düzenlenmesi**: Her domain için gerekli bağımlılıkları ve konfigürasyonları güncelle. Package.json dosyalarını kontrol et ve gerekli güncellemeleri yap.
+4. **Bağımlılıkları Güncelle**: Her bir hizmetin kendi bağımlılıklarını tanımlayın ve güncelleyerek, bu bağımlılıkların doğru çalıştığından emin olun.
 
-5. **Testlerin Güncellenmesi**: Her domain için test dosyalarını kontrol et ve taşınan kodlar için gerekli testleri güncelle veya oluştur. Testlerin geçerliliğini sağlamak için çalıştır ve onayla.
+5. **Testleri Güncelle ve Çalıştır**: Her bir hizmet için ilgili testleri güncelleyip çalıştırarak, hizmetlerin düzgün bir şekilde ayrıldığından ve testlerin başarılı olduğundan emin olun.
 
-— Agent: GameBY Agent • 2025-08-16T12:54:07.224Z
-
-
-## Fail checkpoint (attempt 1)
-- time: 2025-08-16T12:54:36.605Z
-- reason: Command failed: npm test
+— Agent: GameBY Agent • 2025-08-16T12:54:49.924Z
