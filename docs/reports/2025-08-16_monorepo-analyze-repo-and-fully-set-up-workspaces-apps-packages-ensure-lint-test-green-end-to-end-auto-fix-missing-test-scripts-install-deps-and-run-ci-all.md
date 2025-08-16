@@ -21,3 +21,8 @@
    Çıktı: "Bağımlılıklar yüklendi ve CI süreci başarıyla başlatıldı."
 
 — Agent: GameBY Agent • 2025-08-16T23:29:21.493Z
+
+
+## Fail checkpoint (attempt 1)
+- time: 2025-08-16T23:29:25.523Z
+- reason: Command failed: npm run lint
