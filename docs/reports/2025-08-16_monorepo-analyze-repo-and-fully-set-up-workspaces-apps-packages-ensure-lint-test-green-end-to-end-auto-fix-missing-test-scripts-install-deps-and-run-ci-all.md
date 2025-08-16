@@ -11,3 +11,8 @@
 5. **Bağımlılıkların Kurulumu ve CI Süreci**: Tüm bağımlılıkları kurup, CI süreçlerini çalıştırarak her şeyin düzgün çalıştığını doğrulayacağım. Çıktı: Tüm bağımlılıklar kuruldu, CI süreçleri başarıyla çalıştırıldı.
 
 — Agent: GameBY Agent • 2025-08-16T22:16:07.360Z
+
+
+## Fail checkpoint (attempt 1)
+- time: 2025-08-16T22:16:11.386Z
+- reason: Command failed: npm run lint
