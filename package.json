@@ -14,8 +14,14 @@
     "lint": "eslint . --ext .js,.ts --max-warnings=0",
     "lint:fix": "eslint . --ext .js,.ts --fix",
     "test": "npm -ws run test",
+    "smoke:local": "node apps/api/src/scripts/smoke.js",
+    "dc:up": "docker compose up -d",
+    "dc:down": "docker compose down -v --remove-orphans",
     "coverage": "npm --prefix apps/api/src run coverage",
     "ci:all": "npm --prefix apps/api/src test"
+  },
+  "engines": {
+    "node": ">=18"
   },
   "devDependencies": {
     "@eslint/js": "^9.33.0",
