@@ -6087,3 +6087,16 @@ Rapor: docs/reports/2025-08-16_bootstrap.md dosyasına eklendi.
 5. **Kalite Durumu**: Projede lint ve test süreçleri başarılı bir şekilde geçildi. Güvenlik açısından düşük seviyede iki zafiyet bulundu ancak bu durum izlenmeye alındı.
 
 — Agent: GameBY Agent • 2025-08-16T14:14:25.642Z
+
+
+1. **Geliştirme Odaklılık:** Belge ve hafıza görevleri yasaklandı, ajan yalnızca gerçek kod geliştirme görevlerine odaklanacak.
+
+2. **Monorepo Güncellemeleri:** Monorepo'da ekonomi, dolandırıcılık ve sohbet hizmetleri için alan ayrımı yapılacak; ortak iş mantığı paketlere ayrılacak.
+
+3. **Veritabanı Araçları:** Ortak veritabanı kullanımları için yeni paketler oluşturulacak; uygun inter-servis iletişim desenleri uygulanacak.
+
+4. **Doğrulayıcılar ve İşlem Şablonları:** Ortak doğrulayıcılar için yeni paketler eklenecek; paylaşım ve doğrulama işlemleri için standart hale getirilecek.
+
+5. **Kalite Kontrolü:** Tüm kod değişiklikleri için lint ve test süreçleri başarılı bir şekilde geçildi; güvenlik sorunları izlenmeye alınacak.
+
+— Agent: GameBY Agent • 2025-08-16T14:14:40.815Z
