@@ -6177,3 +6177,12 @@ Rapor: docs/reports/2025-08-16_bootstrap.md güncellenecek.
 5. Proje, modüler yapı ve bağımsız hizmetlerin oluşturulmasıyla geliştirme sürecini sürdürüyor.
 
 — Agent: GameBY Agent • 2025-08-16T14:16:43.907Z
+
+
+1. Proje, "pringless01/GameBY" adlı monorepo yapısında geliştirilmektedir ve öncelikle gerçek kod geliştirmeye odaklanmaktadır.
+2. Belgelendirme görevleri tamamen yasaklanmış, agent sadece kod geliştirme ile ilgilenecektir.
+3. Öncelikli eylemler arasında uygulama alanlarının ayrılması, ortak iş mantığının paketlere çıkarılması ve uygun servisler arası iletişim desenlerinin uygulanması yer almaktadır.
+4. Projenin mevcut durumu, lint ve testlerin başarılı olmasıyla birlikte güvenlik açıklarının izlenmeye alınması ile devam etmektedir.
+5. Gelecek adımlar, yukarıda belirtilen öncelikli eylemlerden oluşmakta ve belgelendirme ya da hafıza güncellemeleri yapılmayacaktır.
+
+— Agent: GameBY Agent • 2025-08-16T14:16:58.391Z
