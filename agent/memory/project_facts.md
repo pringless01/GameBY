@@ -16,6 +16,14 @@
 - Kritik kurallar: importlarda .js uzantısı, ESM modülü, controller-first; middleware yolu tekil: `apps/api/src/http/middleware/auth.js`.
 - Leaderboard kuralları ve header konvansiyonu: `.github/copilot-instructions.md` dokümanındaki sabit başlıklar korunmalı.
 
+## Workspaces ve scriptler (özet)
+- Root workspaces: apps/*, apps/api/src, packages/*
+- Root scripts:
+	- lint, lint:fix, test (workspaces), smoke:local, dc:up, dc:down, coverage, ci:all
+- apps/api/src (oyun-backend):
+	- test kompozisyonu: unit (cursor-security, reputation-decay, onboarding, cache, auth-refresh) + integration (contracts, funds, barter, trustcap, leaderboard, mentor-flow, fraud-risk, contract-risk, abuse-stats, weak-secret, ws-auth, marketplace-idem)
+- CI workflows: ci.yml (root workspaces), ci-full.yml (server pipeline), memory-rollup.yml (günlük roll-up)
+
 ## Açık işler
 - Domain split: economy, fraud, chat mantığını service/repo katmanlarına indirmek (davranış değiştirmeden).
 - ESLint modül sınırlarını sertleştirmek (no-cycle, no-restricted-imports; import/order; no-unused-vars istisnaları).
@@ -35,3 +43,4 @@
 ---
 - [2025-08-16 12:00] memory/bootstrap: İlk okuma & 5 maddelik özet raporu eklendi (docs/reports/2025-08-16_bootstrap.md).
 - [2025-08-16 12:10] status/next-actions: Run workflow adımı Blocked olarak not edildi; rapor eklendi (docs/reports/2025-08-16_run-workflow.md).
+- [2025-08-16 12:18] memory/project_facts: Repo workspaces, scriptler ve CI özetleri eklendi (docs/reports/2025-08-16_project-facts.md).

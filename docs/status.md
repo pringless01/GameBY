@@ -14,7 +14,7 @@
 
 ## Next Actions
 - [ ] İlk manuel "Run workflow" yap ve raporu doğrula (Blocked: GitHub UI üzerinden manuel tetik gerekli)
-- [ ] Project Facts içine repo bilgilerini doldur
+- [x] Project Facts içine repo bilgilerini doldur
 - [ ] README’ye "Hafıza Sistemi Nasıl Çalışır?" bölümü ekle
 
 ## Blocked
