@@ -1,26 +1,17 @@
 # Next Action: Monorepo: Complete apps/api/src domain split (economy/fraud/chat services)
 
-Alt Adım 1: **Ekonomi Servisini Ayırma**
-- apps/api/src/economy dizini oluşturulacak.
-- Mevcut ekonomi ile ilgili kodlar bu dizine taşınacak.
-- Ekonomi servisi için gerekli bağımlılıklar güncellenecek.
+Aksiyon: "Monorepo: Complete apps/api/src domain split (economy/fraud/chat services)" için alt adımlar:
 
-Alt Adım 2: **Dolandırıcılık Servisini Ayırma**
-- apps/api/src/fraud dizini oluşturulacak.
-- Mevcut dolandırıcılık ile ilgili kodlar bu dizine taşınacak.
-- Dolandırıcılık servisi için gerekli bağımlılıklar güncellenecek.
+1. **Analiz ve Planlama**: Mevcut kod yapısını inceleyerek domain'leri (ekonomi, dolandırıcılık, sohbet hizmetleri) belirle ve her bir domain için gereken kaynakları ve dosyaları planla.
 
-Alt Adım 3: **Sohbet Servisini Ayırma**
-- apps/api/src/chat dizini oluşturulacak.
-- Mevcut sohbet ile ilgili kodlar bu dizine taşınacak.
-- Sohbet servisi için gerekli bağımlılıklar güncellenecek.
+2. **Klasör Yapısını Oluşturma**: `apps/api/src` altında `economy`, `fraud` ve `chat` adında yeni klasörler oluştur ve her bir domain için başlangıç dosyalarını yerleştir.
 
-Alt Adım 4: **Yapılandırma Dosyalarını Güncelleme**
-- Her bir servis için yapılandırma dosyaları güncellenecek.
-- Servislerin bağımsız çalışabilmesi için gerekli ayarlar yapılacak.
+3. **Kod Ayrıştırma**: Mevcut kodu analiz et ve ilgili domain'lere ait olan kod parçalarını uygun klasörlere taşımaya başla. Her bir domain için ayrı modüller oluştur.
 
-Alt Adım 5: **Test ve Doğrulama**
-- Yeni dizin yapısında her servisin testleri çalıştırılacak.
-- Tüm servislerin düzgün çalıştığından emin olunacak ve gerekli düzeltmeler yapılacak.
+4. **Bağımlılıkların Düzenlenmesi**: Domain'ler arası bağımlılıkları kontrol et ve güncelle. Her domain'in bağımsız çalışabilmesi için gereken ayarlamaları yap.
 
-— Agent: GameBY Agent • 2025-08-16T12:07:31.843Z
+5. **Test ve Doğrulama**: Her domain için oluşturulan yapıyı test et. Birim testleri yaz ve tüm testlerin geçip geçmediğini kontrol et. 
+
+Bu adımlar tamamlandığında, monorepo yapısı belirtilen domain'lere göre bölünmüş olacak.
+
+— Agent: GameBY Agent • 2025-08-16T12:08:19.727Z
