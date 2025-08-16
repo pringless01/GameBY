@@ -1,23 +1,13 @@
 # Next Action: Monorepo: Analyze repo and fully set up workspaces (apps/*, packages/*), ensure lint/test green end-to-end; auto-fix missing test scripts; install deps and run ci:all
 
-1. **Repo Analizi**: Monorepo içindeki `apps/*` ve `packages/*` dizinlerini analiz et. Projelerin yapılandırmalarını ve bağımlılıklarını gözden geçir.
-   - Çıktı: Repo analizi tamamlandı. Uygulama ve paket dizinleri belirlendi.
+1. **Workspace Analizi**: Monorepo içerisindeki `apps/*` ve `packages/*` dizinlerini analiz et. Her bir uygulama ve paket için gerekli yapılandırmaları ve bağımlılıkları belirle.
 
-2. **Workspace Kurulumu**: `apps/*` ve `packages/*` için gerekli workspace ayarlarını yap. Gerekli yapılandırma dosyalarını güncelle.
-   - Çıktı: Workspace kurulumu tamamlandı. Tüm uygulama ve paketler için yapılandırmalar güncellendi.
+2. **Lint ve Test Kontrolü**: Tüm workspace'lerde lint ve test süreçlerini çalıştırarak, her birinin başarılı bir şekilde geçmesini sağla. Hatalı kodları düzelt.
 
-3. **Lint/T test Kontrolü**: Tüm projelerde linting ve test işlemlerini çalıştırarak yeşil duruma getirin.
-   - Çıktı: Lint ve test kontrolü tamamlandı. Tüm projelerde yeşil durum sağlandı.
+3. **Eksik Test Scriptlerini Otomatik Düzeltme**: Her bir paket ve uygulama için eksik olan test scriptlerini otomatik olarak oluştur ve mevcut olanları güncelle.
 
-4. **Eksik Test Scriptlerini Düzeltme**: Eksik test scriptlerini otomatik olarak ekle ve mevcut test yapılandırmalarını güncelle.
-   - Çıktı: Eksik test scriptleri otomatik olarak düzeltildi. Tüm projelerde test scriptleri tamamlandı.
+4. **Bağımlılıkları Yükleme**: Gerekli bağımlılıkları belirle ve tüm projelerde `npm install` veya `yarn install` komutunu çalıştırarak yükle.
 
-5. **Bağımlılıkları Yükleme ve CI Çalıştırma**: Tüm bağımlılıkları yükle ve sürekli entegrasyon (CI) sürecini çalıştır.
-   - Çıktı: Bağımlılıklar başarıyla yüklendi. CI süreci başarıyla çalıştırıldı.
+5. **CI Sürecini Çalıştırma**: Tüm workspace'lerde `ci:all` komutunu çalıştırarak sürekli entegrasyon süreçlerini başlat ve tüm testlerin geçmesini sağla.
 
-— Agent: GameBY Agent • 2025-08-16T22:45:58.638Z
-
-
-## Fail checkpoint (attempt 3)
-- time: 2025-08-16T22:46:02.836Z
-- reason: Command failed: npm run lint
+— Agent: GameBY Agent • 2025-08-16T22:46:20.567Z
