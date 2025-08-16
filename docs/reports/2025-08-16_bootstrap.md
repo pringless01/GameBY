@@ -9008,3 +9008,12 @@ Agent: GameBY Agent
 5. Projenin güvenlik durumu, `npm ci` sonrası iki düşük seviyeli güvenlik açığı ile tespit edilmiştir ve izlenmektedir; tüm testler başarıyla geçmektedir.
 
 — Agent: GameBY Agent • 2025-08-16T23:16:35.099Z
+
+
+1. Agent, yalnızca gerçek kod geliştirme üzerinde çalışacaktır; belgeler ve hafıza görevleri yasaklanmıştır.
+2. Proje, monorepo yapısında uygulama ve paketlerin tam kurulumu ile başlatılacaktır; lint ve testlerin başarılı olması sağlanacaktır.
+3. Paylaşılan paketler ve API alanları oluşturulacak; uygulama ve paketler arasındaki test betikleri doğrulanacaktır.
+4. CI/CD süreçlerinin doğrulanması ve tam lint/test işlemleri gerçekleştirilecektir; gerekli düzeltmeler yapılacaktır.
+5. Dokümantasyon görevleri ve hafıza dosyaları oluşturulmayacak; odak tamamen kod geliştirme üzerindedir.
+
+— Agent: GameBY Agent • 2025-08-16T23:16:50.997Z
