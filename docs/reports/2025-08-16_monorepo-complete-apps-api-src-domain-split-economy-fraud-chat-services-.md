@@ -11,3 +11,8 @@
 5. **Test ve Doğrulama**: Her bir modülün ayrı ayrı test edilmesi ve entegrasyon testlerinin gerçekleştirilerek tüm uygulamanın düzgün çalıştığının doğrulanması.
 
 — Agent: GameBY Agent • 2025-08-16T14:37:13.637Z
+
+
+## Fail checkpoint (attempt 2)
+- time: 2025-08-16T14:37:47.213Z
+- reason: Command failed: npm test
