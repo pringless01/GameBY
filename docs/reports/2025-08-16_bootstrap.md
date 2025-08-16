@@ -7998,3 +7998,12 @@ Yukarıdaki bilgiler hafızaya eklenecek ve bir rapor hazırlanacaktır.
 5. **Açık İşler**: Ekonomik, dolandırıcılık ve sohbet gibi alanların hizmet katmanlarına ayrılması ve modül sınırlamalarının güçlendirilmesi gibi görevler bulunuyor.
 
 — Agent: GameBY Agent • 2025-08-16T22:46:30.690Z
+
+
+1. Proje, yalnızca gerçek kod geliştirme üzerine odaklanmakta; belgeler ve hafıza güncellemeleri yasaklanmıştır.
+2. Monorepo, çalışma alanlarının tam kurulumu, eksik test scriptlerinin otomatik düzeltilmesi ve bağımlılıkların yüklenmesi gibi görevlerle yapılandırılacaktır.
+3. Paylaşılan paketlerin ve API alanlarının taslakları oluşturulacak; bu süreçte lint ve testlerin başarılı olması sağlanacaktır.
+4. Çeşitli iş akışlarının doğrulanması ve test scriptlerinin gözden geçirilmesi gerekmekte; tüm CI süreçlerinin işlevselliği kontrol edilecektir.
+5. Dokümantasyon ve hafıza güncellemeleri tamamen durdurulmuş olup, mevcut durum ve açık işler üzerine odaklanılacaktır.
+
+— Agent: GameBY Agent • 2025-08-16T22:46:46.816Z
