@@ -3197,3 +3197,12 @@ Rapor: docs/reports/2025-08-16_bootstrap.md dosyasına eklendi.
 5. **Gelecek Aşamalar**: ESLint modül sınırlarının düzeltilmesi, shared utils/types genişletilmesi ve CI rehberi oluşturulması gibi görevler ön plandadır.
 
 — Agent: GameBY Agent • 2025-08-16T10:34:07.552Z
+
+
+1. Proje, hafıza dosyaları ve roll-up işlemleri ile birlikte MVP aşamasına geçiş yapmayı hedefliyor.
+2. Python 3.11 ile GitHub Actions üzerinde hafıza altyapısı kurulması ve roll-up günlük işlemlerinin otomatikleştirilmesi planlanmıştır.
+3. CI süreçlerinde temel lint ve test komutları kullanılmakta, bazı kırıkların mevcut olabileceği kabul edilmektedir.
+4. Proje, Node.js monorepo yapısına sahiptir ve önemli dosyalar arasında agent/prompt.md, agent/memory/* ve docs/reports/ bulunmaktadır.
+5. Geçmişte yapılan güncellemelerle birlikte, haftalık raporlar oluşturulmakta ve CI iş akışları manuel tetiklemeye ihtiyaç duymaktadır.
+
+— Agent: GameBY Agent • 2025-08-16T10:34:45.743Z
