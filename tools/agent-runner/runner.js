@@ -27,6 +27,44 @@ const STOP_FILE = path.join(repoRoot, "agent", "STOP");
 const LOCK_FILE = path.join(repoRoot, "agent", "agent.lock");
 const RETRIES = Math.max(0, Number(process.env.RETRY_ON_FAIL || 2));
 
+// Announce + throttle + hybrid model (idempotent-safe)
+const ANNOUNCE   = /^(1|true)$/i.test(process.env.ANNOUNCE||"");
+const ANNOUNCE_TO= process.env.ANNOUNCE_TO || "pr:16"; // pr:<id> veya "file"
+const MAX_CPH    = Number(process.env.MAX_COMMITS_PER_HOUR||10);
+
+const MODEL_PRIMARY = process.env.MODEL_PRIMARY || process.env.MODEL || "gpt-4o";
+const MODEL_THINK   = process.env.MODEL_THINK   || "gpt-5";
+const USE_GPT5_ON   = (process.env.USE_GPT5_ON || "")
+  .split(",").map(s=>s.trim()).filter(Boolean);
+
+const commitHistory = [];
+function canCommit(){
+  const now=Date.now();
+  while(commitHistory.length && now-commitHistory[0]>60*60*1000) commitHistory.shift();
+  return commitHistory.length < MAX_CPH;
+}
+function markCommit(){ commitHistory.push(Date.now()); }
+
+function announce({action, summary, commitSha, filesChanged}){
+  if(!ANNOUNCE) return;
+  const line = `• ${new Date().toISOString()} | ${action} | ${filesChanged} file(s) | commit ${commitSha}\n${summary}\n`;
+  try{
+    if(ANNOUNCE_TO.startsWith("pr:")){
+      const pr=ANNOUNCE_TO.split(":")[1];
+      sh(`gh pr comment ${pr} -b "${line.replace(/"/g,'\\"')}"`);
+    }else{
+      const p=`docs/reports/_activity.md`;
+      write(p,(read(p)+"\n"+line));
+      sh(`git add -A`); sh(`git commit -m "docs(report): append activity feed"`);
+    }
+  }catch{}
+}
+
+function pickModelFor(title=""){
+  const hit = USE_GPT5_ON.some(k=>k && title.toLowerCase().includes(k));
+  return hit ? MODEL_THINK : MODEL_PRIMARY;
+}
+
 const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 // Görev tipine göre model seçimi
@@ -108,7 +146,12 @@ function write(rel, s) {
 }
 function gitAddCommit(msg) {
   if (DRY) return;
-  try { sh(`git add -A`); sh(`git commit -m "${msg.replace(/"/g, '\\"')}"`); } catch {}
+  if (!canCommit()){
+    write(`docs/reports/_throttle.md`, `${new Date().toISOString()} throttled: ${msg}\n`);
+    return;
+  }
+  sh(`git add -A`);
+  try{ const out = sh(`git commit -m "${msg.replace(/"/g,'\\"')}"`); markCommit(); return out; }catch{}
 }
 function lintAndTest() {
   if (DRY) {
@@ -118,33 +161,25 @@ function lintAndTest() {
   sh(`npm run lint`, { stdio: "inherit" });
   sh(`npm test`, { stdio: "inherit" });
 }
-async function askLLM(input, taskType = 'default', contextInfo = '') {
+async function askLLM(input, { actionTitle } = {}) {
   const noKey = !process.env.OPENAI_API_KEY;
+  const model = pickModelFor(actionTitle||"");
   if (DRY || noKey) {
-    // Deterministic lightweight fallback (no external calls in DRY or when key missing)
     const text = Array.isArray(input) ? (input[1]?.content || "") : String(input || "");
     const head = text.split("\n").slice(0, 3).join(" ").slice(0, 160);
-    const stub = `- [stub] ${head}\n- [stub] Yerel özet (DRY/no-key)\n- [stub] Plan oluşturuldu\n- [stub] Dosyalar güncellenecek\n- [stub] Lint/Test korunur`;
+    const stub = `- [stub:${model}] ${head}\n- [stub] Yerel özet (DRY/no-key)\n- [stub] Plan oluşturuldu\n- [stub] Dosyalar güncellenecek\n- [stub] Lint/Test korunur`;
     log(`LLM(out): ${trimOut(stub, 200)}`);
     return stub;
   }
   try {
-    const selectedModel = selectModel(taskType);
-    const messages = Array.isArray(input) ? input : [{ role: "user", content: String(input) }];
-    
-    // Context bilgisi varsa system message'a ekle
-    if (contextInfo && messages.length > 0 && messages[0].role === 'system') {
-      messages[0].content += `\n\nGÖREV TİPİ: ${taskType}\nKONTEKST: ${contextInfo}`;
-    }
-    
-    const res = await client.chat.completions.create({
-      model: selectedModel,
-      messages: messages,
-      temperature: taskType === 'heavy' ? 0.3 : 0.7, // Ağır işlerde daha deterministik
-      max_tokens: taskType === 'heavy' ? 3000 : 2000   // Ağır işlerde daha uzun yanıt
+    const res = await client.responses.create({
+      model,
+      input,
+      max_output_tokens: Number(process.env.OPENAI_MAX_OUTPUT_TOKENS||0)||undefined,
+      temperature: Number(process.env.OPENAI_TEMPERATURE||0.2)
     });
-    const text = res.choices[0]?.message?.content || "";
-    log(`LLM(${selectedModel}): ${trimOut(text, 200)}`);
+    const text = res.output_text || "";
+    log(`LLM(${model}): ${trimOut(text, 200)}`);
     return text;
   } catch (e) {
     const stub = `- [stub] LLM erişimi başarısız; offline fallback kullanıldı\n- [stub] Plan ve özet yerel üretildi`;
@@ -182,31 +217,27 @@ function updateHeartbeat() {
   write(p, s);
   gitAddCommit(`chore(agent): heartbeat update`);
 }
-function ensureNextActions() {
+function ensureNextActions(){
   ensureStatusSkeleton();
-  const statusPath = "docs/status.md";
-  let status = read(statusPath);
-  const { hasAny, openCount } = parseNextActionsBlock(status);
-
-  // EĞER açık madde yoksa (0) veya hiç madde yoksa → seed et
-  if (hasAny && openCount > 0) return;
+  const statusPath="docs/status.md";
+  let status=read(statusPath);
+  const {hasAny,openCount}=parseNextActionsBlock(status);
+  if(hasAny && openCount>0) return;
 
   const roadmap = read("tasks/roadmap.md");
-  const bullets = (roadmap.match(/^\- .+$/gm) || []).slice(0, 5);
+  const bullets = (roadmap.match(/^\- .+$/gm) || []).slice(0,7);
   const seed = bullets.length ? bullets : [
-    "- ESLint module boundaries düzelt",
-    "- Shared utils/types (non-invasive) genişlet",
-    "- Env rehberi + scripts/print-env-check.js (rapor-only)",
-    "- CI: memory-rollup + sweep artifact",
-    "- Haftalık rapor oluştur"
+    "- Security: CodeQL + Trivy + SBOM (report-only)",
+    "- Release: standard-version scripts + release.yml (no tag push)",
+    "- Prod cookies: strict flags via feature flag (default OFF)",
+    "- RefreshStore: redis adapter feature-flag stub (default OFF)",
+    "- GHCR: docker metadata + buildx tag standardization (no push)",
+    "- Docs: runbooks index + architecture note (no behavior change)",
+    "- Weekly: memory-rollup check + sweep trigger"
   ];
-
-  const injected = status.replace(
-    /(##\s*Next Actions\s*\n*)([\s\S]*?)(?=\n##|\n#|$)/i,
-    (_, head) => `${head}${seed.join("\n")}\n`
-  );
-
-  write(statusPath, injected);
+  const injected=status.replace(/(##\s*Next Actions\s*\n*)([\s\S]*?)(?=\n##|\n#|$)/i,
+    (_,head)=>`${head}${seed.join("\n")}\n`);
+  write(statusPath,injected);
   gitAddCommit("docs(status): seed Next Actions (no open items)");
 }
 function firstNextAction() {
@@ -320,7 +351,7 @@ async function mainLoop() {
         { role: "user", content:
           `Aşağıdaki içeriklere bak ve 5 maddelik kısa özet çıkar (yalın):\n\n` +
           `--- status.md ---\n${status}\n--- project_facts.md ---\n${facts}\n--- long_term.md ---\n${lt}\n--- roadmap.md ---\n${roadmap}\n` }
-      ], 'light', 'Bootstrap özet ve hafıza güncelleme');
+      ], { actionTitle: act });
       const bootPath = `docs/reports/${date}_bootstrap.md`;
       write(bootPath, (read(bootPath) + `\n\n${bootstrap}\n\n— Agent: GameBY Agent • ${new Date().toISOString()}\n`));
       write("agent/memory/project_facts.md", facts + `\n- [${new Date().toISOString()}] bootstrap summary appended`);
@@ -329,12 +360,11 @@ async function mainLoop() {
       steps += 1;
 
       // 2) Plan: alt adımlar (görev karmaşıklığına göre model seçimi)
-      const taskComplexity = analyzeTaskComplexity(act);
-      const plan = await askLLM([
+  const plan = await askLLM([
         { role: "system", content: SYSTEM_PROMPT },
         { role: "user", content:
       `Next Action: "${act}"\nBu aksiyonu en fazla 5 alt adıma böl; her alt adım için kısa çıktı üret (davranış değiştirme yok).` }
-      ], taskComplexity, `Planlama: ${act}`);
+  ], { actionTitle: act });
     write(reportPath, `# Next Action: ${act}\n\n${plan}\n\n— Agent: GameBY Agent • ${new Date().toISOString()}\n`);
       gitAddCommit(`docs(reports): start ${slug}`);
 
@@ -380,6 +410,14 @@ async function mainLoop() {
 
       // 6) Status: tamamlandı işaretle
   markDone(act);
+
+      // 6.5) Announce (lint/test PASS sonrası)
+      try {
+        const diffList = (sh(`git diff --name-only HEAD~1..HEAD`)||"");
+        const filesChanged = diffList.split("\n").filter(Boolean).length;
+        const commitSha = sh(`git rev-parse --short HEAD`);
+        announce({ action: act, summary: "lint/test PASS; rapor+hafıza güncellendi", commitSha, filesChanged });
+      } catch {}
 
       // 7) PR (Draft) — gh yoksa sessiz geç + rapora URL yaz
       const prUrl = tryCreateDraftPR(slug, reportPath);
