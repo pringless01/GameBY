@@ -1,18 +1,17 @@
 # Next Action: Monorepo: Complete apps/api/src domain split (economy/fraud/chat services)
 
-1. **Domain Yapısını Belirleme**: Mevcut uygulamanın domain yapısını analiz et ve economy, fraud ve chat servisleri için gerekli olan dosya ve klasör yapılarını oluştur.
+Next Action'ı 5 alt adıma böldüm:
 
-2. **Kod Bölme İşlemi**: apps/api/src içinde bulunan mevcut kodları, belirlenen domain yapısına göre economy, fraud ve chat servisleri arasında böl.
+1. **Domain Yapısını Analiz Et**: Mevcut apps/api/src dizininde bulunan dosyaların ve yapıların analizi yapılacak. Hangi dosyaların economy, fraud ve chat hizmetlerine ait olduğu belirlenecek.
 
-3. **Bağımlılık Yönetimi**: Her bir yeni domain için gerekli bağımlılıkları belirle ve bunları uygun şekilde güncelle. 
+2. **Yeni Dizin Yapısını Oluştur**: Economy, fraud ve chat hizmetlerine uygun yeni dizin yapıları oluşturulacak. Her bir hizmet için ayrı klasörler oluşturulacak.
 
-4. **Test Senaryolarını Güncelleme**: Yeni domain yapısına göre test senaryolarını düzenle ve her bir domain için test dosyalarını oluştur.
+3. **Dosyaları Taşı**: Belirlenen dosyalar, uygun olarak yeni dizin yapılarına taşınacak. Bu işlem, her bir hizmetin bağımsız çalışabilmesi için gerekli düzenlemeleri içerecek.
 
-5. **Dokümantasyon ve Yansıtma**: Yapılan değişiklikleri dokümante et ve ilgili değişiklikleri proje dokümantasyonuna ekle.
+4. **Bağımlılıkları Güncelle**: Taşınan dosyaların bağımlılıkları güncellenecek. Her hizmetin kendi bağımlılıklarının doğru şekilde tanımlandığından emin olunacak.
 
-— Agent: GameBY Agent • 2025-08-16T13:30:06.044Z
+5. **Test ve Doğrulama**: Yapılan değişikliklerin düzgün çalıştığını doğrulamak için tüm hizmetler için testler gerçekleştirilecek. Başarılı bir şekilde çalıştığından emin olunacak.
 
+Her adımda gerekli değişiklikler yapılacak ve rapor oluşturulacak. Şimdi ilk adıma geçiyorum.
 
-## Fail checkpoint (attempt 1)
-- time: 2025-08-16T13:30:35.047Z
-- reason: Command failed: npm test
+— Agent: GameBY Agent • 2025-08-16T13:30:46.804Z
