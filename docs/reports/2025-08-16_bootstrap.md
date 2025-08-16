@@ -3337,3 +3337,12 @@ Rapor, docs/reports/2025-08-16_bootstrap.md dosyasına eklenecek.
 5. Gelecek adımlar arasında, auto-task issue template ile iş akışının geliştirilmesi ve hafıza dosyalarının tamamlanması yer almaktadır.
 
 — Agent: GameBY Agent • 2025-08-16T10:42:12.291Z
+
+
+1. Projenin ana hedefi, hafıza dosyaları, roll-up eylemi ve PR şablonlarının oluşturulmasıdır.
+2. Python 3.11 çalıştırıcısının ve ilgili scriptlerin başarıyla çalışacağı varsayılmaktadır; CI için temel komutlar belirlenmiştir.
+3. DevOps süreçleri için önemli dosyalar arasında agent/prompt.md, agent/memory/* ve docs/reports/ bulunmaktadır.
+4. Mevcut blokaj, memory-rollup workflow'unun 'workflow_dispatch' tetiklenmesini gerektirmesidir; bu, manuel olarak tetiklenememektedir.
+5. Projenin gelecekteki adımları, ESLint modül sınırlarının düzeltilmesi ve shared utils/types genişletilmesini içermektedir.
+
+— Agent: GameBY Agent • 2025-08-16T10:42:51.635Z
