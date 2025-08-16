@@ -1,22 +1,13 @@
 # Next Action: Monorepo: Complete apps/api/src domain split (economy/fraud/chat services)
 
-Next Action'ı "Monorepo: Complete apps/api/src domain split (economy/fraud/chat services)" alt adımlara böldüm:
+1. **Domain Analizi**: Mevcut apps/api/src dizininde yer alan hizmetlerin fonksiyonlarını ve bağımlılıklarını analiz et. Her bir alanın (economy, fraud, chat) gereksinimlerini belirle.
 
-1. **Mevcut Yapının Analizi**: apps/api/src klasöründeki mevcut yapı ve bağımlılıkların incelenmesi.
-   
-2. **Yeni Klasör Yapısının Oluşturulması**: economy, fraud ve chat hizmetleri için gerekli olan yeni klasör yapısının oluşturulması.
+2. **Dizin Yapısı Oluşturma**: Yeni dizin yapısını oluştur. apps/api/src altında economy, fraud ve chat adında üç yeni klasör oluştur.
 
-3. **Kodun Taşınması**: Mevcut kodların ilgili yeni klasörlere taşınması ve gerekli güncellemelerin yapılması.
+3. **Kod Taşınması**: Mevcut kodları uygun dizinlere taşı. Economy ile ilgili kodları economy klasörüne, fraud ile ilgili olanları fraud klasörüne, chat ile ilgili olanları chat klasörüne yerleştir.
 
-4. **Bağımlılıkların Güncellenmesi**: Her bir yeni domain için gerekli bağımlılıkların güncellenmesi ve yapılandırılması.
+4. **Bağımlılık Yönetimi**: Her bir yeni alan için bağımlılıkları güncelle ve gerekli olanları kur. Her domainin bağımsız çalışabilmesi için gerekli yapılandırmaları yap.
 
-5. **Testlerin Uygulanması ve Doğrulama**: Taşınan kodların düzgün çalıştığını doğrulamak için testlerin uygulanması ve geçerliliğinin kontrol edilmesi.
+5. **Test ve Doğrulama**: Taşınan kodların testlerini çalıştır ve her domainin doğru bir şekilde çalıştığını doğrulamak için entegrasyon testleri yap. Tüm testlerin PASS olduğundan emin ol.
 
-Bu adımları sırayla gerçekleştireceğim. İlk adım olan "Mevcut Yapının Analizi" ile başlayacağım.
-
-— Agent: GameBY Agent • 2025-08-16T14:07:09.497Z
-
-
-## Fail checkpoint (attempt 1)
-- time: 2025-08-16T14:07:38.701Z
-- reason: Command failed: npm test
+— Agent: GameBY Agent • 2025-08-16T14:07:51.550Z
