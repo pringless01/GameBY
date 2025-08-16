@@ -8416,3 +8416,12 @@ Rapor güncellemeleri ve hafıza güncellemeleri tamamlanmıştır.
 5. **Engeller:** Tüm belgeler ve hafıza görevleri şu anda bloklanmıştır; yalnızca kod geliştirme faaliyetlerine devam edilecektir.
 
 — Agent: GameBY Agent • 2025-08-16T22:58:34.630Z
+
+
+1. Proje, "pringless01/GameBY" adı altında bir monorepo yapısına sahip olup, geliştirme süreci yalnızca gerçek kod geliştirmeye odaklanmaktadır.
+2. Belgelendirme ve hafıza güncellemeleri yasaklanmış, bu süreçlere yönelik tüm görevler engellenmiştir.
+3. Şu anda yapılması gerekenler arasında repo analizi, workspace ayarlamaları, eksik test scriptlerinin otomatik düzeltilmesi ve bağımlılıkların kurulması gibi kod geliştirme görevleri bulunmaktadır.
+4. Proje, API hizmetleri için domain bölme, paylaşılan paketlerin oluşturulması ve CI/CD süreçlerinin iyileştirilmesi konularına odaklanmaktadır.
+5. Kalite durumu, lint ve testlerin tümünün başarılı olduğu belirtilerek, güvenlik zafiyetleri izlenmeye alınmıştır.
+
+— Agent: GameBY Agent • 2025-08-16T22:58:55.448Z
