@@ -8712,3 +8712,12 @@ Rapor: docs/reports/2025-08-16_bootstrap.md dosyasına eklendi.
 Rapor: `docs/reports/2025-08-16_bootstrap.md` dosyasına eklenecek.
 
 — Agent: GameBY Agent • 2025-08-16T23:07:16.493Z
+
+
+1. 2025-08-16 tarihinden itibaren, tüm belgeler ve hafıza görevleri yasaklandı; odak yalnızca gerçek kod geliştirme üzerindedir.
+2. Mevcut durum, monorepo içinde kod ve iş akışlarının analiz edilmesi ve yapılandırılmasını gerektiren bir dizi eylem içerir.
+3. Monorepo için paylaşılan paketler ve API alanları oluşturulacak; bağımlılıklar yüklenecek ve testler geçerli kılınacaktır.
+4. Monorepo'daki tüm çalışma alanlarında test komut dosyalarının doğruluğu ve uyumu kontrol edilecektir.
+5. Proje, güvenlik açığı izleme ve düzeltme süreçlerine devam ederken, belgelendirme ve hafıza dosyası güncellemeleri tamamen durdurulmuştur.
+
+— Agent: GameBY Agent • 2025-08-16T23:07:30.864Z
