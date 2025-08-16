@@ -3685,3 +3685,16 @@ Rapor güncellenecek ve hafıza dosyalarına eklenecek.
 5. **Engeller**: Memory-rollup iş akışının 'workflow_dispatch' tetikleme gereksinimi nedeniyle iş akışının çalışmadığı not edilmiştir.
 
 — Agent: GameBY Agent • 2025-08-16T11:14:45.939Z
+
+
+1. **Proje Yapısı**: Proje, `pringless01/GameBY` isimli bir monorepo olup; `apps/api`, `apps/web`, `packages/shared-*` ve diğer klasörlerden oluşmaktadır. Ana branch `main` olarak belirlenmiştir.
+
+2. **Gelişim Durumu**: MVP aşamasında hafıza dosyaları, roll-up işlemleri ve PR şablonları geliştirilmekte, bu süreçte otomatik görev şablonları için bir iş akışı oluşturulmaktadır.
+
+3. **Varsayımlar ve Kararlar**: Python 3.11 GitHub Actions runner ortamında sorunsuz çalışacak, CI için temel komutlar belirlenmiştir. Hafıza altyapısının 2025-08-16 tarihine kadar kurulması planlanmıştır.
+
+4. **Next Actions**: Şu an için yapılacak işler arasında hafıza dosyaları, roll-up eylemi ve PR şablonlarının tamamlanması bulunmaktadır. Ayrıca, ESLint modül sınırlarının düzeltilmesi ve shared utils/types genişletilmesi gerekmektedir.
+
+5. **Kalite Durumu**: Lint ve test süreçleri başarılı bir şekilde geçmiştir. Ancak, bazı testlerde düşük seviyeli güvenlik açıkları tespit edilmiştir ve bu durum izlemeye alınmıştır.
+
+— Agent: GameBY Agent • 2025-08-16T11:15:32.429Z
