@@ -1,21 +1,18 @@
 # Next Action: Monorepo: Complete apps/api/src domain split (economy/fraud/chat services)
 
-1. **Domain Analysis**: Uygulama içindeki mevcut domain yapısını analiz et ve hangi bileşenlerin ekonomi, dolandırıcılık ve sohbet hizmetlerine ait olduğunu belirle.
+1. **Alt Adım 1: Domain Yapısını Belirleme**
+   - Mevcut uygulama yapısındaki domain'lerin (ekonomi, dolandırıcılık, sohbet hizmetleri) belirlenmesi ve her birinin bağımsız olarak nasıl yapılandırılacağını planlama.
 
-2. **Directory Structure Creation**: Yeni domain yapısına uygun olarak dosya ve dizin yapısını oluştur. `economy`, `fraud` ve `chat` dizinlerini `apps/api/src` altında oluştur.
+2. **Alt Adım 2: Kod Tabanını Analiz Etme**
+   - Uygulama kod tabanını inceleyerek hangi bileşenlerin her bir domain'e ait olduğunu belirleme ve bu bileşenleri ayrı modüllere ayırma gereğini değerlendirme.
 
-3. **Code Refactoring**: Mevcut kodları belirlenen yeni dizinlere taşı ve her bir service için gerekli bağımlılıkları güncelle. Kodun tüm bileşenlerinin doğru çalıştığından emin ol.
+3. **Alt Adım 3: Modül Ayrıştırma**
+   - Belirlenen domain'lere göre mevcut kodu modüllere ayırma işlemini gerçekleştirme. Her bir modül için gerekli bağımlılıkları ve dosya yapılarını oluşturma.
 
-4. **Testing**: Yeni domain yapısına uygun olarak unit testleri yaz ve mevcut testleri güncelle. Tüm testlerin başarılı bir şekilde geçmesini sağla.
+4. **Alt Adım 4: Entegrasyon Testleri Hazırlama**
+   - Ayrıştırılan her bir domain için entegrasyon testleri geliştirme. Her domain'in bağımsız çalıştığından ve diğer domain'lerle uyumlu olduğundan emin olma.
 
-5. **Documentation Update**: Yeni domain yapısı ve değişiklikler hakkında belgeleri güncelle. Kullanıcıların ve geliştiricilerin yeni yapıyı anlamasını kolaylaştır.
+5. **Alt Adım 5: Dokümantasyon ve Raporlama**
+   - Yapılan değişiklikleri ve yeni yapılandırmayı belgeleme. Kullanıcılar ve geliştiriciler için gerekli dökümantasyonları oluşturma ve güncellenmiş yapıyı raporlama.
 
-Rapor: docs/reports/2023-10-04_domain_split_plan.md
-Hafıza: agent/memory/project_facts.md append.
-
-— Agent: GameBY Agent • 2025-08-16T13:17:54.914Z
-
-
-## Fail checkpoint (attempt 3)
-- time: 2025-08-16T13:18:24.106Z
-- reason: Command failed: npm test
+— Agent: GameBY Agent • 2025-08-16T13:18:47.314Z
