@@ -1,15 +1,13 @@
 # Next Action: Monorepo: Complete apps/api/src domain split (economy/fraud/chat services)
 
-1. **Domain Split Planlama**: Uygulamanın mevcut yapısını inceleyerek, economy, fraud ve chat servisleri için ayrı domain yapıları oluşturulacak. Her bir domainin sorumlulukları ve etkileşimleri belirlenecek.
+1. **Domain Analizi ve Planlama**: Uygulama içindeki mevcut domain yapısını inceleyerek, ekonomi, dolandırıcılık ve sohbet servislerinin gereksinimlerini belirlemek.
 
-2. **Kod Tabanını Analiz Etme**: Mevcut kod tabanındaki API'lerin ve servislerin hangi domainlere ait olduğunu belirlemek için detaylı bir analiz yapılacak. Bu aşamada gereksiz bağımlılıklar ve kod tekrarları da tespit edilecek.
+2. **Proje Yapısı Tasarımı**: Yeni domain yapısını yansıtacak şekilde monorepo içindeki dizin yapısını ve dosya organizasyonunu planlamak.
 
-3. **Yeni Domain Yapılarının Oluşturulması**: Economy, fraud ve chat domainleri için gerekli klasör yapılarını oluşturulacak. Her domain için ilgili dosyalar ve kaynaklar taşınacak veya yeniden yapılandırılacak.
+3. **Kod Taşıma ve Refaktörizasyon**: Ekonomi, dolandırıcılık ve sohbet servislerine ait kodları uygun dizinlere taşımak ve gerekli refaktörizasyonları yapmak.
 
-4. **Bağımlılıkların Düzenlenmesi**: Domainler arası bağımlılıkları minimize etmek için gerekli revizyonlar yapılacak. API çağrıları ve servis etkileşimleri yeniden yapılandırılacak.
+4. **Bağımlılık Yönetimi**: Taşınan her bir domain için bağımlılıkları güncelleyerek, ilgili servislerin çalışabilirliğini sağlamak.
 
-5. **Test ve Doğrulama**: Yeni oluşturulan domainlerin doğru çalıştığından emin olmak için testler yazılacak ve mevcut testler güncellenecek. Tüm sistemin entegrasyon testleri gerçekleştirilecek. 
+5. **Test ve Doğrulama**: Her domain için gerekli testleri yazarak, taşınan kodların ve yapıların doğru çalıştığını doğrulamak.
 
-Bu adımların her biri, uygulamanın domain bazında daha modüler ve yönetilebilir hale gelmesini sağlayacak.
-
-— Agent: GameBY Agent • 2025-08-16T12:03:26.202Z
+— Agent: GameBY Agent • 2025-08-16T12:04:15.216Z
