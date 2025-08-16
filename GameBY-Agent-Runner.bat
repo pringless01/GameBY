@@ -2,14 +2,14 @@
 @echo off
 setlocal enableextensions enabledelayedexpansion
 
-REM Repo köküne geç
+REM Repo kokune gec
 cd /d "%~dp0"
 
-REM Klasörler
-if not exist "tools\agent-runner\logs" mkdir "tools\agent-runner\logs"
+REM Klasorler
+if not exist "logs" mkdir "logs"
 if not exist "agent" mkdir "agent"
 
-REM Çalışma ortamı (gerekirse düzenleyebilirsin)
+REM Calisma ortami (gerekirse duzenleyebilirsin)
 set REQUIRE_OPENAI=1
 set MODEL_PRIMARY=gpt-4o
 set MODEL_THINK=gpt-5
@@ -23,10 +23,18 @@ set ALLOW_PROD=0
 REM STOP temizle (graceful start)
 if exist "agent\STOP" del /f /q "agent\STOP"
 
-REM Bağımlılıklar (ilk kurulum için)
+REM Bagimliliklar (ilk kurulum icin)
 if not exist "node_modules" (
   echo [bootstrap] npm ci calistiriliyor...
   call npm ci
+)
+
+REM Arguman yakala (tum)
+set PROMPT=%*
+if not "%PROMPT%"=="" (
+  echo [inject] Prompt alindi: %PROMPT%
+  node tools\agent-runner\prompt-inject.cjs "%PROMPT%"
+  goto tail
 )
 
 REM Lock varsa ikinci instance baslatma
@@ -38,8 +46,9 @@ if exist "agent\agent.lock" (
   timeout /t 2 >nul
 )
 
-echo [logs] tools\agent-runner\logs\runner.log izleniyor (Crtl+C ile cik)
+:tail
+echo [logs] logs\runner.log izleniyor (Ctrl+C ile cik)
 powershell -NoProfile -ExecutionPolicy Bypass -Command ^
-  "if(!(Test-Path 'tools/agent-runner/logs/runner.log')){New-Item -ItemType File -Path 'tools/agent-runner/logs/runner.log' | Out-Null}; Get-Content -Path 'tools/agent-runner/logs/runner.log' -Wait -Tail 80"
+  "if(!(Test-Path 'logs/runner.log')){New-Item -ItemType File -Path 'logs/runner.log' | Out-Null}; Get-Content -Path 'logs/runner.log' -Wait -Tail 80"
 
 endlocal
