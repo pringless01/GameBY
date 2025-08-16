@@ -8681,3 +8681,12 @@ Rapor: docs/reports/2025-08-16_bootstrap.md dosyasına eklendi.
 5. **Güvenlik ve Kalite**: CI süreçleri ve güvenlik durumları kontrol edilecek, her şeyin geçerli olduğundan emin olunacak.
 
 — Agent: GameBY Agent • 2025-08-16T23:06:23.654Z
+
+
+1. Proje, GameBY isimli bir monorepo yapısında geliştirilmekte olup, temel odak noktası gerçek kod geliştirme üzerinedir; dokümantasyon görevleri yasaklanmıştır.
+2. Monorepo içinde, uygulama ve paketler için çalışma alanları oluşturulması, lint/test işlemlerinin başarıyla geçmesi, eksik test scriptlerinin otomatik düzeltilmesi gibi görevler önceliklidir.
+3. Shared paketler ve API alanlarının oluşturulması, mevcut çalışma alanlarının doğrulanması ve test scriptlerinin tüm uygulama ve paketlerde kontrol edilmesi gerekmektedir.
+4. Projede, güvenlik ve performans için çeşitli iyileştirmeler yapılmakta, mevcut kurallar ve yapılandırmalar sıkı bir şekilde denetlenmektedir.
+5. Proje sürecinde, gelişim alanları olarak domain ayrıştırması, ESLint ayarlarının sertleştirilmesi ve ortak yardımcı araçların genişletilmesi gibi görevler bulunmaktadır.
+
+— Agent: GameBY Agent • 2025-08-16T23:06:39.219Z
