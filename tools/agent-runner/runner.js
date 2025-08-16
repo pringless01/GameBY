@@ -4,7 +4,7 @@ import { execSync } from "child_process";
 import OpenAI from "openai";
 import dotenv from "dotenv";
 import { fileURLToPath } from "url";
-dotenv.config();
+dotenv.config({ override: true });
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const repoRoot = path.resolve(here, "..", "..");
