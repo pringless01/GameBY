@@ -11,3 +11,8 @@
 5. **Testlerin Güncellenmesi**: Taşınan kodlar için test dosyalarını güncelle ve her domain için testlerin başarıyla geçmesini sağla.
 
 — Agent: GameBY Agent • 2025-08-16T12:40:56.659Z
+
+
+## Fail checkpoint (attempt 1)
+- time: 2025-08-16T12:41:25.819Z
+- reason: Command failed: npm test
