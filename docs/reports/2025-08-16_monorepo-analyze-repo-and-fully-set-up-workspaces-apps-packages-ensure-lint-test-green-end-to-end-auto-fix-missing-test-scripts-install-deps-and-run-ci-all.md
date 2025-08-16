@@ -11,3 +11,8 @@
 5. **CI Tümünü Çalıştırma**: Son olarak, tüm projelerde CI sürecini çalıştırarak tüm testlerin geçmesini sağlayacağım. Bu aşamada sürecin sonunda her şeyin düzgün çalıştığını doğrulamak için rapor oluşturacağım.
 
 — Agent: GameBY Agent • 2025-08-16T22:42:54.886Z
+
+
+## Fail checkpoint (attempt 2)
+- time: 2025-08-16T22:42:59.119Z
+- reason: Command failed: npm run lint
