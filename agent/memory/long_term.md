@@ -14,3 +14,4 @@ Bu dosya uzun dönem özetlerin ve önemli kararların sıkıştırılmış hali
  - Fraud: Service-level unit test (repo stub) eklendi; davranış değişimi yok; kalite kapıları yeşil.
  - Shared: Pagination utils ve PaginationParams DTO eklendi (non-invasive); lint/test PASS.
  - [2025-08-16] ESLint boundaries: Module boundary kuralları zaten uygulanmış, ihlal yok; doğrulama PASS.
+ - [2025-08-16] Docs: architecture/security/index güncellendi, kapsamlı haftalık rapor oluşturuldu.

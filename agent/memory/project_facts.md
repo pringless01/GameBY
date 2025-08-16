@@ -50,4 +50,5 @@
  - [2025-08-16 13:05] fraud/unit: Fraud servisine repo stub ile birim test eklendi; lint/test yeşil (commit d4e5036). Rapor: docs/reports/2025-08-16_fraud-service-unit.md
  - [2025-08-16 13:15] memory/bootstrap: Mevcut durum okundu, 5 maddelik özet bootstrap raporuna eklendi
  - [2025-08-16 13:20] eslint/boundaries: Module boundary kuralları doğrulandı - ihlal yok, lint+test PASS
+ - [2025-08-16 13:25] docs/update: architecture/index/security güncellendi, haftalık rapor oluşturuldu - lint+test PASS
  - [2025-08-16 13:15] shared-utils/types: Pagination helpers (normalizeLimit/Offset) ve PaginationParams DTO eklendi; davranış değişimi yok. Rapor: docs/reports/2025-08-16_shared-utils-types.md
