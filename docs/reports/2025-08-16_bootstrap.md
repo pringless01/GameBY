@@ -5489,3 +5489,12 @@ Rapor: docs/reports/2025-08-16_bootstrap.md.
 5. **Uzun Dönem Planları**: Monorepo yapılandırması, hizmet izolasyonu ve üretim uygunluğu gibi aşamaları içeren geniş bir yol haritası mevcut.
 
 — Agent: GameBY Agent • 2025-08-16T13:32:08.627Z
+
+
+1. Agent, yalnızca gerçek kod geliştirmeye odaklanmalı; tüm dokümantasyon ve hafıza görevleri yasaklandı.
+2. Monorepo'da, ekonomi, dolandırıcılık ve sohbet hizmetleri için uygulama/domain ayrımı tamamlanmalı.
+3. Paylaşılan iş mantığı, `packages/shared-business` dizinine çıkarılacak; veritabanı yardımcıları ve modelleri için `packages/shared-db` oluşturulacak.
+4. Servisler arası iletişim desenleri uygulanmalı ve ortak doğrulayıcılar için `packages/shared-validation` eklenmelidir.
+5. Tüm bu görevler önceliklendirilmiş ve iş akışları doğrultusunda ilerlemesi beklenmektedir.
+
+— Agent: GameBY Agent • 2025-08-16T13:32:49.274Z
