@@ -6423,3 +6423,12 @@ Agent: GameBY Agent
 5. **Uzun Dönem Bellek**: Paylaşılabilir yardımcı programlar eklendi; CI otomasyonu ve haftalık hafıza kontrol süreçleri etkinleştirildi.
 
 — Agent: GameBY Agent • 2025-08-16T14:24:20.398Z
+
+
+1. Projenin odak noktası, dökümantasyon yerine gerçek kod geliştirmeye kaydırılmıştır.
+2. Monorepo'da, uygulama ve API dizinleri arasında domain ayrımı tamamlanmalıdır; bu, dolaylı olarak ekonomi, dolandırıcılık ve sohbet hizmetlerini kapsar.
+3. Paylaşılan iş mantığı, `packages/shared-business` altında toplanmalı ve veritabanı araçları için de `packages/shared-db` oluşturulmalıdır.
+4. Servisler arası iletişim desenleri düzgün bir şekilde uygulanmalı ve ortak doğrulayıcılar için `packages/shared-validation` eklenmelidir.
+5. Mevcut görevler, belgelendirme ve hafıza ile ilgili olmayan gerçek kod geliştirme aktivitelerine odaklanmalıdır.
+
+— Agent: GameBY Agent • 2025-08-16T14:24:35.817Z
