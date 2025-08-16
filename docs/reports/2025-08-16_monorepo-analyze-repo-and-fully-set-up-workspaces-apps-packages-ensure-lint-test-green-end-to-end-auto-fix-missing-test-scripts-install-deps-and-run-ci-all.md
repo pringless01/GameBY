@@ -1,20 +1,18 @@
 # Next Action: Monorepo: Analyze repo and fully set up workspaces (apps/*, packages/*), ensure lint/test green end-to-end; auto-fix missing test scripts; install deps and run ci:all
 
-1. **Repo Analizi**: Monorepo'yu analiz ederek mevcut uygulamaları (apps/*) ve paketleri (packages/*) belirle. Gerekli yapılandırmaları ve bağımlılıkları gözden geçir.
+**Alt Adım 1: Repo Analizi**
+- Monorepo'daki dizin yapısını ve mevcut dosyaları analiz et. `apps/*` ve `packages/*` altında bulunan tüm projeleri incele.
 
-2. **Workspace Kurulumu**: Belirlenen uygulama ve paketler için workspace'leri kur. Gerekli dosya ve dizin yapılandırmalarını oluştur.
+**Alt Adım 2: Workspace Ayarları**
+- `apps/*` ve `packages/*` için gerekli workspace ayarlarını yapılandır. Gerekli konfigürasyon dosyalarını oluştur veya güncelle.
 
-3. **Lint ve Test Kontrolü**: Tüm uygulamalarda ve paketlerde linting ve test süreçlerini çalıştırarak sonuçların yeşil (başarılı) olduğundan emin ol.
+**Alt Adım 3: Lint ve Test Kontrolü**
+- Tüm projelerde lint ve test süreçlerini kontrol et. Hataları tespit et ve gider.
 
-4. **Eksik Test Script'lerinin Otomatik Düzeltmesi**: Eksik olan test script'lerini tespit et ve otomatik olarak düzelt. Gerekli test script'lerini ekle.
+**Alt Adım 4: Eksik Test Scriptlerinin Otomatik Düzeltmesi**
+- Eksik test scriptlerini otomatik olarak ekle veya düzelt. Her proje için test scriptlerinin varlığını sağla.
 
-5. **Bağımlılıkların Kurulumu ve CI Süreçlerinin Çalıştırılması**: Tüm bağımlılıkları yükle ve `ci:all` komutunu çalıştırarak sürekli entegrasyon süreçlerini başlat. 
+**Alt Adım 5: Bağımlılıkların Yüklenmesi ve CI Çalıştırılması**
+- Tüm projelerde gerekli bağımlılıkları yükle ve `ci:all` komutunu çalıştırarak sürekli entegrasyon süreçlerini başlat.
 
-Bu adımlar tamamlandıktan sonra rapor dosyası oluşturulacak ve hafızaya ekleme yapılacak.
-
-— Agent: GameBY Agent • 2025-08-16T22:33:09.202Z
-
-
-## Fail checkpoint (attempt 1)
-- time: 2025-08-16T22:33:13.295Z
-- reason: Command failed: npm run lint
+— Agent: GameBY Agent • 2025-08-16T22:33:24.948Z
