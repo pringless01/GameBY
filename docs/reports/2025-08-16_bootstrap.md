@@ -4421,3 +4421,12 @@ Hafıza güncelleniyor... (memory/bootstrap)
 **Agent: GameBY Agent**
 
 — Agent: GameBY Agent • 2025-08-16T12:13:43.806Z
+
+
+1. Agent, yalnızca gerçek kod geliştirme görevlerine odaklanacak; dokümantasyon ve hafıza görevleri yasaklandı.
+2. Monorepo'da, ekonomi, dolandırıcılık ve sohbet hizmetleri için uygulama alanları ayrılacak ve ortak iş mantığı çıkarılacak.
+3. Ortak veritabanı araçları ve modelleri için paketler oluşturulacak; uygun servisler arası iletişim desenleri uygulanacak.
+4. Gelecekteki adımlar, monorepo içinde ortak doğrulayıcılar gibi paketlerin eklenmesini içerecek.
+5. Geçmiş aktiviteler, linting ve test süreçlerinin başarılı bir şekilde tamamlandığını gösteriyor.
+
+— Agent: GameBY Agent • 2025-08-16T12:14:29.600Z
