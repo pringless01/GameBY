@@ -11,8 +11,6 @@ export default [
       'server/**',
       'frontend/**',
   'tools/**',
-  // Frontend (apps/web) henüz lint uyumlu değil; geçici olarak ignore
-      'apps/web/**',
     // Duplike eski test konumu
   'apps/api/tests/**'
     ]
@@ -104,7 +102,62 @@ export default [
         clearTimeout: 'readonly',
         fetch: 'readonly'
       }
+    },
+    rules: { 'no-unused-vars': 'off' }
   },
-  rules: { 'no-unused-vars': 'off' }
+  // apps/web public (browser) scriptleri için tarayıcı global’leri ve geçici gevşetmeler
+  {
+    files: ['apps/web/public/**/*.js'],
+    languageOptions: {
+      globals: {
+        window: 'readonly',
+        document: 'readonly',
+        fetch: 'readonly',
+        location: 'readonly',
+        localStorage: 'readonly',
+        sessionStorage: 'readonly',
+        navigator: 'readonly',
+        Notification: 'readonly',
+        Event: 'readonly',
+        alert: 'readonly',
+        requestAnimationFrame: 'readonly',
+        io: 'readonly',
+        gtag: 'readonly',
+        Audio: 'readonly',
+        URL: 'readonly',
+        setTimeout: 'readonly',
+        clearTimeout: 'readonly',
+        setInterval: 'readonly',
+        clearInterval: 'readonly',
+        console: 'readonly',
+        AbortController: 'readonly'
+      }
+    },
+    rules: {
+      'no-empty': 'off',
+      'no-unused-vars': 'off',
+      'no-dupe-class-members': 'off',
+      'no-self-assign': 'off'
+    }
+  },
+  // apps/web scriptleri (node) için ortam
+  {
+    files: ['apps/web/scripts/**/*.js'],
+    languageOptions: {
+      globals: {
+        console: 'readonly',
+        process: 'readonly',
+        __dirname: 'readonly',
+        require: 'readonly',
+        URL: 'readonly',
+        setTimeout: 'readonly',
+        clearTimeout: 'readonly',
+        setInterval: 'readonly',
+        clearInterval: 'readonly'
+      }
+    },
+    rules: {
+      'no-unused-vars': 'off'
+    }
   }
 ];
