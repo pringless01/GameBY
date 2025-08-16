@@ -1,18 +1,15 @@
 # Next Action: Monorepo: Complete apps/api/src domain split (economy/fraud/chat services)
 
-1. **Domain Yapısını Planla**: Apps/api/src dizinindeki mevcut yapıyı analiz et ve ekonomi, dolandırıcılık ve sohbet hizmetleri için yeni bir domain yapısı oluştur.
+1. **Domain Yapısı Oluşturma**: apps/api/src dizininde ekonomi, dolandırıcılık ve sohbet hizmetleri için ayrı klasörler oluşturulacak. Her bir klasör, ilgili alanın kaynak dosyalarını barındıracak.
 
-2. **Kod Tabanını Böl**: Mevcut kod tabanını, belirlenen yeni domain yapısına göre gerekli dosya ve klasörlere ayır.
+2. **Mevcut Kodun Taşınması**: Ekonomi, dolandırıcılık ve sohbet ile ilgili mevcut kod dosyaları, ilgili yeni oluşturulan klasörlere taşınacak. Bu adım, her alan için kodun düzgün bir şekilde organize edilmesini sağlayacak.
 
-3. **Bağımlılıkları Güncelle**: Yeni domain yapısındaki bağımlılıkları kontrol et ve her bir domain için gerekli bağımlılıkları güncelle.
+3. **Yapılandırma Dosyalarının Güncellenmesi**: Yeni domain yapısına uygun olarak yapılandırma dosyaları (örn. package.json, tsconfig.json) güncellenecek. Her domain için gerekli bağımlılıklar ve ayarlar eklenecek.
 
-4. **Testleri İyileştir**: Yeni domain yapısına göre testleri güncelle ve her bir domain için uygun test senaryoları ekle.
+4. **Testlerin Güncellenmesi**: Taşınan her alan için test dosyaları güncellenecek ve yeni klasör yapısına uygun hale getirilecek. Testlerin geçerliliği kontrol edilecek.
 
-5. **Dokümantasyonu Güncelle**: Yeni yapı ve domainler hakkında ilgili dokümantasyonu güncelle ve gerekli bilgileri ekle.
+5. **Dokümantasyonun Güncellenmesi**: Yeni domain yapısına uygun olarak proje dokümantasyonu güncellenecek. Her alan için kullanım kılavuzları ve örnekler eklenecek. 
 
-— Agent: GameBY Agent • 2025-08-16T12:52:34.244Z
+Bu adımlar, monorepo içerisinde domainlerin başarılı bir şekilde ayrılmasını sağlayacak.
 
-
-## Fail checkpoint (attempt 2)
-- time: 2025-08-16T12:53:04.769Z
-- reason: Command failed: npm test
+— Agent: GameBY Agent • 2025-08-16T12:53:21.558Z
