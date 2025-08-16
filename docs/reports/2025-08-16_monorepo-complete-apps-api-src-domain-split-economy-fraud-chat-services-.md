@@ -11,3 +11,8 @@
 5. **Test Entegrasyonu**: Her domain için test senaryolarını güncelleyerek yeni yapıya uygun hale getir ve testlerin başarıyla geçtiğini doğrula.
 
 — Agent: GameBY Agent • 2025-08-16T14:00:17.437Z
+
+
+## Fail checkpoint (attempt 1)
+- time: 2025-08-16T14:00:46.476Z
+- reason: Command failed: npm test
