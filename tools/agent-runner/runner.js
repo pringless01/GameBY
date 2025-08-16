@@ -90,8 +90,14 @@ async function askLLM(input) {
     return stub;
   }
   try {
-    const res = await client.responses.create({ model: MODEL, input });
-    const text = res.output_text || "";
+    const messages = Array.isArray(input) ? input : [{ role: "user", content: String(input) }];
+    const res = await client.chat.completions.create({
+      model: MODEL,
+      messages: messages,
+      temperature: 0.7,
+      max_tokens: 2000
+    });
+    const text = res.choices[0]?.message?.content || "";
     log(`LLM(out): ${trimOut(text, 200)}`);
     return text;
   } catch (e) {
