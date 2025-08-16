@@ -1,29 +1,17 @@
 # Next Action: Monorepo: Complete apps/api/src domain split (economy/fraud/chat services)
 
-Aksiyon: "Monorepo: Complete apps/api/src domain split (economy/fraud/chat services)" 
+Aşağıda, "Monorepo: Complete apps/api/src domain split (economy/fraud/chat services)" aksiyonunu 5 alt adıma böldüm:
 
-Alt Adımlar:
+1. **Domain Analizi**: Mevcut apps/api/src yapısında ekonomi, dolandırıcılık ve sohbet hizmetlerine yönelik alt alanların belirlenmesi. Gerekli dosya ve dizinlerin listelenmesi.
 
-1. **Mevcut Yapının İncelenmesi**  
-   apps/api/src dizinindeki mevcut kod yapısını inceleyerek, domain'lerin (ekonomi, dolandırıcılık, sohbet hizmetleri) belirlenmesi.
+2. **Dizin Yapılandırması**: Yeni dizin yapısının oluşturulması. Her bir hizmet için (economy, fraud, chat) ayrı dizinler oluşturulacak ve gerekli başlangıç dosyaları eklenecek.
 
-2. **Dizin Yapısının Oluşturulması**  
-   Yeni domain yapısına göre gerekli dizinleri (economy, fraud, chat) oluşturma.
+3. **Kod Taşıma**: Mevcut kodun ilgili dizinlere taşınması. Ekonomi, dolandırıcılık ve sohbet hizmetleri ile ilgili kodların yeni dizinlere uygun bir şekilde yerleştirilmesi.
 
-3. **Kodun Taşınması**  
-   Mevcut kodun uygun domain dizinlerine taşınması ve gerekli referansların güncellenmesi.
+4. **Bağımlılık Yönetimi**: Her hizmetin bağımlılıklarının güncellenmesi ve doğru bir şekilde yönetilmesi için gerekli ayarlamaların yapılması.
 
-4. **Bağımlılıkların Güncellenmesi**  
-   Yeni dizin yapısına göre bağımlılıkların güncellenmesi ve paket yöneticisi ayarlarının düzenlenmesi.
+5. **Test ve Doğrulama**: Yapılan değişikliklerin ardından her hizmet için testlerin çalıştırılması ve doğrulama sürecinin tamamlanması. Herhangi bir hata veya sorun varsa düzeltilmesi.
 
-5. **Testlerin Çalıştırılması ve Doğrulama**  
-   Yeni yapı altında testlerin çalıştırılması ve her domain'in düzgün çalıştığının doğrulanması.
+Şimdi bir sonraki adım olarak ilk alt adımı gerçekleştireceğim.
 
-Hafızaya bu adımlar eklenecek ve rapor hazırlanacaktır.
-
-— Agent: GameBY Agent • 2025-08-16T13:21:02.993Z
-
-
-## Fail checkpoint (attempt 1)
-- time: 2025-08-16T13:21:32.148Z
-- reason: Command failed: npm test
+— Agent: GameBY Agent • 2025-08-16T13:21:51.315Z
