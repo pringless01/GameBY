@@ -7276,3 +7276,12 @@ Rapor oluşturulacak ve hafıza güncellenmeye devam edilecek.
 5. **Belirlenen Engeller**: Tüm dokümantasyon görevleri engellenmiş olup, yalnızca kod geliştirme ile devam edilecektir.
 
 — Agent: GameBY Agent • 2025-08-16T22:25:13.001Z
+
+
+1. 2025-08-16 itibarıyla, Agent, yalnızca gerçek kod geliştirme görevlerine odaklanacak ve dokümantasyon görevleri yasaklandı.
+2. Monorepo'da, çalışma alanlarının tam kurulumu, eksik test scriptlerinin otomatik düzeltmesi ve tüm bağımlılıkların yüklenmesi gerektiği belirtiliyor.
+3. Ortak paketler ve API alanları için scaffold işlemleri yapılacak; bu, mevcut uygulama ve paketlerin yapılandırılmasını içerecek.
+4. Lint ve test süreçlerinin tüm uygulama ve paketlerde geçerli olması sağlanacak; ayrıca, CI süreçleri ve test senaryoları doğrulanacak.
+5. Mevcut açık işler arasında, domain bölünmesi, ESLint modüllerinin sınırlandırılması ve paylaşılan yardımcı fonksiyonların genişletilmesi yer alıyor.
+
+— Agent: GameBY Agent • 2025-08-16T22:25:27.787Z
