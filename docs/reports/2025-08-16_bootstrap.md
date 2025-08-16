@@ -8979,3 +8979,12 @@ Agent: GameBY Agent
 5. **Gelecek Adımlar**: Monorepo'da paylaşılan paketlerin oluşturulması ve API alanlarının yapılandırılması gibi görevler önceliklidir.
 
 — Agent: GameBY Agent • 2025-08-16T23:15:31.129Z
+
+
+1. Agent, yalnızca gerçek kod geliştirme görevlerine odaklanacak; dokümantasyon ve hafıza ile ilgili tüm görevler yasaklandı.
+2. Monorepo için iş alanları tam olarak kurulacak, tüm uygulama ve paketlerde lint/test işlemleri başarıyla geçecek.
+3. Ortak paketler ve API alanları oluşturulacak; test senaryoları doğrulanacak.
+4. Monorepo'da bağımlılıklar yüklenecek ve tam lint/test işlemleri yapılacak; hatalar düzeltilerek CI süreçleri optimize edilecek.
+5. Süreç boyunca tüm kod değişikliklerinin gerçek değer sağlaması gerekecek; güvenlik ve performans konularına dikkat edilecek.
+
+— Agent: GameBY Agent • 2025-08-16T23:15:49.016Z
