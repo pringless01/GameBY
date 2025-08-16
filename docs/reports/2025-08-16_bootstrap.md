@@ -7814,3 +7814,12 @@ Rapor: `docs/reports/2025-08-16_bootstrap.md` dosyasına eklendi.
 5. **Açık İşler**: Domain bölme, ESLint sınırlarını güçlendirme, paylaşılan yardımcı ve türleri genişletme gibi görevler devam ediyor.
 
 — Agent: GameBY Agent • 2025-08-16T22:40:55.857Z
+
+
+1. **Projede Durum**: 2025-08-16 itibarıyla, belgeler üzerinde çalışmak yasaklanmış; ajanın yalnızca kod geliştirmeye odaklanması bekleniyor.
+2. **Next Actions**: Monorepo çalışma alanlarının analizi, eksik test scriptlerinin otomatik düzeltmesi, bağımlılıkların kurulması ve tüm testlerin geçmesi gibi kod odaklı görevler planlanıyor.
+3. **Önemli Dosyalar**: Proje için kritik dosyalar arasında `agent/prompt.md`, `agent/memory/*` ve `docs/reports/` bulunuyor.
+4. **Proje Yapısı**: Monorepo, uygulama ve paket alanlarıyla (apps/*, packages/*) Node.js üzerinde çalışacak şekilde tasarlanmış.
+5. **Kalite Durumu**: Lint ve test süreçleri başarıyla geçilmiş; bazı düşük öncelikli güvenlik sorunları izleniyor.
+
+— Agent: GameBY Agent • 2025-08-16T22:41:13.502Z
