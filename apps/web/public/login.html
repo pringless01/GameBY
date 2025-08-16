@@ -34,10 +34,29 @@ main
         a:hover { text-decoration:underline; }
         .footer { margin-top:24px; text-align:center; font-size:12px; color:#5d6b78; }
     </style>
+    <link rel="stylesheet" href="/css/codara-intro.css">
     <script src="./js/config.js" defer></script>
     <script src="./js/auth.js" defer></script>
 </head>
 <body>
+        <!-- CODARA Splash Intro Overlay (login) -->
+        <div id="codara-intro" class="codara-intro hidden" role="dialog" aria-modal="true" aria-label="CODARA intro">
+            <div class="stage">
+                <canvas id="spark"></canvas>
+                <div class="halo top"></div>
+                <div class="halo bottom"></div>
+                <div class="stack">
+                    <div class="mark" aria-label="Codara mark">
+                        <span class="brace">{</span><span class="c">C</span><span class="brace">}</span>
+                    </div>
+                    <div class="word" aria-label="Codara wordmark">
+                        <div id="brand" class="brand" data-text="CODARA">CODARA</div>
+                        <div class="tag">GAME</div>
+                    </div>
+                </div>
+                <div class="skip">Devam etmek için bir tuşa basın / tıklayın</div>
+            </div>
+        </div>
     <main class="card">
         <h1>Giriş Yap</h1>
         <form id="loginForm" autocomplete="on">
@@ -156,7 +175,13 @@ main
         </div>
     </div>
 
-    <!-- JavaScript -->
+        <!-- JavaScript -->
+        <script src="/js/codara-intro.js"></script>
+        <script>
+            (async function(){
+                try { await (window.startCodaraIntro ? window.startCodaraIntro({ autoFinish:true, minHoldMs:1800, maxDurationMs:6000 }) : Promise.resolve()); } catch(e){}
+            })();
+        </script>
     <script>
         // Debug için window objesine fonksiyonları ekleyelim
         console.log('🔐 Login page loading...');

@@ -1386,7 +1386,11 @@ function dismissNotification(element) {
 
 // Sayfa yüklendiğinde dashboard'u başlat
 document.addEventListener('DOMContentLoaded', () => {
-    window.dashboard = new Dashboard();
+    if (!window.__DEFER_DASHBOARD__) {
+        window.dashboard = new Dashboard();
+    } else {
+        window.__BOOT_DASHBOARD__ = () => { window.dashboard = new Dashboard(); };
+    }
 });
 
 // Visibility change event - sayfa görünür olduğunda verileri güncelle
