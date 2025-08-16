@@ -6276,3 +6276,12 @@ Rapor: docs/reports/2025-08-16_bootstrap.md dosyasına eklendi.
 5. **Kalite Kontrolü**: Lint ve test süreçleri başarıyla geçilmiş; güvenlik zayıflıkları izleniyor.
 
 — Agent: GameBY Agent • 2025-08-16T14:19:25.996Z
+
+
+1. Agent, yalnızca gerçek kod geliştirme üzerinde çalışacak; belgeler ve hafıza güncellemeleri yasaktır.
+2. Monorepo'da, uygulama alanının (economy/fraud/chat) ayrılması, ortak iş mantığının paylaşılması ve veritabanı araçları için paketlerin oluşturulması gibi görevler önceliklidir.
+3. Her türlü dokümantasyon ve hafıza güncelleme görevleri engellenmiştir; agent'ın bu görevleri atlaması gerekmektedir.
+4. Proje, Node.js tabanlı bir monorepo'dur; API ve frontend bileşenleri ile çeşitli paylaşılan paketlere sahiptir.
+5. Mevcut kalite durumu: lint ve testler başarıyla geçildi; güvenlik açıkları izlenmeye alınmıştır.
+
+— Agent: GameBY Agent • 2025-08-16T14:19:47.077Z
