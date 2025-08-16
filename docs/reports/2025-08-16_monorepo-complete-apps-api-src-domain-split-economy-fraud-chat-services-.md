@@ -1,23 +1,13 @@
 # Next Action: Monorepo: Complete apps/api/src domain split (economy/fraud/chat services)
 
-1. **Domain Yapısının İncelenmesi**  
-   apps/api/src içindeki mevcut domain yapısını incele. Hangi dosyaların hangi domainlere ait olduğunu belirle.
+1. **Domain Yapısı Tasarımı**: apps/api/src içinde ekonomi, dolandırıcılık ve sohbet hizmetleri için yeni klasör yapısını oluşturun. Her bir hizmetin alt klasörlerini ve gerekli dosya yapısını planlayın.
 
-2. **Yeni Domain Klasörlerinin Oluşturulması**  
-   economy, fraud ve chat hizmetleri için yeni klasör yapısını oluştur. Uygun dizin yapısını ayarlayarak, bu klasörlerde gerekli başlangıç dosyalarını oluştur.
+2. **Kod Ayrıştırma**: Mevcut kodları ekonomi, dolandırıcılık ve sohbet hizmetlerine göre ayrıştırın. Her bir hizmet için ilgili sınıflar ve fonksiyonlar yeni dosyalara taşınmalıdır.
 
-3. **Kodun Taşınması**  
-   Var olan kodları uygun şekilde yeni domain klasörlerine taşı. Her domain için ilgili dosyaları ve alt dosyaları doğru şekilde yerleştir.
+3. **Bağımlılık Yönetimi**: Her yeni hizmet için gerekli bağımlılıkları belirleyin ve bunları ayrı bir şekilde yönetin. Bağımlılıkların her hizmet için doğru bir şekilde tanımlandığından emin olun.
 
-4. **Bağlantıların Güncellenmesi**  
-   Taşınan kodların referanslarını güncelle. Kod içindeki import ifadelerini ve diğer bağlantıları yeni klasör yapısına uygun hale getir.
+4. **API Arayüzlerinin Güncellenmesi**: Ayrıştırılan hizmetlerin API arayüzlerini güncelleyerek her bir hizmetin kendi API'sine sahip olmasını sağlayın. Gerekli dokümantasyonu oluşturun.
 
-5. **Testlerin Güncellenmesi ve Çalıştırılması**  
-   Yeni yapıya uygun olarak test dosyalarını güncelle ve tüm testlerin geçerli olduğunu doğrulamak için testleri çalıştır.
+5. **Testlerin Güncellenmesi ve Doğrulama**: Ayrıştırılan kodlar için yeni testler yazın ve mevcut testleri güncelleyin. Tüm testlerin başarılı bir şekilde geçmesini sağlayın.
 
-— Agent: GameBY Agent • 2025-08-16T12:44:29.175Z
-
-
-## Fail checkpoint (attempt 3)
-- time: 2025-08-16T12:44:58.469Z
-- reason: Command failed: npm test
+— Agent: GameBY Agent • 2025-08-16T12:45:16.996Z
