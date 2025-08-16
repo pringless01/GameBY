@@ -9714,3 +9714,12 @@ Rapor güncellenecek ve hafızaya eklenecek.
 5. **Açık İşler**: Ekonomi, dolandırıcılık ve sohbet gibi alanlarda hizmetlerin ayrıştırılması gibi görevler, mevcut açık işler arasında yer almakta.
 
 — Agent: GameBY Agent • 2025-08-16T23:37:22.926Z
+
+
+1. Proje, `pringless01/GameBY` adlı monorepo yapısına sahiptir ve belgeler yerine gerçek kod geliştirmeye odaklanmıştır.
+2. Belgelendirme görevleri yasaklanmış ve geliştirici, backend ve frontend kod üzerinde çalışmak zorundadır.
+3. Gelecek eylemler arasında monorepo analizi, çalışma alanlarının kurulumu ve testlerin sağlıklı bir şekilde çalıştığının kontrolü bulunmaktadır.
+4. CI/CD süreçleri ve test senaryoları üzerinde iyileştirmeler yapılacak, eksik test senaryoları otomatik olarak düzeltilecektir.
+5. Proje güvenlik ve performans optimizasyonuna yönelik aşamalı bir gelişim süreci izlemekte, çeşitli hizmetlerin ayrıştırılması ve modüler bir yapı oluşturulması hedeflenmektedir.
+
+— Agent: GameBY Agent • 2025-08-16T23:38:10.970Z
