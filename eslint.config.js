@@ -18,9 +18,16 @@ export default [
   {
     files: ['**/*.js','**/*.ts'],
     rules: {
-  'no-unused-vars': ['error', { argsIgnorePattern: '^_', caughtErrors: 'none', caughtErrorsIgnorePattern: '^_' }],
-      'import/order': ['error', { alphabetize: { order: 'asc', caseInsensitive: true }, 'newlines-between': 'always' }]
-      , 'no-empty': 'off'
+      'no-unused-vars': ['error', { argsIgnorePattern: '^_', caughtErrorsIgnorePattern: '^_' }],
+      'import/no-cycle': 'error',
+      'no-restricted-imports': ['error', { 
+        patterns: [
+          { group: ['**/modules/*/!(index|*.service|*.repo).js'], message: 'Service/Repo dışı module iç dosyalara doğrudan import etme.' },
+          { group: ['../modules/*/*'], message: 'Farklı domaine relative import yasak; shared/* veya public API kullan.' }
+        ]
+      }],
+      'import/order': ['error', { alphabetize: { order: 'asc', caseInsensitive: true }, 'newlines-between': 'always' }],
+      'no-empty': 'off'
     }
   },
   // apps/api için Node ortamı ve kurallar
