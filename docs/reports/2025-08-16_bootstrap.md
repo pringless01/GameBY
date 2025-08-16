@@ -7952,3 +7952,14 @@ Rapor: docs/reports/2025-08-16_bootstrap.md dosyasına eklenecek.
 5. **Açık İşler**: Domain split, ESLint sertleştirmeleri ve paylaşılan yardımcı fonksiyonların genişletilmesi gibi görevler devam etmektedir.
 
 — Agent: GameBY Agent • 2025-08-16T22:45:16.993Z
+
+
+1. Proje, 2025-08-16 itibarıyla yalnızca gerçek kod geliştirme görevlerine odaklanmayı hedeflemekte, dokümantasyon görevleri tamamen yasaklanmıştır.
+2. Monorepo, uygulama ve paket yapılarının düzgün bir şekilde kurulması, tüm testlerin yeşil olması ve eksik test scriptlerinin otomatik olarak düzeltilmesi gerekmektedir.
+3. Paylaşılan paketler (business, db, validation, auth vb.) ve API alanları (economy, fraud, chat) oluşturulması planlanmaktadır.
+4. Tüm iş alanları ve test scriptleri, uygulama ve paketler arasında doğrulanacak, bağımlılıkların kurulması ve tam lint/test süreci gerçekleştirilecektir.
+5. Mevcut durum, havuzda bulunan bilgilere dayalı olarak güncellenmekte ve haftalık raporlar oluşturulmaktadır. 
+
+Rapor: docs/reports/2025-08-16_bootstrap.md dosyasına eklenecek.
+
+— Agent: GameBY Agent • 2025-08-16T22:45:34.984Z
