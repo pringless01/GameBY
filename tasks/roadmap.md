@@ -1,43 +1,59 @@
-# GameBY Agent Aggressive Roadmap - Real Development Tasks
+# GameBY Agent Monorepo Modularization Roadmap
 
-## URGENT CODE CHANGES (Agent focus here immediately!):
+## PHASE 1: MONOREPO STRUCTURE MODULARIZATION (IMMEDIATE):
 
-- Backend API: Add marketplace bidding system endpoints (/api/marketplace/bid)
-- Backend API: Implement reputation decay scheduler job (CRON based)
-- Backend API: Add contract dispute resolution endpoints (/api/contracts/dispute)  
-- Frontend PWA: Build real-time chat interface (WebSocket + UI)
-- Frontend PWA: Add marketplace listing management UI (CRUD interface)
-- Backend: Optimize leaderboard cursor performance (SQL index + cache)
-- Backend: Add user preference settings API (/api/user/preferences)
-- Frontend: Implement trust score visualization (Chart.js integration)
-- Backend: Add mentor matching algorithm (recommendation engine)
-- Frontend: Build onboarding progress tracker (step-by-step UI)
+- Monorepo: Complete apps/api/src domain split (economy/fraud/chat services)
+- Monorepo: Extract shared business logic to packages/shared-business
+- Monorepo: Create packages/shared-db for database utilities and models
+- Monorepo: Implement proper inter-service communication patterns
+- Monorepo: Add packages/shared-validation for common validators
+- Monorepo: Extract authentication logic to packages/shared-auth
+- Monorepo: Create packages/shared-config for environment management
+- Monorepo: Add packages/shared-middleware for common HTTP middleware
+- Monorepo: Extract WebSocket logic to packages/shared-realtime
+- Monorepo: Create packages/shared-testing for test utilities
 
-## PRIORITY FEATURES (Real development work):
+## PHASE 2: SERVICE ISOLATION & BOUNDARIES:
 
-- Backend: Add advanced fraud detection algorithms (ML-based scoring)
-- Frontend: Implement mobile-first responsive design (CSS Grid + Flexbox)
-- Backend: Add email notification system (NodeMailer + templates)
-- Frontend: Build user dashboard with analytics (Charts + metrics)
-- Backend: Implement caching layer optimization (Redis integration)
-- Frontend: Add PWA offline functionality (Service Worker + IndexedDB)
-- Backend: Build comprehensive logging system (Winston + structured logs)
-- Frontend: Add dark mode theme support (CSS variables + localStorage)
-- Backend: Implement rate limiting enhancements (Redis-based sliding window)
-- Frontend: Add real-time notification system (WebSocket + push notifications)
+- Services: Isolate economy module with proper service/repo layers
+- Services: Extract fraud detection into standalone service module
+- Services: Create chat service with message persistence
+- Services: Build user management service with profile handling
+- Services: Add marketplace service with listing/bidding logic
+- Services: Create mentor system service with matching algorithms
+- Services: Build contract service with dispute resolution
+- Services: Add notification service with multi-channel support
+- Services: Create analytics service with metrics collection
+- Services: Build reputation service with score calculations
 
-## ARCHITECTURE IMPROVEMENTS (Code refactoring needed):
+## PHASE 3: ADVANCED MONOREPO PATTERNS:
 
-- Database: Add indexes for performance optimization (trust_score, created_at)
-- Backend: Fix authentication token refresh logic (JWT renewal)
-- Frontend: Implement proper error boundaries (React-like error handling)
-- Backend: Add database connection pooling optimization (connection limits)
-- Frontend: Fix memory leaks in WebSocket connections (proper cleanup)
-- Backend: Optimize slow database queries in leaderboard (query optimization)
-- Frontend: Add input validation for all forms (client-side + server-side)
-- Backend: Fix frontend routing issues in PWA (service worker routing)
-- Frontend: Implement proper logging across all services (structured logging)
-- Backend: Add health check endpoints for monitoring (/health, /ready)
+- Architecture: Implement proper dependency injection container
+- Architecture: Add event-driven architecture between services  
+- Architecture: Create API gateway layer for service orchestration
+- Architecture: Build comprehensive logging with distributed tracing
+- Architecture: Add service discovery and health monitoring
+- Architecture: Implement proper database migration system
+- Architecture: Create shared error handling and response patterns
+- Architecture: Build comprehensive testing framework (unit/integration/e2e)
+- Architecture: Add performance monitoring and metrics collection
+- Architecture: Implement proper CI/CD pipeline for monorepo
+
+## PHASE 4: PRODUCTION READINESS:
+
+- Production: Add comprehensive security audit and fixes
+- Production: Implement proper secrets management system
+- Production: Add database backup and disaster recovery
+- Production: Create comprehensive documentation for services
+- Production: Add monitoring dashboards and alerting
+- Production: Implement proper rate limiting per service
+- Production: Add comprehensive caching strategies
+- Production: Build deployment automation and rollback procedures
+- Production: Add load testing and performance optimization
+- Production: Create comprehensive API documentation
+
+## CURRENT FOCUS (Next Actions will be seeded from here):
+These tasks will automatically populate docs/status.md Next Actions
 
 ## STOP DOING (No more docs/memory tasks):
 

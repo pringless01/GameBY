@@ -17,16 +17,11 @@ Last activity: 2025-08-16T11:21:35.123Z
 - Assumption: Token usage must provide real value through code changes
 
 ## Next Actions
-- Backend API: Add marketplace bidding system endpoints (/api/marketplace/bid)
-- Backend API: Implement reputation decay scheduler job (CRON based)
-- Backend API: Add contract dispute resolution endpoints (/api/contracts/dispute)  
-- Frontend PWA: Build real-time chat interface (WebSocket + UI)
-- Frontend PWA: Add marketplace listing management UI (CRUD interface)
-- Backend: Optimize leaderboard cursor performance (SQL index + cache)
-- Backend: Add user preference settings API (/api/user/preferences)
-- Frontend: Implement trust score visualization (Chart.js integration)
-- Backend: Add mentor matching algorithm (recommendation engine)
-- Frontend: Build onboarding progress tracker (step-by-step UI)
+- Monorepo: Complete apps/api/src domain split (economy/fraud/chat services)
+- Monorepo: Extract shared business logic to packages/shared-business
+- Monorepo: Create packages/shared-db for database utilities and models
+- Monorepo: Implement proper inter-service communication patterns
+- Monorepo: Add packages/shared-validation for common validators
 
 ## BANNED TASKS (Agent must skip these):
 - ~~MVP: Hafıza dosyaları + roll-up action + PR şablonları~~ ❌ BANNED
