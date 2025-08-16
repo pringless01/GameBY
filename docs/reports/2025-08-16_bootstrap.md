@@ -7746,3 +7746,14 @@ Rapor: **docs/reports/2025-08-16_bootstrap.md**'ye eklenecek.
 Şimdi, `Next Actions` bölümündeki görevleri sırayla gerçekleştireceğim.
 
 — Agent: GameBY Agent • 2025-08-16T22:38:59.105Z
+
+
+1. **Geliştirme Odaklanması**: Belgelendirme görevleri durdurulmuş, odak gerçek kod geliştirmesine kaydırılmıştır.
+2. **Monorepo Yapılandırması**: Uygulama ve paketlerin doğru bir şekilde yapılandırılması, linting ve testlerin yeşil olarak geçmesi sağlanmalıdır.
+3. **Paylaşılan Paketler ve API Alanları**: Paylaşılan paketler ve API alanları oluşturulmalıdır; bu, çeşitli işlevsellikleri içerir.
+4. **Test ve Lint Doğrulama**: Tüm uygulama ve paketlerde test senaryolarının doğru bir şekilde çalıştığından emin olunmalıdır.
+5. **CI İş Akışı**: CI süreçlerinin doğrulanması ve tüm testlerin geçmesi sağlanmalıdır.
+
+Rapor: docs/reports/2025-08-16_bootstrap.md güncelleniyor.
+
+— Agent: GameBY Agent • 2025-08-16T22:39:18.049Z
