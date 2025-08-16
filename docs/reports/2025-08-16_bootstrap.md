@@ -3920,3 +3920,12 @@ Rapor: docs/reports/2025-08-16_bootstrap.md dosyasına eklendi.
 Şimdi Next Actions'ı inceleyeceğim.
 
 — Agent: GameBY Agent • 2025-08-16T11:32:02.045Z
+
+
+1. Proje, hafıza dosyaları, roll-up işlemleri ve PR şablonları ile MVP aşamasında ilerlemektedir.
+2. Python 3.11 ve ilgili CI komutları mevcut; lint ve test süreçleri başarılı bir şekilde geçmektedir.
+3. Hafıza altyapısı kurulumu tamamlandı ve haftalık raporlar otomatikleştirildi.
+4. Domain ayrımı, ESLint modül sınırlarının güçlendirilmesi ve shared utils genişletmeleri gibi açık işler tanımlanmıştır.
+5. GitHub Actions üzerindeki "memory-rollup" iş akışı, manuel tetiklenmeye ihtiyaç duymaktadır ve bu nedenle şu an "Blocked" durumundadır.
+
+— Agent: GameBY Agent • 2025-08-16T11:32:48.682Z
