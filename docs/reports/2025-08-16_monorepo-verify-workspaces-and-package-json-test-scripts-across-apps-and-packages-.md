@@ -1,18 +1,13 @@
 # Next Action: Monorepo: verify workspaces and package.json test scripts across apps/* and packages/*
 
-Alt Adım 1: "Monorepo'daki tüm uygulamaların (apps/*) package.json dosyalarını kontrol et."
-- Çalışma alanları ve test komutları ile ilgili bilgileri toplamak için her uygulamanın package.json dosyası incelenecek.
+1. **Workspace'ları Kontrol Et**: Monorepo içerisindeki `apps/*` ve `packages/*` dizinlerindeki workspace'ları kontrol et. Tüm workspace'ların düzgün bir şekilde tanımlandığını ve birbirleriyle uyumlu olduğunu doğrula.
 
-Alt Adım 2: "Monorepo'daki tüm paketlerin (packages/*) package.json dosyalarını kontrol et."
-- Paketlerin test komutları ve çalışma alanları doğrulanacak, böylece tutarlı bir yapı sağlanacak.
+2. **package.json Dosyalarını İncele**: `apps/*` ve `packages/*` dizinlerindeki `package.json` dosyalarını incele. Her bir dosyada gerekli alanların (isim, sürüm, bağımlılıklar vb.) doğru bir şekilde tanımlandığını kontrol et.
 
-Alt Adım 3: "Uygulamalar ve paketler arasındaki test komutlarını karşılaştır."
-- Uygulamalar ve paketler arasındaki test komutlarının tutarlılığı kontrol edilecek, herhangi bir tutarsızlık tespit edilecek.
+3. **Test Scriptlerini Gözden Geçir**: Her `package.json` dosyasındaki test scriptlerini gözden geçir. Scriptlerin doğru bir şekilde tanımlandığını ve beklenen testlerin çalıştırılmasını sağladığını kontrol et.
 
-Alt Adım 4: "Gerekli düzeltmeleri yap."
-- Tespit edilen tutarsızlıklar ve eksiklikler için gerekli düzenlemeler yapılacak, package.json dosyaları güncellenecek.
+4. **Testleri Çalıştır**: `apps/*` ve `packages/*` içerisindeki her bir projenin test scriptini çalıştır. Testlerin başarılı bir şekilde geçip geçmediğini kontrol et.
 
-Alt Adım 5: "Son durumu belgeleyerek rapor oluştur."
-- Yapılan değişiklikler ve güncellemeler raporlanacak ve documentation/reports/ klasörüne kaydedilecek.
+5. **Rapor Oluştur**: Tüm kontroller ve testler tamamlandıktan sonra, bulguları ve sonuçları içeren bir rapor oluştur. Rapor, yapılan işlemleri ve elde edilen sonuçları özetleyecek şekilde düzenlenmelidir.
 
-— Agent: GameBY Agent • 2025-08-16T23:50:04.259Z
+— Agent: GameBY Agent • 2025-08-16T23:50:53.535Z
