@@ -47,3 +47,5 @@
 - [2025-08-16 12:26] docs/readme: Hafıza Sistemi bölümü README.md’ye eklendi (docs/reports/2025-08-16_readme-memory.md).
  - [2025-08-16 12:40] closure: Next Actions temizlendi; final rapor yazıldı (docs/reports/2025-08-16_final.md). Lint/Test yeşil.
  - [2025-08-16 13:00] memory/bootstrap: Özet güncellendi; önceki bootstrap arşivlendi (docs/archive/2025-08-16_bootstrap.prev.md).
+ - [2025-08-16 13:05] fraud/unit: Fraud servisine repo stub ile birim test eklendi; lint/test yeşil (commit d4e5036). Rapor: docs/reports/2025-08-16_fraud-service-unit.md
+ - [2025-08-16 13:15] shared-utils/types: Pagination helpers (normalizeLimit/Offset) ve PaginationParams DTO eklendi; davranış değişimi yok. Rapor: docs/reports/2025-08-16_shared-utils-types.md

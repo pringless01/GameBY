@@ -1,4 +1,5 @@
 import assert from 'assert';
+
 import * as FraudService from '../../modules/fraud/fraud.service.js';
 
 // Repo stub: kontrollü event listesi döner
