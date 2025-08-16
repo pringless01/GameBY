@@ -1,17 +1,13 @@
 # Next Action: MVP: Hafıza dosyaları + roll-up action + PR şablonları
 
-Next Action'ı aşağıdaki 5 alt adıma böldüm:
+1. **Hafıza Dosyaları Oluşturma**: Proje gereksinimlerini ve önemli bilgileri içeren hafıza dosyaları hazırlayın. Bu dosyalar, projenin genel hatlarını belirlemek için kullanılacaktır.
 
-1. **Hafıza Dosyalarının Oluşturulması**: Projeye özgü hafıza dosyalarını oluştur ve gerekli bilgileri ekle.
+2. **Roll-Up Action Planı Geliştirme**: Proje ilerlemesini izlemek ve tüm takımların senkronize çalışmasını sağlamak için bir roll-up eylem planı oluşturun. Bu plan, belirli hedeflerin ve zaman çizelgelerinin belirlenmesine yardımcı olacaktır.
 
-2. **Roll-up Action Tanımlaması**: Roll-up action'ı tanımla; proje yönetim süreçlerini ve hedeflerini içermelidir.
+3. **PR Şablonu Tasarımı**: Pull request (PR) işlemlerini kolaylaştırmak için bir şablon oluşturun. Bu şablon, geliştiricilerin PR'lerini düzenli bir şekilde sunmalarına yardımcı olacak ve gerekli bilgileri içerecektir.
 
-3. **PR Şablonlarının Tasarlanması**: Pull request (PR) şablonlarını tasarla; kod inceleme süreçlerini kolaylaştıracak şekilde yapılandır.
+4. **Hafıza Dosyalarının Gözden Geçirilmesi**: Oluşturulan hafıza dosyalarını gözden geçirerek eksiklikleri ve gereksinimleri belirleyin. Gerekli düzeltmeleri yaparak dosyaların güncel ve doğru olmasını sağlayın.
 
-4. **Hafıza Dosyalarının Gözden Geçirilmesi**: Oluşturulan hafıza dosyalarını gözden geçir ve eksiklikleri gider.
+5. **Roll-Up Action Planının Dağıtımı**: Roll-up eylem planını tüm ekip üyeleriyle paylaşın. Ekip üyelerinin plan hakkında bilgi sahibi olmalarını ve katkıda bulunmalarını sağlamak için gerekli toplantıları organize edin.
 
-5. **Roll-up Action ve PR Şablonlarının Uygulanması**: Tanımlanan roll-up action ve PR şablonlarını projeye entegre et ve uygulamaya geç.
-
-Her bir adımda gerekli değişiklikleri yapacağım. Şimdi ilk adıma geçiyorum.
-
-— Agent: GameBY Agent • 2025-08-16T09:20:43.474Z
+— Agent: GameBY Agent • 2025-08-16T09:21:28.067Z
