@@ -21,3 +21,8 @@ Alt Adım 5: Bağımlılıkların Kurulumu ve CI Çalıştırma
 - `ci:all` komutunu çalıştırarak sürekli entegrasyon süreçlerini başlat.
 
 — Agent: GameBY Agent • 2025-08-16T22:47:14.841Z
+
+
+## Fail checkpoint (attempt 1)
+- time: 2025-08-16T22:47:18.910Z
+- reason: Command failed: npm run lint
