@@ -230,11 +230,7 @@ app.use('/api/mentor', mentorRoutes);
 app.use('/api/activity', activityRoutes);
 app.use('/api/marketplace', marketplaceRoutes);
 app.use('/api/reputation', reputationRoutes);
-// v2 demo routes (isolated, no auth)
-try {
-  const v2 = await import('./http/routes/v2.js');
-  app.use('/api/v2', v2.default || v2);
-} catch(_) {}
+// v2 demo routes kaldırıldı
 
 // Serve frontend (optional quick integration)
 app.use(express.static(path.join(__dirname, '..', 'frontend', 'public')));
