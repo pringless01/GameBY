@@ -3434,3 +3434,12 @@ Rapor: docs/reports/2025-08-16_bootstrap.md dosyasına eklenmiştir.
 5. **Blokaj ve İlerleme**: Memory-rollup workflow'u 'workflow_dispatch' tetiklenmesini gerektirdiğinden şu an için blokajda; ilerleyen süreçte otomatik raporlama ve hafıza güncellemeleri bekleniyor.
 
 — Agent: GameBY Agent • 2025-08-16T10:48:19.545Z
+
+
+1. Proje, hafıza dosyaları, roll-up eylemleri ve PR şablonları ile MVP aşamasını hedefliyor.
+2. Python 3.11 ve GitHub Actions ile CI sürecinde lint ve test komutları kullanılacak; mevcut kırıklara rağmen yeni altyapı ekleniyor.
+3. Phase-2 için ESLint modül sınırları ve shared utils/types genişletilmesi gibi gelişmeler var.
+4. Hafıza sistemi, otomatik haftalık raporlamalar ve CI iş akışı ile destekleniyor; bazı işlemler "Blocked" durumu ile not edilmiştir.
+5. Repo, monorepo yapısında organize edilmiş ve ana branch "main" olarak belirlenmiş; çeşitli uygulama ve test alanları içeriyor.
+
+— Agent: GameBY Agent • 2025-08-16T10:48:58.413Z
