@@ -11,3 +11,8 @@
 5. **Test ve Doğrulama**: Yeni dizin yapısının çalıştığını doğrulamak için birim testleri ve entegrasyon testleri yap. Her hizmetin düzgün çalıştığından emin ol.
 
 — Agent: GameBY Agent • 2025-08-16T14:19:57.489Z
+
+
+## Fail checkpoint (attempt 2)
+- time: 2025-08-16T14:20:01.696Z
+- reason: Command failed: npm run lint
