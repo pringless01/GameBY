@@ -18,3 +18,18 @@ Notlar/Riskler:
 - memory-rollup yerelde tetiklenemez; yalnız raporlanır.
 
 Checkpoint: 2025-08-16T13:00Z+bootstrap
+
+---
+
+Güncelleme (2025-08-16 14:10)
+
+Özet (5 madde):
+- Next Actions listesi tamamlanmış görünüyor; roadmap’tan yeni maddeler seed edilecek.
+- ESLint boundaries konfigürasyonu kök `eslint.config.js` içinde zaten sıkı; doğrulama yapılacak.
+- Lint ve test komutları kökten çalıştırılacak: `npm run lint` ve `npm test`.
+- Hafıza: `agent/memory/project_facts.md` ve `agent/memory/long_term.md` append ile güncellenecek.
+- Davranış değişimi yok; yalnızca dokümantasyon/konfig doğrulaması.
+
+Sonuç: Yürütme döngüsü başlatıldı (seed → lint/test → rapor/roll-up).
+
+Checkpoint: 2025-08-16T14:10Z+bootstrap-update

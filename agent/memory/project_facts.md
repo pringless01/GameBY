@@ -53,3 +53,5 @@
  - [2025-08-16 13:25] docs/update: architecture/index/security güncellendi, haftalık rapor oluşturuldu - lint+test PASS
  - [2025-08-16 13:30] ci/workflow: GitHub Actions workflows doğrulandı, memory rollup test edildi - tamamen operasyonel
  - [2025-08-16 13:15] shared-utils/types: Pagination helpers (normalizeLimit/Offset) ve PaginationParams DTO eklendi; davranış değişimi yok. Rapor: docs/reports/2025-08-16_shared-utils-types.md
+
+- [2025-08-16 14:10] memory/bootstrap: Rapor güncellendi; Next Actions roadmap'tan seed edildi (docs/reports/2025-08-16_bootstrap.md)

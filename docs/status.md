@@ -13,11 +13,8 @@
 - Assumption: Lint/test kırıkları mevcut olabilir; bu çalışma davranışı değiştirmeyecek, yalnızca bellek/raporlama altyapısı ekler.
 
 ## Next Actions
-- [x] Fraud service: repo stub ile 1 adet service-level unit test ekle (davranış değiştirme yok)
-- [x] Shared utils/types: pagination, dates, hmac yardımcılarını non-invasive ekle
-- [x] ESLint module boundaries: no-cycle ve no-restricted-imports ihlallerini düzelt
-- [x] Docs: architecture/index/security güncelle ve haftalık raporu oluştur
-- [x] CI: sweep raporu artifact, compose smoke ve memory roll-up workflow doğrulaması (raporlamalı)
+- [ ] MVP: Hafıza dosyaları + roll-up action + PR şablonları
+- [ ] Gelişim: Auto-task issue template ile iş akışı
 
 ## Blocked
 - memory-rollup workflow ‘workflow_dispatch’ tetiklenmesi gerekli (GitHub Actions UI). Bu yerel araçlarla çalıştırılamaz.
