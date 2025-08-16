@@ -2220,3 +2220,192 @@ Checkpoint: 2025-08-16T14:10Z+bootstrap-update
 - [stub] Lint/Test korunur
 
 — Agent: GameBY Agent • 2025-08-16T06:48:23.691Z
+
+
+- [stub] Aşağıdaki içeriklere bak ve 5 maddelik kısa özet çıkar (yalın):  --- status.md ---
+- [stub] Yerel özet (DRY/no-key)
+- [stub] Plan oluşturuldu
+- [stub] Dosyalar güncellenecek
+- [stub] Lint/Test korunur
+
+— Agent: GameBY Agent • 2025-08-16T06:48:59.050Z
+
+
+- [stub] Aşağıdaki içeriklere bak ve 5 maddelik kısa özet çıkar (yalın):  --- status.md ---
+- [stub] Yerel özet (DRY/no-key)
+- [stub] Plan oluşturuldu
+- [stub] Dosyalar güncellenecek
+- [stub] Lint/Test korunur
+
+— Agent: GameBY Agent • 2025-08-16T06:49:01.250Z
+
+
+- [stub] Aşağıdaki içeriklere bak ve 5 maddelik kısa özet çıkar (yalın):  --- status.md ---
+- [stub] Yerel özet (DRY/no-key)
+- [stub] Plan oluşturuldu
+- [stub] Dosyalar güncellenecek
+- [stub] Lint/Test korunur
+
+— Agent: GameBY Agent • 2025-08-16T06:49:03.315Z
+
+
+- [stub] Aşağıdaki içeriklere bak ve 5 maddelik kısa özet çıkar (yalın):  --- status.md ---
+- [stub] Yerel özet (DRY/no-key)
+- [stub] Plan oluşturuldu
+- [stub] Dosyalar güncellenecek
+- [stub] Lint/Test korunur
+
+— Agent: GameBY Agent • 2025-08-16T06:49:05.420Z
+
+
+- [stub] Aşağıdaki içeriklere bak ve 5 maddelik kısa özet çıkar (yalın):  --- status.md ---
+- [stub] Yerel özet (DRY/no-key)
+- [stub] Plan oluşturuldu
+- [stub] Dosyalar güncellenecek
+- [stub] Lint/Test korunur
+
+— Agent: GameBY Agent • 2025-08-16T06:49:07.678Z
+
+
+- [stub] Aşağıdaki içeriklere bak ve 5 maddelik kısa özet çıkar (yalın):  --- status.md ---
+- [stub] Yerel özet (DRY/no-key)
+- [stub] Plan oluşturuldu
+- [stub] Dosyalar güncellenecek
+- [stub] Lint/Test korunur
+
+— Agent: GameBY Agent • 2025-08-16T06:49:09.820Z
+
+
+- [stub] Aşağıdaki içeriklere bak ve 5 maddelik kısa özet çıkar (yalın):  --- status.md ---
+- [stub] Yerel özet (DRY/no-key)
+- [stub] Plan oluşturuldu
+- [stub] Dosyalar güncellenecek
+- [stub] Lint/Test korunur
+
+— Agent: GameBY Agent • 2025-08-16T06:49:12.060Z
+
+
+- [stub] Aşağıdaki içeriklere bak ve 5 maddelik kısa özet çıkar (yalın):  --- status.md ---
+- [stub] Yerel özet (DRY/no-key)
+- [stub] Plan oluşturuldu
+- [stub] Dosyalar güncellenecek
+- [stub] Lint/Test korunur
+
+— Agent: GameBY Agent • 2025-08-16T06:49:14.166Z
+
+
+- [stub] Aşağıdaki içeriklere bak ve 5 maddelik kısa özet çıkar (yalın):  --- status.md ---
+- [stub] Yerel özet (DRY/no-key)
+- [stub] Plan oluşturuldu
+- [stub] Dosyalar güncellenecek
+- [stub] Lint/Test korunur
+
+— Agent: GameBY Agent • 2025-08-16T06:49:16.260Z
+
+
+- [stub] Aşağıdaki içeriklere bak ve 5 maddelik kısa özet çıkar (yalın):  --- status.md ---
+- [stub] Yerel özet (DRY/no-key)
+- [stub] Plan oluşturuldu
+- [stub] Dosyalar güncellenecek
+- [stub] Lint/Test korunur
+
+— Agent: GameBY Agent • 2025-08-16T06:49:18.386Z
+
+
+- [stub] Aşağıdaki içeriklere bak ve 5 maddelik kısa özet çıkar (yalın):  --- status.md ---
+- [stub] Yerel özet (DRY/no-key)
+- [stub] Plan oluşturuldu
+- [stub] Dosyalar güncellenecek
+- [stub] Lint/Test korunur
+
+— Agent: GameBY Agent • 2025-08-16T06:49:20.506Z
+
+
+- [stub] Aşağıdaki içeriklere bak ve 5 maddelik kısa özet çıkar (yalın):  --- status.md ---
+- [stub] Yerel özet (DRY/no-key)
+- [stub] Plan oluşturuldu
+- [stub] Dosyalar güncellenecek
+- [stub] Lint/Test korunur
+
+— Agent: GameBY Agent • 2025-08-16T06:49:22.599Z
+
+
+- [stub] Aşağıdaki içeriklere bak ve 5 maddelik kısa özet çıkar (yalın):  --- status.md ---
+- [stub] Yerel özet (DRY/no-key)
+- [stub] Plan oluşturuldu
+- [stub] Dosyalar güncellenecek
+- [stub] Lint/Test korunur
+
+— Agent: GameBY Agent • 2025-08-16T06:49:24.681Z
+
+
+- [stub] Aşağıdaki içeriklere bak ve 5 maddelik kısa özet çıkar (yalın):  --- status.md ---
+- [stub] Yerel özet (DRY/no-key)
+- [stub] Plan oluşturuldu
+- [stub] Dosyalar güncellenecek
+- [stub] Lint/Test korunur
+
+— Agent: GameBY Agent • 2025-08-16T06:49:26.786Z
+
+
+- [stub] Aşağıdaki içeriklere bak ve 5 maddelik kısa özet çıkar (yalın):  --- status.md ---
+- [stub] Yerel özet (DRY/no-key)
+- [stub] Plan oluşturuldu
+- [stub] Dosyalar güncellenecek
+- [stub] Lint/Test korunur
+
+— Agent: GameBY Agent • 2025-08-16T06:49:28.888Z
+
+
+- [stub] Aşağıdaki içeriklere bak ve 5 maddelik kısa özet çıkar (yalın):  --- status.md ---
+- [stub] Yerel özet (DRY/no-key)
+- [stub] Plan oluşturuldu
+- [stub] Dosyalar güncellenecek
+- [stub] Lint/Test korunur
+
+— Agent: GameBY Agent • 2025-08-16T06:49:30.975Z
+
+
+- [stub] Aşağıdaki içeriklere bak ve 5 maddelik kısa özet çıkar (yalın):  --- status.md ---
+- [stub] Yerel özet (DRY/no-key)
+- [stub] Plan oluşturuldu
+- [stub] Dosyalar güncellenecek
+- [stub] Lint/Test korunur
+
+— Agent: GameBY Agent • 2025-08-16T06:49:33.056Z
+
+
+- [stub] Aşağıdaki içeriklere bak ve 5 maddelik kısa özet çıkar (yalın):  --- status.md ---
+- [stub] Yerel özet (DRY/no-key)
+- [stub] Plan oluşturuldu
+- [stub] Dosyalar güncellenecek
+- [stub] Lint/Test korunur
+
+— Agent: GameBY Agent • 2025-08-16T06:49:35.122Z
+
+
+- [stub] Aşağıdaki içeriklere bak ve 5 maddelik kısa özet çıkar (yalın):  --- status.md ---
+- [stub] Yerel özet (DRY/no-key)
+- [stub] Plan oluşturuldu
+- [stub] Dosyalar güncellenecek
+- [stub] Lint/Test korunur
+
+— Agent: GameBY Agent • 2025-08-16T06:49:37.254Z
+
+
+- [stub] Aşağıdaki içeriklere bak ve 5 maddelik kısa özet çıkar (yalın):  --- status.md ---
+- [stub] Yerel özet (DRY/no-key)
+- [stub] Plan oluşturuldu
+- [stub] Dosyalar güncellenecek
+- [stub] Lint/Test korunur
+
+— Agent: GameBY Agent • 2025-08-16T06:49:39.367Z
+
+
+- [stub] Aşağıdaki içeriklere bak ve 5 maddelik kısa özet çıkar (yalın):  --- status.md ---
+- [stub] Yerel özet (DRY/no-key)
+- [stub] Plan oluşturuldu
+- [stub] Dosyalar güncellenecek
+- [stub] Lint/Test korunur
+
+— Agent: GameBY Agent • 2025-08-16T06:49:41.497Z

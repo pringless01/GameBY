@@ -28,7 +28,9 @@ Stop yalnızca agent/STOP varsa.
 `;
 
 function sh(cmd, opts = {}) {
-  return execSync(cmd, { cwd: repoRoot, stdio: ["pipe", "pipe", "pipe"], ...opts }).toString().trim();
+  const res = execSync(cmd, { cwd: repoRoot, stdio: ["pipe", "pipe", "pipe"], ...opts });
+  if (opts && opts.stdio === "inherit") return "";
+  return (res ? res.toString() : "").trim();
 }
 function read(rel) {
   const p = path.join(repoRoot, rel);
