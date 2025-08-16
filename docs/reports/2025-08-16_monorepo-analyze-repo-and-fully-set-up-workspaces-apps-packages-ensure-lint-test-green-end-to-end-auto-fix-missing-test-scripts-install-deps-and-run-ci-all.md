@@ -11,3 +11,8 @@
 5. **CI Sürecini Çalıştırma**: Tüm workspace'lerde `ci:all` komutunu çalıştırarak sürekli entegrasyon süreçlerini başlat ve tüm testlerin geçmesini sağla.
 
 — Agent: GameBY Agent • 2025-08-16T22:46:20.567Z
+
+
+## Fail checkpoint (attempt 1)
+- time: 2025-08-16T22:46:24.766Z
+- reason: Command failed: npm run lint
