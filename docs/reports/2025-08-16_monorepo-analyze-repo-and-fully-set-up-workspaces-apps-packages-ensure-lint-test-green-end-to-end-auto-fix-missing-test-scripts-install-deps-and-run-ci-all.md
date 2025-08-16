@@ -21,3 +21,8 @@
 - `ci:all` komutu çalıştırılarak tüm testlerin geçmesi sağlandı.
 
 — Agent: GameBY Agent • 2025-08-16T22:18:59.494Z
+
+
+## Fail checkpoint (attempt 1)
+- time: 2025-08-16T22:19:03.556Z
+- reason: Command failed: npm run lint
