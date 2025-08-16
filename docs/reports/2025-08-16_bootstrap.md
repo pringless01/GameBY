@@ -6886,3 +6886,12 @@ Rapor: `docs/reports/2025-08-16_bootstrap.md` dosyasına eklendi.
 5. Süreç boyunca belgelendirme ve hafıza görevleri yasaklanmıştır; odak kod geliştirme üzerindedir.
 
 — Agent: GameBY Agent • 2025-08-16T22:14:14.700Z
+
+
+1. Proje, kod geliştirme odaklı olup, dökümantasyon görevleri yasaklanmıştır.
+2. Monorepo yapısının tamamlanması ve çalışma alanlarının kurulumuna odaklanılacak.
+3. Paylaşılan paketler ve API alanlarının oluşturulması gerekmektedir.
+4. Tüm testlerin başarılı bir şekilde geçmesi ve CI süreçlerinin doğrulanması beklenmektedir.
+5. Belirli görevler (dökümantasyon, hafıza dosyaları vb.) artık yasaklıdır ve kod geliştirmeye öncelik verilmelidir.
+
+— Agent: GameBY Agent • 2025-08-16T22:14:30.377Z
