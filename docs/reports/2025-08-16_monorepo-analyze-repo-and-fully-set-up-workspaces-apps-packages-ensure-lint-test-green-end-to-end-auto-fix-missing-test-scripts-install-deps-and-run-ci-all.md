@@ -1,18 +1,18 @@
 # Next Action: Monorepo: Analyze repo and fully set up workspaces (apps/*, packages/*), ensure lint/test green end-to-end; auto-fix missing test scripts; install deps and run ci:all
 
-1. **Repo Analizi:** Monorepo yapısını incele, mevcut uygulamalar (apps/*) ve paketler (packages/*) dizinlerini değerlendir. 
-   - Çıktı: Repo yapısı ve mevcut bileşenler hakkında bilgi toplandı.
+### Alt Adım 1: Repo Analizi ve Workspace'lerin Kurulumu
+Repo'yu analiz ederek mevcut yapı ve dizinleri inceleyeceğim. `apps/*` ve `packages/*` dizinlerini kontrol ederek gerekli workspace'leri kuracağım.
 
-2. **Workspace Kurulumu:** Gerekli workspace yapılandırmalarını oluştur ve eksik olanları tamamla.
-   - Çıktı: Workspace'ler başarıyla kuruldu ve yapılandırıldı.
+### Alt Adım 2: Lint Kontrolü
+Kurulan workspace'lerde lint kontrollerini yaparak, varsa hataları düzelteceğim. Bu aşamada tüm kod parçalarının lint kurallarına uygunluğunu sağlamaya odaklanacağım.
 
-3. **Lint/Test Kontrolü:** Tüm kodda lint hatalarını kontrol et ve testlerin başarılı olup olmadığını denetle.
-   - Çıktı: Tüm kod için lint ve test sonuçları yeşil durumda.
+### Alt Adım 3: Testlerin Çalıştırılması
+Workspace'lerdeki testleri çalıştırarak tüm sistemin testlerin başarılı bir şekilde geçmesini sağlayacağım. Test sonuçlarını gözlemleyeceğim.
 
-4. **Eksik Test Scriptlerini Düzeltme:** Eksik test scriptlerini otomatik olarak düzelt ve ekle.
-   - Çıktı: Eksik test scriptleri otomatik olarak düzeltildi ve eklendi.
+### Alt Adım 4: Eksik Test Scriptlerini Otomatik Düzeltme
+Varsa eksik test scriptlerini otomatik olarak ekleyip düzelteceğim. Bu, her paketin yeterli test kapsamına sahip olmasını sağlayacak.
 
-5. **Bağımlılıkların Kurulumu ve CI Çalıştırma:** Tüm bağımlılıkları yükle ve CI sürecini başlat.
-   - Çıktı: Bağımlılıklar başarıyla yüklendi ve CI süreci çalıştırıldı.
+### Alt Adım 5: Bağımlılıkların Yüklenmesi ve CI'nin Çalıştırılması
+Tüm bağımlılıkları kuracak ve ardından `ci:all` komutunu çalıştırarak sürekli entegrasyon sürecini başlatacağım. Bu aşamada sistemin genel sağlığını kontrol edeceğim.
 
-— Agent: GameBY Agent • 2025-08-16T23:39:57.461Z
+— Agent: GameBY Agent • 2025-08-16T23:40:44.870Z
