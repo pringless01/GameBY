@@ -26,6 +26,7 @@ const MAX_IDLE = Number(process.env.MAX_IDLE_SECONDS || 120);
 const STOP_FILE = path.join(repoRoot, "agent", "STOP");
 const LOCK_FILE = path.join(repoRoot, "agent", "agent.lock");
 const RETRIES = Math.max(0, Number(process.env.RETRY_ON_FAIL || 2));
+const LOCK_STALE_MS = Math.max(5 * 60 * 1000, Number(process.env.LOCK_STALE_MS || (30 * 60 * 1000))); // min 5dk, varsayilan 30dk
 
 const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
@@ -354,9 +355,30 @@ function slugify(t) { return t.toLowerCase().replace(/[^a-z0-9]+/g, "-"); }
 
 function acquireLock() {
   if (fs.existsSync(LOCK_FILE)) {
-    log(`lock present at ${LOCK_FILE}; exiting`);
-    console.log("locked");
-    return false;
+    // Stale lock kontrolü: PID ya da zaman afm
+    try {
+      const content = fs.readFileSync(LOCK_FILE, 'utf8');
+      const pidMatch = content.match(/pid=(\d+)/);
+      const startedMatch = content.match(/started=(.+)/);
+      const pid = pidMatch ? Number(pidMatch[1]) : NaN;
+      const started = startedMatch ? Date.parse(startedMatch[1]) : NaN;
+      let running = false;
+      if (!isNaN(pid) && pid > 0) {
+        try { process.kill(pid, 0); running = true; } catch { running = false; }
+      }
+      const staleByTime = !isNaN(started) && (Date.now() - started > LOCK_STALE_MS);
+      if (!running || staleByTime) {
+        log(`stale lock detected (running=${running}, staleByTime=${staleByTime}); removing ${LOCK_FILE}`);
+        try { fs.unlinkSync(LOCK_FILE); } catch {}
+      } else {
+        log(`lock present at ${LOCK_FILE}; exiting`);
+        console.log("locked");
+        return false;
+      }
+    } catch (e) {
+      log(`lock read error; attempting removal: ${trimOut(e && e.message ? e.message : String(e), 160)}`);
+      try { fs.unlinkSync(LOCK_FILE); } catch {}
+    }
   }
   fs.mkdirSync(path.dirname(LOCK_FILE), { recursive: true });
   fs.writeFileSync(LOCK_FILE, `pid=${process.pid}\nstarted=${ts()}\n`);
