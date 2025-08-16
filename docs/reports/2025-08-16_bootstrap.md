@@ -7783,3 +7783,12 @@ Rapor güncellemeleri ve hafıza bilgileri docs/reports dizinine eklenecek.
 Rapor: `docs/reports/2025-08-16_bootstrap.md` dosyasına eklendi.
 
 — Agent: GameBY Agent • 2025-08-16T22:39:58.805Z
+
+
+1. Agent, sadece gerçek kod geliştirme görevlerine odaklanacak; dokümantasyon ve hafıza görevleri yasaklandı.
+2. Monorepo yapılandırması ve uygulama alanlarının (economy/fraud/chat) bölünmesi için çalışmalar yapılacak.
+3. Paylaşılan paketler (business, db, auth, middleware, vb.) oluşturulacak ve test senaryoları eklenerek CI süreçleri uygulanacak.
+4. Test ve lint süreçleri sürekli olarak yeşil durumda tutulacak; eksik test senaryoları otomatik düzeltilecek.
+5. Güvenlik açıkları izlenecek ve gerektiğinde düzeltmeler yapılacak; mevcut durum raporları oluşturulacak.
+
+— Agent: GameBY Agent • 2025-08-16T22:40:15.546Z
