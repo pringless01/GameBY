@@ -4733,3 +4733,12 @@ Rapor: docs/reports/2025-08-16_bootstrap.md'ye kaydedildi.
 5. Gelecek adımlarda domain bölünmesi, iş mantığı paketleri oluşturulması ve doğru servis iletişim kalıplarının uygulanması gibi görevler bulunmaktadır.
 
 — Agent: GameBY Agent • 2025-08-16T12:38:41.350Z
+
+
+1. 2025-08-16 itibarıyla, belgelerden ziyade gerçek kod geliştirmeye odaklanma kararı alındı.
+2. Monorepo'da, ekonomi, dolandırıcılık ve sohbet hizmetleri için uygulama alanları bölünmeli ve ortak iş mantığı çıkarılmalıdır.
+3. Veritabanı yardımcıları ve modeller için ortak paketler oluşturulmalı, hizmetler arası iletişim desenleri uygulanmalıdır.
+4. Belirli doğrulayıcılar için ortak doğrulama paketleri eklenmeli ve gerekli güvenlik kontrolleri yapılmalıdır.
+5. Tüm belgeler ve bellek görevleri yasaklandı; öncelik kod geliştirmeye verildi.
+
+— Agent: GameBY Agent • 2025-08-16T12:39:22.053Z
