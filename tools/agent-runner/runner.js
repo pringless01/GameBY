@@ -82,10 +82,16 @@ async function askLLM(input) {
     log(`LLM(out): ${trimOut(stub, 200)}`);
     return stub;
   }
-  const res = await client.responses.create({ model: MODEL, input });
-  const text = res.output_text || "";
-  log(`LLM(out): ${trimOut(text, 200)}`);
-  return text;
+  try {
+    const res = await client.responses.create({ model: MODEL, input });
+    const text = res.output_text || "";
+    log(`LLM(out): ${trimOut(text, 200)}`);
+    return text;
+  } catch (e) {
+    const stub = `- [stub] LLM erişimi başarısız; offline fallback kullanıldı\n- [stub] Plan ve özet yerel üretildi`;
+    log(`LLM(error→stub): ${trimOut(e && e.message ? e.message : String(e), 200)}`);
+    return stub;
+  }
 }
 function idleGuard(lastTs) {
   if (Date.now() - lastTs > MAX_IDLE * 1000) {
