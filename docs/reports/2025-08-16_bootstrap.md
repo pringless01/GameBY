@@ -2655,3 +2655,12 @@ Rapor: docs/reports/2025-08-16_bootstrap.md.
 Rapor: docs/reports/2025-08-16_bootstrap.md'ye eklendi.
 
 — Agent: GameBY Agent • 2025-08-16T09:22:06.770Z
+
+
+1. **Proje Durumu**: Hafıza dosyaları, roll-up işlemleri ve PR şablonları ile MVP çalışmalarının tamamlanması hedefleniyor.
+2. **Otomasyon ve Test**: CI süreçleri otomatikleştirildi, haftalık hafıza roll-up'ı ve sweep raporları oluşturulacak.
+3. **ESLint İyileştirmeleri**: Modül sınırları ile ilgili kurallar sıkılaştırıldı. Testler ve lint doğrulamaları başarıyla geçildi.
+4. **Geliştirilecek Özellikler**: Shared utils ve types genişletilecek, CI rehberleri güncellenecek ve dokümantasyon üzerinde çalışmalar yapılacak.
+5. **Engeller**: Memory-rollup iş akışının tetiklenmesi için GitHub Actions UI üzerindeki ‘workflow_dispatch’ özelliğinin aktif olması gerekiyor.
+
+— Agent: GameBY Agent • 2025-08-16T09:22:48.756Z
