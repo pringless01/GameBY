@@ -37,6 +37,13 @@ Kimlik: "Agent: GameBY Agent" imzası; "GitHub Copilot" demek YASAK.
 Stop yalnızca agent/STOP varsa.
 `;
 
+function parseNextActionsBlock(md) {
+  const block = md.match(/##\s*Next Actions[\s\S]*?(?=\n##|\n#|$)/i)?.[0] || "";
+  const lines = block.split("\n").filter(l => l.trim().startsWith("- "));
+  const open  = lines.filter(l => !l.includes("~~"));
+  return { hasAny: lines.length > 0, openCount: open.length, block };
+}
+
 function sh(cmd, opts = {}) {
   try {
     log(`$ ${cmd}`);
@@ -127,10 +134,13 @@ function ensureNextActions() {
   ensureStatusSkeleton();
   const statusPath = "docs/status.md";
   let status = read(statusPath);
-  const hasItem = /##\s*Next Actions[\s\S]*\n- /.test(status);
-  if (hasItem) return;
+  const { hasAny, openCount } = parseNextActionsBlock(status);
+
+  // EĞER açık madde yoksa (0) veya hiç madde yoksa → seed et
+  if (hasAny && openCount > 0) return;
+
   const roadmap = read("tasks/roadmap.md");
-  const bullets = (roadmap.match(/^- .+$/gm) || []).slice(0, 5);
+  const bullets = (roadmap.match(/^\- .+$/gm) || []).slice(0, 5);
   const seed = bullets.length ? bullets : [
     "- ESLint module boundaries düzelt",
     "- Shared utils/types (non-invasive) genişlet",
@@ -138,23 +148,24 @@ function ensureNextActions() {
     "- CI: memory-rollup + sweep artifact",
     "- Haftalık rapor oluştur"
   ];
-  const injected = status.replace(/(##\s*Next Actions\s*\n*)([\s\S]*)$/i, (_, head) => `${head}${seed.join("\n")}\n`);
+
+  const injected = status.replace(
+    /(##\s*Next Actions\s*\n*)([\s\S]*?)(?=\n##|\n#|$)/i,
+    (_, head) => `${head}${seed.join("\n")}\n`
+  );
+
   write(statusPath, injected);
-  gitAddCommit(`docs(status): seed Next Actions from roadmap/backlog`);
+  gitAddCommit("docs(status): seed Next Actions (no open items)");
 }
 function firstNextAction() {
   const s = read("docs/status.md");
-  const block = s.match(/##\s*Next Actions[\s\S]*?(?:\n##|\n$)/i)?.[0] || "";
-  const lines = block.split("\n");
-  for (const l of lines) {
-    if (l.includes("~~")) continue; // done
-    const m = l.match(/^\s*-\s*(?:\[(?: |x|X)\]\s*)?(.+?)\s*$/);
-    if (m && m[1]) {
-      const title = m[1].trim();
-      if (title) return title;
-    }
-  }
-  return null;
+  const { block } = parseNextActionsBlock(s);
+  const items = block.split("\n").filter(l => l.trim().startsWith("- ") && !l.includes("~~"));
+  const raw = items[0] || null;
+  if (!raw) return null;
+  // "- [ ] task" veya "- [x] task" varyantlarını normalize et
+  const cleaned = raw.replace(/^\-\s*(?:\[(?: |x|X)\]\s*)?/, "").trim();
+  return cleaned || null;
 }
 function markDone(title) {
   const p = "docs/status.md";
@@ -231,10 +242,18 @@ async function mainLoop() {
 
     ensureNextActions();
     const action = firstNextAction();
-  if (!action) { lastTs = idleGuard(lastTs); await new Promise(r=>setTimeout(r, 250)); continue; }
+    if (!action) {
+      // tekrar seed etmeyi dene ve watchdog yerine hızla devam et
+      ensureNextActions();
+      const retry = firstNextAction();
+      if (!retry) { lastTs = idleGuard(lastTs); await new Promise(r=>setTimeout(r, 250)); continue; }
+      var act = retry;
+    } else {
+      var act = action;
+    }
 
     const date = new Date().toISOString().slice(0,10);
-    const slug = slugify(action);
+  const slug = slugify(act);
     const reportPath = `docs/reports/${date}_${slug}.md`;
 
     let success = false;
@@ -261,20 +280,20 @@ async function mainLoop() {
       const plan = await askLLM([
         { role: "system", content: SYSTEM_PROMPT },
         { role: "user", content:
-          `Next Action: "${action}"\nBu aksiyonu en fazla 5 alt adıma böl; her alt adım için kısa çıktı üret (davranış değiştirme yok).` }
+      `Next Action: "${act}"\nBu aksiyonu en fazla 5 alt adıma böl; her alt adım için kısa çıktı üret (davranış değiştirme yok).` }
       ]);
-      write(reportPath, `# Next Action: ${action}\n\n${plan}\n\n— Agent: GameBY Agent • ${new Date().toISOString()}\n`);
+    write(reportPath, `# Next Action: ${act}\n\n${plan}\n\n— Agent: GameBY Agent • ${new Date().toISOString()}\n`);
       gitAddCommit(`docs(reports): start ${slug}`);
 
       // 3) Minimal gerçek değişiklik örnekleri (davranış yok)
-      if (/env/i.test(action)) {
+  if (/env/i.test(act)) {
         const exPath = ".env.example";
         const ex = read(exPath);
         const add = `\n# JWT_SECRET >= 32 chars (base64 48 bytes önerilir)\n# CURSOR_SECRET >= 24 chars\n`;
         if (!ex.includes("JWT_SECRET")) write(exPath, ex + add);
         gitAddCommit(`docs: env secret guidance notes`);
       }
-      if (/eslint/i.test(action)) {
+  if (/eslint/i.test(act)) {
         const p = "eslint.config.js";
         let s = read(p);
         if (s && !s.includes("no-restricted-imports")) {
@@ -307,7 +326,7 @@ async function mainLoop() {
       gitAddCommit(`docs(memory): roll-up for ${slug}`);
 
       // 6) Status: tamamlandı işaretle
-      markDone(action);
+  markDone(act);
 
       // 7) PR (Draft) — gh yoksa sessiz geç + rapora URL yaz
       const prUrl = tryCreateDraftPR(slug, reportPath);

@@ -2451,3 +2451,9 @@ Checkpoint: 2025-08-16T14:10Z+bootstrap-update
 - [stub] Plan ve özet yerel üretildi
 
 — Agent: GameBY Agent • 2025-08-16T07:12:14.396Z
+
+
+- [stub] LLM erişimi başarısız; offline fallback kullanıldı
+- [stub] Plan ve özet yerel üretildi
+
+— Agent: GameBY Agent • 2025-08-16T08:33:44.631Z
