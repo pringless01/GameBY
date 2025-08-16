@@ -44,7 +44,7 @@
     "test:unit:onboarding": "node tests/unit/onboarding.test.js",
     "test:unit:cache": "node tests/unit/cache.test.js",
     "test:unit:auth-refresh": "node tests/unit/authRefresh.test.js",
-    "test": "npm run test:unit:cursor-security && npm run test:unit:reputation-decay && npm run test:unit:onboarding && npm run test:unit:cache && npm run test:unit:auth-refresh && npm run test:integration:all",
+  "test": "npm run test:unit:cursor-security && npm run test:unit:reputation-decay && npm run test:unit:onboarding && npm run test:unit:cache && npm run test:unit:auth-refresh && node tests/unit/fraud.service.test.js && npm run test:integration:all",
   "test:unit:economy-sink": "node tests/unit/economySink.test.js",
   "test:unit:economy-service": "node tests/unit/economy.service.test.js",
     "coverage": "c8 --reporter=text-summary --reporter=lcov npm run test",
