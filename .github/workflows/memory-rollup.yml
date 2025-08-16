@@ -1,22 +1,25 @@
 name: memory-rollup
 on:
   schedule:
-    - cron: '0 21 * * *' # GitHub Actions CRON UTC. 21:00 UTC ~ gece.
+    - cron: '17 2 * * 1' # Haftalık (Pzt 02:17 UTC)
   workflow_dispatch: {}
+permissions:
+  contents: write
 jobs:
   rollup:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
-          python-version: '3.11'
-      - name: Roll-up memory
-        run: python scripts/memory_rollup.py
-      - name: Commit changes
+          node-version: '20'
+      - name: Roll-up memory (Node)
+        run: node scripts/memory_rollup.js
+      - name: Commit roll-up (if any)
         run: |
-          git config user.name "auto-memory"
-          git config user.email "auto@users.noreply.github.com"
-          git add -A
-          git commit -m "chore(memory): daily roll-up" || echo "no changes"
+          git config user.name  "GameBY Agent"
+          git config user.email "gameby-agent[bot]@users.noreply.github.com"
+          git add agent/memory/long_term.md
+          git commit -m "docs(memory): weekly roll-up by GameBY Agent" || echo "no changes"
           git push || true

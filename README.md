@@ -311,3 +311,11 @@ REPUTATION_NEGATIVE_WEIGHT=1
 **Not:** Bu README v3.5-pre teknik durumunu yansıtır; roadmap güncellemeleri Ana Oyun Dokümanı ile senkron tutulacaktır.
 # Test commit Fri 15 Aug 2025 08:49:31 PM UTC
 # Deploy test Fri 15 Aug 2025 08:54:18 PM UTC
+
+## 🧠 Hafıza Sistemi Nasıl Çalışır?
+
+- Kaynak dosyalar: `agent/memory/project_facts.md`, `agent/memory/long_term.md`.
+- Otomasyon: `.github/workflows/memory-rollup.yml` günlük çalışır veya GitHub Actions UI’dan manuel tetiklenir (workflow_dispatch).
+- İşleyiş: Her mantıksal adımda tarih-damgalı rapor `docs/reports/` altına eklenir; hafıza dosyalarına tek satırlık append yapılır (davranış değişikliği yok).
+- Kalite kapıları: Her adımda `npm run lint` (0 hata) ve `npm test` (unit+integration PASS) hedeflenir.
+- Status senkronu: `docs/status.md` içindeki “Next Actions” güncellenir; tamamlananlar işaretlenir, blocked durumlar not edilir.

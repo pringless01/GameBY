@@ -1,14 +1,21 @@
-## Plan
-(özet)
+## Summary
+- [ ] No behavior change (refactor/docs/ci only)
+- [ ] Lint PASS (`npm run lint`)
+- [ ] Tests PASS (`npm test`)
+- [ ] Docs / reports updated (if applicable)
 
-## Diff Özeti
-- Değişiklikler
+## Changes
+- ...
 
-## Test Sonuçları
-- (varsa)
+## Verification
+```bash
+npm run lint
+npm test
 
-## Riskler
-- (kısa)
+Risk / Backout
 
-## Kalan İşler
-- (liste)
+Risk: Low (no behavior change)
+
+Backout: Revert this PR
+
+— Agent: GameBY Agent

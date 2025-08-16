@@ -1,23 +1,17 @@
 ---
 name: Bug report
-about: Hata bildirimi
+about: Create a report to help us improve
 labels: bug
 ---
 
-### Özet
-Açıklayıcı kısa özet.
+**Describe the bug**
+- Expected:
+- Actual:
 
-### Adımlar
+**Steps to reproduce**
 1. ...
-2. ...
 
-### Beklenen Davranış
+**Logs/Screenshots**
+- ...
 
-### Gerçekleşen Davranış
-
-### Ortam
-- OS:
-- Versiyon/Commit:
-
-### Ek
-Loglar, ekran görüntüleri, vs.
+— Agent: GameBY Agent

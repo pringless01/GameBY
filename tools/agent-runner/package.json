@@ -1,0 +1,16 @@
+{
+  "name": "gameby-agent-runner",
+  "private": true,
+  "type": "module",
+  "version": "0.1.0",
+  "scripts": {
+  "agent:once": "node ./runner.js --once",
+  "agent:loop": "node ./runner.js --loop",
+  "agent:dry": "cross-env DRY=1 node ./runner.js --once"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.5",
+  "openai": "^4.60.0",
+  "cross-env": "^7.0.3"
+  }
+}

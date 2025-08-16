@@ -30,3 +30,9 @@ export const MetricsSummary = {
   gauges: {},
   counters: {},
 };
+
+// Pagination params shape (reference only)
+export const PaginationParams = {
+  limit: 0,
+  offset: 0,
+};

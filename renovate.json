@@ -1,0 +1,11 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["config:recommended"],
+  "labels": ["deps", "automated"],
+  "draftPR": true,
+  "prConcurrentLimit": 5,
+  "rangeStrategy": "bump",
+  "schedule": ["every weekend"],
+  "automerge": false,
+  "lockFileMaintenance": { "enabled": true }
+}

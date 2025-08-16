@@ -44,7 +44,7 @@ server/
 - Faz 2: Leaderboard içindeki servis/adapter ayrışması ve unit testler.
 - Faz 3: Mentor, Contracts, Auth için aynı pattern.
 
-Durum (güncel): apps/api altında users ve leaderboard domainleri controller→service→repo katmanlarıyla ayrıştırıldı; legacy passthrough ve admin zinciri korunuyor.
+Durum (güncel 2025-08-16): Monorepo yapısına geçildi. Ana backend: `apps/api/src` (oyun backend) + legacy `server/` (passthrough korunuyor). Module boundaries ESLint kuralları aktif; ihlal tespit edilmedi. Memory/bootstrap altyapısı çalışır durumda.
 
 ### Modül Sınırları ve Testler
 - Controller katmanı yalnızca service katmanını çağırır; repo doğrudan import edilmez (lint kuralı ile izlenir).

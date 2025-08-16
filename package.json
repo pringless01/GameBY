@@ -9,16 +9,22 @@
     "packages/*"
   ],
   "scripts": {
+  "memory:rollup": "node scripts/memory_rollup.js",
+  "sweep:report": "node scripts/sweep.mjs",
     "codex:run": "node tools/codex-runner.js",
     "dev:web": "npm --workspace @gameby/web run dev",
     "lint": "eslint . --ext .js,.ts --max-warnings=0",
     "lint:fix": "eslint . --ext .js,.ts --fix",
     "test": "npm -ws run test",
-    "smoke:local": "node apps/api/src/scripts/smoke.js",
+  "smoke:local": "node scripts/smoke_local.js",
     "dc:up": "docker compose up -d",
     "dc:down": "docker compose down -v --remove-orphans",
-    "coverage": "npm --prefix apps/api/src run coverage",
-    "ci:all": "npm --prefix apps/api/src test"
+  "coverage": "npm --prefix apps/api/src run coverage",
+  "perf:smoke": "k6 run perf/k6-smoke.js",
+  "ci:all": "npm --prefix apps/api/src test",
+  "agent:once": "npm --prefix tools/agent-runner run agent:once",
+  "agent:loop": "npm --prefix tools/agent-runner run agent:loop",
+  "agent:dry": "npm --prefix tools/agent-runner run agent:dry"
   },
   "engines": {
     "node": ">=18"

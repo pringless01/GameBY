@@ -2,12 +2,10 @@ import assert from 'assert';
 
 // Fake timers kullanmıyoruz; TTL doğrulamasını yaklaşık değerlerle yapacağız.
 import * as trustCaches from '../../cache/trustCaches.js';
-
-// SUT
-import * as UsersService from '../../modules/users/users.service.js';
-
 // Repo stub’ları: dynamic import yerine doğrudan module stubbing için simple monkey-patch (ESM)
 import * as RealRepo from '../../modules/users/users.repo.js';
+// SUT
+import * as UsersService from '../../modules/users/users.service.js';
 
 function clearCaches(){ trustCaches.dailyTrustCache.clear(); trustCaches.trustTrendCache.clear(); }
 

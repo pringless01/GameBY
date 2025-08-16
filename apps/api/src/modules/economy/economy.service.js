@@ -1,3 +1,6 @@
+// Public service facade for Economy domain (no behavior change)
+// Delegates to existing services/economyService.js for now.
+export { runEconomySinkOnce, scheduleEconomySinkIfEnabled } from '../../services/economyService.js';
 import { initDb } from '../../config/database.js';
 import { logResource } from '../../services/auditService.js';
 import { getIo } from '../../sockets/io.js';
