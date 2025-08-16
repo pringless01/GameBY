@@ -1,18 +1,13 @@
 # Next Action: Monorepo: Complete apps/api/src domain split (economy/fraud/chat services)
 
-1. **Domain Split Planlama**: Mevcut `apps/api/src` yapısını incele ve `economy`, `fraud`, ve `chat services` için ayrı domain yapıları oluşturacak bir plan hazırla. 
+1. **Domain Yapısını Planla**: Mevcut `apps/api/src` dizin yapısını analiz et ve `economy`, `fraud`, ve `chat` servisleri için ayrı domain yapıları oluştur.
 
-2. **Kod Tabanının Ayrıştırılması**: Mevcut kod tabanını inceleyerek `economy`, `fraud` ve `chat services` ile ilgili kodları belirle ve bu kodları ilgili domain dizinlerine taşı.
+2. **Service Dosyalarını Taşı**: `apps/api/src` dizinindeki ilgili dosyaları `economy`, `fraud`, ve `chat` dizinlerine taşı ve uygun şekilde yeniden adlandır.
 
-3. **Bağımlılıkların Yönetimi**: Her bir domain için bağımlılıkları güncelle, gerekirse yeni bağımlılıkları ekle ve mevcut olanları kaldırarak temizle.
+3. **Bağımlılıkları Güncelle**: Taşınan dosyaların bağımlılıklarını kontrol et ve gerekli güncellemeleri yaparak her servisin kendi bağımlılıklarını tanımla.
 
-4. **Testlerin Güncellenmesi**: Taşınan kodların testlerini gözden geçir ve her domain için uygun test senaryolarını yaz; geçerliliklerini sağlamak için testleri çalıştır.
+4. **Testleri Güncelle**: Her yeni domain için mevcut testleri güncelle ve yeni test senaryoları ekle, böylece her servisin düzgün çalıştığını doğrula.
 
-5. **Dokümantasyon Güncellemesi**: Yeni domain yapısını ve değişiklikleri detaylandıran bir dokümantasyon hazırla ve mevcut dokümantasyonu güncelle.
+5. **Dokümantasyonu Güncelle**: Yeni domain yapısını ve servislerin çalışma şekillerini açıklayan güncel bir dokümantasyon oluştur.
 
-— Agent: GameBY Agent • 2025-08-16T14:23:24.484Z
-
-
-## Fail checkpoint (attempt 1)
-- time: 2025-08-16T14:23:29.093Z
-- reason: Command failed: npm run lint
+— Agent: GameBY Agent • 2025-08-16T14:23:42.865Z
