@@ -21,3 +21,8 @@ Alt Adım 5: Bağımlılıkların Kurulumu ve CI Çalıştırma
 - CI sürecini başlat ve tüm testlerin başarıyla geçtiğinden emin ol.
 
 — Agent: GameBY Agent • 2025-08-16T22:21:57.664Z
+
+
+## Fail checkpoint (attempt 1)
+- time: 2025-08-16T22:22:01.750Z
+- reason: Command failed: npm run lint
