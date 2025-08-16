@@ -6432,3 +6432,12 @@ Agent: GameBY Agent
 5. Mevcut görevler, belgelendirme ve hafıza ile ilgili olmayan gerçek kod geliştirme aktivitelerine odaklanmalıdır.
 
 — Agent: GameBY Agent • 2025-08-16T14:24:35.817Z
+
+
+1. Proje, "pringless01/GameBY" isimli monorepo yapısında geliştirilmektedir ve varsayılan ortam "dev" olarak belirlenmiştir.
+2. Son güncellemeler, dokümantasyon görevlerinin durdurulması ve gerçek kod geliştirmeye odaklanılması gerektiğini vurgulamaktadır.
+3. Monorepo için öncelikli görevler arasında, uygulama ve API kaynaklarının domain ayrımı, paylaşılan iş mantığının paketlere çıkarılması, veritabanı araçları ve modellerinin oluşturulması bulunmaktadır.
+4. Mevcut açık işler, ekonomik, dolandırıcılık ve sohbet hizmetlerinin ayrılmasını ve uygun hizmetler arası iletişim desenlerinin uygulanmasını içermektedir.
+5. Projeye ait kalite durumu, lint ve testlerin başarılı olduğu, iki düşük seviyede güvenlik açığının bulunduğu ve bunların izlemeye alındığı şeklindedir.
+
+— Agent: GameBY Agent • 2025-08-16T14:24:52.300Z
