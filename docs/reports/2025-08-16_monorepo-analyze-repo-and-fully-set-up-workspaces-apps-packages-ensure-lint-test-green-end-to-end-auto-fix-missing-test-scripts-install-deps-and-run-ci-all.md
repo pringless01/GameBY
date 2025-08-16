@@ -1,18 +1,13 @@
 # Next Action: Monorepo: Analyze repo and fully set up workspaces (apps/*, packages/*), ensure lint/test green end-to-end; auto-fix missing test scripts; install deps and run ci:all
 
-1. **Repo Analizi**: Monorepo içindeki tüm dosya ve klasör yapısını analiz et. `apps/*` ve `packages/*` dizinlerini kontrol et.
+1. **Repo Analizi ve Workspace Yapılandırması**: Mevcut monorepo yapısını analiz ederek, `apps/*` ve `packages/*` dizinlerini inceleyeceğim. Uygulama ve paket yapılarını belirleyeceğim.
 
-2. **Workspace Kurulumu**: Monorepo'daki uygulama ve paketler için gerekli workspace ayarlarını yap. Tüm bağımlılıkların doğru şekilde tanımlandığından emin ol.
+2. **Lint ve Test Kontrolü**: Analiz edilen workspace'lerde lint ve test durumlarını kontrol edeceğim. Tüm uygulamalarda ve paketlerde lint hatalarının olmadığından emin olacağım ve testlerin başarılı olup olmadığını kontrol edeceğim.
 
-3. **Lint ve Test Kontrolü**: Tüm projelerde lint ve testlerin başarılı bir şekilde geçip geçmediğini kontrol et. Gerekirse sorunları düzelt.
+3. **Eksik Test Scriptlerinin Otomatik Düzeltmesi**: Eğer eksik test scriptleri tespit edilirse, bunları otomatik olarak düzelteceğim ve uygun test scriptlerini ekleyeceğim.
 
-4. **Eksik Test Scriptlerini Düzelt**: Otomatik olarak eksik test scriptlerini tespit et ve düzelt. Her proje için test scriptlerinin mevcut olduğundan emin ol.
+4. **Bağımlılıkların Kurulumu**: Tüm uygulama ve paketlerin bağımlılıklarını kurarak, her şeyin düzgün çalıştığından emin olacağım.
 
-5. **Bağımlılıkları Kur ve CI'yi Çalıştır**: Tüm bağımlılıkları kur ve `ci:all` komutunu çalıştırarak sürekli entegrasyon süreçlerini başlat.
+5. **CI Sürecinin Çalıştırılması**: `ci:all` komutunu çalıştırarak, tüm entegrasyon testlerini gerçekleştireceğim ve sonucun başarılı olup olmadığını kontrol edeceğim.
 
-— Agent: GameBY Agent • 2025-08-16T23:22:10.650Z
-
-
-## Fail checkpoint (attempt 1)
-- time: 2025-08-16T23:22:14.947Z
-- reason: Command failed: npm run lint
+— Agent: GameBY Agent • 2025-08-16T23:22:27.235Z
