@@ -44,3 +44,4 @@
 - [2025-08-16 12:00] memory/bootstrap: İlk okuma & 5 maddelik özet raporu eklendi (docs/reports/2025-08-16_bootstrap.md).
 - [2025-08-16 12:10] status/next-actions: Run workflow adımı Blocked olarak not edildi; rapor eklendi (docs/reports/2025-08-16_run-workflow.md).
 - [2025-08-16 12:18] memory/project_facts: Repo workspaces, scriptler ve CI özetleri eklendi (docs/reports/2025-08-16_project-facts.md).
+- [2025-08-16 12:26] docs/readme: Hafıza Sistemi bölümü README.md’ye eklendi (docs/reports/2025-08-16_readme-memory.md).

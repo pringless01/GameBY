@@ -15,7 +15,7 @@
 ## Next Actions
 - [ ] İlk manuel "Run workflow" yap ve raporu doğrula (Blocked: GitHub UI üzerinden manuel tetik gerekli)
 - [x] Project Facts içine repo bilgilerini doldur
-- [ ] README’ye "Hafıza Sistemi Nasıl Çalışır?" bölümü ekle
+- [x] README’ye "Hafıza Sistemi Nasıl Çalışır?" bölümü ekle
 
 ## Blocked
 - memory-rollup workflow ‘workflow_dispatch’ tetiklenmesi gerekli (GitHub Actions UI). Bu yerel araçlarla çalıştırılamaz.

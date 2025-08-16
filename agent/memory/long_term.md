@@ -9,3 +9,4 @@ Bu dosya uzun dönem özetlerin ve önemli kararların sıkıştırılmış hali
  - Economy: Facade eklendi (modules/economy), service-level unit test (economy.service.test.js) geçirildi; tüm suite yeşil.
  - Roll-up: memory-rollup workflow var; manuel tetik gerektirdiği için Blocked olarak not edilip ilerlemeye devam edildi.
  - Project Facts genişletildi; workspaces/scripts/CI özetleri eklendi.
+ - README’ye hafıza sistemi bölümü eklendi; süreç şeffaflaştırıldı.
