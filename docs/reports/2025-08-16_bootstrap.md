@@ -4833,3 +4833,14 @@ Rapor: docs/reports/2025-08-16_bootstrap.md.
 5. Kalite kontrol süreçleri (lint ve test) sürekli olarak geçerli kalmakta ve tüm testler başarıyla geçilmektedir.
 
 — Agent: GameBY Agent • 2025-08-16T12:45:51.641Z
+
+
+1. Agent, yalnızca gerçek kod geliştirme görevlerine odaklanacak; dokümantasyon ve hafıza görevleri yasaklandı.
+2. Monorepo'da çeşitli alanlar (ekonomi, dolandırıcılık, sohbet hizmetleri) için domain bölünmesi tamamlanacak.
+3. Paylaşılan iş mantığı, veritabanı araçları ve modelleri için paketler oluşturulacak.
+4. Servisler arası iletişim ve ortak doğrulayıcılar için uygun yapılar uygulanacak.
+5. Proje, güvenlik denetimi, gizli yönetim ve veritabanı yedekleme gibi üretime hazır hale getirilmesi gereken aşamalara geçecek. 
+
+Şimdi, "Next Actions" listesini sırayla işleme alıyorum.
+
+— Agent: GameBY Agent • 2025-08-16T12:46:32.670Z
