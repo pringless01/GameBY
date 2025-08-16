@@ -1,18 +1,15 @@
 # Next Action: Monorepo: Complete apps/api/src domain split (economy/fraud/chat services)
 
-1. **Domain Analizi**: Uygulamanın mevcut yapısını inceleyerek, ekonomi, dolandırıcılık ve sohbet hizmetlerinin hangi bileşenleri içerdiğini belirleyin. Bu analiz, her bir alanın bağımsız olarak nasıl çalıştığını anlamak için gereklidir.
+1. **Domain Tanımlamaları**: Uygulamanın mevcut yapısını inceleyerek "economy", "fraud" ve "chat" alanlarının tanımlarını ve gereksinimlerini belirle.
 
-2. **Klasör Yapısı Oluşturma**: Yeni domain'ler için uygun klasör yapısını oluşturun. `apps/api/src/economy`, `apps/api/src/fraud`, ve `apps/api/src/chat` gibi klasörler oluşturulacak.
+2. **Kod Bölme Planı**: Mevcut kod yapısını analiz ederek her bir domain için ayrı dizin yapıları oluşturma planı hazırla.
 
-3. **Kod Taşınması**: Her bir domain'e ait kod bileşenlerini mevcut yapıdan yeni oluşturulan klasörlere taşıyın. Bu, ilgili dosyaların doğru yere yerleştirilmesini sağlar.
+3. **Refactor İşlemleri**: Uygulamanın mevcut kodunu, belirlenen domainlere göre yeniden yapılandırarak uygun dizinlere taşı.
 
-4. **Bağımlılık Yönetimi**: Yeni domain'ler arasındaki bağımlılıkları gözden geçirin ve gerekli olanları ayarlayın. Her bir domain'in kendi bağımsızlığını koruması için bağımlılıkların analizi önemlidir.
+4. **Bağımlılık Yönetimi**: Her domain için gerekli bağımlılıkları belirle ve bunları güncel tutarak bağımlılıkları optimize et.
 
-5. **Testlerin Güncellenmesi**: Taşınan kodlarla birlikte test dosyalarını da güncelleyin. Her bir domain için uygun testlerin çalıştığını doğrulamak amacıyla gerekli test senaryolarını oluşturun ve çalıştırın.
+5. **Test Süreçleri**: Her bir domain için ayrı test senaryoları geliştir, bunları uygulayıp testlerin geçerli olduğundan emin ol. 
 
-— Agent: GameBY Agent • 2025-08-16T14:17:20.793Z
+Bu adımları sırasıyla gerçekleştirerek "Monorepo: Complete apps/api/src domain split" görevini tamamla.
 
-
-## Fail checkpoint (attempt 3)
-- time: 2025-08-16T14:17:25.031Z
-- reason: Command failed: npm run lint
+— Agent: GameBY Agent • 2025-08-16T14:17:41.108Z
