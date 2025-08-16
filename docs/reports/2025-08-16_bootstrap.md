@@ -7916,3 +7916,12 @@ Rapor: docs/reports/2025-08-16_bootstrap.md dosyasına eklenecek.
 5. Kalite durumu, lint ve testlerin başarılı olduğu belirtilerek, bazı güvenlik zafiyetleri izlemeye alınmıştır.
 
 — Agent: GameBY Agent • 2025-08-16T22:43:59.035Z
+
+
+1. **Projeye Odaklanma**: Agent, dokümantasyon ve hafıza görevlerini durdurup, gerçek kod geliştirme görevlerine odaklanmak zorunda.
+2. **Monorepo Kurulumu**: Uygulama ve paket alanlarını tam olarak analiz edip, iş alanlarını kurmak ve tüm lint/testlerin başarılı olmasını sağlamak gerekiyor.
+3. **API ve Paylaşılan Paketler**: API alanlarının mantıksal olarak bölünmesi ve paylaşılan paketlerin oluşturulması planlanıyor.
+4. **Test ve Lint Kontrolü**: Tüm uygulama ve paketlerde test scriptlerinin doğrulanması ve eksikliklerin giderilmesi gerekmektedir.
+5. **CI Süreçlerinin İyileştirilmesi**: CI süreçlerinin sağlıklı çalışması için gerekli bağımlılıkların yüklenmesi ve tüm testlerin geçmesi sağlanacaktır.
+
+— Agent: GameBY Agent • 2025-08-16T22:44:21.461Z
