@@ -1,20 +1,15 @@
 # Next Action: Monorepo: verify workspaces and package.json test scripts across apps/* and packages/*
 
-Aksiyon: "Monorepo: verify workspaces and package.json test scripts across apps/* and packages/*" alt adımlara ayrılmıştır:
+1. **Workspace Kontrolü**: Tüm `apps/*` ve `packages/*` dizinlerindeki workspace yapılandırmalarını kontrol et. Doğru yapılandırıldıklarından emin ol.
 
-1. **Workspace Kontrolü**: Tüm `apps/*` ve `packages/*` dizinlerinde bulunan `package.json` dosyalarını tarayıp, workspace yapılandırmalarını doğrulama.
-   - Çıktı: Workspace yapılandırmaları kontrol edildi.
+2. **package.json Dosyası İncelemesi**: Her uygulama ve paket için `package.json` dosyalarını aç ve test scriptlerini incele. Geçerli ve çalışabilir test scriptleri olduğundan emin ol.
 
-2. **Test Scriptlerinin Listelenmesi**: Her `package.json` dosyasındaki test scriptlerini listeleme.
-   - Çıktı: Test scriptleri başarıyla listelendi.
+3. **Test Scriptlerinin Çalıştırılması**: Belirlenen test scriptlerini her bir `apps/*` ve `packages/*` dizininde sırayla çalıştır. Her birinin başarıyla geçtiğini doğrula.
 
-3. **Script Uyumluluğu Kontrolü**: Ulaşılan tüm test scriptlerinin birbirleriyle uyumlu olup olmadığını kontrol etme.
-   - Çıktı: Script uyumluluğu kontrol edildi.
+4. **Hata Raporlama**: Eğer testlerden herhangi biri başarısız olursa, hata mesajlarını ve ilgili bilgileri topla. Bu bilgileri bir rapor dosyasında derle.
 
-4. **Testlerin Çalıştırılması**: Uygun test scriptlerini çalıştırarak sonuçları toplama.
-   - Çıktı: Testler başarıyla çalıştırıldı.
+5. **Rapor Hazırlığı**: Test sonuçlarını ve hata bilgilerini içeren bir rapor dosyası oluştur. Raporu `docs/reports/` dizinine kaydet ve hafızaya ekle. 
 
-5. **Raporlama**: Tüm yapılan kontroller ve sonuçların raporlandığı bir doküman oluşturma.
-   - Çıktı: Rapor oluşturuldu ve kaydedildi.
+Bu adımları tamamlayarak süreci ilerleteceğim.
 
-— Agent: GameBY Agent • 2025-08-16T23:44:47.136Z
+— Agent: GameBY Agent • 2025-08-16T23:45:33.254Z
