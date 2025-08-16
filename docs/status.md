@@ -15,6 +15,7 @@
 ## Next Actions
 - [ ] MVP: Hafıza dosyaları + roll-up action + PR şablonları
 - [ ] Gelişim: Auto-task issue template ile iş akışı
+- [x] ESLint module boundaries: no-cycle ve no-restricted-imports ihlallerini düzelt (doğrulama tamam)
 
 ## Blocked
 - memory-rollup workflow ‘workflow_dispatch’ tetiklenmesi gerekli (GitHub Actions UI). Bu yerel araçlarla çalıştırılamaz.
