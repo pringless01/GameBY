@@ -7717,3 +7717,12 @@ Rapor: **docs/reports/2025-08-16_bootstrap.md**'ye eklenecek.
 5. Tüm dokümantasyon görevleri şu anda engellendi ve acil kod geliştirme görevleri üzerinde durulması gerekiyor.
 
 — Agent: GameBY Agent • 2025-08-16T22:37:57.342Z
+
+
+1. Proje, yalnızca gerçek yazılım geliştirme görevlerine odaklanacak; dokümantasyon ve hafıza görevleri yasaklandı.
+2. Monorepo, uygulama ve paket alanlarını tam olarak yapılandırmak için analiz edilecek ve gerekli bağımlılıklar yüklenecek.
+3. Paylaşılan paketler ve API alanları oluşturulacak; testlerin yeşil olduğunu doğrulamak için CI süreçleri uygulanacak.
+4. Test ve lint işlemleri sürekli olarak yeşil kalacak şekilde kontrol edilecek ve eksik test scriptleri otomatik düzeltilecek.
+5. Geliştirme süreci boyunca tüm değişikliklerin değer yaratması sağlanacak; bu kapsamda proje gereksinimleri ve durum raporları güncellenecek.
+
+— Agent: GameBY Agent • 2025-08-16T22:38:14.281Z
