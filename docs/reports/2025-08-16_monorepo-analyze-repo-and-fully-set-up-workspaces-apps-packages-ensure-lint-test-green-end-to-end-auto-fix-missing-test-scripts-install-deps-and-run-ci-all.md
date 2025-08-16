@@ -1,23 +1,15 @@
 # Next Action: Monorepo: Analyze repo and fully set up workspaces (apps/*, packages/*), ensure lint/test green end-to-end; auto-fix missing test scripts; install deps and run ci:all
 
-### Alt Adım 1: Repo Analizi
-Repo yapısını analiz et ve `apps/*` ile `packages/*` dizinlerini incele. Hangi bileşenlerin mevcut olduğunu ve yapılandırmalarını belirle.
+1. **Repo Analizi**: Monorepo yapısını incele, mevcut çalışma alanlarını (apps/*, packages/*) belirle ve her birinin yapılandırmasını kontrol et.
 
-### Alt Adım 2: Workspace Ayarları
-Gerekli workspace ayarlarını oluştur. `apps/*` ve `packages/*` dizinlerini uygun şekilde yapılandırarak monorepo mimarisine uygun hale getir.
+2. **Workspace Kurulumu**: İlgili çalışma alanlarını (apps/*, packages/*) tam olarak kur ve gerekli yapılandırmaları yap.
 
-### Alt Adım 3: Lint Kontrolü
-Tüm projelerde lint kontrolü yap. Lint hatalarını tespit et ve düzeltme işlemlerine başla.
+3. **Lint Kontrolü**: Tüm kodların linting işlemlerini gerçekleştir ve hataları düzelt. Kod kalitesini sağlamak için gerekli düzeltmeleri yap.
 
-### Alt Adım 4: Test Senaryolarını Kontrol Et
-Projelerdeki test senaryolarını kontrol et. Eksik test scriptlerini otomatik olarak ekle ve mevcut olanları çalıştır.
+4. **Test Script'lerinin Otomatik Düzeltimi**: Eksik test script'lerini otomatik olarak tespit et ve ekle, mevcut testlerin çalışabilirliğini kontrol et.
 
-### Alt Adım 5: Bağımlılıkları Kur ve CI Sürecini Çalıştır
-Gerekli bağımlılıkları yükle ve CI işlemlerini başlat. `ci:all` komutunu çalıştırarak tüm testlerin geçerli olduğunu doğrula.
+5. **Bağımlılıkların Kurulumu ve CI Çalıştırma**: Gerekli bağımlılıkları kur, ardından tüm entegrasyon testlerini ve sürekli entegrasyonu (ci:all) çalıştır. 
 
-— Agent: GameBY Agent • 2025-08-16T23:35:16.651Z
+Her alt adım tamamlandıkça, ilgili çıktılar kaydedilecek ve raporlanacaktır.
 
-
-## Fail checkpoint (attempt 2)
-- time: 2025-08-16T23:35:21.092Z
-- reason: Command failed: npm run lint
+— Agent: GameBY Agent • 2025-08-16T23:35:34.186Z
