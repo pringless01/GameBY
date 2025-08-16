@@ -1,18 +1,15 @@
 # Next Action: Monorepo: Complete apps/api/src domain split (economy/fraud/chat services)
 
-1. **Domain Analizi**: Mevcut apps/api/src dizininde yer alan hizmetlerin fonksiyonlarını ve bağımlılıklarını analiz et. Her bir alanın (economy, fraud, chat) gereksinimlerini belirle.
+1. **Domain Analizi ve Planlama**: Uygulamanın mevcut yapısını analiz et ve ekonomi, dolandırıcılık ve sohbet hizmetleri için ayrı domain yapıları oluşturma planı hazırla.
 
-2. **Dizin Yapısı Oluşturma**: Yeni dizin yapısını oluştur. apps/api/src altında economy, fraud ve chat adında üç yeni klasör oluştur.
+2. **Kod Yapısının Hazırlanması**: Yeni domainler için gerekli klasör ve dosya yapısını oluştur. `apps/api/src` altında `economy`, `fraud`, ve `chat` dizinlerini oluştur.
 
-3. **Kod Taşınması**: Mevcut kodları uygun dizinlere taşı. Economy ile ilgili kodları economy klasörüne, fraud ile ilgili olanları fraud klasörüne, chat ile ilgili olanları chat klasörüne yerleştir.
+3. **Service'lerin Ayrılması**: Mevcut kodu, ilgili domainlere göre ayırarak her bir domain için gerekli olan service’leri oluştur.
 
-4. **Bağımlılık Yönetimi**: Her bir yeni alan için bağımlılıkları güncelle ve gerekli olanları kur. Her domainin bağımsız çalışabilmesi için gerekli yapılandırmaları yap.
+4. **Bağımlılıkların Yönetimi**: Her yeni domain için bağımlılıkları düzenle ve güncelle. Gerekli kütüphaneleri her domain için ekle.
 
-5. **Test ve Doğrulama**: Taşınan kodların testlerini çalıştır ve her domainin doğru bir şekilde çalıştığını doğrulamak için entegrasyon testleri yap. Tüm testlerin PASS olduğundan emin ol.
+5. **Testlerin Güncellenmesi**: Her domain için oluşturulan yeni yapı ve fonksiyonlar üzerinde testleri güncelle ve gerekli testleri yaz. Testlerin geçerli olduğundan emin ol. 
 
-— Agent: GameBY Agent • 2025-08-16T14:07:51.550Z
+Her adımda gerekli dosyalar ve commit işlemleri yapılacak.
 
-
-## Fail checkpoint (attempt 2)
-- time: 2025-08-16T14:08:20.720Z
-- reason: Command failed: npm test
+— Agent: GameBY Agent • 2025-08-16T14:08:32.866Z
