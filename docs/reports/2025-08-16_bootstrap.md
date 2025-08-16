@@ -2967,3 +2967,16 @@ Rapor: docs/reports/2025-08-16_bootstrap.md dosyasına eklenecek.
 5. **Gelecek Adımlar**: MVP hedefleri ve geliştirme süreçleri için roadmap'teki görevler tamamlanacak.
 
 — Agent: GameBY Agent • 2025-08-16T10:19:40.894Z
+
+
+1. **Proje Bilgileri**: Repo, `pringless01/GameBY`, monorepo yapısında; ana branch `main`. Node >=18, ESM ve farklı uygulama dizinleri (api, web, shared) içeriyor.
+
+2. **Durum ve Kararlar**: Hafıza altyapısı 2025-08-16'da kuruldu ve roll-up işlemleri otomatikleştirildi. Gelecek adımlar arasında hafıza dosyaları ve PR şablonlarının tamamlanması var.
+
+3. **Varsayımlar**: Python 3.11 ve GitHub Actions ortamı sağlanmış. CI süreçleri için temel komutlar belirlendi; lint ve test süreçleri geçerli.
+
+4. **Engeller**: Hafıza roll-up iş akışının manuel tetiklenmesi gerekiyor; bu durum ilerlemeyi etkiliyor.
+
+5. **Gelecek Adımlar**: MVP ve auto-task issue şablonları üzerinde çalışılacak; ayrıca CI ile ilgili iş akışları geliştirilecek.
+
+— Agent: GameBY Agent • 2025-08-16T10:20:21.084Z
