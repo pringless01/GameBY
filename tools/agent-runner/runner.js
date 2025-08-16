@@ -99,9 +99,17 @@ function ensureNextActions() {
 }
 function firstNextAction() {
   const s = read("docs/status.md");
-  const block = s.match(/##\s*Next Actions[\s\S]*?(?:\n\n|$)/i)?.[0] || "";
-  const items = block.split("\n").filter(l => l.trim().startsWith("- ") && !l.includes("~~"));
-  return items[0]?.replace(/^- /, "").trim() || null;
+  const block = s.match(/##\s*Next Actions[\s\S]*?(?:\n##|\n$)/i)?.[0] || "";
+  const lines = block.split("\n");
+  for (const l of lines) {
+    if (l.includes("~~")) continue; // done
+    const m = l.match(/^\s*-\s*(?:\[(?: |x|X)\]\s*)?(.+?)\s*$/);
+    if (m && m[1]) {
+      const title = m[1].trim();
+      if (title) return title;
+    }
+  }
+  return null;
 }
 function markDone(title) {
   const p = "docs/status.md";
@@ -120,7 +128,7 @@ async function mainLoop() {
 
     ensureNextActions();
     const action = firstNextAction();
-    if (!action) { lastTs = idleGuard(lastTs); continue; }
+  if (!action) { lastTs = idleGuard(lastTs); await new Promise(r=>setTimeout(r, 250)); continue; }
 
     // 1) Bootstrap: oku + 5'li özet + rapor + hafıza
     const status = read("docs/status.md");
@@ -206,7 +214,9 @@ async function mainLoop() {
 
 // Entry
 if (process.argv.includes("--loop") || process.argv.includes("--once")) {
-  mainLoop().catch(() => process.exit(1));
+  process.on('unhandledRejection', (e) => { if (DRY) process.exit(0); else process.exit(1); });
+  process.on('uncaughtException', (e) => { if (DRY) process.exit(0); else process.exit(1); });
+  mainLoop().catch(() => { if (DRY) process.exit(0); else process.exit(1); });
 } else {
   console.log("Usage: node tools/agent-runner/runner.js --once | --loop");
 }
