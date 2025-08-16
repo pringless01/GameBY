@@ -8117,3 +8117,12 @@ Yukarıdaki bilgiler hafızaya eklenecek ve bir rapor hazırlanacaktır.
 5. Tüm bağımlılıkların yüklenip tam lint/test işlemlerinin gerçekleştirilmesi ve CI süreçlerinin geçerliliği onaylanacak.
 
 — Agent: GameBY Agent • 2025-08-16T22:49:53.955Z
+
+
+1. **Geliştirme Önceliği**: Agent, belgeler ve hafıza yerine gerçek kod geliştirme üzerine odaklanacak; dokümantasyon görevleri yasaklandı.
+2. **Monorepo Yapılandırması**: Monorepo'daki çalışma alanları analiz edilecek, eksik test senaryoları düzeltilecek ve tüm bağımlılıklar kurulacak.
+3. **API ve Paylaşılan Paketler**: Paylaşılan iş mantığı ve API alanları oluşturulacak; çeşitli paylaşılan paketler (auth, config, middleware vb.) hazırlanacak.
+4. **Test ve Lint Kontrolleri**: Tüm uygulama ve paketlerde test ve lint kontrollerinin geçmesi sağlanacak; gerekli düzeltmeler yapılacak.
+5. **Güvenlik Durumu**: Güncel güvenlik durumu izlenecek ve düşük seviyeli güvenlik açıkları için takip yapılacak.
+
+— Agent: GameBY Agent • 2025-08-16T22:50:10.859Z
