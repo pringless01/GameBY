@@ -19,13 +19,51 @@ function log(msg) {
 }
 
 const DRY = /^(1|true)$/i.test(process.env.DRY || "");
-const MODEL = process.env.MODEL || "gpt-4o";
+const MODEL_LIGHT = process.env.MODEL_LIGHT || "gpt-4o-mini";
+const MODEL_HEAVY = process.env.MODEL_HEAVY || "gpt-4o"; 
+const MODEL_DEFAULT = process.env.MODEL_DEFAULT || process.env.MODEL || "gpt-4o-mini";
 const MAX_IDLE = Number(process.env.MAX_IDLE_SECONDS || 120);
 const STOP_FILE = path.join(repoRoot, "agent", "STOP");
 const LOCK_FILE = path.join(repoRoot, "agent", "agent.lock");
 const RETRIES = Math.max(0, Number(process.env.RETRY_ON_FAIL || 2));
 
 const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+
+// Görev tipine göre model seçimi
+function selectModel(taskType = 'default') {
+  const models = {
+    light: MODEL_LIGHT,    // Gündelik: hafıza, basit commit, rapor
+    heavy: MODEL_HEAVY,    // Ağır: kod analizi, refactoring, planlama
+    default: MODEL_DEFAULT
+  };
+  const selected = models[taskType] || MODEL_DEFAULT;
+  log(`Model seçildi: ${selected} (tip: ${taskType})`);
+  return selected;
+}
+
+// Görev tipini analiz et - Next Action içeriğine göre
+function analyzeTaskComplexity(nextActionText) {
+  const heavyKeywords = [
+    'refactor', 'architecture', 'analysis', 'optimize', 'performance', 'security',
+    'complex', 'algorithm', 'design pattern', 'integration', 'migration',
+    'kod analizi', 'performans', 'güvenlik', 'mimari', 'entegrasyon'
+  ];
+  
+  const lightKeywords = [
+    'docs', 'documentation', 'memory', 'report', 'commit', 'log', 'update',
+    'simple', 'basic', 'add', 'remove', 'fix typo',
+    'doküman', 'hafıza', 'rapor', 'güncelle', 'ekle', 'basit'
+  ];
+  
+  const text = nextActionText.toLowerCase();
+  
+  const heavyScore = heavyKeywords.filter(kw => text.includes(kw)).length;
+  const lightScore = lightKeywords.filter(kw => text.includes(kw)).length;
+  
+  if (heavyScore > lightScore) return 'heavy';
+  if (lightScore > heavyScore) return 'light';
+  return 'default';
+}
 
 const SYSTEM_PROMPT = `
 ROL: Kıdemli Monorepo/DevOps ajanı. Soru sorma yok.
@@ -80,7 +118,7 @@ function lintAndTest() {
   sh(`npm run lint`, { stdio: "inherit" });
   sh(`npm test`, { stdio: "inherit" });
 }
-async function askLLM(input) {
+async function askLLM(input, taskType = 'default', contextInfo = '') {
   const noKey = !process.env.OPENAI_API_KEY;
   if (DRY || noKey) {
     // Deterministic lightweight fallback (no external calls in DRY or when key missing)
@@ -91,15 +129,22 @@ async function askLLM(input) {
     return stub;
   }
   try {
+    const selectedModel = selectModel(taskType);
     const messages = Array.isArray(input) ? input : [{ role: "user", content: String(input) }];
+    
+    // Context bilgisi varsa system message'a ekle
+    if (contextInfo && messages.length > 0 && messages[0].role === 'system') {
+      messages[0].content += `\n\nGÖREV TİPİ: ${taskType}\nKONTEKST: ${contextInfo}`;
+    }
+    
     const res = await client.chat.completions.create({
-      model: MODEL,
+      model: selectedModel,
       messages: messages,
-      temperature: 0.7,
-      max_tokens: 2000
+      temperature: taskType === 'heavy' ? 0.3 : 0.7, // Ağır işlerde daha deterministik
+      max_tokens: taskType === 'heavy' ? 3000 : 2000   // Ağır işlerde daha uzun yanıt
     });
     const text = res.choices[0]?.message?.content || "";
-    log(`LLM(out): ${trimOut(text, 200)}`);
+    log(`LLM(${selectedModel}): ${trimOut(text, 200)}`);
     return text;
   } catch (e) {
     const stub = `- [stub] LLM erişimi başarısız; offline fallback kullanıldı\n- [stub] Plan ve özet yerel üretildi`;
@@ -265,7 +310,7 @@ async function mainLoop() {
 
     let success = false;
     for (let attempt = 1; attempt <= (1 + RETRIES); attempt++) {
-      // 1) Bootstrap: oku + 5'li özet + rapor + hafıza
+      // 1) Bootstrap: oku + 5'li özet + rapor + hafıza (light task)
       const status = read("docs/status.md");
       const facts = read("agent/memory/project_facts.md");
       const lt = read("agent/memory/long_term.md");
@@ -275,7 +320,7 @@ async function mainLoop() {
         { role: "user", content:
           `Aşağıdaki içeriklere bak ve 5 maddelik kısa özet çıkar (yalın):\n\n` +
           `--- status.md ---\n${status}\n--- project_facts.md ---\n${facts}\n--- long_term.md ---\n${lt}\n--- roadmap.md ---\n${roadmap}\n` }
-      ]);
+      ], 'light', 'Bootstrap özet ve hafıza güncelleme');
       const bootPath = `docs/reports/${date}_bootstrap.md`;
       write(bootPath, (read(bootPath) + `\n\n${bootstrap}\n\n— Agent: GameBY Agent • ${new Date().toISOString()}\n`));
       write("agent/memory/project_facts.md", facts + `\n- [${new Date().toISOString()}] bootstrap summary appended`);
@@ -283,12 +328,13 @@ async function mainLoop() {
       lastTs = Date.now();
       steps += 1;
 
-      // 2) Plan: alt adımlar
+      // 2) Plan: alt adımlar (görev karmaşıklığına göre model seçimi)
+      const taskComplexity = analyzeTaskComplexity(act);
       const plan = await askLLM([
         { role: "system", content: SYSTEM_PROMPT },
         { role: "user", content:
       `Next Action: "${act}"\nBu aksiyonu en fazla 5 alt adıma böl; her alt adım için kısa çıktı üret (davranış değiştirme yok).` }
-      ]);
+      ], taskComplexity, `Planlama: ${act}`);
     write(reportPath, `# Next Action: ${act}\n\n${plan}\n\n— Agent: GameBY Agent • ${new Date().toISOString()}\n`);
       gitAddCommit(`docs(reports): start ${slug}`);
 
