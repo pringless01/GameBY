@@ -2,10 +2,10 @@
 // Behavior preserved 1:1; no schema or header changes.
 
 import { initDb } from '../../config/database.js';
+import usersService from '../../modules/users/users.service.js';
 import { getInvalidCursorIpStats, getAbusiveIpCount, getCooldownIpCount } from '../../security/cursorSecurity.js';
 import { computeFraudRiskScore, getMultiUserDevices, getMultiUserIps } from '../../services/fraudService.js';
 import { sendWithEtag } from '../../utils/etag.js';
-import usersService from '../../modules/users/users.service.js';
 
 // Note: Middleware is kept at route layer; controllers are plain handlers.
 

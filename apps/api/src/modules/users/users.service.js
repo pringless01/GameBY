@@ -3,6 +3,7 @@ import { initDb } from '../../config/database.js';
 import { DAILY_CONTRACT_TRUST_CAP } from '../../services/contractService.js';
 import { getActiveMentorship, canBeMentor, getQueues } from '../../services/mentorService.js';
 import { findUserByUsername } from '../../services/userService.js';
+
 import * as Repo from './users.repo.js';
 
 export async function getMe(userId) {
