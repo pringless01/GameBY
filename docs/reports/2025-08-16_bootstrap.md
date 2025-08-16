@@ -8217,3 +8217,14 @@ Yukarıdaki bilgiler hafızaya eklenecek ve bir rapor hazırlanacaktır.
 Şimdi, **Next Actions**'ı sırayla işleme alıyorum.
 
 — Agent: GameBY Agent • 2025-08-16T22:52:48.693Z
+
+
+1. 2025-08-16 itibarıyla, "GameBY" projesinde belgeler yerine gerçek kod geliştirmeye odaklanılması kararlaştırıldı; belgeler ve hafıza ile ilgili tüm görevler yasaklandı.
+2. Monorepo üzerinde iş alanları (apps/*, packages/*) kurulumunu tamamlamak ve çalışır durumda tüm testlerin yeşil olmasını sağlamak öncelikli eylem olarak belirlendi.
+3. API alanlarının (economy, fraud, chat) bölünmesi, paylaşılan paketlerin (shared-business, shared-db vb.) oluşturulması ve test scriptlerinin doğrulanması gibi görevler de Next Actions içerisinde yer aldı.
+4. Lint ve test süreçlerinin geçerli olduğu, güvenlik açıklarının izlenmeye alındığı ve CI/CD süreçlerinin doğrulandığı belirtildi.
+5. Gelecek adımlar için gerekli görevler roadmap'ten belirlenecek ve belgelerle ilgili tüm işler durdurulacaktır. 
+
+Şimdi, Next Actions'ı işleme alıyorum.
+
+— Agent: GameBY Agent • 2025-08-16T22:53:05.136Z
