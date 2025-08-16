@@ -3,4 +3,4 @@
 - [stub] LLM erişimi başarısız; offline fallback kullanıldı
 - [stub] Plan ve özet yerel üretildi
 
-— Agent: GameBY Agent • 2025-08-16T08:44:42.211Z
+— Agent: GameBY Agent • 2025-08-16T08:45:42.298Z
