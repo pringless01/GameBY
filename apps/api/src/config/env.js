@@ -1,20 +1,6 @@
-import fs from 'fs';
 import path from 'path';
 
-import dotenv from 'dotenv';
-
-// Çok aşamalı yükleme: .env.<NODE_ENV> sonra genel .env (override=false)
-export function loadEnv(){
-  const serverDir = path.join(path.dirname(new URL(import.meta.url).pathname), '..');
-  const rootDir = path.join(serverDir, '..');
-  const env = process.env.NODE_ENV || 'development';
-  const specific = path.join(rootDir, `.env.${env}`);
-  if(fs.existsSync(specific)) dotenv.config({ path: specific, override:false });
-  const rootEnv = path.join(rootDir, '.env');
-  if(fs.existsSync(rootEnv)) dotenv.config({ path: rootEnv, override:false });
-  const localServerEnv = path.join(serverDir, '.env');
-  if(fs.existsSync(localServerEnv)) dotenv.config({ path: localServerEnv, override:false });
-}
+import { loadEnv as sharedLoadEnv } from '@gameby/shared-config';
 
 const schema = [
   { key:'NODE_ENV', default:'development' },
@@ -86,7 +72,9 @@ export function validateEnv(){
 }
 
 export function loadAndValidateEnv(){
-  loadEnv();
+  const serverDir = path.join(path.dirname(new URL(import.meta.url).pathname), '..');
+  const rootDir = path.join(serverDir, '..');
+  sharedLoadEnv({ rootDir, appDir: serverDir });
   const { errors, warnings, config } = validateEnv();
   if(warnings.length) console.warn('[env] warnings', warnings.join(','));
   if(errors.length){

@@ -17,9 +17,9 @@ Last activity: 2025-08-16T11:21:35.123Z
 - Assumption: Token usage must provide real value through code changes
 
 ## Next Actions
-- Backend: Add @gameby/shared-middleware to api and use requestId()
-- Backend: Wire @gameby/shared-config.env() where envConfig used
-- Backend: Use @gameby/shared-auth.readToken() in socketAuth
+- Backend: Add @gameby/shared-middleware to api and use requestId() ✅
+- Backend: Wire @gameby/shared-config.env() where envConfig used ✅
+- Backend: Use @gameby/shared-auth.readToken() in socketAuth ✅
 - Backend: Extract one small util to @gameby/shared-utils and consume it
 - CI: Ensure runner.lintAndTest runs npm ci if node_modules missing
 
