@@ -10,9 +10,7 @@ export default [
       // Legacy folders kept during monorepo migration (lint dışı)
       'server/**',
       'frontend/**',
-  'tools/**',
-    // Duplike eski test konumu
-  'apps/api/tests/**'
+  'tools/**'
     ]
   },
   js.configs.recommended,
@@ -22,6 +20,7 @@ export default [
     rules: {
   'no-unused-vars': ['error', { argsIgnorePattern: '^_', caughtErrors: 'none', caughtErrorsIgnorePattern: '^_' }],
       'import/order': ['error', { alphabetize: { order: 'asc', caseInsensitive: true }, 'newlines-between': 'always' }]
+      , 'no-empty': 'off'
     }
   },
   // apps/api için Node ortamı ve kurallar
@@ -43,11 +42,32 @@ export default [
       }
     },
     rules: {
-      // Kademeli açılış: bu klasörde unused-vars ve import/order şimdilik kapalı
-      'no-empty': 'off',
-      'no-unused-vars': 'off',
-      'import/order': 'off'
+      // API kaynaklarında geçici: params ve placeholder fonksiyonlar için
+      'no-unused-vars': ['error', {
+        argsIgnorePattern: '^_|req|res|next',
+        varsIgnorePattern: '^(getTrustLeaderboardFacade|computeUserRankMeta|encodeCursor|decodeCursor|computeMentorQualityScore|listUserContracts|getMentorshipById|sleep|updateTrust|canAttempt|evt|meta|now|_)$',
+        caughtErrors: 'none',
+        caughtErrorsIgnorePattern: '^_'
+      }]
     }
+  },
+  // Legacy test konumu: apps/api/tests/** (Node + fetch globals)
+  {
+    files: ['apps/api/tests/**/*.js'],
+    languageOptions: {
+      globals: {
+        console: 'readonly',
+        process: 'readonly',
+        Buffer: 'readonly',
+        URL: 'readonly',
+        setTimeout: 'readonly',
+        clearTimeout: 'readonly',
+        setInterval: 'readonly',
+        clearInterval: 'readonly',
+        fetch: 'readonly'
+      }
+    },
+    rules: { 'no-unused-vars': 'off' }
   },
   // Root scripts (node) için ortam
   {

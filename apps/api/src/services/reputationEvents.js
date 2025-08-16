@@ -82,7 +82,7 @@ let __watching = false;
 function watchRules(){
   if(__watching) return; __watching = true;
   try {
-    fs.watch(RULES_PATH, { persistent:false }, (evt)=>{ setTimeout(loadRules, 100); });
+  fs.watch(RULES_PATH, { persistent:false }, (_evt)=>{ setTimeout(loadRules, 100); });
   } catch { /* ignore */ }
 }
 watchRules();
@@ -133,7 +133,7 @@ function cleanupDailyCountersIfDayChanged(){
 }
 
 // Public API: otomatik event işleme
-export async function emitReputationEvent({ userId, type, meta = {} }){
+export async function emitReputationEvent({ userId, type, meta: _meta = {} }){
   cleanupDailyCountersIfDayChanged();
   const calc = computeDelta(userId, type);
   if(!calc){ incUnknownType(); return { skipped:true, reason:'unknown_type' }; }
@@ -187,18 +187,18 @@ export function listDeltaRules(){ return JSON.parse(JSON.stringify(DELTA_RULES))
 export function getReputationRulesVersion(){ return __RULES_VERSION || 'unknown'; }
 export function getReputationRuleCount(){ return Object.keys(DELTA_RULES).filter(k=>!k.startsWith('_')).length; }
 
-export async function applyDirectReputationDelta({ userId, delta, reason }){
+export async function applyDirectReputationDelta({ userId, delta, reason: _reason }){
   if(typeof delta !== 'number' || !delta) return { success:false, error:'invalid_delta' };
   const db = await initDb();
   const now = new Date().toISOString();
   await db.exec('BEGIN');
   try {
-  await db.run('INSERT INTO reputation_events (user_id, delta, reason, created_at) VALUES (?,?,?,?)',[userId, delta, reason, now]);
+  await db.run('INSERT INTO reputation_events (user_id, delta, reason, created_at) VALUES (?,?,?,?)',[userId, delta, _reason, now]);
   await db.run('UPDATE users SET trust_score = trust_score + ?, last_decay_at = COALESCE(last_decay_at, ?) WHERE id=?',[delta, now, userId]);
     await db.exec('COMMIT');
     invalidateOnTrustChange(userId);
-    incReputationEvent(reason);
-    return { success:true, delta };
+  incReputationEvent(_reason);
+  return { success:true, delta };
   } catch(err){
     incReputationDbError();
     await db.exec('ROLLBACK');

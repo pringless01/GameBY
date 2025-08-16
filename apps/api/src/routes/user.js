@@ -4,10 +4,10 @@ import { mentorsLbCache, mentorsRankCache, MENTOR_LB_TTL_MS } from '../cache/men
 import { dailyTrustCache, leaderboardCache, trustTrendCache, DAILY_TRUST_TTL_MS, LEADERBOARD_TTL_MS, TRUST_TREND_TTL_MS, trustAroundCache } from '../cache/trustCaches.js';
 import { initDb } from '../config/database.js';
 import { envConfig } from '../config/env.js';
-import { authRequired } from '../middleware/auth.js';
 import { fraudMetrics, setMultiuserIpCount, setMultiuserDeviceCount } from '../metrics/fraudMetrics.js';
 import { leaderboardMetrics } from '../metrics/leaderboardMetrics.js';
 import { reputationMetrics } from '../metrics/reputationMetrics.js';
+import { authRequired } from '../middleware/auth.js';
 import { trustRateLimit, rateLimit } from '../middleware/rateLimit.js';
 import { encodeCursor, decodeCursor, WEAK_CURSOR_SECRET, isCursorAbuse, isInCursorCooldown, getIpInvalidCount, getCooldownIpCount, getAbusiveIpCount, getInvalidCursorRecent, getCursorCooldownUntil, INVALID_CURSOR_THRESHOLD, shouldAutoDegrade, getInvalidCursorIpStats } from '../security/cursorSecurity.js';
 import { DAILY_CONTRACT_TRUST_CAP } from '../services/contractService.js';
