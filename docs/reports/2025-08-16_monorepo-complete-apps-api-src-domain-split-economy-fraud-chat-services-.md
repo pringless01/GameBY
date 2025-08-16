@@ -1,18 +1,13 @@
 # Next Action: Monorepo: Complete apps/api/src domain split (economy/fraud/chat services)
 
-1. **Domain Tanımlaması ve Analizi**: Mevcut uygulama yapısını inceleyerek, ekonomi, dolandırıcılık ve sohbet hizmetleri için gerekli domain bileşenlerini belirle.
+1. **Domain Yapısını Tasarlama**: Uygulama için ekonomi, dolandırıcılık ve sohbet hizmetlerini kapsayan bir domain yapısı belirle. Her domain için gerekli bileşenleri ve bağımlılıkları tanımla.
 
-2. **Klasör ve Dosya Yapısı Oluşturma**: Her bir domain için uygun klasör ve dosya yapısını oluştur, yeni dizinler altında gerekli dosyaları yerleştir.
+2. **Kodu Bölme Planı Oluşturma**: Mevcut kod tabanını analiz et ve her bir domain için bağımsız modüller veya dizinler oluşturacak şekilde bir bölme planı hazırla.
 
-3. **Kodun Taşınması**: Mevcut kodu ilgili domain klasörlerine taşımak için gerekli düzenlemeleri yap, her domain için bağımsız çalışma sağlamaya yönelik güncellemeleri gerçekleştir.
+3. **Kod Tabanını Bölme**: Belirlenen plan doğrultusunda mevcut kodu ekonomi, dolandırıcılık ve sohbet hizmetleri olarak üç ayrı bölüme ayır. Her bölümde ilgili dosyaları ve bileşenleri düzenle.
 
-4. **Bağımlılık Yönetimi**: Yeni domain yapısına uygun bağımlılıkları güncelle, her domainin ihtiyaç duyduğu kütüphaneleri ve araçları düzgün bir şekilde yapılandır.
+4. **Bağımlılıkların Yönetimi**: Yeni domainlerdeki bağımlılıkları gözden geçir ve gerekli olanları her bir domain için izole et. Her domainin kendi bağımlılıklarını getirmesi için ayarlamalar yap.
 
-5. **Test ve Doğrulama**: Taşınan kodun düzgün çalıştığını doğrulamak için testleri çalıştır, her domain için gerekli test senaryolarını oluştur ve geçerliliğini kontrol et.
+5. **Test ve Doğrulama**: Her bir domainin işlevselliğini doğrulamak için test senaryoları oluştur ve çalıştır. Tüm domainlerin düzgün çalıştığını ve beklenen sonuçları verdiğini kontrol et.
 
-— Agent: GameBY Agent • 2025-08-16T13:58:02.523Z
-
-
-## Fail checkpoint (attempt 1)
-- time: 2025-08-16T13:58:31.566Z
-- reason: Command failed: npm test
+— Agent: GameBY Agent • 2025-08-16T13:58:44.908Z
