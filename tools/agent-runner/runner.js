@@ -44,6 +44,10 @@ function gitAddCommit(msg) {
   try { sh(`git add -A`); sh(`git commit -m "${msg.replace(/"/g, '\\"')}"`); } catch {}
 }
 function lintAndTest() {
+  if (DRY) {
+    sh(`npm run lint --silent`, { stdio: "inherit" });
+    return;
+  }
   sh(`npm run lint`, { stdio: "inherit" });
   sh(`npm test`, { stdio: "inherit" });
 }
@@ -110,6 +114,7 @@ function slugify(t) { return t.toLowerCase().replace(/[^a-z0-9]+/g, "-"); }
 
 async function mainLoop() {
   let lastTs = Date.now();
+  let steps = 0;
   while (true) {
     if (fs.existsSync(STOP_FILE)) break;
 
@@ -133,7 +138,8 @@ async function mainLoop() {
     write(bootPath, (read(bootPath) + `\n\n${bootstrap}\n\n— Agent: GameBY Agent • ${new Date().toISOString()}\n`));
     write("agent/memory/project_facts.md", facts + `\n- [${new Date().toISOString()}] bootstrap summary appended`);
     gitAddCommit(`docs(memory): bootstrap snapshot + report (no behavior change)`);
-    lastTs = Date.now();
+  lastTs = Date.now();
+  steps += 1;
 
     // 2) Plan: alt adımlar
     const plan = await askLLM([
@@ -165,12 +171,13 @@ async function mainLoop() {
     }
 
     // 4) Lint + Test (kırmızıysa otomatik küçült)
-    try { lintAndTest(); }
+  try { lintAndTest(); }
     catch {
       if (!DRY) sh(`git reset --hard HEAD~1`);
       lastTs = idleGuard(lastTs);
       continue;
     }
+  if (DRY) break;
 
     // 5) Hafıza append
     write("agent/memory/project_facts.md", read("agent/memory/project_facts.md")
@@ -191,6 +198,7 @@ async function mainLoop() {
 
     lastTs = Date.now();
   if (process.argv.includes("--once")) break;
+  if (DRY && steps >= Number(process.env.MAX_STEPS || 1)) break;
   // kısa bekleme (cross-platform)
   await new Promise((r) => setTimeout(r, 5000));
   }
