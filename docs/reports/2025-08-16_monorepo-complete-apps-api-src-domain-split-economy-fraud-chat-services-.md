@@ -1,23 +1,13 @@
 # Next Action: Monorepo: Complete apps/api/src domain split (economy/fraud/chat services)
 
-1. **Alt Adım 1: Domain Yapısını Belirleme**
-   - Mevcut uygulama yapısındaki domain'lerin (ekonomi, dolandırıcılık, sohbet hizmetleri) belirlenmesi ve her birinin bağımsız olarak nasıl yapılandırılacağını planlama.
+1. **Proje Yapısını Değerlendirme**: Mevcut `apps/api/src` dizin yapısını incele ve hangi dosya ve klasörlerin ekonomi, dolandırıcılık ve sohbet servislerine ait olduğunu belirle.
 
-2. **Alt Adım 2: Kod Tabanını Analiz Etme**
-   - Uygulama kod tabanını inceleyerek hangi bileşenlerin her bir domain'e ait olduğunu belirleme ve bu bileşenleri ayrı modüllere ayırma gereğini değerlendirme.
+2. **Domain Split Tasarımı**: Ekonomi, dolandırıcılık ve sohbet hizmetleri için ayrı dizin yapıları oluştur. Her bir domain için gerekli olan dosya ve klasör isimlerini belirle.
 
-3. **Alt Adım 3: Modül Ayrıştırma**
-   - Belirlenen domain'lere göre mevcut kodu modüllere ayırma işlemini gerçekleştirme. Her bir modül için gerekli bağımlılıkları ve dosya yapılarını oluşturma.
+3. **Kodu Taşıma**: Belirlenen dosya ve klasörleri uygun domain dizinlerine taşı. Her taşınma işleminden sonra dosya yollarını ve referanslarını güncelle.
 
-4. **Alt Adım 4: Entegrasyon Testleri Hazırlama**
-   - Ayrıştırılan her bir domain için entegrasyon testleri geliştirme. Her domain'in bağımsız çalıştığından ve diğer domain'lerle uyumlu olduğundan emin olma.
+4. **Test Güncellemesi**: Taşınan dosyalar için mevcut testleri gözden geçir ve gerekli değişiklikleri yaparak her domain için ayrı test dosyaları oluştur.
 
-5. **Alt Adım 5: Dokümantasyon ve Raporlama**
-   - Yapılan değişiklikleri ve yeni yapılandırmayı belgeleme. Kullanıcılar ve geliştiriciler için gerekli dökümantasyonları oluşturma ve güncellenmiş yapıyı raporlama.
+5. **Dokümantasyon Güncellemesi**: Yapılan değişiklikleri ve yeni dizin yapısını belgeleyerek proje dokümantasyonunu güncelle. Her domain için gereken bilgileri ekle.
 
-— Agent: GameBY Agent • 2025-08-16T13:18:47.314Z
-
-
-## Fail checkpoint (attempt 1)
-- time: 2025-08-16T13:19:16.299Z
-- reason: Command failed: npm test
+— Agent: GameBY Agent • 2025-08-16T13:19:28.161Z
