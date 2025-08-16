@@ -8668,3 +8668,16 @@ Rapor: docs/reports/2025-08-16_bootstrap.md dosyasına eklendi.
 5. **Açık İşler**: Ekonomi, dolandırıcılık ve sohbet alanları için hizmet katmanları oluşturulacak; ESLint kuralları sertleştirilecek ve paylaşılan yardımcılar genişletilecektir.
 
 — Agent: GameBY Agent • 2025-08-16T23:06:02.560Z
+
+
+1. **Geliştirme Önceliği**: Agent, yalnızca kod geliştirme ile ilgilenecek; belgeler ve hafıza görevleri tamamen yasaklandı.
+
+2. **Next Actions**: Monorepo analiz edilecek ve iş alanları (apps/*, packages/*) tamamen kurulum yapılacak, lint/test süreçleri yeşil hale getirilecek.
+
+3. **Paylaşılan Paketler**: Yeni ortak paketler oluşturulacak (örneğin, shared-business, shared-db, shared-validation, vb.) ve API alanları (economy, fraud, chat) kurulacak.
+
+4. **Test ve Lint Kontrolü**: Tüm uygulamalar ve paketler arasında test betikleri doğrulanacak ve bağımlılıklar kurulup tam lint/test işlemleri gerçekleştirilecek.
+
+5. **Güvenlik ve Kalite**: CI süreçleri ve güvenlik durumları kontrol edilecek, her şeyin geçerli olduğundan emin olunacak.
+
+— Agent: GameBY Agent • 2025-08-16T23:06:23.654Z
