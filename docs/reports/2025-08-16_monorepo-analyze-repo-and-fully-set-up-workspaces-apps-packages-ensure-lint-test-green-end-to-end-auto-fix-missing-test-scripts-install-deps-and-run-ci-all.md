@@ -16,3 +16,8 @@ Eksik olan test script'leri otomatik olarak eklenecek ve mevcut script’ler gö
 Gerekli bağımlılıklar kurulacak ve sürekli entegrasyon (CI) süreci başlatılacak. Hedef: `ci:all` komutunu çalıştırarak tüm sistemin entegrasyonunu sağlamak.
 
 — Agent: GameBY Agent • 2025-08-16T23:02:00.688Z
+
+
+## Fail checkpoint (attempt 1)
+- time: 2025-08-16T23:02:04.796Z
+- reason: Command failed: npm run lint
