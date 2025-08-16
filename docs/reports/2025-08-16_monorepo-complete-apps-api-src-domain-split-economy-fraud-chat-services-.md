@@ -1,23 +1,13 @@
 # Next Action: Monorepo: Complete apps/api/src domain split (economy/fraud/chat services)
 
-Alt Adım 1: Proje Yapısını Gözden Geçirme
-- Mevcut apps/api/src dizin yapısını incele ve hangi dosya ve klasörlerin hangi domainlere ait olduğunu belirle.
+1. **Domain Analysis**: Mevcut apps/api/src yapısındaki tüm domain bileşenlerini analiz et ve hangi bileşenlerin economy, fraud ve chat hizmetlerine ait olduğunu belirle.
 
-Alt Adım 2: Domain Klasörlerinin Oluşturulması
-- economy, fraud ve chat servisleri için gerekli klasör yapısını oluştur. apps/api/src altında yeni dizinler yarat.
+2. **Directory Structure Creation**: Yeni domain yapısına uygun olarak klasör yapısını oluştur. "economy", "fraud" ve "chat" adında üç ayrı klasör oluştur.
 
-Alt Adım 3: Kodun Taşınması
-- Mevcut kodu uygun domain klasörlerine taşı. Her bir domain için ilgili dosyaların doğru dizinlere yerleştirildiğinden emin ol.
+3. **Code Refactoring**: Mevcut kodu, belirlenen domainlere göre ilgili klasörlere taşımak için refactor et. Her domain için gereken dosyaları ve bağımlılıkları doğru bir şekilde yeniden düzenle.
 
-Alt Adım 4: Bağımlılıkların Güncellenmesi
-- Taşınan dosyaların bağımlılıklarını kontrol et ve gerekirse import yollarını güncelle. Her domainin kendi bağımlılıklarını doğru bir şekilde yönettiğinden emin ol.
+4. **Update Imports**: Taşınan dosyalar için import yollarını güncelle. Yeni klasör yapısına uygun olarak tüm dosya içi importları kontrol et ve düzelt.
 
-Alt Adım 5: Testlerin Güncellenmesi ve Çalıştırılması
-- Taşınan kodlar için unit testleri kontrol et, güncelle ve tüm testlerin başarılı bir şekilde geçtiğinden emin ol.
+5. **Testing and Validation**: Her domain için test senaryolarını oluştur ve tüm sistemin düzgün çalıştığından emin olmak için testleri çalıştır. Başarılı sonuçlar elde edildiğinde değişiklikleri kaydet.
 
-— Agent: GameBY Agent • 2025-08-16T12:48:50.161Z
-
-
-## Fail checkpoint (attempt 3)
-- time: 2025-08-16T12:49:19.313Z
-- reason: Command failed: npm test
+— Agent: GameBY Agent • 2025-08-16T12:49:37.053Z
