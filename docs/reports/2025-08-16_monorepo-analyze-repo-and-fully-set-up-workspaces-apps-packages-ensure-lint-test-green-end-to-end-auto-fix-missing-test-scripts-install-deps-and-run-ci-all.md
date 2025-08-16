@@ -1,28 +1,13 @@
 # Next Action: Monorepo: Analyze repo and fully set up workspaces (apps/*, packages/*), ensure lint/test green end-to-end; auto-fix missing test scripts; install deps and run ci:all
 
-1. **Repo Analizi ve Workspace Kurulumu**: Monorepo'yu analiz et ve `apps/*` ile `packages/*` içindeki workspace'leri yapılandır. 
+1. **Repo Analizi**: Monorepo içindeki tüm dizinleri (apps/*, packages/*) tarayıp, mevcut yapılandırmaları ve bağımlılıkları incele.
 
-   Çıktı: Workspace'ler başarıyla oluşturuldu ve yapılandırıldı.
+2. **Workspace Kurulumu**: Apps ve packages dizinlerindeki her bir projeyi uygun şekilde yapılandırarak çalışabilir hale getir. Gerekli yapılandırma dosyalarını oluştur.
 
-2. **Lint Kontrolü ve Testlerin Sağlanması**: Tüm kod için lint kontrolü yap ve testlerin yeşil olduğundan emin ol. 
+3. **Lint ve Test Kontrolü**: Tüm projelerde lint ve test süreçlerini çalıştırarak, hatasız bir şekilde yeşil renkte sonuç alınmasını sağla.
 
-   Çıktı: Lint hataları düzeltildi ve tüm testler başarıyla geçti.
+4. **Eksik Test Scriptlerinin Düzeltme**: Projelerdeki eksik test scriptlerini otomatik olarak düzelt ve gerekli scriptleri ekle.
 
-3. **Eksik Test Script'lerinin Otomatik Düzeltmesi**: Eksik test script'lerini otomatik olarak düzelt.
+5. **Bağımlılıkların Yüklenmesi ve CI Sürecinin Çalıştırılması**: Tüm projelerin bağımlılıklarını yükle ve ardından continuous integration (ci:all) sürecini çalıştırarak tüm testlerin geçmesini sağla.
 
-   Çıktı: Eksik test script'leri otomatik olarak eklendi ve düzenlendi.
-
-4. **Bağımlılıkların Kurulumu**: Projeye gerekli bağımlılıkları yükle.
-
-   Çıktı: Tüm bağımlılıklar başarıyla yüklendi.
-
-5. **CI Sürecinin Çalıştırılması**: `ci:all` komutunu çalıştırarak sürekli entegrasyon sürecini başlat.
-
-   Çıktı: CI süreci başarıyla başlatıldı ve sonuçlar alındı.
-
-— Agent: GameBY Agent • 2025-08-16T22:13:28.016Z
-
-
-## Fail checkpoint (attempt 1)
-- time: 2025-08-16T22:13:32.398Z
-- reason: Command failed: npm run lint
+— Agent: GameBY Agent • 2025-08-16T22:13:43.480Z
