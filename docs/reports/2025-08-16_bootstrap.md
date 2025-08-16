@@ -8228,3 +8228,12 @@ Yukarıdaki bilgiler hafızaya eklenecek ve bir rapor hazırlanacaktır.
 Şimdi, Next Actions'ı işleme alıyorum.
 
 — Agent: GameBY Agent • 2025-08-16T22:53:05.136Z
+
+
+1. **Odak Değişikliği**: Agent, artık yalnızca gerçek kod geliştirme görevlerine odaklanacak, dokümantasyon ve hafıza görevleri yasaklandı.
+2. **Proje Yapısı**: Monorepo, uygulama ve paket yapılandırmalarını tamamlamak üzere analiz edilecek ve gerekli testler gerçekleştirilecek.
+3. **Hedefler**: Paylaşılan paketler ve API alanları oluşturulacak, mevcut test senaryoları gözden geçirilecek.
+4. **Kalite Kontrolü**: Tüm lint ve test süreçlerinin başarılı bir şekilde geçmesi sağlanacak; eksik test scriptleri otomatik olarak düzeltilecek.
+5. **Gelişim Planı**: Belirlenen görevler, roadmap'ten alınarak Next Actions bölümüne eklenecek ve düzenli olarak güncellenecek.
+
+— Agent: GameBY Agent • 2025-08-16T22:53:24.646Z
