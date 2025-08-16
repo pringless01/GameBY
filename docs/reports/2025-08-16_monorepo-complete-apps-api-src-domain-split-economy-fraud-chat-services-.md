@@ -1,18 +1,13 @@
 # Next Action: Monorepo: Complete apps/api/src domain split (economy/fraud/chat services)
 
-1. **Domain Analysis**: Tüm mevcut uygulama ve hizmetlerin mevcut yapısını analiz et. Ekonomi, dolandırıcılık ve sohbet hizmetlerini belirle ve bunların bağımlılıklarını incele.
+1. **Domain Yapısını Planla**: Apps/api/src dizinindeki mevcut yapıyı analiz et ve ekonomi, dolandırıcılık ve sohbet hizmetleri için yeni bir domain yapısı oluştur.
 
-2. **Directory Structure Setup**: Yeni bir dizin yapısı oluştur. `apps/api/src/economy`, `apps/api/src/fraud`, ve `apps/api/src/chat` dizinlerini oluştur ve gerekli başlangıç dosyalarını yerleştir.
+2. **Kod Tabanını Böl**: Mevcut kod tabanını, belirlenen yeni domain yapısına göre gerekli dosya ve klasörlere ayır.
 
-3. **Code Refactoring**: Mevcut kodları ilgili dizinlere taşı ve her bir hizmete özgü olarak yeniden yapılandır. Gereksiz bağımlılıkları kaldır ve her hizmet için ayrı bir yapı oluştur.
+3. **Bağımlılıkları Güncelle**: Yeni domain yapısındaki bağımlılıkları kontrol et ve her bir domain için gerekli bağımlılıkları güncelle.
 
-4. **Configuration Management**: Her hizmet için gerekli yapılandırma dosyalarını oluştur. Ortak yapılandırmaları ayır ve her bir hizmetin özel ayarlarını tanımla.
+4. **Testleri İyileştir**: Yeni domain yapısına göre testleri güncelle ve her bir domain için uygun test senaryoları ekle.
 
-5. **Testing and Validation**: Yeni yapılandırmayı test etmek için her hizmet için birim testleri oluştur. Tüm hizmetlerin uyumlu çalıştığından emin olmak için entegrasyon testleri yap.
+5. **Dokümantasyonu Güncelle**: Yeni yapı ve domainler hakkında ilgili dokümantasyonu güncelle ve gerekli bilgileri ekle.
 
-— Agent: GameBY Agent • 2025-08-16T12:51:51.926Z
-
-
-## Fail checkpoint (attempt 1)
-- time: 2025-08-16T12:52:20.906Z
-- reason: Command failed: npm test
+— Agent: GameBY Agent • 2025-08-16T12:52:34.244Z
