@@ -1,20 +1,15 @@
 # Next Action: Monorepo: Complete apps/api/src domain split (economy/fraud/chat services)
 
-1. **Domain Analizi ve Planlama**: Mevcut apps/api/src dizin yapısını analiz et ve domain'lerin (economy, fraud, chat) gereksinimlerini belirle. 
+1. **Domain Split Planlama**: Mevcut yapı ve modüllerin analizi yapılacak. Ekonomi, dolandırıcılık ve sohbet hizmetleri için gerekli bileşenler belirlenecek.
 
-2. **Yeni Dizin Yapısının Oluşturulması**: Economy, fraud ve chat domain'leri için gerekli dizin yapısını oluştur. Her bir domain için ayrı klasörler oluşturulacak.
+2. **Klasör Yapısının Oluşturulması**: Yeni domain yapısına uygun olarak klasörler (economy, fraud, chat) oluşturulacak. Her bir domain için gerekli başlangıç dosyaları hazırlanacak.
 
-3. **Kodun Taşınması**: Mevcut kodu uygun domain dizinlerine taşı. Her bir domain için kodun doğru bir şekilde yapılandırıldığından emin olun.
+3. **Kod Taşıma İşlemi**: Mevcut kodların ilgili domain klasörlerine taşınması sağlanacak. Her bir domain için spesifik modüller ve bileşenler, yeni yapıya uygun şekilde düzenlenecek.
 
-4. **Bağımlılıkların Güncellenmesi**: Taşınan kodların bağımlılıklarını gözden geçir ve gereksinimlere göre güncelle. Her bir domain için gerekli kütüphaneleri ve bağımlılıkları kontrol et.
+4. **Bağımlılıkların Yönetimi**: Her bir domain için gerekli bağımlılıklar belirlenecek ve uygun şekilde yönetilecek. Paket yöneticisi ile bağımlılıkların güncellenmesi sağlanacak.
 
-5. **Testlerin Güncellenmesi ve Doğrulama**: Her domain için testlerin geçerliliğini kontrol et. Yeni dizin yapısına göre testleri güncelle ve başarıyla geçtiklerinden emin ol. 
+5. **Test ve Doğrulama**: Yeni yapı üzerinde testler gerçekleştirilecek. Her domain için ilgili test senaryoları oluşturulacak ve başarıyla geçmeleri sağlanacak. 
 
-Bu adımların her biri, domain'lerin düzgün bir şekilde ayrılmasını ve yönetilmesini sağlayacaktır.
+Bu adımların ardından domain bölünmesi tamamlanmış olacak.
 
-— Agent: GameBY Agent • 2025-08-16T12:41:37.489Z
-
-
-## Fail checkpoint (attempt 2)
-- time: 2025-08-16T12:42:06.430Z
-- reason: Command failed: npm test
+— Agent: GameBY Agent • 2025-08-16T12:42:17.648Z
