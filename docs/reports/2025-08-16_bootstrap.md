@@ -6748,3 +6748,12 @@ Rapor: docs/reports/2025-08-16_bootstrap.md dosyasına eklendi.
 Rapor: docs/reports/2025-08-16_bootstrap.md dosyasına eklendi.
 
 — Agent: GameBY Agent • 2025-08-16T22:09:53.726Z
+
+
+1. Agent, sadece gerçek kod geliştirme görevlerine odaklanacak; belgeler ve hafıza güncellemeleri yasaklandı.
+2. Monorepo için gerekli çalışmalara öncelik verilecek; uygulama ve paket yapılandırmaları tamamlanacak.
+3. API alanları ve paylaşılacak paketler oluşturulacak; test senaryoları tüm uygulamalar için geçerli hale getirilecek.
+4. CI/CD süreçleri optimize edilecek; tüm testlerin başarıyla geçmesi sağlanacak.
+5. Proje, güvenlik incelemeleri ve belgelerle desteklenen üretim aşamasına hazırlanacak.
+
+— Agent: GameBY Agent • 2025-08-16T22:10:09.160Z
