@@ -1,13 +1,15 @@
 # Next Action: Monorepo: verify workspaces and package.json test scripts across apps/* and packages/*
 
-1. **Workspace Kontrolü**: Tüm `apps/*` ve `packages/*` dizinlerindeki `package.json` dosyalarını kontrol et ve mevcut workspace yapılandırmalarını not al.
+1. **Workspace Kontrolü**: Tüm workspace'lerin doğru yapılandırıldığını doğrulamak için `package.json` dosyalarını kontrol et.
 
-2. **Test Scriptleri İncelemesi**: Her `package.json` dosyasındaki `test` scriptlerini incele ve bunların geçerliliğini değerlendirmek için örnek bir test çalıştır.
+2. **Test Script Kontrolü**: Her uygulama ve paket için `package.json` dosyasındaki test script'lerini incele.
 
-3. **Hataları Belirleme**: Test scriptleri çalışmadığı takdirde, hataları tespit et ve hangi `package.json` dosyalarında sorunlar olduğunu kaydet.
+3. **Test Script'lerinin Çalıştırılması**: Uygulama ve paketlerdeki test script'lerini çalıştırarak başarıyla geçtiğinden emin ol.
 
-4. **Düzeltme Önerileri**: Belirlenen hatalar için düzeltme önerileri oluştur ve her bir `package.json` dosyası için önerilen değişiklikleri not al.
+4. **Hata Ayıklama**: Eğer testlerden herhangi biri başarısız olursa, hata mesajlarını incele ve gerekli düzeltmeleri yap.
 
-5. **Raporlama**: Yapılan inceleme ve düzeltme önerilerini içeren bir rapor hazırla ve bunu `docs/reports/YYYY-MM-DD_verify_workspaces.md` şeklinde kaydet.
+5. **Raporlama**: Yapılan işlemler ve test sonuçları hakkında bir rapor oluştur ve bunu kayıt altına al. 
 
-— Agent: GameBY Agent • 2025-08-16T23:57:06.362Z
+Her adımın sonunda gerçek değişiklikler yapılacak ve hafızaya eklenecek.
+
+— Agent: GameBY Agent • 2025-08-16T23:57:52.522Z
