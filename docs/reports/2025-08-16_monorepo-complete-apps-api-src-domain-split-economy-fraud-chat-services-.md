@@ -1,20 +1,13 @@
 # Next Action: Monorepo: Complete apps/api/src domain split (economy/fraud/chat services)
 
-1. **Domain Tanımlamaları**: Mevcut apps/api/src içindeki domainlerin (economy, fraud, chat) tanımlamalarını yaparak, her birinin işlevlerini belirle.
+1. **Domain Analizi**: Uygulamanın mevcut yapısını inceleyerek, ekonomi, dolandırıcılık ve sohbet hizmetlerinin hangi bileşenleri içerdiğini belirleyin. Bu analiz, her bir alanın bağımsız olarak nasıl çalıştığını anlamak için gereklidir.
 
-2. **Kodu Analiz Etme**: apps/api/src içinde yer alan kodları inceleyerek, hangi bileşenlerin hangi domainlere ait olduğunu belirle ve gerekli refaktöring alanlarını tespit et.
+2. **Klasör Yapısı Oluşturma**: Yeni domain'ler için uygun klasör yapısını oluşturun. `apps/api/src/economy`, `apps/api/src/fraud`, ve `apps/api/src/chat` gibi klasörler oluşturulacak.
 
-3. **Refaktöring Planı Oluşturma**: Belirlenen bileşenler için bir refaktöring planı hazırla. Her bir domain için bağımsız modüller oluşturulmasını sağla.
+3. **Kod Taşınması**: Her bir domain'e ait kod bileşenlerini mevcut yapıdan yeni oluşturulan klasörlere taşıyın. Bu, ilgili dosyaların doğru yere yerleştirilmesini sağlar.
 
-4. **Uygulama ve Test**: Refaktöring planını uygulayarak kodu yeniden yapılandır. Her bir domain için test senaryoları oluştur ve testleri çalıştırarak geçerliliğini kontrol et.
+4. **Bağımlılık Yönetimi**: Yeni domain'ler arasındaki bağımlılıkları gözden geçirin ve gerekli olanları ayarlayın. Her bir domain'in kendi bağımsızlığını koruması için bağımlılıkların analizi önemlidir.
 
-5. **Dokümantasyon Güncelleme**: Yapılan değişiklikleri ve yeni yapılandırmayı belgelerle güncelle. Her bir domainin kullanımını ve entegrasyonunu açıklayan dokümanlar oluştur. 
+5. **Testlerin Güncellenmesi**: Taşınan kodlarla birlikte test dosyalarını da güncelleyin. Her bir domain için uygun testlerin çalıştığını doğrulamak amacıyla gerekli test senaryolarını oluşturun ve çalıştırın.
 
-Bu alt adımların her biri, monorepo içinde uygulama ve kod kalitesini artırmaya yönelik önemli adımlar olacak.
-
-— Agent: GameBY Agent • 2025-08-16T14:17:04.684Z
-
-
-## Fail checkpoint (attempt 2)
-- time: 2025-08-16T14:17:08.965Z
-- reason: Command failed: npm run lint
+— Agent: GameBY Agent • 2025-08-16T14:17:20.793Z
