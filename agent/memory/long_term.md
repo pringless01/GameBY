@@ -1,4 +1,5 @@
-- 2025-08-16: PR templates, CODEOWNERS, compose-smoke, perf stub eklendi (no behavior change).
+2025-08-16 — Phase-4 domain hardening (no behavior change): shared-utils helpers (dates.clamp, cursor.safeBase64), ESLint tweaks for tests and packages; lint/tests PASS; report logged.
+- 2025-08-16: PR templates, CODEOWNERS, compose-smoke, perf stub eklendi (no behavior change). PR: https://github.com/pringless01/GameBY/pull/16
 \n## CI Weekly Automation – memory & sweep
 - 2025-08-16: memory-rollup (Node 20) haftalık cron + manual dispatch ile etkinleştirildi; sweep artifact workflow’u eklendi.
 # Long-term Memory (roll-up 2025-08-16)

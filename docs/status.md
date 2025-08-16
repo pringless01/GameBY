@@ -13,12 +13,16 @@
 - Assumption: Lint/test kırıkları mevcut olabilir; bu çalışma davranışı değiştirmeyecek, yalnızca bellek/raporlama altyapısı ekler.
 
 ## Next Actions
+- ~~Fraud: service-level unit test (repo stub) + boundary sweep~~ ✅
+- ~~Chat: service-level unit test (flood/penalty) (repo stub) + boundary sweep~~ ✅
+- ~~Docs: runbooks (auth refresh, leaderboard metrics, fraud scoring, chat flood) → docs/runbooks/*~~ ✅
+- ~~Shared utils: cursor utils (safeEncode/Decode no-op) ve dates(msToDays, clamp) refactor’leri — non-invasive~~ ✅
 - ~~CI: memory-rollup.yml haftalık cron + raporu PR açıklamasına ekle.~~ ✅
 - ~~CI: sweep-report.json artifact (scripts/sweep.mjs + workflow).~~ ✅
 - ~~compose smoke: dc:up → smoke:local → dc:down opsiyonel job.~~ ✅
 - ~~PR templates: .github/PULL_REQUEST_TEMPLATE.md + docs/contributing.md.~~ ✅
 - ~~CODEOWNERS + Renovate (draft PR, schedule haftalık).~~ ✅
-- Shared utils/types: cursor utils + dates + pagination (non-invasive).
+- ~~Shared utils/types: cursor utils + dates + pagination (non-invasive).~~ ✅
 - ~~Perf placeholder: docs/perf.md + k6 smoke stub + npm script.~~ ✅
 - [ ] MVP: Hafıza dosyaları + roll-up action + PR şablonları
 - [ ] Gelişim: Auto-task issue template ile iş akışı

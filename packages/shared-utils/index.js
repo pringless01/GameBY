@@ -1,5 +1,8 @@
 // shared utility placeholders
 import crypto from 'node:crypto';
+export * as dates from './src/dates.js';
+export * as cursor from './src/cursor.js';
+export { invariant } from './src/invariant.js';
 
 export function hmacSha256Base64(str, key){
   return crypto.createHmac('sha256', key).update(str).digest('base64');

@@ -74,7 +74,7 @@ export default [
         fetch: 'readonly'
       }
     },
-    rules: { 'no-unused-vars': 'off' }
+  rules: { 'no-unused-vars': 'off', 'import/order': 'off' }
   },
   // Root scripts (node) için ortam
   {
@@ -141,7 +141,7 @@ export default [
         fetch: 'readonly'
       }
     },
-    rules: { 'no-unused-vars': 'off' }
+  rules: { 'no-unused-vars': 'off', 'import/order': 'off' }
   },
   // apps/web public (browser) scriptleri için tarayıcı global’leri ve geçici gevşetmeler
   {
@@ -198,6 +198,21 @@ export default [
     },
     rules: {
       'no-unused-vars': 'off'
+    }
+  }
+  ,
+  // packages (shared utils) node ortamı
+  {
+    files: ['packages/**/src/**/*.js', 'packages/**/index.js'],
+    languageOptions: {
+      globals: {
+        console: 'readonly',
+        process: 'readonly',
+        Buffer: 'readonly',
+        URL: 'readonly',
+        setTimeout: 'readonly',
+        clearTimeout: 'readonly'
+      }
     }
   }
 ];

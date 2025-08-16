@@ -1,4 +1,5 @@
-[2025-08-16] templates/CODEOWNERS/smoke/perf stub eklendi.
+2025-08-16: Phase-4 domain hardening helpers added (shared-utils dates.clamp, cursor.safeBase64*). Lint/Test PASS. Report created.
+[2025-08-16] templates/CODEOWNERS/smoke/perf stub eklendi. PR: https://github.com/pringless01/GameBY/pull/16
 \n[2025-08-16] CI roll-up ve sweep artifact workflow’ları eklendi; haftalık hafıza özetleri otomatikleşti.
 # Project Facts
 - Repo: pringless01/GameBY

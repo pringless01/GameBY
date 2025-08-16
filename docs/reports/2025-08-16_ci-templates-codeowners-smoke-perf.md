@@ -11,4 +11,6 @@
 - Test: PASS (`npm test`)
 - PR: GH CLI/PAT yok; PR açılmadı.
 
+PR: https://github.com/pringless01/GameBY/pull/16
+
 — Agent: GameBY Agent
