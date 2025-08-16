@@ -1,13 +1,15 @@
 # Next Action: MVP: Hafıza dosyaları + roll-up action + PR şablonları
 
-1. **Hafıza Dosyalarının Oluşturulması**: Proje ile ilgili kritik bilgilerin toplandığı hafıza dosyaları oluşturulacak. Bu dosyalar, proje süresince referans alınacak önemli bilgileri içerecek.
+1. **Hafıza Dosyalarının Oluşturulması**: Proje ile ilgili temel bilgilerin yer aldığı hafıza dosyaları oluşturulacak. Bu dosyalar, proje hakkında genel bir bakış ve önemli bilgileri içerecek.
 
-2. **Roll-up Action Belirlenmesi**: Projede yapılacak eylemlerin ve görevlerin genel bir özetini oluşturacak bir roll-up action belirlenecek. Bu, ekibin genel ilerlemesini takip etmesine yardımcı olacak.
+2. **Roll-Up Action Stratejisinin Geliştirilmesi**: Proje yönetimi sürecinde roll-up action stratejisi oluşturulacak. Bu strateji, farklı görevlerin ve eylemlerin bir araya getirilmesini sağlayacak.
 
-3. **PR Şablonlarının Tasarlanması**: Pull request (PR) süreçlerini standartlaştırmak için kullanılacak PR şablonları tasarlanacak. Bu şablonlar, geliştiricilerin PR'larını daha düzenli ve anlaşılır bir şekilde hazırlamalarını sağlayacak.
+3. **PR Şablonlarının Tasarlanması**: Pull request (PR) süreçlerini kolaylaştırmak için uygun PR şablonları tasarlanacak. Bu şablonlar, katkıda bulunanların PR'lerini düzenli ve anlaşılır bir şekilde sunmalarını sağlayacak.
 
-4. **Dokümantasyonun Güncellenmesi**: Oluşturulan hafıza dosyaları ve PR şablonları ile ilgili dokümantasyon güncellenecek. Bu, ekibin yeni süreçlere kolayca adapte olmasını sağlayacak.
+4. **Hafıza Dosyalarının Güncellenmesi**: Oluşturulan hafıza dosyaları düzenli olarak güncellenecek ve proje gelişmelerine göre revize edilecek.
 
-5. **Geri Bildirim Toplanması**: Oluşturulan hafıza dosyaları ve PR şablonları hakkında ekipten geri bildirim toplanacak. Bu geri bildirimler, süreçlerin iyileştirilmesi için değerlendirilecektir.
+5. **Roll-Up Action ve PR Şablonlarının Entegrasyonu**: Geliştirilen roll-up action stratejisi ve PR şablonları, proje yönetim sistemine entegre edilerek kullanılabilir hale getirilecek. 
 
-— Agent: GameBY Agent • 2025-08-16T11:29:47.116Z
+Her adım için gerekli değişiklikler yapılacak ve raporlar oluşturulacak.
+
+— Agent: GameBY Agent • 2025-08-16T11:30:34.227Z
