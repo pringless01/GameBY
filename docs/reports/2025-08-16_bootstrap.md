@@ -5197,3 +5197,14 @@ Rapor: `docs/reports/2025-08-16_bootstrap.md` dosyasına yazıldı.
 Şimdi "Next Actions" bölümünü işleme alıyorum.
 
 — Agent: GameBY Agent • 2025-08-16T13:11:16.136Z
+
+
+1. **Son Aktivite**: 2025-08-16 tarihinde en son etkinlik gerçekleştirildi, raporlar güncellendi.
+2. **Odak Değişikliği**: Ajan, artık yalnızca gerçek kod geliştirme görevlerine odaklanacak; belgelerle ilgili görevler yasaklandı.
+3. **Geçerli Eylemler**: Monorepo içindeki uygulama ve API'lerin alanlarının ayrılması, paylaşılan iş mantığının paketlere çıkarılması ve inter-servis iletişim kalıplarının uygulanması gibi görevler önceliklidir.
+4. **Kalite Durumu**: Lint ve test süreçleri başarılı bir şekilde geçildi; bazı güvenlik açıkları izlenmeye alındı.
+5. **Yasaklı Görevler**: Tüm belge ve hafıza ile ilgili görevler yasaklandı; yalnızca kod geliştirme üzerine yoğunlaşılmalıdır. 
+
+Rapor oluşturulacak.
+
+— Agent: GameBY Agent • 2025-08-16T13:12:02.181Z
