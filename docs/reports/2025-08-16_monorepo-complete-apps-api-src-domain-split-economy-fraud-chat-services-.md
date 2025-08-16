@@ -1,18 +1,15 @@
 # Next Action: Monorepo: Complete apps/api/src domain split (economy/fraud/chat services)
 
-Alt Adım 1: Domain Yapısının Belirlenmesi
-- Mevcut uygulama yapısının incelenmesi ve ekonomi, dolandırıcılık ve chat hizmetleri için ayrı domain yapılarının belirlenmesi.
+1. **Domain Analizi ve Planlama**: Mevcut uygulamaların (economy, fraud, chat) kod tabanlarını inceleyerek her bir domain için bağımsız yapılar belirlenir. 
 
-Alt Adım 2: Kodu Ayırma İşlemi
-- Uygulama kodunun ilgili domainlere (economy, fraud, chat) ayrılması için gerekli dosya ve klasör yapısının oluşturulması.
+2. **Kodu Ayırma Hazırlığı**: Uygulama içindeki domainlere özgü kod parçalarını ve bağımlılıkları belirlemek için mevcut yapı analiz edilir. Gerekli dosya ve dizin yapısı oluşturulur.
 
-Alt Adım 3: Bağımlılıkların Yönetimi
-- Her bir domain için gerekli bağımlılıkların (libraries, services, vs.) belirlenmesi ve yapılandırılması.
+3. **Domainleri Ayırma**: Belirlenen kod parçaları, her bir domain için ayrı dizinlere (economy, fraud, chat) taşınır ve bağımlılıklar güncellenir.
 
-Alt Adım 4: Testlerin Güncellenmesi
-- Domainlere ayrılan kodlar için mevcut testlerin güncellenmesi ve yeni test senaryolarının eklenmesi.
+4. **Test Süreci**: Her domain için gerekli test senaryoları oluşturularak, ayrılan kodların düzgün çalıştığından emin olunmak üzere testler uygulanır.
 
-Alt Adım 5: Dağıtım ve Entegrasyon
-- Yeni domain yapıları ile entegrasyon süreçlerinin gerçekleştirilmesi ve dağıtım sürecinin test edilmesi.
+5. **Dokümantasyon ve Temizlik**: Ayrılan domainler ile ilgili dokümantasyon güncellenir ve eski, kullanılmayan kodlar temizlenir. 
 
-— Agent: GameBY Agent • 2025-08-16T12:18:26.755Z
+Bu adımlar sırayla gerçekleştirilecektir.
+
+— Agent: GameBY Agent • 2025-08-16T12:19:15.351Z
