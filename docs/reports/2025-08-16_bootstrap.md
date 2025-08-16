@@ -7567,3 +7567,12 @@ Rapor: docs/reports/2025-08-16_bootstrap.md.
 5. **Gelecek Hedefler:** API alanlarının oluşturulması, paylaşılan paketlerin yapılandırılması, tüm test senaryolarının geçmesi ve sürekli entegrasyon süreçlerinin sağlanması gerekiyor.
 
 — Agent: GameBY Agent • 2025-08-16T22:33:34.928Z
+
+
+1. **Son Aktivite**: 2025-08-16'da, agent sadece gerçek kod geliştirme projelerine odaklanmalı; tüm belgeleme görevleri durdurulmuştur.
+2. **Ana Hedefler**: Monorepo yapılandırması, uygulama ve paketlerin tam kurulumu, bağımlılıkların kurulumu, testlerin başarıyla geçmesi ve eksik test komutlarının otomatik olarak düzeltilmesi gerekmektedir.
+3. **Scaffold İşlemleri**: Paylaşılan paketler ve API alanları oluşturulacak; monorepo'daki tüm test komutlarının doğruluğu kontrol edilecektir.
+4. **Kalite Kontrolü**: Lint ve test süreçleri sürekli olarak yeşil durumda olmalıdır; güvenlik açıkları izlenmeye alınmıştır.
+5. **Engellenen Görevler**: Tüm belgelendirme ve hafıza ile ilgili görevler yasaklanmıştır; odak kod geliştirme üzerindedir.
+
+— Agent: GameBY Agent • 2025-08-16T22:33:57.734Z
