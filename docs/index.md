@@ -1,6 +1,6 @@
 # GameBY Docs
 
-- Architecture: ./architecture.md
+- Architecture: ./ARCHITECTURE.md
 - Security: ./security.md
 - Setup: ./setup/
 - Performance: ./perf/

@@ -1,0 +1,21 @@
+name: CI - Smoke
+
+on:
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+      - name: Install deps (root workspaces)
+        run: npm i
+      - name: Lint (quick)
+        run: npm run lint
+      - name: Smoke marker
+        run: node -e "console.log('SMOKE_OK')"
