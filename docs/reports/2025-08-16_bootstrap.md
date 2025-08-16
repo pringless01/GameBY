@@ -8277,3 +8277,12 @@ Yukarıdaki bilgiler hafızaya eklenecek ve bir rapor hazırlanacaktır.
 5. **Kalite Kontrolü:** Lint ve test süreçleri geçerli, güvenlik açıkları izleniyor; iki düşük öncelikli güvenlik açığı belirlendi ve kayıt altına alındı.
 
 — Agent: GameBY Agent • 2025-08-16T22:54:36.682Z
+
+
+1. Agent, yalnızca gerçek kod geliştirmeye odaklanacak, dokümantasyon ve hafıza görevleri yasaklandı.
+2. Monorepo, uygulama ve paket yapılandırmalarını analiz edilip, testlerin geçerli olduğu bir ortamda kurulacak.
+3. Paylaşılan paketler ve API alanları oluşturulacak, eksik test scriptleri otomatik olarak düzeltilecek.
+4. Tüm çalışma alanları ve test scriptleri doğrulanacak, CI süreçleri gözden geçirilecek.
+5. Güvenlik açıkları izlendi ve düşük önem dereceli iki açık raporlandı.
+
+— Agent: GameBY Agent • 2025-08-16T22:54:51.852Z
