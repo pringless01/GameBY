@@ -11,3 +11,8 @@
 5. **CI Sürecinin Çalıştırılması**: `ci:all` komutunu çalıştırarak tüm testlerin ve lint kontrollerinin başarılı bir şekilde geçmesini sağla.
 
 — Agent: GameBY Agent • 2025-08-16T22:56:28.808Z
+
+
+## Fail checkpoint (attempt 2)
+- time: 2025-08-16T22:56:32.800Z
+- reason: Command failed: npm run lint
