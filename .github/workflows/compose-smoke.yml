@@ -1,0 +1,22 @@
+name: compose-smoke
+on:
+  workflow_dispatch:
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Docker compose up
+        run: |
+          docker compose up -d || docker-compose up -d
+      - name: Local smoke
+        run: node scripts/smoke_local.js
+      - name: Docker compose down
+        if: always()
+        run: |
+          docker compose down || docker-compose down

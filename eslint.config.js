@@ -80,9 +80,20 @@ export default [
   {
     files: ['scripts/**/*.js','scripts/**/*.mjs'],
     languageOptions: {
-      globals: { console: 'readonly', process: 'readonly', Buffer: 'readonly' }
+      globals: { console: 'readonly', process: 'readonly', Buffer: 'readonly', setTimeout: 'readonly' }
     },
     rules: { 'no-unused-vars': 'off' }
+  },
+  // perf (k6) dosyaları için özel global ve kurallar
+  {
+    files: ['perf/**/*.js'],
+    languageOptions: {
+      globals: { console: 'readonly', __ENV: 'readonly' }
+    },
+    rules: {
+      'import/order': 'off',
+      'no-undef': 'off'
+    }
   },
   // apps/api public (browser) scriptleri için tarayıcı global’leri
   {
