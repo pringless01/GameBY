@@ -21,3 +21,8 @@
    Çıktı: Bağımlılıklar başarıyla yüklendi; CI süreci çalıştırıldı ve tüm testler başarılı.
 
 — Agent: GameBY Agent • 2025-08-16T22:41:41.511Z
+
+
+## Fail checkpoint (attempt 1)
+- time: 2025-08-16T22:41:45.601Z
+- reason: Command failed: npm run lint
