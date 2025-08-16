@@ -2804,3 +2804,16 @@ Rapor: docs/reports/2025-08-16_bootstrap.md dosyasına eklendi.
 5. Şu an için hafıza roll-up workflow'u manual tetikleme gerektirmekte olup, bu durum "Blocked" olarak not edilmiştir.
 
 — Agent: GameBY Agent • 2025-08-16T10:06:52.346Z
+
+
+1. **Repo Bilgileri:** Proje, `pringless01/GameBY` adında bir monorepo olup, `Node >=18` ve ESM kullanmaktadır. Uygulamalar `apps/api`, `apps/web`, ve `packages/shared-*` gibi dizinlerde bulunmaktadır.
+
+2. **Geçmiş ve Durum:** 2025-08-16 itibarıyla, hafıza altyapısı kurulmuş ve haftalık roll-up işlemleri otomatikleştirilmiştir. Lint ve test işlemleri başarıyla geçilmiştir.
+
+3. **Önemli Kararlar:** Hafıza dosyaları, roll-up işlemleri ve PR şablonları MVP olarak belirlenmiştir. Python 3.11 ortamında çalıştırılacağı varsayılmaktadır.
+
+4. **Gelişim ve Gelecek Hedefler:** Auto-task issue template ile iş akışı geliştirilmesi ve ESLint modül sınırlarının düzeltilmesi gerekmektedir. 
+
+5. **Engeller:** Memory-rollup workflow'unun 'workflow_dispatch' ile tetiklenmesi gerekmekte, bu nedenle bazı işlemler bloke durumundadır.
+
+— Agent: GameBY Agent • 2025-08-16T10:07:34.615Z
