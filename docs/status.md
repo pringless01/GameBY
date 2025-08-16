@@ -17,5 +17,12 @@
 - [ ] Gelişim: Auto-task issue template ile iş akışı
 - [x] ESLint module boundaries: no-cycle ve no-restricted-imports ihlallerini düzelt (doğrulama tamam)
 
+### Next Actions (Phase-2)
+- ESLint module boundaries düzelt
+- Shared utils/types (non-invasive) genişlet
+- ~~Env rehberi + scripts/print-env-check.js (rapor-only)~~ ✅
+- CI: memory-rollup + sweep artifact
+- Haftalık rapor oluştur
+
 ## Blocked
 - memory-rollup workflow ‘workflow_dispatch’ tetiklenmesi gerekli (GitHub Actions UI). Bu yerel araçlarla çalıştırılamaz.

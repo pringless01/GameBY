@@ -116,7 +116,10 @@ function firstNextAction() {
 function markDone(title) {
   const p = "docs/status.md";
   let s = read(p);
-  s = s.replace(new RegExp(`^- ${title.replace(/[.*+?^${}()|[\\]\\\\]/g, "\\$&")}`, "m"), `- ~~${title}~~ ✅`);
+  const esc = title.replace(/[.*+?^${}()|[\\]\\]/g, "\\$&");
+  // Satır biçimleri: "- title" veya "- [ ] title" / "- [x] title"
+  const re = new RegExp(`^\\s*-\\s*(?:\\[(?: |x|X)\\]\\s*)?${esc}\\s*$`, "m");
+  s = s.replace(re, `- ~~${title}~~ ✅`);
   write(p, s);
   gitAddCommit(`docs(status): mark done - ${title}`);
 }
@@ -185,6 +188,7 @@ async function mainLoop() {
     catch {
       if (!DRY) sh(`git reset --hard HEAD~1`);
       lastTs = idleGuard(lastTs);
+      if (DRY) break;
       continue;
     }
   if (DRY) break;
