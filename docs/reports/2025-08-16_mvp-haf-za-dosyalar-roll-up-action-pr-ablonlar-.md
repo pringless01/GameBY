@@ -1,37 +1,18 @@
 # Next Action: MVP: Hafıza dosyaları + roll-up action + PR şablonları
 
-1. **Hafıza Dosyaları Oluşturma**: Proje için gerekli hafıza dosyalarını oluştur ve yapılandır. Bu dosyalar, projenin önemli bilgilerini ve kararlarını içerecek.
+1. **Hafıza Dosyalarının Oluşturulması:**
+   - Yeni hafıza dosyaları için gerekli şablonlar oluşturulacak ve mevcut hafıza bilgileri güncellenecek.
 
-2. **Roll-Up Action Geliştirme**: Projede yapılan tüm eylemleri ve sonuçları toplayarak bir roll-up action geliştirin. Bu, tüm önemli bilgilerin bir arada toplanmasını sağlayacak.
+2. **Roll-up Action'ın Tasarlanması:**
+   - Roll-up action için gerekli olan adımlar ve süreçler belirlenecek, ardından tasarım süreci başlayacak.
 
-3. **PR Şablonları Tasarlama**: Pull request işlemleri için standartlaştırılmış şablonlar oluşturun. Bu şablonlar, katkıda bulunanların PR’larını düzenli ve anlaşılır bir şekilde sunmalarına yardımcı olacak.
+3. **PR Şablonlarının Geliştirilmesi:**
+   - Proje için kullanılacak PR şablonları tasarlanacak ve bu şablonların içeriği oluşturulacak.
 
-4. **Hafıza Dosyalarını Güncelleme**: Oluşturulan hafıza dosyalarını, projede yapılan güncellemelerle sürekli olarak güncel tutun. Bu, geçmişe yönelik referanslar için önemlidir.
+4. **Hafıza Dosyalarının Entegrasyonu:**
+   - Oluşturulan hafıza dosyaları, mevcut sistemle entegre edilecek ve erişilebilir hale getirilecek.
 
-5. **Dokümantasyon ve Raporlama**: Tüm işlemleri belgeleyin ve bir rapor oluşturun. Bu rapor, projenin ilerlemesi ve hafıza dosyalarının işlevselliği hakkında bilgi verecek.
+5. **Gözden Geçirme ve Revizyon:**
+   - Tüm belgeler ve şablonlar gözden geçirilecek, gerekli revizyonlar yapılacak ve son hali verilecek.
 
-Şimdi bu adımları sırayla uygulamaya başlayacağım. İlk adım "Hafıza Dosyaları Oluşturma". 
-
-**Adım 1: Hafıza Dosyaları Oluşturma** 
-
-Belirtilen hafıza dosyaları oluşturulacak. 
-
-Hafıza dosyası: `agent/memory/project_facts.md`
-- Projenin temel bilgileri ve önemli kararları eklenecek.
-
-Hafıza dosyası: `agent/memory/long_term.md`
-- Uzun vadeli hedefler ve stratejiler eklenecek.
-
-Bu dosyalar oluşturulacak ve hafızaya eklenecek. 
-
-**Çıktı: Hafıza dosyaları oluşturuldu.** 
-
-Dosya içeriği eklenecek. 
-
-**Rapor: docs/reports/2023-10-05_hafiza_dosyaları_oluşturma.md** 
-
-- Hafıza dosyalarının oluşturulduğu kaydedildi.
-
-**İmzalı: Agent: GameBY Agent**
-
-— Agent: GameBY Agent • 2025-08-16T09:23:32.242Z
+— Agent: GameBY Agent • 2025-08-16T09:24:11.724Z
