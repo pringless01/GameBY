@@ -2445,3 +2445,9 @@ Checkpoint: 2025-08-16T14:10Z+bootstrap-update
 - [stub] Lint/Test korunur
 
 — Agent: GameBY Agent • 2025-08-16T06:51:33.859Z
+
+
+- [stub] LLM erişimi başarısız; offline fallback kullanıldı
+- [stub] Plan ve özet yerel üretildi
+
+— Agent: GameBY Agent • 2025-08-16T07:12:14.396Z
