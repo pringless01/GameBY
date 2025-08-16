@@ -21,3 +21,8 @@
    - Tüm proje bileşenlerinin uyumlu ve çalışır durumda olduğundan emin olunacak.
 
 — Agent: GameBY Agent • 2025-08-16T22:44:28.126Z
+
+
+## Fail checkpoint (attempt 1)
+- time: 2025-08-16T22:44:32.099Z
+- reason: Command failed: npm run lint
