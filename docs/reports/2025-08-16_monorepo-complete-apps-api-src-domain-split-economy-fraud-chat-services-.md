@@ -1,18 +1,15 @@
 # Next Action: Monorepo: Complete apps/api/src domain split (economy/fraud/chat services)
 
-1. **Domain Yapısını İnceleme:** apps/api/src dizinindeki mevcut yapı incelenecek ve domain split için uygun olan economy, fraud ve chat servisleri belirlenecek.
+1. **Domain Analysis and Structure Planning**: Ekonomi, dolandırıcılık ve sohbet hizmetleri için mevcut uygulama yapısını analiz et. Her domain için gerekli bileşenleri ve bağımlılıkları belirle.
 
-2. **Yeni Dizin Oluşturma:** Belirlenen domainler için yeni dizin yapıları oluşturulacak. economy, fraud ve chat için uygun dizinler oluşturulacak.
+2. **Directory Creation**: Yeni domainler için gerekli dizin yapısını oluştur. `apps/api/src/economy`, `apps/api/src/fraud` ve `apps/api/src/chat` dizinlerini yarat.
 
-3. **Kodun Taşınması:** Mevcut kod yapısından ilgili servislere ait dosyalar, belirlenen yeni dizinlere taşınacak. Bu aşamada kodun düzgün bir şekilde ayrıldığından emin olunacak.
+3. **Code Migration**: Mevcut kodu uygun dizinlere taşı. Ekonomi ile ilgili kodları `economy`, dolandırıcılık ile ilgili kodları `fraud` ve sohbet ile ilgili kodları `chat` dizinine yerleştir.
 
-4. **Bağlantıların Güncellenmesi:** Taşınan dosyaların içindeki import ve export bağlantıları, yeni dizin yapısı ile uyumlu hale getirilecek.
+4. **Update Imports and Dependencies**: Taşınan kodların içindeki importları ve bağımlılıkları güncelle. Yeni dizin yapısına uygun şekilde dosyaların birbirleriyle olan bağlantılarını kontrol et.
 
-5. **Testlerin Güncellenmesi ve Çalıştırılması:** Yeni dizin yapısına göre test dosyaları güncellenecek ve tüm testlerin başarıyla geçtiğinden emin olunacak.
+5. **Testing and Validation**: Her domain için testleri çalıştır ve geçerli sonuçlar al. Kodun düzgün çalıştığından emin olmak için gerekli testleri yap. 
 
-— Agent: GameBY Agent • 2025-08-16T13:44:11.738Z
+Her alt adım tamamlandıktan sonra hafızaya ekleme yapacağım.
 
-
-## Fail checkpoint (attempt 3)
-- time: 2025-08-16T13:44:40.690Z
-- reason: Command failed: npm test
+— Agent: GameBY Agent • 2025-08-16T13:45:00.466Z
