@@ -176,10 +176,11 @@ main
     </div>
 
         <!-- JavaScript -->
+        <script>window.__CODARA_INTRO_NO_AUTO__ = true;</script>
         <script src="/js/codara-intro.js"></script>
         <script>
             (async function(){
-                try { await (window.startCodaraIntro ? window.startCodaraIntro({ autoFinish:true, minHoldMs:1800, maxDurationMs:6000 }) : Promise.resolve()); } catch(e){}
+            try { await (window.startCodaraIntro ? window.startCodaraIntro({ autoFinish:true, minHoldMs:1000, maxDurationMs:3500 }) : Promise.resolve()); } catch(e){}
             })();
         </script>
     <script>

@@ -139,9 +139,12 @@
     });
   };
 
-  if(document.readyState === 'loading'){
-    document.addEventListener('DOMContentLoaded', ()=> window.startCodaraIntro && window.startCodaraIntro());
-  } else {
-    window.startCodaraIntro && window.startCodaraIntro();
+  // Otomatik başlatmayı opsiyonel yap: dışarıdan kontrol edeceğiz
+  if (!window.__CODARA_INTRO_NO_AUTO__) {
+    if(document.readyState === 'loading'){
+      document.addEventListener('DOMContentLoaded', ()=> window.startCodaraIntro && window.startCodaraIntro());
+    } else {
+      window.startCodaraIntro && window.startCodaraIntro();
+    }
   }
 })();
