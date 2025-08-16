@@ -2940,3 +2940,12 @@ Rapor: docs/reports/2025-08-16_bootstrap.md dosyasına eklenecek.
 5. **Gelecek Adımlar**: ESLint modül sınırlarını düzeltmek ve paylaşılan araçlar/types genişletmek gibi Phase-2 görevleri planlandı.
 
 — Agent: GameBY Agent • 2025-08-16T10:15:11.647Z
+
+
+1. Proje, hafıza dosyaları ve roll-up işlemleri ile PR şablonları üzerinde çalışıyor; bunların tamamlanması hedefleniyor.
+2. Python 3.11 uyumlu GitHub Actions runner'ında, hafıza altyapısı ve günlük raporlama işlemleri kurulacak.
+3. CI süreçleri için temel komutlar belirlendi; lint ve test işlemleri mevcut durumda başarılı.
+4. ESLint modül sınırları sertleştirilecek ve shared utils/types genişletilecek; bu değişiklikler davranış değişikliği yaratmayacak.
+5. Gelecek adımlar arasında hafıza dosyaları, roll-up işlemleri ve PR şablonları üzerinde çalışmak yer alıyor.
+
+— Agent: GameBY Agent • 2025-08-16T10:15:51.625Z
