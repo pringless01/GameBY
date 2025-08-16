@@ -1,23 +1,18 @@
 # Next Action: Monorepo: Analyze repo and fully set up workspaces (apps/*, packages/*), ensure lint/test green end-to-end; auto-fix missing test scripts; install deps and run ci:all
 
-1. **Repo Analizi**: Monorepo yapısını analiz ederek mevcut dizinleri ve dosyaları inceleyeceğim. Bu aşamada, apps/* ve packages/* dizinlerindeki projelerin yapısını anlamak için gerekli bilgileri toplayacağım.
+### Alt Adım 1: Repo Analizi
+Repo yapısını analiz et ve mevcut `apps/*` ve `packages/*` dizinlerini kontrol et. Gerekli dosya ve dizinlerin varlığını doğrula.
 
-2. **Workspace Kurulumu**: Elde edilen bilgiler doğrultusunda, gerekli workspace'leri oluşturup yapılandıracağım. Bu aşamada, her bir uygulama ve paket için uygun ayarların yapıldığından emin olacağım.
+### Alt Adım 2: Workspace'lerin Kurulumu
+`apps/*` ve `packages/*` dizinlerindeki workspace'leri oluştur. Her bir workspace için uygun yapılandırmaları ayarla.
 
-3. **Lint Kontrolü**: Tüm kod tabanında lint kontrollerini gerçekleştireceğim. Bu aşamada, kodun standartlara uygun olup olmadığını kontrol edip gerekli düzeltmeleri yapacağım.
+### Alt Adım 3: Lint Kontrolü
+Tüm kod tabanında lint kontrollerini çalıştır. Hataları belirle ve düzeltmek için gerekli değişiklikleri yap.
 
-4. **Test Senaryoları**: Test senaryalarının eksik olup olmadığını kontrol edeceğim. Eksik test script'lerini otomatik olarak düzeltecek ve her projede testlerin çalıştığından emin olacağım.
+### Alt Adım 4: Test Senaryolarının Kontrolü
+Mevcut test senaryolarını kontrol et ve eksik olan test script'lerini otomatik olarak düzelt. Gerekirse yeni test senaryoları ekle.
 
-5. **Bağımlılıkların Yüklenmesi ve CI Çalıştırma**: Tüm bağımlılıkları yükledikten sonra CI süreçlerini başlatacağım. Bu aşamada, ci:all komutunu çalıştırarak tüm testlerin başarılı bir şekilde geçmesini sağlayacağım. 
+### Alt Adım 5: Bağımlılıkların Yüklenmesi ve CI Çalıştırma
+Projede ihtiyaç duyulan bağımlılıkları yükle. Ardından, `ci:all` komutunu çalıştırarak tüm testlerin ve lint kontrollerinin geçmesini sağla.
 
-Bu adımları sırayla uygulayarak projeyi tam anlamıyla kurmayı hedefliyorum. Şimdi ilk adıma geçiyorum. 
-
-### Adım 1: Repo Analizi
-Repo yapısını analiz edeceğim. (Gerekli dosya ve dizinleri inceleyerek bilgi toplayacağım.)
-
-— Agent: GameBY Agent • 2025-08-16T23:07:37.288Z
-
-
-## Fail checkpoint (attempt 2)
-- time: 2025-08-16T23:07:41.367Z
-- reason: Command failed: npm run lint
+— Agent: GameBY Agent • 2025-08-16T23:07:53.935Z
