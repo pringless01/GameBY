@@ -21,3 +21,8 @@
    - Çıktı: CI süreci başarıyla çalıştırıldı ve tüm testler geçti.
 
 — Agent: GameBY Agent • 2025-08-16T22:18:02.344Z
+
+
+## Fail checkpoint (attempt 1)
+- time: 2025-08-16T22:18:06.444Z
+- reason: Command failed: npm run lint
