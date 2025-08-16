@@ -78,7 +78,7 @@ export default [
   },
   // Root scripts (node) için ortam
   {
-    files: ['scripts/**/*.js'],
+    files: ['scripts/**/*.js','scripts/**/*.mjs'],
     languageOptions: {
       globals: { console: 'readonly', process: 'readonly', Buffer: 'readonly' }
     },

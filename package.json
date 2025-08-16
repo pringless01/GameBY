@@ -9,6 +9,8 @@
     "packages/*"
   ],
   "scripts": {
+  "memory:rollup": "node scripts/memory_rollup.js",
+  "sweep:report": "node scripts/sweep.mjs",
     "codex:run": "node tools/codex-runner.js",
     "dev:web": "npm --workspace @gameby/web run dev",
     "lint": "eslint . --ext .js,.ts --max-warnings=0",
