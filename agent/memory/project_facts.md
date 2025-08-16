@@ -1,4 +1,7 @@
 # Project Facts
-- Repo: (otomatik keşfet ve güncelle)
+- Repo: pringless01/GameBY
 - Ana branch: main
-- Paket/komut sınamaları: (npm test / pytest -q / npm run lint) — projeye göre keşfedip not et.
+- Paket/komut sınamaları:
+	- Root lint: npm run lint
+	- API test: npm --prefix apps/api/src test
+	- API coverage: npm --prefix apps/api/src run coverage
