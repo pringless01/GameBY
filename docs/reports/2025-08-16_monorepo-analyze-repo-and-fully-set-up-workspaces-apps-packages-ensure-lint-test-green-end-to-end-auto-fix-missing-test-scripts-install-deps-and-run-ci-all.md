@@ -16,3 +16,8 @@ Eksik test script'lerini tespit et ve otomatik olarak ekle.
 Tüm bağımlılıkları yükle ve `ci:all` komutunu çalıştırarak entegrasyon testlerini gerçekleştir.
 
 — Agent: GameBY Agent • 2025-08-16T23:30:19.510Z
+
+
+## Fail checkpoint (attempt 1)
+- time: 2025-08-16T23:30:23.746Z
+- reason: Command failed: npm run lint
