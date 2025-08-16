@@ -2980,3 +2980,12 @@ Rapor: docs/reports/2025-08-16_bootstrap.md dosyasına eklenecek.
 5. **Gelecek Adımlar**: MVP ve auto-task issue şablonları üzerinde çalışılacak; ayrıca CI ile ilgili iş akışları geliştirilecek.
 
 — Agent: GameBY Agent • 2025-08-16T10:20:21.084Z
+
+
+1. Proje, hafıza dosyaları, roll-up işlemleri ve PR şablonları içeren bir MVP oluşturmayı hedefliyor.
+2. Python 3.11 ile uyumlu bir GitHub Actions runner'ı ve gerekli scriptlerin sorunsuz çalışacağı varsayılıyor.
+3. CI için temel komutlar belirlenmiş ve bazı lint/test sorunları olabileceği kabul ediliyor, ancak bu durum hafıza ve raporlama altyapısını etkilemeyecek.
+4. Geliştirme aşamasında, auto-task issue template ile iş akışının iyileştirilmesi planlanıyor.
+5. CI için memory-rollup ve sweep artifact workflow'ları oluşturulmuş, ancak memory-rollup workflow'u "workflow_dispatch" tetiklenmesini bekliyor ve bu nedenle bloke durumda.
+
+— Agent: GameBY Agent • 2025-08-16T10:21:01.218Z
