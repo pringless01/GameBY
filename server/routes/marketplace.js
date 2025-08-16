@@ -1,20 +1,20 @@
 import express from 'express';
 
 import { authRequired } from '../middleware/auth.js';
-import { createListing, buyListing, listListings } from '../services/marketplaceService.js';
+import { MarketplaceService } from '../modules/marketplace/index.js';
 
 const router = express.Router();
 
 router.post('/list', authRequired, async (req,res)=>{
   const { item, price } = req.body;
   if(!item || typeof price !== 'number' || price <=0) return res.status(400).json({ error:'invalid' });
-  const listing = await createListing(req.user.id, item, price);
+  const listing = await MarketplaceService.createListing(req.user.id, item, price);
   res.json({ listing });
 });
 
 router.post('/buy/:id', authRequired, async (req,res)=>{
   try {
-    const result = await buyListing(req.params.id, req.user.id);
+    const result = await MarketplaceService.buyListing(req.params.id, req.user.id);
     res.json(result);
   } catch(e){
     if(e.message==='not_found') return res.status(404).json({ error:'not_found' });
@@ -24,7 +24,7 @@ router.post('/buy/:id', authRequired, async (req,res)=>{
 });
 
 router.get('/', authRequired, async (req,res)=>{
-  const listings = await listListings();
+  const listings = await MarketplaceService.listListings();
   res.json({ listings });
 });
 
