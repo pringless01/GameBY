@@ -1,15 +1,13 @@
 # Next Action: Monorepo: Complete apps/api/src domain split (economy/fraud/chat services)
 
-1. **Domain Analizi ve Planlama**: Mevcut apps/api/src yapısını analiz et. Ekonomi, dolandırıcılık ve sohbet hizmetleri için gerekli bileşenleri belirle. Her bir domain için plan oluştur.
+1. **Domain Split Planlama**: apps/api/src içinde mevcut yapıların analizi yapılacak ve ekonomi, dolandırıcılık ve sohbet hizmetleri için gerekli dosyalar belirlenecek.
 
-2. **Kodu Modüler Hale Getirme**: Mevcut kodu her bir domain için ayrı modüllere ayır. Ekonomi, dolandırıcılık ve sohbet hizmetleri için gerekli dosya ve dizin yapısını oluştur.
+2. **Klasör Yapısı Oluşturma**: Her bir domain (economy, fraud, chat) için ayrı klasörler oluşturulacak ve mevcut dosyalar bu klasörlere taşınacak.
 
-3. **Bağımlılık Yönetimi**: Her bir domain için bağımlılıkları belirle ve bağımlılıkları yönetmek için gerekli güncellemeleri yap. Paket yöneticisi kullanarak bağımlılıkları güncelle.
+3. **Bağımlılıkların Güncellenmesi**: Taşınan dosyaların bağımlılıkları kontrol edilecek ve gerekli güncellemeler yapılacak.
 
-4. **Test ve Doğrulama**: Her bir domain için ayrılan kod modüllerini test et. Testlerin geçerli olduğundan emin ol ve gerekli düzeltmeleri yap.
+4. **Testlerin Güncellenmesi**: Yeni klasör yapısına uygun test dosyaları oluşturulacak ve mevcut testler güncellenecek.
 
-5. **Dokümantasyon ve Raporlama**: Yapılan değişiklikleri ve yeni yapıyı belgeleyin. Her bir domain için dokümantasyon oluştur ve güncellemeleri raporla. 
+5. **Dokümantasyon Güncellemesi**: Yapılan değişiklikler ve yeni yapı hakkında dokümantasyon güncellenecek.
 
-Her bir adım için gerekli değişiklikleri yapacağım.
-
-— Agent: GameBY Agent • 2025-08-16T12:00:47.419Z
+— Agent: GameBY Agent • 2025-08-16T12:01:39.272Z
