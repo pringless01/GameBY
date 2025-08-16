@@ -27,3 +27,6 @@
 - Lint: PASS (0 warning; root `npm run lint`).
 - Test: PASS (apps/api/src tüm unit+integration). Bazı testler env için `CURSOR_SECRET:weak/invalid` uyarılarını beklenen şekilde logluyor.
 - Güvenlik: `npm ci` sonrası 2 low severity vulnerability (npm audit raporuna göre) — davranış dışı, izlemeye alındı.
+
+### Notlar
+- Module Boundaries enforced: import/no-cycle + no-restricted-imports kuralları root ESLint’e eklendi (davranış değişimi yok).
