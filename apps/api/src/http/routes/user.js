@@ -28,8 +28,9 @@ router.get('/mentorship/history', authRequired, UserController.getMentorshipHist
 // Leaderboard endpoints controller-first
 router.get('/leaderboard', authRequired, Lb.getLeaderboard);
 router.head('/leaderboard', authRequired, Lb.headLeaderboard);
-router.get('/leaderboard/metrics', roleRequired('admin'), Lb.getMetricsSummary);
-router.get('/leaderboard/metrics/prom', roleRequired('admin'), Lb.getMetricsPrometheus);
+// Metrics require authenticated admin; ensure auth runs before role check
+router.get('/leaderboard/metrics', authRequired, roleRequired('admin'), Lb.getMetricsSummary);
+router.get('/leaderboard/metrics/prom', authRequired, roleRequired('admin'), Lb.getMetricsPrometheus);
 
 // Fallback to legacy routes for the rest
 router.use(legacyRouter);
