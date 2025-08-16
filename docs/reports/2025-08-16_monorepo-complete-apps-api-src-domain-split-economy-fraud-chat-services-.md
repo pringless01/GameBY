@@ -1,20 +1,23 @@
 # Next Action: Monorepo: Complete apps/api/src domain split (economy/fraud/chat services)
 
-1. **Domain Yapısını Belirleme**: apps/api/src dizininde mevcut yapıyı inceleyerek, ekonomi, dolandırıcılık ve sohbet hizmetlerinin hangi dosya ve klasörleri kapsadığını belirle.
+### Alt Adım 1: Proje Yapısını Gözden Geçirme
+- `apps/api/src` dizinindeki mevcut yapı incelenecek. 
+- Hangi dosyaların hangi domainlere ait olduğu belirlenecek.
 
-2. **Klasör Yapısını Oluşturma**: Belirlenen domainlere göre yeni klasör yapısını oluştur. apps/api/src dizininde "economy", "fraud", ve "chat" klasörlerini oluştur.
+### Alt Adım 2: Domain Split Planı Hazırlama
+- Ekonomi, dolandırıcılık ve sohbet hizmetleri için ayrı dizin yapıları oluşturulacak.
+- Her domain için gerekli dosya ve klasör listesi oluşturulacak.
 
-3. **Dosyaları Taşıma**: Mevcut kod dosyalarını ilgili domain klasörlerine taşı. Ekonomi ile ilgili dosyalar "economy" klasörüne, dolandırıcılık ile ilgili olanlar "fraud" klasörüne ve sohbet ile ilgili olanlar "chat" klasörüne yerleştirilecek.
+### Alt Adım 3: Kodun Taşınması
+- Mevcut kodlar, belirlenen yeni dizin yapısına taşınacak.
+- Taşınma sırasında dosya referansları güncellenecek.
 
-4. **Bağlantıları Güncelleme**: Taşınan dosyalar arasındaki bağlantıları ve import ifadelerini güncelleyerek, yeni klasör yapısına göre uyumlu hale getir.
+### Alt Adım 4: Testlerin Güncellenmesi
+- Yeni dizin yapısına uygun olarak test dosyaları güncellenecek.
+- Her domain için bağımsız test senaryoları oluşturulacak.
 
-5. **Test ve Doğrulama**: Tüm değişikliklerin ardından uygulamanın işlevselliğini test et ve gerekli testlerin geçtiğinden emin ol. 
+### Alt Adım 5: Dokümantasyon ve Raporlama
+- Yapılan değişiklikler için güncellenmiş dokümantasyon hazırlanacak.
+- Proje durumu ve yapılan işlemler hakkında bir rapor oluşturulacak.
 
-Bu adımlar tamamlandığında, monorepo içerisindeki domain ayrımı başarıyla gerçekleştirilmiş olacaktır.
-
-— Agent: GameBY Agent • 2025-08-16T14:21:01.811Z
-
-
-## Fail checkpoint (attempt 2)
-- time: 2025-08-16T14:21:06.269Z
-- reason: Command failed: npm run lint
+— Agent: GameBY Agent • 2025-08-16T14:21:19.149Z
