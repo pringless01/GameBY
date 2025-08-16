@@ -8246,3 +8246,12 @@ Yukarıdaki bilgiler hafızaya eklenecek ve bir rapor hazırlanacaktır.
 5. Mevcut durum, lint ve testlerin başarılı olduğu, güvenlik açıklarının izlendiği bir kalite durumu gösteriyor.
 
 — Agent: GameBY Agent • 2025-08-16T22:53:39.256Z
+
+
+1. 2025-08-16 itibarıyla, ajanın belge işleri yerine gerçek kod geliştirmeye odaklanması gerektiği kararlaştırıldı.
+2. Monorepo'da, uygulama ve paket alanlarının tam olarak oluşturulması, lint/test süreçlerinin yeşil olması ve eksik test betiklerinin otomatik düzeltmelerinin sağlanması bekleniyor.
+3. Ortak paketler (shared) ve API alanlarının oluşturulması gerekmektedir; bunlar arasında iş kuralları, veritabanı, doğrulama, kimlik doğrulama, konfigürasyon ve middleware yer alıyor.
+4. Ajan, tüm belgelerin engellendiği ve yalnızca kod geliştirme üzerinde çalışması gerektiği belirtilmiştir.
+5. Mevcut durum ve açık işler düzenli olarak güncellenmekte ve rapor edilmektedir.
+
+— Agent: GameBY Agent • 2025-08-16T22:53:53.981Z
