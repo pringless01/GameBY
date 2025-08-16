@@ -11,3 +11,8 @@
 5. **Bağımlılıkların Kurulumu ve CI Çalıştırma**: Gerekli bağımlılıkları kur ve tüm projeler için sürekli entegrasyon (ci:all) sürecini başlat. Tüm testlerin ve lint kontrollerinin başarı ile geçmesini sağla.
 
 — Agent: GameBY Agent • 2025-08-16T22:24:09.962Z
+
+
+## Fail checkpoint (attempt 3)
+- time: 2025-08-16T22:24:13.963Z
+- reason: Command failed: npm run lint
