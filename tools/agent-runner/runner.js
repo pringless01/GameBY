@@ -133,15 +133,15 @@ function scaffoldPackage(pkg, files = {}) {
   ensureFile(`${base}/package.json`, pkgJson(`@gameby/${pkg}`));
   ensureFile(`${base}/README.md`, `# @gameby/${pkg}\n\nInternal shared package for GameBY monorepo.\n`);
   // varsayılan index
-  if (!files["src/index.js"]) files["src/index.js"] = `/* eslint-disable */\n// @gameby/${pkg} — initial scaffold\nexport function noop() { return true; }\n`;
+  if (!files["src/index.js"]) files["src/index.js"] = `// @gameby/${pkg} — initial scaffold\nexport function noop() { return true; }\n`;
   for (const [rel, content] of Object.entries(files)) {
     ensureFile(`${base}/${rel}`, content);
   }
 }
 function scaffoldApiDomain(domain) {
   const base = `apps/api/src/${domain}`;
-  ensureFile(`${base}/service.js`, `/* eslint-disable */\n// ${domain} service (scaffold)\nexport const ${domain}Service = {\n  ping() { return '${domain}:ok'; },\n};\n`);
-  ensureFile(`${base}/repo.js`, `/* eslint-disable */\n// ${domain} repository (scaffold)\nexport const ${domain}Repo = {\n  findById(id) { return { id, ok: true }; },\n};\n`);
+  ensureFile(`${base}/service.js`, `// ${domain} service (scaffold)\nexport const ${domain}Service = {\n  ping() { return '${domain}:ok'; },\n};\n`);
+  ensureFile(`${base}/repo.js`, `// ${domain} repository (scaffold)\nexport const ${domain}Repo = {\n  findById(id) { return { id, ok: true }; },\n};\n`);
   ensureFile(`${base}/index.js`, `export * from './service.js';\nexport * from './repo.js';\n`);
 }
 function performMonorepoAction(act) {
@@ -152,49 +152,49 @@ function performMonorepoAction(act) {
   // packages/*
   if (a.includes('packages/shared-business')) {
     scaffoldPackage('shared-business', {
-      'src/index.js': `/* eslint-disable */\nexport function calculateTrustDelta(base, modifier=1){ return (base||0)*modifier; }\n`,
+      'src/index.js': `export function calculateTrustDelta(base, modifier=1){ return (base||0)*modifier; }\n`,
     });
     didWork = true;
   }
   if (a.includes('packages/shared-db')) {
     scaffoldPackage('shared-db', {
-      'src/index.js': `/* eslint-disable */\nexport function createDbClient(){ /* no-op sqlite wrapper placeholder */ return { query: ()=>'OK' }; }\n`,
+      'src/index.js': `export function createDbClient(){ /* no-op sqlite wrapper placeholder */ return { query: ()=>'OK' }; }\n`,
     });
     didWork = true;
   }
   if (a.includes('packages/shared-validation')) {
     scaffoldPackage('shared-validation', {
-      'src/index.js': `/* eslint-disable */\nexport const validators = { required:(v)=>v!==undefined && v!==null && v!=='', min:(n)=>(v)=>Number(v)>=n };\n`,
+      'src/index.js': `export const validators = { required:(v)=>v!==undefined && v!==null && v!=='', min:(n)=>(v)=>Number(v)>=n };\n`,
     });
     didWork = true;
   }
   if (a.includes('packages/shared-auth')) {
     scaffoldPackage('shared-auth', {
-      'src/index.js': `/* eslint-disable */\nexport function readToken(h=''){ return (h||'').replace(/^Bearer\s+/i,''); }\n`,
+      'src/index.js': `export function readToken(h=''){ return (h||'').replace(/^Bearer\s+/i,''); }\n`,
     });
     didWork = true;
   }
   if (a.includes('packages/shared-config')) {
     scaffoldPackage('shared-config', {
-      'src/index.js': `/* eslint-disable */\nexport function env(key, def){ return process.env[key] ?? def; }\n`,
+      'src/index.js': `export function env(key, def){ return process.env[key] ?? def; }\n`,
     });
     didWork = true;
   }
   if (a.includes('packages/shared-middleware')) {
     scaffoldPackage('shared-middleware', {
-      'src/index.js': `/* eslint-disable */\nexport function requestId(req,res,next){ req.reqId = req.reqId||Date.now().toString(36); next&&next(); }\n`,
+      'src/index.js': `export function requestId(req,res,next){ req.reqId = req.reqId||Date.now().toString(36); next&&next(); }\n`,
     });
     didWork = true;
   }
   if (a.includes('packages/shared-realtime')) {
     scaffoldPackage('shared-realtime', {
-      'src/index.js': `/* eslint-disable */\nimport { EventEmitter } from 'events';\nexport function createBus(){ return new EventEmitter(); }\n`,
+      'src/index.js': `import { EventEmitter } from 'events';\nexport function createBus(){ return new EventEmitter(); }\n`,
     });
     didWork = true;
   }
   if (a.includes('packages/shared-testing')) {
     scaffoldPackage('shared-testing', {
-      'src/index.js': `/* eslint-disable */\nexport function fakeUser(id='u1'){ return { id, name:'Test' }; }\n`,
+      'src/index.js': `export function fakeUser(id='u1'){ return { id, name:'Test' }; }\n`,
     });
     didWork = true;
   }
