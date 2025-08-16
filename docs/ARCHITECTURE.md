@@ -44,6 +44,8 @@ server/
 - Faz 2: Leaderboard içindeki servis/adapter ayrışması ve unit testler.
 - Faz 3: Mentor, Contracts, Auth için aynı pattern.
 
+Durum (güncel): apps/api altında users ve leaderboard domainleri controller→service→repo katmanlarıyla ayrıştırıldı; legacy passthrough ve admin zinciri korunuyor.
+
 ## Riskler ve Önlemler
 - Göreli import bozulması → Adapter/facade ile eski yollar korunur; import path değişiklikleri küçük adımlarla.
 - Döngüsel bağımlılık → shared/* ve modules/* sınırları net tutulur; import linter kuralı ile izlenir.
