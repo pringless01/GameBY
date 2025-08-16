@@ -11,3 +11,8 @@
 5. **Testlerin Güncellenmesi ve Doğrulama**: Her domain için testlerin güncellenmesi; yeni yapı altında testlerin çalıştığının doğrulanması ve geçerli olduğunun kontrolü.
 
 — Agent: GameBY Agent • 2025-08-16T14:22:47.746Z
+
+
+## Fail checkpoint (attempt 2)
+- time: 2025-08-16T14:22:51.950Z
+- reason: Command failed: npm run lint
