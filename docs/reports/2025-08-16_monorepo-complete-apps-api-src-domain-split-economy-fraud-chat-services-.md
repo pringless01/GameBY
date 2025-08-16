@@ -1,23 +1,15 @@
 # Next Action: Monorepo: Complete apps/api/src domain split (economy/fraud/chat services)
 
-1. **Domain Analizi ve Belirleme**
-   - Ekonomi, dolandırıcılık ve sohbet hizmetlerinin gereksinimlerini belirleyin. Her bir hizmetin sorumluluklarını ve etkileşimlerini analiz edin.
+1. **Domain Analizi**: Uygulamanın mevcut yapısını incele, ekonomi, dolandırıcılık ve sohbet servisleri için gerekli olan bileşenleri belirle.
 
-2. **Klasör Yapısının Oluşturulması**
-   - Uygulama dizininde, her bir hizmet için ayrı klasörler oluşturun: `economy`, `fraud`, `chat`. Bu klasörler altında gerekli dosya ve alt klasör yapısını tanımlayın.
+2. **Klasör Yapısı Oluşturma**: Yeni domainler için klasör yapısını oluştur; `apps/api/src/economy`, `apps/api/src/fraud`, `apps/api/src/chat` şeklinde dizinleri ayır.
 
-3. **Hizmetlerin Kod Yapısının Ayrılması**
-   - Mevcut kod tabanından ilgili hizmetlerin kodunu ayırarak yeni oluşturulan klasörlere taşıyın. Her bir hizmetin bağımsız birimler olarak çalışmasını sağlamak için gerekli değişiklikleri yapın.
+3. **Kod Dağıtımı**: Mevcut kodu uygun domain dizinlerine taşı; her servisin ilgili kodları doğru klasörlere yerleştir.
 
-4. **Bağımlılıkların Yönetimi**
-   - Her bir hizmetin bağımlılıklarını güncelleyin. Gerekli kütüphaneleri ve modülleri her hizmetin özel dizininde yönetin.
+4. **Bağımlılık Yönetimi**: Taşınan kodların bağımlılıklarını kontrol et ve her domain için gerekli bağımlılıkları güncelle veya ekle.
 
-5. **Test ve Doğrulama**
-   - Ayrılan hizmetler için test senaryoları oluşturun ve mevcut testleri güncelleyerek her bir hizmetin bağımsız olarak doğru çalıştığını doğrulayın. Testlerin geçerli olduğunu kontrol edin.
+5. **Test ve Doğrulama**: Her domain için test senaryolarını oluştur ve çalıştır; tüm testlerin başarılı olduğundan emin ol. 
 
-— Agent: GameBY Agent • 2025-08-16T14:24:42.256Z
+Bu adımlar tamamlandıktan sonra, projenin domain bölümü tamamlanmış olacaktır.
 
-
-## Fail checkpoint (attempt 2)
-- time: 2025-08-16T14:24:46.478Z
-- reason: Command failed: npm run lint
+— Agent: GameBY Agent • 2025-08-16T14:24:58.010Z
