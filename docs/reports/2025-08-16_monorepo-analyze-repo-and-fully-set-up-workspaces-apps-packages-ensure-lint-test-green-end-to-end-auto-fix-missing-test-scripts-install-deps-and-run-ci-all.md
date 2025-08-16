@@ -1,20 +1,20 @@
 # Next Action: Monorepo: Analyze repo and fully set up workspaces (apps/*, packages/*), ensure lint/test green end-to-end; auto-fix missing test scripts; install deps and run ci:all
 
-1. **Repo Analizi**: Monorepo'daki tüm dizinleri (apps/*, packages/*) analiz edilecek. Hedef, mevcut yapıyı ve bağımlılıkları anlamak.
+### Alt Adım 1: Repo Analizi
+Repo'yu analiz ederek mevcut yapı ve dizinleri inceleyeceğim. `apps/*` ve `packages/*` dizinlerinde bulunan projelerin yapılandırmalarını gözden geçireceğim.
 
-2. **Workspace Kurulumu**: Apps ve Packages dizinlerindeki projelerin çalışma alanları kurulacak. Gerekli yapılandırmalar ve ayarlar yapılacak.
+### Alt Adım 2: Workspace'lerin Kurulumu
+Gerekli `workspace` ayarlarını yaparak `apps/*` ve `packages/*` dizinlerini uygun bir şekilde yapılandıracağım. Her bir uygulama ve paket için gerekli yapılandırma dosyalarını kontrol edeceğim.
 
-3. **Lint ve Test Kontrolü**: Tüm projelerde lint ve testlerin çalışması sağlanacak. Hedef, tüm projelerin end-to-end olarak yeşil durumda olması.
+### Alt Adım 3: Lint ve Test Kontrolü
+Tüm projelerde linter'ı çalıştırarak kod kalitesini kontrol edeceğim. Aynı zamanda, mevcut testlerin geçerli olup olmadığını kontrol edeceğim ve eksik olan test dosyalarını belirleyeceğim.
 
-4. **Eksik Test Scriptlerinin Düzeltmesi**: Projelerdeki eksik test scriptleri otomatik olarak düzeltilecek. Bu, test süreçlerinin tam ve doğru bir şekilde çalışmasını sağlayacak.
+### Alt Adım 4: Test Script'lerini Otomatik Düzeltme
+Belirlenen eksik test script'lerini otomatik olarak düzeltmek için uygun komutları ekleyeceğim. Bu adımda, her bir proje için gerekli test script'lerini oluşturacağım.
 
-5. **Bağımlılıkların Yüklenmesi ve CI Sürecinin Çalıştırılması**: Gerekli bağımlılıklar yüklenecek ve tüm CI süreçleri (ci:all) çalıştırılacak. Hedef, her şeyin düzgün çalıştığından emin olmak. 
+### Alt Adım 5: Bağımlılıkların Yüklenmesi ve CI Çalıştırma
+Tüm bağımlılıkları yükledikten sonra `ci:all` komutunu çalıştırarak sürekli entegrasyon sürecini başlatacağım. Bu süreçte herhangi bir hata olup olmadığını kontrol edeceğim. 
 
-Her adım için uygun değişiklikler yapılacak ve raporlar oluşturulacak.
+Her alt adımın ardından rapor oluşturulacak ve hafızaya gerekli bilgiler eklenecek.
 
-— Agent: GameBY Agent • 2025-08-16T23:03:49.950Z
-
-
-## Fail checkpoint (attempt 1)
-- time: 2025-08-16T23:03:54.143Z
-- reason: Command failed: npm run lint
+— Agent: GameBY Agent • 2025-08-16T23:04:07.357Z
