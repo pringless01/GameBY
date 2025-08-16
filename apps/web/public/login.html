@@ -179,9 +179,12 @@ main
         <script>window.__CODARA_INTRO_NO_AUTO__ = true;</script>
         <script src="/js/codara-intro.js"></script>
         <script>
-            (async function(){
-            try { await (window.startCodaraIntro ? window.startCodaraIntro({ autoFinish:true, minHoldMs:1000, maxDurationMs:3500 }) : Promise.resolve()); } catch(e){}
-            })();
+                    (async function(){
+                        let skip = false;
+                        try { skip = sessionStorage.getItem('splash_done') === '1'; } catch(e){}
+                        if(skip) return; // Aynı sekans içinde ikinci kez gösterme
+                        try { await (window.startCodaraIntro ? window.startCodaraIntro({ autoFinish:false }) : Promise.resolve()); } catch(e){}
+                    })();
         </script>
     <script>
         // Debug için window objesine fonksiyonları ekleyelim

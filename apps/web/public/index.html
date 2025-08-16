@@ -712,12 +712,14 @@
         <script>window.__CODARA_INTRO_NO_AUTO__ = true;</script>
         <script src="/js/codara-intro.js"></script>
         <script>
-            // Splash sonrası login kontrolü ve yönlendirme
+                    // Splash (kullanıcı tıklayana kadar sürsün) -> sonra login kontrolü
             (async function(){
                 try{
-                      await (window.startCodaraIntro ? window.startCodaraIntro({ autoFinish:true, minHoldMs:1200, maxDurationMs:5000 }) : Promise.resolve());
+                            await (window.startCodaraIntro ? window.startCodaraIntro({ autoFinish:false }) : Promise.resolve());
                 }catch(_){}
-        const token = localStorage.getItem('jwt_token');
+                        // Splash tamamlandı: bu oturum için işaretleyelim (login'de tekrar göstermeyelim)
+                        try { sessionStorage.setItem('splash_done','1'); } catch(e){}
+                        const token = localStorage.getItem('jwt_token');
                 if(!token){
                     // login'e yönlendirmeden önce isterse kullanıcı splash'da tıkladıysa buraya düşer
                     window.location.href = '/login.html';
