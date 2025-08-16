@@ -1,20 +1,15 @@
 # Next Action: Monorepo: Complete apps/api/src domain split (economy/fraud/chat services)
 
-1. **Domain Split Planlama**: Mevcut apps/api/src yapısını analiz et ve domain'leri (economy, fraud, chat) belirle. Bu aşamada, hangi dosyaların hangi domain'e ait olduğunu tanımla.
+1. **Domain Analysis**: Mevcut uygulamanın (apps/api/src) yapılarını ve bağımlılıklarını analiz et. Hangi bileşenlerin ekonomi, dolandırıcılık ve sohbet hizmetlerine ait olduğunu belirle.
 
-2. **Kod Tablosu Hazırlığı**: Her domain için ilgili kod tablosunu oluştur. Bu, her domain'in hangi dosya ve bağımlılıkları içereceğini gösterecek.
+2. **Directory Structure Update**: Yeni dizin yapısını oluştur. Ekonomi, dolandırıcılık ve sohbet hizmetleri için gerekli klasörleri (economy/, fraud/, chat/) apps/api/src altında oluştur.
 
-3. **Dosya Taşıma**: Belirlenen dosyaları uygun domain klasörlerine taşı. Bu aşamada, kodun derlenebilirliğini sağlamak için gerekli güncellemeleri yap.
+3. **Code Refactoring**: Belirlenen bileşenleri uygun dizinlere taşı. Her bir hizmetin kodunu ilgili klasöre yerleştir ve bağımlılıkları güncelle.
 
-4. **Bağımlılık Yönetimi**: Domain'ler arası bağımlılıkları kontrol et ve gerekli olanları güncelle. Bu, her domain'in bağımsız çalışabilmesi için önemli.
+4. **Configuration Management**: Her bir hizmet için gerekli yapılandırma dosyalarını oluştur. Ortak yapılandırmaları dışlayarak her hizmetin kendi yapılandırmasını yönetilebilir hale getir.
 
-5. **Test ve Doğrulama**: Her domain için test senaryolarını oluştur ve testleri çalıştır. Tüm işlemlerin başarılı olduğunu doğrula. 
+5. **Testing and Validation**: Yeni yapılandırmayı test et. Her hizmetin bağımsız olarak çalıştığından emin olmak için birim testleri ve entegrasyon testleri gerçekleştir. 
 
-Bu adımlar tamamlandığında, monorepo domain split işlemi gerçekleştirilmiş olacak.
+Her adımın ardından gerekli dosya değişiklikleri yapılacak ve rapor güncellenecektir.
 
-— Agent: GameBY Agent • 2025-08-16T12:39:28.669Z
-
-
-## Fail checkpoint (attempt 2)
-- time: 2025-08-16T12:39:57.524Z
-- reason: Command failed: npm test
+— Agent: GameBY Agent • 2025-08-16T12:40:09.695Z
