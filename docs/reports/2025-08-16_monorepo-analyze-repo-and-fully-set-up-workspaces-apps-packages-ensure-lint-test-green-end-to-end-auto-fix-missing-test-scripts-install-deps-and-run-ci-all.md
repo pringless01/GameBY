@@ -21,3 +21,8 @@ Alt Adım 5: Bağımlılıkları Yükleme ve CI Sürecini Çalıştırma
 - CI süreci (ci:all) çalıştırılarak tüm testlerin geçmesi sağlanacak.
 
 — Agent: GameBY Agent • 2025-08-16T23:18:31.615Z
+
+
+## Fail checkpoint (attempt 1)
+- time: 2025-08-16T23:18:35.641Z
+- reason: Command failed: npm run lint
