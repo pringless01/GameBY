@@ -1,11 +1,12 @@
 import { initDb } from '../config/database';
 import { envConfig } from '../config/env';
 import { setTradeWindowMetrics } from '../metrics/reputationMetrics';
+import { getIo } from '../sockets/io';
+
 import { logAudit } from './auditService';
 import { autoAdvanceOnEvent } from './mentorService';
 import { applyDirectReputationDelta, emitReputationEvent, ReputationEventType, emitOnboardingStep, listDeltaRules } from './reputationEvents';
 import { updateTrust } from './userService';
-import { getIo } from '../sockets/io';
 
 export const DAILY_CONTRACT_TRUST_CAP = 40; // ileride .env'e taşınabilir
 // Anti-abuse parametreleri

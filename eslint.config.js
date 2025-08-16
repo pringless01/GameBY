@@ -13,19 +13,17 @@ export default [
   'tools/**',
   // Frontend (apps/web) henüz lint uyumlu değil; geçici olarak ignore
       'apps/web/**',
-      // Duplike eski test konumu
-  'apps/api/tests/**',
-  // Geçici: api yardımcı scriptleri ve testleri kökten ignore
-  'apps/api/src/scripts/**',
-  'apps/api/src/tests/**'
+    // Duplike eski test konumu
+  'apps/api/tests/**'
     ]
   },
   js.configs.recommended,
+  { plugins: { import: importPlugin } },
   {
-    plugins: { import: importPlugin },
+    files: ['**/*.js','**/*.ts'],
     rules: {
-      'import/order': ['warn', { 'newlines-between': 'always', alphabetize: { order: 'asc', caseInsensitive: true } }],
-      'no-unused-vars': ['warn', { argsIgnorePattern: '^_' }]
+  'no-unused-vars': ['error', { argsIgnorePattern: '^_', caughtErrors: 'none', caughtErrorsIgnorePattern: '^_' }],
+      'import/order': ['error', { alphabetize: { order: 'asc', caseInsensitive: true }, 'newlines-between': 'always' }]
     }
   },
   // apps/api için Node ortamı ve kurallar
@@ -47,11 +45,19 @@ export default [
       }
     },
     rules: {
-      // Geçici olarak katı kuralları kapatıyoruz; monorepo düzeni tamamlanınca sıkılaştırılacak
+      // Kademeli açılış: bu klasörde unused-vars ve import/order şimdilik kapalı
       'no-empty': 'off',
       'no-unused-vars': 'off',
       'import/order': 'off'
     }
+  },
+  // Root scripts (node) için ortam
+  {
+    files: ['scripts/**/*.js'],
+    languageOptions: {
+      globals: { console: 'readonly', process: 'readonly', Buffer: 'readonly' }
+    },
+    rules: { 'no-unused-vars': 'off' }
   },
   // apps/api public (browser) scriptleri için tarayıcı global’leri
   {
@@ -98,6 +104,7 @@ export default [
         clearTimeout: 'readonly',
         fetch: 'readonly'
       }
-    }
+  },
+  rules: { 'no-unused-vars': 'off' }
   }
 ];

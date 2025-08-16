@@ -1,6 +1,6 @@
-/* eslint-disable no-console */
 import fs from "node:fs";
 import path from "node:path";
+
 import fg from "fast-glob";
 
 const ROOT = path.resolve(process.cwd());
@@ -62,7 +62,7 @@ function rewriteImportsInFile(file) {
       if (!newAbs) return m; // skip if unknown
       const rel = path.relative(path.dirname(abs), newAbs);
       let newSpec = rel.startsWith(".") ? rel : "./" + rel;
-      newSpec = toPosix(newSpec).replace(/(\.js|\.ts|\.mjs|\.cjs)$/, ""); // drop ext
+      newSpec = toPosix(newSpec); // keep extension for ESM compatibility
       changed = true;
       return m.replace(spec, newSpec);
     } catch {

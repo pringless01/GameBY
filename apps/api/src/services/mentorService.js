@@ -3,8 +3,9 @@ import { initDb } from '../config/database';
 import { envConfig } from '../config/env';
 import { startMentorSession, endMentorSession } from '../metrics/mentorMetrics';
 import { incMentorSessionCompleted, incMentorRatingGiven, incMenteeRatingGiven } from '../metrics/reputationMetrics';
-import { emitReputationEvent, ReputationEventType } from './reputationEvents';
 import { getIo } from '../sockets/io';
+
+import { emitReputationEvent, ReputationEventType } from './reputationEvents';
 
 // Tutorial adım tanımları (sade)
 export const TUTORIAL_STEPS = [
