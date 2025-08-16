@@ -24,6 +24,7 @@
 - ~~CODEOWNERS + Renovate (draft PR, schedule haftalık).~~ ✅
 - ~~Shared utils/types: cursor utils + dates + pagination (non-invasive).~~ ✅
 - ~~Perf placeholder: docs/perf.md + k6 smoke stub + npm script.~~ ✅
+- [ ] Test: Performance analysis ve optimization için leaderboard cursor sisteminde complex algorithm geliştir
 - [ ] MVP: Hafıza dosyaları + roll-up action + PR şablonları
 - [ ] Gelişim: Auto-task issue template ile iş akışı
 - [x] ESLint module boundaries: no-cycle ve no-restricted-imports ihlallerini düzelt (doğrulama tamam)
