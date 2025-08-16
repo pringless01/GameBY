@@ -30,3 +30,7 @@
 
 ### Notlar
 - Module Boundaries enforced: import/no-cycle + no-restricted-imports kuralları root ESLint’e eklendi (davranış değişimi yok).
+- Economy: modules/economy altında facade (economy.service.js) hazır; unit test eklendi (tests/unit/economy.service.test.js). Tam test suite PASS.
+
+---
+- [2025-08-16 12:00] memory/bootstrap: İlk okuma & 5 maddelik özet raporu eklendi (docs/reports/2025-08-16_bootstrap.md).
