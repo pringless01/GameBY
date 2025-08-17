@@ -1,0 +1,20 @@
+- id: T002
+  title: Proje için temel test iskeleti (unit + smoke)
+  def: Dil/framework’e uygun test çerçevesi ekle; 1-2 örnek test yaz.
+  done_def: CI testleri geçiyor; coverage raporu üretiliyor.
+- id: T003
+  title: Kod kalitesi ve kurallar
+  def: Linter/formatter kuralları; pre-commit talimatı README’de.
+  done_def: CI’de lint adımı yeşil; pre-commit çalışıyor.
+- id: T004
+  title: CI optimizasyon ve artefakt
+  def: Coverage ve smoke raporlarını artefakt olarak yükle; npm cache optimize.
+  done_def: Workflow başarıyla coverage ve raporları yüklüyor.
+- id: T005
+  title: Dokümantasyon ve ADR
+  def: DECISIONS.md/ADR girişleri, ARCHITECTURE güncelleme.
+  done_def: Dokümanlar güncel; linkler README’de.
+ - id: T006
+  title: Cursor güvenlik testleri genişletme
+  def: Threshold/cooldown/auto-degrade negatif testler ve snapshot güncelleme.
+  done_def: Ek testler yeşil; metrikler doğrulanıyor.

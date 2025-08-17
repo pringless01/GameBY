@@ -1,0 +1,8 @@
+# Tamamlanan görevlerin geçmişi
+- id: T001
+	title: Runner kurulum altyapısı
+	finished_at: 2025-08-17
+	notes:
+		- agent/memory ve tasks dizinleri oluşturuldu
+		- scripts/dev.* ve test.* eklendi
+		- runner-ci.yml smoke workflow eklendi

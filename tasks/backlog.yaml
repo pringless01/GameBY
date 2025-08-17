@@ -1,0 +1,20 @@
+- id: T004
+  title: CI optimizasyon ve artefakt
+  def: Coverage ve smoke raporlarını artefakt olarak yükle; npm cache optimize.
+  done_def: Workflow başarıyla coverage ve raporları yüklüyor.
+- id: T005
+  title: Dokümantasyon ve ADR
+  def: DECISIONS.md/ADR girişleri, ARCHITECTURE güncelleme.
+  done_def: Dokümanlar güncel; linkler README’de.
+- id: T006
+  title: Cursor güvenlik testleri genişletme
+  def: Threshold/cooldown/auto-degrade negatif testler ve snapshot güncelleme.
+  done_def: Ek testler yeşil; metrikler doğrulanıyor.
+- id: T007
+  title: Smoke/perf entegrasyonu
+  def: Artillery/K6 smoke script entegrasyonu ve rapor kopyası.
+  done_def: Smoke komutu tek adımda çalışıyor; rapor logs/’a kopyalanıyor.
+- id: T008
+  title: Docker Compose local dev
+  def: infra/docker-compose ile local servisler; scripts/dev bunları çağırır.
+  done_def: Tek komutla backend ayakta; README talimatı var.

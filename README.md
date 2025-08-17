@@ -101,6 +101,23 @@ npm run migrate
 npm run dev  # Development mode
 ```
 
+### Geliştirici Hızlı Başlangıç (Runner)
+
+Yerelde hızlı başlamak için runner scriptlerini kullanabilirsiniz:
+
+```powershell
+# Windows PowerShell
+./scripts/dev.ps1            # API'yi production modunda başlatır
+./scripts/dev.ps1 -Watch     # watch modunda geliştirici servisi
+./scripts/test.ps1           # Unit smoke (cursor-security) + coverage
+```
+
+```bash
+# macOS/Linux (opsiyonel)
+bash scripts/dev.sh --watch
+bash scripts/test.sh
+```
+
 ### Frontend Testi
 
 ```bash
