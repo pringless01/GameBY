@@ -1,13 +1,17 @@
 # Next Action: Monorepo: verify workspaces and package.json test scripts across apps/* and packages/*
 
-1. **Workspace Kontrolü**: Monorepo içindeki tüm uygulama ve paketlerin workspace yapılandırmalarını gözden geçirin. Her bir uygulama ve paketin doğru şekilde tanımlandığını doğrulayın.
+Aşağıda "Monorepo: verify workspaces and package.json test scripts across apps/* and packages/*" aksiyonunu 5 alt adıma böldüm:
 
-2. **package.json Dosyalarının İncelenmesi**: Uygulama ve paketlerin `package.json` dosyalarını inceleyin. Test scriptlerinin mevcut olup olmadığını kontrol edin.
+1. **Workspace Kontrolü**: Monorepo'daki tüm workspace'lerin doğru yapılandırıldığını kontrol et. Her bir app ve package için `package.json` dosyalarını gözden geçir.
 
-3. **Test Scriptlerinin Geçerliliği**: Her bir uygulama ve pakette bulunan test scriptlerinin geçerliliğini kontrol edin. Scriptlerin doğru çalıştığından emin olun.
+2. **Test Scriptlerinin Listelemesi**: Tüm `package.json` dosyalarında bulunan `test` scriptlerini listele. Bu scriptlerin varlığını ve doğru yapılandırıldıklarını doğrula.
 
-4. **Test Çalıştırma**: Geçerli test scriptlerini çalıştırarak testlerin başarılı bir şekilde geçtiğini doğrulayın. Hatalı olanları not edin.
+3. **Script Çalıştırma**: Her bir `test` scriptini sırayla çalıştır. Çalıştırma sonuçlarını topla ve her bir scriptin başarılı bir şekilde geçip geçmediğini kontrol et.
 
-5. **Raporlama**: Yapılan kontroller ve test sonuçları hakkında bir rapor oluşturun. Hatalı bulunan test scriptleri ve düzeltme önerilerini ekleyin.
+4. **Hata Analizi**: Eğer herhangi bir test scripti başarısız olursa, hata mesajlarını analiz et. Hataların nedenini anlamak için gerekli olan dosyaları ve konfigürasyonları incele.
 
-— Agent: GameBY Agent • 2025-08-17T00:04:56.599Z
+5. **Raporlama**: Tüm test sonuçlarını ve olası hataları içeren bir rapor hazırla. Raporu `docs/reports` dizinine kaydet ve gerekli bilgileri hafızaya ekle. 
+
+Bu adımları sırayla gerçekleştirerek monorepo üzerindeki test scriptlerini doğrulama işlemini tamamlayabilirsin.
+
+— Agent: GameBY Agent • 2025-08-17T00:05:45.134Z
