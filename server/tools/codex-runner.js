@@ -47,7 +47,8 @@ async function run(message, tag){
 (async function main(){
   console.log("[codex-runner] start (server/tools)");
   const master = loadMaster();
-  while(true){
+  let running = true;
+  while (running) {
     let tasks = readTasks();
     if(tasks.length===0){ console.log("[codex-runner] no tasks, sleep…"); await sleep(5000); continue; }
     for(const t of tasks){
