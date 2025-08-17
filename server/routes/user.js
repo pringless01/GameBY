@@ -162,162 +162,35 @@ async function computeUserRankMeta(db, userId){
   return { rank, total, percentile };
 }
 
-// Trust leaderboard (offset / cursor / around)
+// Trust leaderboard (offset / cursor / around) – facade sarmalayıcı
 async function getTrustLeaderboard(db, { limit, offset, useAround, window, userId, cursor, needRank, ip }){
-  const now = Date.now();
-  if(useAround){
+  const { getTrustLeaderboardFacade } = await import('../src/modules/leaderboard/index.js');
+  const r = await getTrustLeaderboardFacade(db, {
+    limit, offset, useAround, window, userId, cursor, needRank, ip,
+    caches: { leaderboardCache, trustAroundCache, LEADERBOARD_TTL_MS }
+  });
+  // Metrikleri eski davranışa göre koru
+  if (useAround) {
     leaderboardMetrics.trust.around.requests++;
-    const aroundKey = userId + ':' + window;
-    const aroundCached = trustAroundCache.get(aroundKey);
-    if(aroundCached && (now - aroundCached.ts) < LEADERBOARD_TTL_MS){
-      return { payload: { category:'trust', around:true, cached:true, ttl_ms: LEADERBOARD_TTL_MS - (now - aroundCached.ts), userRank: aroundCached.userRank, window, list: aroundCached.list }, cache:'HIT', ttl: LEADERBOARD_TTL_MS - (now - aroundCached.ts), lastTs: aroundCached.ts };
-    }
-    const userRankMeta = await computeUserRankMeta(db, userId);
-    if(!userRankMeta) return { error:'user_not_found' };
-    const userRank = userRankMeta.rank;
-    let rows = [];
-    try {
-      rows = await db.all(`SELECT id, username, trust_score, ROW_NUMBER() OVER (ORDER BY trust_score DESC, id ASC) AS r FROM users`);
-      const start = Math.max(1, userRank - window);
-      const end = userRank + window;
-      rows = rows.filter(r=> r.r >= start && r.r <= end);
-    } catch(err){
-      const many = await db.all('SELECT id, username, trust_score FROM users ORDER BY trust_score DESC, id ASC LIMIT 500');
-      rows = many.map((r,i)=>({ ...r, r: i+1 })).filter(r=> r.r >= userRank-window && r.r <= userRank+window);
-    }
-    trustAroundCache.set(aroundKey, { ts: Date.now(), userRank, list: rows });
-    return { payload: { category:'trust', around:true, userRank, userRankMeta, window, list: rows, cached:false, total: userRankMeta.total }, cache:'MISS', ttl: LEADERBOARD_TTL_MS, lastTs: Date.now() };
-  }
-  // paged veya cursor
-  const useCursor = !!cursor;
-  let decodedCursor = null; let cursorRotated = false;
-  if(useCursor){
-    decodedCursor = decodeCursor(cursor, ip);
-    if(!decodedCursor){ return { error:'invalid_cursor' }; }
-    cursorRotated = !!decodedCursor.rotated;
+  } else if (cursor) {
     leaderboardMetrics.trust.cursor.requests++;
-    if(cursorRotated) leaderboardMetrics.trust.cursor.rotations++;
+    if (r?.payload?.cursorRotated) leaderboardMetrics.trust.cursor.rotations++;
+  } else {
+    if (r?.cache === 'HIT') leaderboardMetrics.trust.offset.hits++; else leaderboardMetrics.trust.offset.misses++;
   }
-  if(!useCursor){
-    const cacheKey = limit+':'+offset;
-    const cached = leaderboardCache.get(cacheKey);
-    if(cached && (now - cached.ts) < LEADERBOARD_TTL_MS){
-      leaderboardMetrics.trust.offset.hits++;
-      const ttl = LEADERBOARD_TTL_MS - (now - cached.ts);
-      let userRankMeta = null;
-      if(needRank){ userRankMeta = await computeUserRankMeta(db, userId); }
-      const total = cached.total; const hasMore = offset + (cached.data?.length||0) < total;
-      return { payload: { category:'trust', list: cached.data, cached:true, ttl_ms: ttl, ...(needRank && userRankMeta ? { userRank: userRankMeta.rank, userRankMeta } : {}), total, offset: Number(offset), limit: Number(limit), hasMore, mode:'offset' }, cache:'HIT', ttl, lastTs: cached.ts };
-    }
-    leaderboardMetrics.trust.offset.misses++;
-    const list = await db.all('SELECT id, username, trust_score FROM users ORDER BY trust_score DESC, id ASC LIMIT ? OFFSET ?', [limit, offset]);
-    const totalRow = await db.get('SELECT COUNT(*) as c FROM users');
-    const total = totalRow.c;
-    leaderboardCache.set(limit+':'+offset, { ts: now, data: list, total });
-    let userRankMeta = null;
-    if(needRank){ userRankMeta = await computeUserRankMeta(db, userId); }
-    const hasMore = Number(offset) + list.length < total;
-    return { payload: { category:'trust', list, cached:false, ...(needRank && userRankMeta ? { userRank: userRankMeta.rank, userRankMeta } : {}), total, offset: Number(offset), limit: Number(limit), hasMore, mode:'offset' }, cache:'MISS', ttl: LEADERBOARD_TTL_MS, lastTs: now };
-  }
-  // Cursor mode
-  const params = [];
-  let where = '';
-  if(decodedCursor){
-    where = 'WHERE (trust_score < ? OR (trust_score = ? AND id > ?))';
-    params.push(decodedCursor.score, decodedCursor.score, decodedCursor.id);
-  }
-  const rows = await db.all(`SELECT id, username, trust_score FROM users ${where} ORDER BY trust_score DESC, id ASC LIMIT ?`, [...params, limit]);
-  const totalRow = await db.get('SELECT COUNT(*) as c FROM users');
-  const total = totalRow.c;
-  let userRankMeta = null;
-  if(needRank){ userRankMeta = await computeUserRankMeta(db, userId); }
-  const last = rows[rows.length-1];
-  const nextCursor = rows.length === limit && last ? encodeCursor(last.trust_score, last.id) : null;
-  const hasMore = !!nextCursor;
-  const cursorSigned = decodedCursor ? !!decodedCursor.signed : false;
-  return { payload: { category:'trust', list: rows, cached:false, ...(needRank && userRankMeta ? { userRank: userRankMeta.rank, userRankMeta } : {}), total, cursor: cursor||null, nextCursor, limit: Number(limit), mode:'cursor', hasMore, cursorRotated, cursorSigned }, cache:'MISS', ttl: 0, lastTs: Date.now() };
+  return r;
 }
 
-// Mentor leaderboard
+// Mentor leaderboard – facade sarmalayıcı
 async function getMentorLeaderboard(db, { limit, minSessions, wantSelf, userId }){
-  try {
-    const tbl = await db.all("PRAGMA table_info(mentorships)");
-    if(!Array.isArray(tbl) || tbl.length===0){
-      return { payload: { category:'mentor', list:[], total:0, cached:false, ttl_ms:0, selfRank:null, unavailable:true }, cache:'MISS', ttl:0, lastTs: Date.now() };
-    }
-  } catch {
-    return { payload: { category:'mentor', list:[], total:0, cached:false, ttl_ms:0, selfRank:null, unavailable:true }, cache:'MISS', ttl:0, lastTs: Date.now() };
-  }
-  minSessions = Math.min(50, Math.max(1, Number(minSessions)||3));
-  const now = Date.now();
-  let list = [];
-  let totalQualified = null;
-  let listCached = false;
-  let ttlMs; const cacheKey = limit+':'+minSessions;
-  if(limit > 0){
-    const cached = mentorsLbCache.get(cacheKey);
-    if(cached){
-      const age = now - cached.ts;
-      if(age < MENTOR_LB_TTL_MS){ list = cached.data; totalQualified = cached.total; listCached = true; ttlMs = MENTOR_LB_TTL_MS - age; }
-    }
-    if(!listCached){
-      list = await db.all(`SELECT m.mentor_id as id, u.username, COUNT(m.id) as sessions, ROUND(AVG(m.mentor_rating),2) as avg_rating
-        FROM mentorships m
-        JOIN users u ON u.id = m.mentor_id
-        WHERE m.status='COMPLETED' AND m.mentor_rating IS NOT NULL
-        GROUP BY m.mentor_id
-        HAVING sessions >= ?
-        ORDER BY avg_rating DESC, sessions DESC, id ASC
-        LIMIT ?`, [minSessions, limit]);
-      const totalRow = await db.get(`SELECT COUNT(*) as total FROM (
-          SELECT m.mentor_id
-          FROM mentorships m
-          WHERE m.status='COMPLETED' AND m.mentor_rating IS NOT NULL
-          GROUP BY m.mentor_id
-          HAVING COUNT(m.id) >= ?
-        ) x`, [minSessions]);
-      totalQualified = totalRow.total;
-      mentorsLbCache.set(cacheKey, { ts: now, data: list, total: totalQualified });
-      ttlMs = MENTOR_LB_TTL_MS;
-    }
-  }
-  let selfRank = null;
-  if(wantSelf){
-    const selfRow = await db.get(`SELECT COUNT(id) as sessions, ROUND(AVG(mentor_rating),2) as avg_rating
-      FROM mentorships WHERE mentor_id=? AND status='COMPLETED' AND mentor_rating IS NOT NULL`, [userId]);
-    if(!selfRow || !selfRow.sessions || selfRow.sessions < minSessions || selfRow.avg_rating === null){
-      selfRank = { ranked:false, reason: selfRow && selfRow.sessions < minSessions ? 'min_sessions' : 'no_rating', sessions: selfRow?.sessions||0, minSessions };
-    } else {
-      let agg = mentorsRankCache.get(minSessions);
-      let aggAge; let aggTtl;
-      if(agg){ aggAge = now - agg.ts; if(aggAge > MENTOR_LB_TTL_MS) agg = null; else aggTtl = MENTOR_LB_TTL_MS - aggAge; }
-      if(!agg){
-        const rows = await db.all(`SELECT m.mentor_id as id, u.username, COUNT(m.id) as sessions, ROUND(AVG(m.mentor_rating),2) as avg_rating
-          FROM mentorships m
-          JOIN users u ON u.id = m.mentor_id
-          WHERE m.status='COMPLETED' AND m.mentor_rating IS NOT NULL
-          GROUP BY m.mentor_id
-          HAVING sessions >= ?
-          ORDER BY avg_rating DESC, sessions DESC, id ASC`, [minSessions]);
-        agg = { ts: now, rows, total: rows.length };
-        mentorsRankCache.set(minSessions, agg);
-        aggTtl = MENTOR_LB_TTL_MS;
-      }
-      const rankIndex = agg.rows.findIndex(r=> r.id === userId);
-      if(rankIndex === -1){
-        selfRank = { ranked:false, reason:'not_found_in_agg', sessions: selfRow.sessions, avg_rating: selfRow.avg_rating, minSessions };
-      } else {
-        const rank = rankIndex + 1;
-        const total = agg.total || 1;
-        const percentile = Math.round(((total - rank + 1)/ total) * 10000)/100;
-        selfRank = { ranked:true, rank, total, percentile, sessions: selfRow.sessions, avg_rating: selfRow.avg_rating, minSessions, ttl_ms: aggTtl };
-        if(totalQualified === null) totalQualified = agg.total;
-      }
-    }
-  }
-  const result = { payload: { category:'mentor', list, total: totalQualified, cached:listCached, ttl_ms: typeof ttlMs==='number'?ttlMs:undefined, selfRank }, cache: listCached?'HIT':'MISS', ttl: listCached?ttlMs:MENTOR_LB_TTL_MS, lastTs: listCached ? (Date.now() - (ttlMs||0)) : Date.now() };
-  if(listCached) leaderboardMetrics.mentor.hits++; else leaderboardMetrics.mentor.misses++;
-  return result;
+  const { getMentorLeaderboardFacade } = await import('../src/modules/leaderboard/index.js');
+  const r = await getMentorLeaderboardFacade(db, {
+    limit, minSessions, wantSelf, userId,
+    caches: { mentorsLbCache, mentorsRankCache, MENTOR_LB_TTL_MS }
+  });
+  // Metrikler: mevcut davranış korunur
+  if(r?.cache === 'HIT') leaderboardMetrics.mentor.hits++; else leaderboardMetrics.mentor.misses++;
+  return r;
 }
 
 // Fraud metriklerini güncelle (her Prometheus export öncesi)
@@ -714,12 +587,14 @@ router.get('/leaderboard', authRequired, lbRate, async (req,res)=>{
       res.setHeader('Server-Timing', `total;dur=${(Number(tEnd - tStart)/1e6).toFixed(2)}`);
       return sendWithEtag(req,res,r.payload, { lastTs: r.lastTs });
     }
-    let r = await getTrustLeaderboard(db,{ limit, offset, useAround, window, userId, cursor, needRank: useAround ? true : wantRank, ip: req.ip });
+  // Modül facade: davranış eşdeğeri sonuç döndürür
+  const { getTrustLeaderboardFacade } = await import('../src/modules/leaderboard/index.js');
+  let r = await getTrustLeaderboard(db,{ limit, offset, useAround, window, userId, cursor, needRank: useAround ? true : wantRank, ip: req.ip });
     if(r.error === 'invalid_cursor'){
       const cnt = getIpInvalidCount(req.ip);
       if(process.env.CURSOR_AUTO_DEGRADE==='1' && cnt > INVALID_CURSOR_THRESHOLD){
         req._autoDegrade = true; cursor = null; offset='0';
-        const rDegraded = await getTrustLeaderboard(db,{ limit, offset, useAround, window, userId, cursor:null, needRank: useAround ? true : wantRank, ip: req.ip });
+  const rDegraded = await getTrustLeaderboard(db,{ limit, offset, useAround, window, userId, cursor:null, needRank: useAround ? true : wantRank, ip: req.ip });
         if(!rDegraded.error){ r = rDegraded; }
       }
     }
