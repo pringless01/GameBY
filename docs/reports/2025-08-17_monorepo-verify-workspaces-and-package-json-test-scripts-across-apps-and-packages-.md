@@ -1,15 +1,23 @@
 # Next Action: Monorepo: verify workspaces and package.json test scripts across apps/* and packages/*
 
-1. **Workspaces Kontrolü**: Tüm `apps/*` ve `packages/*` dizinlerindeki `package.json` dosyalarını kontrol ederek, monorepo yapılandırmasındaki `workspaces` ayarlarının doğru olduğundan emin olunacak.
+Alt Adım 1: "Monorepo: verify workspaces"
 
-2. **Test Scriptleri İncelemesi**: Her bir `package.json` dosyasında bulunan `test` scriptlerinin varlığı ve doğru yapılandırılması kontrol edilecek.
+- Tüm workspace'lerin doğru bir şekilde yapılandırıldığını kontrol et. Her bir uygulama ve paket için geçerli bir `package.json` dosyasının bulunduğundan emin ol.
 
-3. **Script Çalıştırma**: `test` scriptlerini her bir uygulama ve paket için çalıştırarak, beklenen sonuçların alınıp alınmadığı test edilecek.
+Alt Adım 2: "Check package.json test scripts in apps"
 
-4. **Hata Kayıtları**: Eğer herhangi bir test scripti hatalı çalışıyorsa, bu hatalar kaydedilecek ve ilgili dosyalar üzerinde düzeltme yapılacak.
+- `apps/*` dizinindeki her `package.json` dosyasını incele ve tanımlı olan test scriptlerini kontrol et. Varsayılan test komutlarının geçerliliğini kontrol et.
 
-5. **Raporlama**: Yapılan tüm kontroller ve test sonuçları, bir rapor dosyasına yazılacak ve hafızaya eklenecek. 
+Alt Adım 3: "Check package.json test scripts in packages"
 
-Her bir alt adımda gerekli değişiklikler, dosya güncellemeleri ve raporlar oluşturulacak.
+- `packages/*` dizinindeki her `package.json` dosyasını incele ve tanımlı olan test scriptlerini kontrol et. Varsayılan test komutlarının geçerliliğini kontrol et.
 
-— Agent: GameBY Agent • 2025-08-17T00:16:36.679Z
+Alt Adım 4: "Run tests in apps"
+
+- `apps/*` dizinindeki her uygulama için test komutlarını çalıştır ve sonuçları kaydet. Her testin başarıyla geçip geçmediğini kontrol et.
+
+Alt Adım 5: "Run tests in packages"
+
+- `packages/*` dizinindeki her paket için test komutlarını çalıştır ve sonuçları kaydet. Her testin başarıyla geçip geçmediğini kontrol et.
+
+— Agent: GameBY Agent • 2025-08-17T00:17:25.666Z
