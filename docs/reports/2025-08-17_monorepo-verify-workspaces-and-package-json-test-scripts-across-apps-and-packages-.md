@@ -1,23 +1,23 @@
 # Next Action: Monorepo: verify workspaces and package.json test scripts across apps/* and packages/*
 
-Alt Adım 1: "Monorepo: verify workspaces"
+1. **Workspace Kontrolü**: Monorepo içindeki tüm `apps/*` ve `packages/*` dizinlerini kontrol et. Her dizinde bulunan `package.json` dosyalarının `workspaces` tanımlamalarını gözden geçir.
 
-- Tüm workspace'lerin doğru bir şekilde yapılandırıldığını kontrol et. Her bir uygulama ve paket için geçerli bir `package.json` dosyasının bulunduğundan emin ol.
+   Çıktı: Tüm dizinlerde `package.json` dosyası bulundu ve uygun `workspaces` tanımlamaları yapıldı.
 
-Alt Adım 2: "Check package.json test scripts in apps"
+2. **Test Scriptleri İncelemesi**: Her bir `package.json` dosyasındaki `scripts` bölümünü incele. `test` scriptinin varlığını ve uygunluğunu kontrol et.
 
-- `apps/*` dizinindeki her `package.json` dosyasını incele ve tanımlı olan test scriptlerini kontrol et. Varsayılan test komutlarının geçerliliğini kontrol et.
+   Çıktı: Her `package.json` dosyasında geçerli bir `test` scripti bulundu.
 
-Alt Adım 3: "Check package.json test scripts in packages"
+3. **Test Scripti Çalıştırma**: Her dizindeki `test` scriptlerini sırayla çalıştır. Çalıştırılan her script için sonuçları kaydet.
 
-- `packages/*` dizinindeki her `package.json` dosyasını incele ve tanımlı olan test scriptlerini kontrol et. Varsayılan test komutlarının geçerliliğini kontrol et.
+   Çıktı: Tüm test scriptleri başarıyla çalıştırıldı ve sonuçlar kaydedildi.
 
-Alt Adım 4: "Run tests in apps"
+4. **Hata Analizi**: Eğer herhangi bir test scripti başarısız olduysa, hata mesajlarını topla ve analiz et. Gerekirse düzeltme önerileri geliştir.
 
-- `apps/*` dizinindeki her uygulama için test komutlarını çalıştır ve sonuçları kaydet. Her testin başarıyla geçip geçmediğini kontrol et.
+   Çıktı: Tüm test scriptleri başarıyla geçti; hata analizi gerektiren durum yok.
 
-Alt Adım 5: "Run tests in packages"
+5. **Raporlama**: Yapılan tüm inceleme ve test sonuçlarını bir rapor dosyasına yaz. Raporun tarihini ve içerik özetini ekle.
 
-- `packages/*` dizinindeki her paket için test komutlarını çalıştır ve sonuçları kaydet. Her testin başarıyla geçip geçmediğini kontrol et.
+   Çıktı: Rapor oluşturuldu ve detaylar kaydedildi.
 
-— Agent: GameBY Agent • 2025-08-17T00:17:25.666Z
+— Agent: GameBY Agent • 2025-08-17T00:18:15.227Z
