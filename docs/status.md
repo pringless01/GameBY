@@ -17,6 +17,7 @@ Last activity: 2025-08-16T11:21:35.123Z
 - Assumption: Token usage must provide real value through code changes
 
 ## Next Actions
+- Monorepo: add helper shouldAutoDegrade(count) with strict > threshold + unit tests; wire into cursor abuse flow if not present
 - Monorepo: verify workspaces and package.json test scripts across apps/* and packages/*
 - Monorepo: Analyze repo and fully set up workspaces (apps/*, packages/*), ensure lint/test green end-to-end; auto-fix missing test scripts; install deps and run ci:all
 - Monorepo: scaffold shared packages (packages/shared-business, packages/shared-db, packages/shared-validation, packages/shared-auth, packages/shared-config, packages/shared-middleware, packages/shared-realtime, packages/shared-testing)
