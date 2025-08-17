@@ -1,10 +1,10 @@
 {
-  "current_task": "T002",
-  "last_commit": "feat(runner): bootstrap continuous runner scaffolding (tasks, memory, scripts, state, smoke CI)",
+  "current_task": "T003",
+  "last_commit": "chore(t002): test iskeleti ve coverage akışı stabilize (logs/ artefaktları)",
   "next_actions": [
-    "apps/api/src unit test iskeletini stabilize et (README talimatları)",
-    "scripts/test.ps1 içine test matrisi (unit+integration smoke) opsiyonel ekle",
-    "coverage raporunu logs/ altına kaydetmeyi doğrula"
+    "ESLint ve Prettier konfigürasyonunu gözden geçir, root scriptleri doğrula",
+    "pre-commit için husky + lint-staged akışını kontrol et, eksikse ekle",
+    "CI workflow’a lint adımı ekle ve cache optimize et"
   ],
   "assumptions": [
     "Minimal unit smoke yeterli",

@@ -1,7 +1,3 @@
-- id: T002
-  title: Proje için temel test iskeleti (unit + smoke)
-  def: Dil/framework’e uygun test çerçevesi ekle; 1-2 örnek test yaz.
-  done_def: CI testleri geçiyor; coverage raporu üretiliyor.
 - id: T003
   title: Kod kalitesi ve kurallar
   def: Linter/formatter kuralları; pre-commit talimatı README’de.

@@ -109,13 +109,18 @@ Yerelde hızlı başlamak için runner scriptlerini kullanabilirsiniz:
 # Windows PowerShell
 ./scripts/dev.ps1            # API'yi production modunda başlatır
 ./scripts/dev.ps1 -Watch     # watch modunda geliştirici servisi
-./scripts/test.ps1           # Unit smoke (cursor-security) + coverage
+./scripts/test.ps1                   # Unit smoke (varsayılan)
+./scripts/test.ps1 -Suite unit       # Unit smoke
+./scripts/test.ps1 -Suite integration # Integration smoke (leaderboard)
+./scripts/test.ps1 -Suite all -Coverage # Tüm testler + coverage (artefaktlar: ./logs)
 ```
 
 ```bash
 # macOS/Linux (opsiyonel)
 bash scripts/dev.sh --watch
-bash scripts/test.sh
+bash scripts/test.sh unit
+bash scripts/test.sh integration
+bash scripts/test.sh all true # Artefaktlar: ./logs (lcov.info, coverage-summary.txt)
 ```
 
 ### Frontend Testi

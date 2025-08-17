@@ -1,3 +1,14 @@
+- id: T002
+	title: Proje için temel test iskeleti (unit + smoke)
+	notes:
+		- scripts/test.ps1 ve scripts/test.sh parametreli hale getirildi (Suite ve Coverage).
+		- apps/api/src coverage:save kök logs/ klasörüne lcov, coverage-final ve summary kopyalıyor.
+		- README hızlı başlangıç kısmı test matrisiyle güncellendi.
+		- Integration smoke (leaderboard) ve tam test suite doğrulandı.
+	acceptance:
+		- Unit smoke PASS (cursor-security)
+		- Integration suite PASS (leaderboard dahil)
+		- Coverage artefaktları logs/ altında mevcut
 # Tamamlanan görevlerin geçmişi
 - id: T001
 	title: Runner kurulum altyapısı
