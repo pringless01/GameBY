@@ -28,7 +28,7 @@ const server = http.createServer((req, res) => {
     if(req.method !== 'GET' && req.method !== 'HEAD') req.pipe(proxyReq); else proxyReq.end();
     return;
   }
-  let urlPath = req.url === '/' ? '/app.html' : req.url; // default app.html
+  let urlPath = req.url === '/' ? '/index.html' : req.url; // default index.html (splash)
   let filePath = path.join(PUBLIC_DIR, urlPath);
   if (!filePath.startsWith(PUBLIC_DIR)) { res.writeHead(403); return void res.end('Forbidden'); }
   fs.readFile(filePath, (err, content) => {
