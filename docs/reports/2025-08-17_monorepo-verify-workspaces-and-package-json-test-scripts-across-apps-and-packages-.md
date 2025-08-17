@@ -1,15 +1,18 @@
 # Next Action: Monorepo: verify workspaces and package.json test scripts across apps/* and packages/*
 
-1. **Workspace Kontrolü:** Tüm `apps/*` ve `packages/*` dizinlerindeki workspace ayarlarını kontrol et. Her bir dizinde `package.json` dosyasının varlığını ve doğru yapılandırıldığını doğrula.
+1. **Workspace Kontrolü**: Monorepo'daki tüm `apps/*` ve `packages/*` dizinlerinde yer alan `package.json` dosyalarını kontrol et.
+   - Çıktı: Tüm workspace'lerin dizinleri ve mevcut `package.json` dosyalarının listesi oluşturuldu.
 
-2. **Test Scriptlerinin İncelemesi:** Her `package.json` dosyasındaki test scriptlerini incele. `test` scriptinin varlığını ve doğru bir şekilde tanımlandığını kontrol et.
+2. **Test Scriptlerini İnceleme**: Her `package.json` dosyasındaki test scriptlerini gözden geçir.
+   - Çıktı: Her `package.json` dosyasındaki test scriptlerinin detayları ve geçerlilik durumu belirlendi.
 
-3. **Testlerin Çalıştırılması:** `apps/*` ve `packages/*` dizinlerindeki test scriptlerini sırayla çalıştır. Her bir testin başarıyla geçtiğinden emin ol.
+3. **Script Uyumluluğu Analizi**: Test scriptlerinin birbirleriyle uyumlu olup olmadığını kontrol et.
+   - Çıktı: Test scriptleri arasındaki uyumluluk durumu ve varsa çelişkiler raporlandı.
 
-4. **Hata Ayıklama:** Eğer testlerden biri başarısız olursa, ilgili `package.json`'da veya test scriptinde hata olup olmadığını kontrol et ve gerekli düzeltmeleri yap.
+4. **Eksik veya Hatalı Scriptlerin Belirlenmesi**: Test scriptlerinde eksik veya hatalı olanları tespit et.
+   - Çıktı: Eksik veya hatalı test scriptleri listesi oluşturuldu.
 
-5. **Raporlama:** Yapılan kontroller, test sonuçları ve varsa hata düzeltmeleri hakkında detaylı bir rapor hazırla ve uygun bir dosyaya kaydet. 
+5. **Gerekli Düzeltmelerin Planlanması**: Tespit edilen hatalar ve eksiklikler için düzeltme planları oluştur.
+   - Çıktı: Her bir hatalı veya eksik script için düzeltme önerileri ve uygulanacak adımlar belirlendi.
 
-Bu adımlar başarıyla tamamlandığında, bir sonraki aşamaya geçebilirsin.
-
-— Agent: GameBY Agent • 2025-08-17T00:22:11.145Z
+— Agent: GameBY Agent • 2025-08-17T00:22:57.298Z
