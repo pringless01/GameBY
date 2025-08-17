@@ -32,7 +32,7 @@ jobs:
           script_stop: true
           script: |
             set -e
-            TARGET_DIR="/home/${{ secrets.SERVER_USER }}/gameby"
+            TARGET_DIR="$HOME/gameby"
             mkdir -p "$TARGET_DIR"
             echo "Prepared $TARGET_DIR"
 
@@ -44,7 +44,7 @@ jobs:
           key: ${{ secrets.SERVER_SSH_KEY }}
           port: ${{ secrets.SERVER_PORT || 22 }}
           source: "."
-          target: "/home/${{ secrets.SERVER_USER }}/gameby"
+          target: "~/gameby"
           rm: true
           overwrite: true
 
@@ -70,7 +70,7 @@ jobs:
           script: |
             set -euo pipefail
             echo "Starting deploy on $(hostname)"
-            cd "/home/${{ secrets.SERVER_USER }}/gameby"
+            cd "$HOME/gameby"
 
             if ! command -v docker >/dev/null 2>&1; then
               if command -v apt-get >/dev/null 2>&1; then
