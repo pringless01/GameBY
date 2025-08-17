@@ -18,9 +18,16 @@ export default [
   {
     files: ['**/*.js','**/*.ts'],
     rules: {
-  'no-unused-vars': ['error', { argsIgnorePattern: '^_', caughtErrors: 'none', caughtErrorsIgnorePattern: '^_' }],
-      'import/order': ['error', { alphabetize: { order: 'asc', caseInsensitive: true }, 'newlines-between': 'always' }]
-      , 'no-empty': 'off'
+      'no-unused-vars': ['error', { argsIgnorePattern: '^_', caughtErrorsIgnorePattern: '^_' }],
+      'import/no-cycle': 'error',
+      'no-restricted-imports': ['error', { 
+        patterns: [
+          { group: ['**/modules/*/!(index|*.service|*.repo).js'], message: 'Service/Repo dışı module iç dosyalara doğrudan import etme.' },
+          { group: ['../modules/*/*'], message: 'Farklı domaine relative import yasak; shared/* veya public API kullan.' }
+        ]
+      }],
+      'import/order': ['error', { alphabetize: { order: 'asc', caseInsensitive: true }, 'newlines-between': 'always' }],
+      'no-empty': 'off'
     }
   },
   // apps/api için Node ortamı ve kurallar
@@ -67,15 +74,26 @@ export default [
         fetch: 'readonly'
       }
     },
-    rules: { 'no-unused-vars': 'off' }
+  rules: { 'no-unused-vars': 'off', 'import/order': 'off' }
   },
   // Root scripts (node) için ortam
   {
-    files: ['scripts/**/*.js'],
+    files: ['scripts/**/*.js','scripts/**/*.mjs'],
     languageOptions: {
-      globals: { console: 'readonly', process: 'readonly', Buffer: 'readonly' }
+      globals: { console: 'readonly', process: 'readonly', Buffer: 'readonly', setTimeout: 'readonly' }
     },
     rules: { 'no-unused-vars': 'off' }
+  },
+  // perf (k6) dosyaları için özel global ve kurallar
+  {
+    files: ['perf/**/*.js'],
+    languageOptions: {
+      globals: { console: 'readonly', __ENV: 'readonly' }
+    },
+    rules: {
+      'import/order': 'off',
+      'no-undef': 'off'
+    }
   },
   // apps/api public (browser) scriptleri için tarayıcı global’leri
   {
@@ -123,7 +141,7 @@ export default [
         fetch: 'readonly'
       }
     },
-    rules: { 'no-unused-vars': 'off' }
+  rules: { 'no-unused-vars': 'off', 'import/order': 'off' }
   },
   // apps/web public (browser) scriptleri için tarayıcı global’leri ve geçici gevşetmeler
   {
@@ -180,6 +198,21 @@ export default [
     },
     rules: {
       'no-unused-vars': 'off'
+    }
+  }
+  ,
+  // packages (shared utils) node ortamı
+  {
+    files: ['packages/**/src/**/*.js', 'packages/**/index.js'],
+    languageOptions: {
+      globals: {
+        console: 'readonly',
+        process: 'readonly',
+        Buffer: 'readonly',
+        URL: 'readonly',
+        setTimeout: 'readonly',
+        clearTimeout: 'readonly'
+      }
     }
   }
 ];

@@ -1,6 +1,8 @@
 export default [
+  // Public statik dosyaları lint dışı bırak
+  { ignores: ["public/**"] },
   {
-    files: ["**/*.js","**/*.ts"],
+    files: ["scripts/**/*.js", "scripts/**/*.ts"],
     languageOptions: {
       globals: { window: "readonly", document: "readonly" }
     },

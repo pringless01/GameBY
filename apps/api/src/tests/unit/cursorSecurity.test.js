@@ -8,7 +8,7 @@ process.env.CURSOR_INVALID_THRESHOLD = '3'; // low threshold for tests
 process.env.CURSOR_ABUSE_COOLDOWN_MS = '500';
 
 const mod = await import('../../security/cursorSecurity.js');
-const { encodeCursor, decodeCursor, WEAK_CURSOR_SECRET, INVALID_CURSOR_THRESHOLD, isCursorAbuse, isInCursorCooldown, getIpInvalidCount } = mod;
+const { encodeCursor, decodeCursor, WEAK_CURSOR_SECRET, INVALID_CURSOR_THRESHOLD, isCursorAbuse, isInCursorCooldown, getIpInvalidCount, shouldAutoDegrade } = mod;
 
 (async () => {
   try {
@@ -54,7 +54,16 @@ const { encodeCursor, decodeCursor, WEAK_CURSOR_SECRET, INVALID_CURSOR_THRESHOLD
     const after = getIpInvalidCount('9.9.9.9');
     assert(after === before + 1, 'Invalid count should increase with another bad decode');
 
-    console.log('CURSOR_SECURITY_UNIT_TESTS_SUCCESS');
+  // 7. shouldAutoDegrade helper: strict > threshold and flag-gated behavior
+  // default (flag not set): should be false even if count exceeds threshold
+  assert.strictEqual(shouldAutoDegrade(3), false, 'Auto-degrade should be off by default');
+  process.env.CURSOR_AUTO_DEGRADE = '1';
+  assert.strictEqual(shouldAutoDegrade(3), false, 'Strict >: at threshold should be false');
+  assert.strictEqual(shouldAutoDegrade(4), true, 'Should auto-degrade when count exceeds threshold with flag=1');
+  process.env.CURSOR_AUTO_DEGRADE = '0';
+  assert.strictEqual(shouldAutoDegrade(4), false, 'Flag=0 should prevent auto-degrade');
+
+  console.log('CURSOR_SECURITY_UNIT_TESTS_SUCCESS');
     process.exit(0);
   } catch (e) {
     console.error('CURSOR_SECURITY_UNIT_TESTS_FAIL', e);

@@ -1,0 +1,13 @@
+{
+  "current_task": "T003",
+  "last_commit": "chore(t002): test iskeleti ve coverage akışı stabilize (logs/ artefaktları)",
+  "next_actions": [
+    "ESLint ve Prettier konfigürasyonunu gözden geçir, root scriptleri doğrula",
+    "pre-commit için husky + lint-staged akışını kontrol et, eksikse ekle",
+    "CI workflow’a lint adımı ekle ve cache optimize et"
+  ],
+  "assumptions": [
+    "Minimal unit smoke yeterli",
+    "npm ci mevcut kilit ile çalışır"
+  ]
+}

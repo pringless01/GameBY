@@ -1,6 +1,7 @@
 import assert from 'assert';
-import LbService from '../../modules/leaderboard/leaderboard.service.js';
+
 import { leaderboardMetrics } from '../../metrics/leaderboardMetrics.js';
+import LbService from '../../modules/leaderboard/leaderboard.service.js';
 
 (async function run(){
   // Seed some counters

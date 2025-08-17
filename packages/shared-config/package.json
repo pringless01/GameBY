@@ -1,0 +1,16 @@
+{
+  "name": "@gameby/shared-config",
+  "version": "0.0.1",
+  "private": false,
+  "type": "module",
+  "main": "src/index.js",
+  "exports": {
+    ".": "./src/index.js"
+  },
+  "scripts": {
+    "test": "echo \"no tests\" && exit 0"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.5"
+  }
+}
