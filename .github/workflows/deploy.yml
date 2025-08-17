@@ -22,37 +22,42 @@ jobs:
           [ -n "${{ secrets.SERVER_USER }}" ] || (echo "Missing SERVER_USER" && exit 1)
           [ -n "${{ secrets.SERVER_SSH_KEY }}" ] || (echo "Missing SERVER_SSH_KEY" && exit 1)
 
-      - name: Prepare target directory
-        uses: appleboy/ssh-action@v1.2.0
+      - name: Setup SSH agent
+        uses: webfactory/ssh-agent@v0.9.0
         with:
-          host: ${{ secrets.SERVER_HOST }}
-          username: ${{ secrets.SERVER_USER }}
-          key: ${{ secrets.SERVER_SSH_KEY }}
-          port: ${{ secrets.SERVER_PORT }}
-          debug: true
-          script_stop: true
-          script: |
-            set -e
-            TARGET_DIR="$HOME/gameby"
-            mkdir -p "$TARGET_DIR"
-            echo "Prepared $TARGET_DIR"
+          ssh-private-key: ${{ secrets.SERVER_SSH_KEY }}
 
-      - name: Sync repo to server
-        uses: appleboy/scp-action@v1
-        with:
-          host: ${{ secrets.SERVER_HOST }}
-          username: ${{ secrets.SERVER_USER }}
-          key: ${{ secrets.SERVER_SSH_KEY }}
-          port: ${{ secrets.SERVER_PORT }}
-          source: "."
-          target: "~/gameby"
-          rm: true
-          overwrite: true
-          debug: true
+      - name: Prepare target directory
+        env:
+          HOST: ${{ secrets.SERVER_HOST }}
+          USER: ${{ secrets.SERVER_USER }}
+          PORT: ${{ secrets.SERVER_PORT }}
+        run: |
+          set -euo pipefail
+          : "${PORT:=22}"
+          ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -p "$PORT" "$USER@$HOST" "mkdir -p \"\$HOME/gameby\" && echo Prepared \"\$HOME/gameby\""
+
+      - name: Sync repo to server (tar stream)
+        env:
+          HOST: ${{ secrets.SERVER_HOST }}
+          USER: ${{ secrets.SERVER_USER }}
+          PORT: ${{ secrets.SERVER_PORT }}
+        run: |
+          set -euo pipefail
+          : "${PORT:=22}"
+          TAR_EXCLUDES=(
+            "--exclude=.git"
+            "--exclude=node_modules"
+            "--exclude=logs"
+            "--exclude=.github/workflows/*.yml~"
+          )
+          tar -czf - "${TAR_EXCLUDES[@]}" . | ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -p "$PORT" "$USER@$HOST" 'mkdir -p "$HOME/gameby" && tar -xzf - -C "$HOME/gameby"'
 
       - name: SSH deploy
-        uses: appleboy/ssh-action@v1.2.0
         env:
+          HOST: ${{ secrets.SERVER_HOST }}
+          USER: ${{ secrets.SERVER_USER }}
+          PORT: ${{ secrets.SERVER_PORT }}
           JWT_SECRET: ${{ secrets.JWT_SECRET }}
           CURSOR_SECRET: ${{ secrets.CURSOR_SECRET }}
           CURSOR_SECRET_ROTATION: ${{ secrets.CURSOR_SECRET_ROTATION }}
@@ -62,64 +67,60 @@ jobs:
           BASIC_AUTH_PASS: ${{ secrets.BASIC_AUTH_PASS }}
           AGENT_ENABLED: ${{ secrets.AGENT_ENABLED }}
           AGENT_CONFIG_PATH: ${{ secrets.AGENT_CONFIG_PATH }}
-        with:
-          host: ${{ secrets.SERVER_HOST }}
-          username: ${{ secrets.SERVER_USER }}
-          key: ${{ secrets.SERVER_SSH_KEY }}
-          port: ${{ secrets.SERVER_PORT }}
-          debug: true
-          envs: JWT_SECRET,CURSOR_SECRET,CURSOR_SECRET_ROTATION,REFRESH_SECRET,CORS_ORIGIN,BASIC_AUTH_USER,BASIC_AUTH_PASS,AGENT_ENABLED,AGENT_CONFIG_PATH
-          script_stop: true
-          script: |
-            set -euo pipefail
-            echo "Starting deploy on $(hostname)"
-            cd "$HOME/gameby"
+        run: |
+          set -euo pipefail
+          : "${PORT:=22}"
+          ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -p "$PORT" "$USER@$HOST" bash -s << 'REMOTE_EOF'
+          set -euo pipefail
+          echo "Starting deploy on $(hostname)"
+          cd "$HOME/gameby"
 
-            if ! command -v docker >/dev/null 2>&1; then
-              if command -v apt-get >/dev/null 2>&1; then
-                sudo apt-get update -y
-                sudo apt-get install -y ca-certificates curl gnupg
-                sudo install -m 0755 -d /etc/apt/keyrings
-                curl -fsSL https://download.docker.com/linux/$(. /etc/os-release; echo "$ID")/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
-                echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/$(. /etc/os-release; echo "$ID") $(. /etc/os-release; echo "$VERSION_CODENAME") stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
-                sudo apt-get update -y
-                sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
-              else
-                echo "Docker missing and apt-get not available"; exit 1
-              fi
-            fi
-
-            if docker compose version >/dev/null 2>&1; then
-              DC="docker compose"
-            elif command -v docker-compose >/dev/null 2>&1; then
-              DC="docker-compose"
+          if ! command -v docker >/dev/null 2>&1; then
+            if command -v apt-get >/dev/null 2>&1; then
+              sudo apt-get update -y
+              sudo apt-get install -y ca-certificates curl gnupg
+              sudo install -m 0755 -d /etc/apt/keyrings
+              curl -fsSL https://download.docker.com/linux/$(. /etc/os-release; echo "$ID")/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+              echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/$(. /etc/os-release; echo "$ID") $(. /etc/os-release; echo "$VERSION_CODENAME") stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+              sudo apt-get update -y
+              sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
             else
-              if command -v apt-get >/dev/null 2>&1; then
-                sudo apt-get update -y && sudo apt-get install -y docker-compose-plugin
-                DC="docker compose"
-              else
-                echo "docker compose not available"; exit 1
-              fi
+              echo "Docker missing and apt-get not available"; exit 1
             fi
+          fi
 
-            umask 077
-            cat > .env << EOF
-            JWT_SECRET=${JWT_SECRET}
-            CURSOR_SECRET=${CURSOR_SECRET}
-            CURSOR_SECRET_ROTATION=${CURSOR_SECRET_ROTATION}
-            REFRESH_SECRET=${REFRESH_SECRET}
-            CORS_ORIGIN=${CORS_ORIGIN}
-            BASIC_AUTH_USER=${BASIC_AUTH_USER}
-            BASIC_AUTH_PASS=${BASIC_AUTH_PASS}
-            AGENT_ENABLED=${AGENT_ENABLED}
-            AGENT_CONFIG_PATH=${AGENT_CONFIG_PATH}
-            EOF
+          if docker compose version >/dev/null 2>&1; then
+            DC="docker compose"
+          elif command -v docker-compose >/dev/null 2>&1; then
+            DC="docker-compose"
+          else
+            if command -v apt-get >/dev/null 2>&1; then
+              sudo apt-get update -y && sudo apt-get install -y docker-compose-plugin
+              DC="docker compose"
+            else
+              echo "docker compose not available"; exit 1
+            fi
+          fi
 
-            sudo $DC pull || true
-            sudo $DC up -d --build
+          umask 077
+          cat > .env << EOF
+          JWT_SECRET=${JWT_SECRET}
+          CURSOR_SECRET=${CURSOR_SECRET}
+          CURSOR_SECRET_ROTATION=${CURSOR_SECRET_ROTATION}
+          REFRESH_SECRET=${REFRESH_SECRET}
+          CORS_ORIGIN=${CORS_ORIGIN}
+          BASIC_AUTH_USER=${BASIC_AUTH_USER}
+          BASIC_AUTH_PASS=${BASIC_AUTH_PASS}
+          AGENT_ENABLED=${AGENT_ENABLED}
+          AGENT_CONFIG_PATH=${AGENT_CONFIG_PATH}
+          EOF
 
-            for i in {1..30}; do
-              curl -fsS http://127.0.0.1/health && break || true
-              sleep 2
-            done
-            curl -fsS http://127.0.0.1/health || (echo "Health failed"; sudo $DC ps; exit 1)
+          sudo $DC pull || true
+          sudo $DC up -d --build
+
+          for i in {1..30}; do
+            curl -fsS http://127.0.0.1/health && break || true
+            sleep 2
+          done
+          curl -fsS http://127.0.0.1/health || (echo "Health failed"; sudo $DC ps; exit 1)
+          REMOTE_EOF
