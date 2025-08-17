@@ -1,17 +1,13 @@
 # Next Action: Monorepo: verify workspaces and package.json test scripts across apps/* and packages/*
 
-Aşağıda "Monorepo: verify workspaces and package.json test scripts across apps/* and packages/*" aksiyonunu 5 alt adıma böldüm:
+1. **Workspace Kontrolü**: Monorepo'daki `apps/*` ve `packages/*` dizinlerindeki tüm workspace'lerin yapılandırmalarını kontrol et. Hatalı veya eksik olanları not al.
 
-1. **Workspace Kontrolü**: Monorepo'daki tüm workspace'lerin doğru yapılandırıldığını kontrol et. Her bir app ve package için `package.json` dosyalarını gözden geçir.
+2. **package.json Dosyası İncelemesi**: Her bir uygulama ve paket için `package.json` dosyasını aç ve test scriptlerinin varlığını ve doğruluğunu kontrol et. Eksik veya hatalı scriptleri belirle.
 
-2. **Test Scriptlerinin Listelemesi**: Tüm `package.json` dosyalarında bulunan `test` scriptlerini listele. Bu scriptlerin varlığını ve doğru yapılandırıldıklarını doğrula.
+3. **Test Scriptlerinin Çalıştırılması**: Belirlenen her bir test scriptini sırasıyla çalıştır ve sonuçları kaydet. Başarılı ve başarısız testlerin listesini oluştur.
 
-3. **Script Çalıştırma**: Her bir `test` scriptini sırayla çalıştır. Çalıştırma sonuçlarını topla ve her bir scriptin başarılı bir şekilde geçip geçmediğini kontrol et.
+4. **Hata Raporlama**: Test sonuçlarına göre, herhangi bir hata veya başarısızlık durumunda detaylı bir rapor hazırla. Hataların çözüm önerilerini ekle.
 
-4. **Hata Analizi**: Eğer herhangi bir test scripti başarısız olursa, hata mesajlarını analiz et. Hataların nedenini anlamak için gerekli olan dosyaları ve konfigürasyonları incele.
+5. **Geri Bildirim ve Düzeltme**: Hata raporunu ilgili ekip üyeleriyle paylaş ve gerekli düzeltmeleri yapmak için geri bildirim al. Düzeltmelerin yapılmasının ardından süreci tekrar gözden geçir.
 
-5. **Raporlama**: Tüm test sonuçlarını ve olası hataları içeren bir rapor hazırla. Raporu `docs/reports` dizinine kaydet ve gerekli bilgileri hafızaya ekle. 
-
-Bu adımları sırayla gerçekleştirerek monorepo üzerindeki test scriptlerini doğrulama işlemini tamamlayabilirsin.
-
-— Agent: GameBY Agent • 2025-08-17T00:05:45.134Z
+— Agent: GameBY Agent • 2025-08-17T00:06:39.785Z
