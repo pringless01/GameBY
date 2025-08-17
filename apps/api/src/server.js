@@ -272,13 +272,23 @@ app.use(express.static(path.join(__dirname, '..', 'frontend', 'public')));
   io.on('disconnect', () => { appMetrics.socket_connections_current = Math.max(0, appMetrics.socket_connections_current-1); });
   const isTest = process.env.NODE_ENV === 'test' || process.env.API_TEST === '1';
   const PORT = envConfig.PORT || (isTest ? 0 : 3000);
+  let addrLogged = false;
+  server.on('error', (err) => {
+    if (err && err.code === 'EADDRINUSE') {
+      const tried = PORT;
+      console.warn('[server] port in use', tried, '→ retrying with random port');
+      server.listen(0);
+    } else {
+      throw err;
+    }
+  });
   server.listen(PORT, () => {
     try {
       const addr = server.address();
       const actual = typeof addr === 'object' && addr ? addr.port : PORT;
-      console.log('Server listening on port', actual);
+      if (!addrLogged) { console.log('Server listening on port', actual); addrLogged = true; }
     } catch {
-      console.log('Server listening on port', PORT);
+      if (!addrLogged) { console.log('Server listening on port', PORT); addrLogged = true; }
     }
   });
 
