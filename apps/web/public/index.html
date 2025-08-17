@@ -3,40 +3,14 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>CODARA • GAME</title>
-  <meta name="robots" content="noindex,nofollow" />
-  <link rel="stylesheet" href="/css/codara-intro.css" />
-  <style>
-    html,body{height:100%;background:#0a0d12;color:#fff;margin:0}
-    .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
-  </style>
-  <script>window.__CODARA_INTRO_NO_AUTO__=true;</script>
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Yönlendiriliyor…</title>
+  <meta http-equiv="refresh" content="0; url=/v2/index.html" />
+  <link rel="canonical" href="/v2/index.html" />
+  <style>body{background:#0e1116;color:#cbd5e1;font-family:system-ui,Segoe UI,Roboto,Arial,sans-serif;display:flex;align-items:center;justify-content:center;min-height:100vh;margin:0} .card{padding:16px 20px;background:#111827;border:1px solid #1f2937;border-radius:12px} a{color:#60a5fa}</style>
 </head>
 <body>
-  <h1 class="sr-only">CODARA GAME</h1>
-  <div id="codara-intro" class="codara-intro hidden" role="dialog" aria-modal="true" aria-label="CODARA intro">
-    <div class="stage">
-      <canvas id="spark"></canvas>
-      <div class="halo top"></div>
-      <div class="halo bottom"></div>
-      <div class="stack">
-        <div class="mark" aria-label="Codara mark">
-          <span class="brace">{</span><span class="c">C</span><span class="brace">}</span>
-        </div>
-        <div class="word" aria-label="Codara wordmark">
-          <div id="brand" class="brand" data-text="CODARA">CODARA</div>
-          <div class="tag">GAME</div>
-        </div>
-      </div>
-      <div class="skip" aria-hidden="true"> </div>
-    </div>
-  </div>
-  <script src="/js/codara-intro.js"></script>
-  <script>
-    // Animasyon: sürekli açık (kapatma yok)
-    (async function(){
-      try { await startCodaraIntro({ autoFinish:false }); } catch(e){}
-    })();
-  </script>
+  <div class="card">v1 kapatıldı. v2'ye yönlendiriliyorsunuz… <a href="/v2/index.html">devam</a></div>
+  <script>location.replace('/v2/index.html');</script>
 </body>
 </html>
