@@ -77,8 +77,8 @@ router.post('/register', async (req, res) => {
       }
     }
 
-    const user = await createUser({ email, username, password });
-    const token = signToken(user.id, { username: user.username, email: user.email });
+  const user = await createUser({ email, username, password });
+  const token = signToken(user.id, { username: user.username, email: user.email, roles: user.roles || [] });
     return res.status(201).json({ token, user: { id: user.id, email: user.email, username: user.username } });
   } catch (e) {
     console.error('[auth/register] error', e);
@@ -109,7 +109,7 @@ router.post('/login', async (req, res) => {
       return res.status(401).json({ error: 'invalid_credentials', message: mapAuthError('invalid_credentials'), attempts: st.count });
     }
 
-    const ok = validatePassword(user, password) || verifyPassword(password, user.password_hash);
+  const ok = validatePassword(user, password) || verifyPassword(password, user.password_hash);
     if (!ok) {
       const st = markFail(identity, ip);
       const status = st.count > MAX_ATTEMPTS ? 429 : 401;
@@ -120,8 +120,10 @@ router.post('/login', async (req, res) => {
       });
     }
 
-    clearFails(identity, ip);
-    const token = signToken(user.id, { username: user.username, email: user.email });
+  clearFails(identity, ip);
+  let roles = [];
+  try { roles = user.roles ? JSON.parse(user.roles) : []; } catch { roles = []; }
+  const token = signToken(user.id, { username: user.username, email: user.email, roles });
     return res.json({ token, user: { id: user.id, email: user.email, username: user.username } });
   } catch (e) {
     console.error('[auth/login] error', e);
