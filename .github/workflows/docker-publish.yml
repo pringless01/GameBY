@@ -10,7 +10,7 @@ jobs:
   docker:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: Login to GHCR
         uses: docker/login-action@v3
         with:
@@ -20,6 +20,7 @@ jobs:
       - name: Build & Push
         uses: docker/build-push-action@v6
         with:
-          context: .
+          context: ./server
+          file: ./server/Dockerfile
           push: true
           tags: ghcr.io/${{ github.repository_owner }}/gameby:latest

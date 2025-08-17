@@ -3,13 +3,15 @@
 // Amaç: Chat / trade / mentor / spam vb. kaynaklardan gelen ham olayları normalleştirip
 // reputation_events tablosuna atomic kayıt + kullanıcı trust_score güncelleme tetiklemek.
 
-import { initDb } from '../config/database.js';
-import { envConfig } from '../config/env.js';
-import { invalidateOnTrustChange } from '../cache/trustCaches.js';
-import { incReputationEvent, incCappedSkip, incUnknownType, incReputationDbError } from '../metrics/reputationMetrics.js';
+import crypto from 'crypto';
 import fs from 'fs';
 import path from 'path';
-import crypto from 'crypto';
+
+import { invalidateOnTrustChange } from '../cache/trustCaches.js';
+import { initDb } from '../config/database.js';
+import { envConfig } from '../config/env.js';
+import { incReputationEvent, incCappedSkip, incUnknownType, incReputationDbError } from '../metrics/reputationMetrics.js';
+
 
 // Event tipleri (genişletilebilir)
 export const ReputationEventType = {

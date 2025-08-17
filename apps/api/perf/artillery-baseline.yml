@@ -1,0 +1,68 @@
+config:
+  target: "http://127.0.0.1:3100"
+  phases:
+    - duration: 60
+      arrivalRate: 50
+      name: step-50
+    - duration: 60
+      arrivalRate: 100
+      name: step-100
+    - duration: 60
+      arrivalRate: 200
+      name: step-200
+  plugins:
+    metrics-by-endpoint: {}
+  ensure:
+    maxErrorRate: 1
+  variables:
+    username: "perf_user_{{ $randomString(6) }}"
+    password: "perf_pass_123"
+scenarios:
+  - name: baseline auth→activity→progress
+    weight: 3
+    flow:
+      - post:
+          url: "/api/auth/register"
+          json:
+            username: "{{ username }}"
+            password: "{{ password }}"
+          capture:
+            - json: "$.user.id"
+              as: userId
+      - post:
+          url: "/api/auth/login"
+          json:
+            username: "{{ username }}"
+            password: "{{ password }}"
+          capture:
+            - json: "$.token"
+              as: jwt
+      - think: 0.2
+      - post:
+          url: "/api/activity/chop-wood"
+          headers:
+            Authorization: "Bearer {{ jwt }}"
+      - get:
+          url: "/api/user/onboarding/progress"
+          headers:
+            Authorization: "Bearer {{ jwt }}"
+  - name: leaderboard smoke (offset)
+    weight: 1
+    flow:
+      - post:
+          url: "/api/auth/register"
+          json:
+            username: "lb_{{ $randomString(6) }}"
+            password: "x"
+      - post:
+          url: "/api/auth/login"
+          json:
+            username: "lb_{{ $prev.json.user.username || 'x' }}"
+            password: "x"
+          capture:
+            - json: "$.token"
+              as: jwt
+      - get:
+          url: "/api/user/leaderboard?limit=10&offset=0&rank=0"
+          headers:
+            Authorization: "Bearer {{ jwt }}"

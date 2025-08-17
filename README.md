@@ -1,5 +1,7 @@
 ## Agent Çalışma Durumu
 
+[Dokümantasyon için tıklayın](./docs/index.md)
+
 İlerleme: 20/20 (RC genişletme sprinti)
 - Tamamlananlar: T001–T009, N010 (Reputation Decay & Ağırlıklar – unit test, cron ve env anahtarları eklendi, migration hazır), N011 (Mentor Eşleştirme + Socket kanalları + rate-limit), N012 (Fraud Risk Skoru + IP/Device normalizasyonu)
 - BİTTİ: N013 Kontrat/Barter Güven Katmanı (escrow iskeleti + cancel-spam risk event)

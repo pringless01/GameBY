@@ -1,4 +1,5 @@
 import express from 'express';
+
 import { signToken } from '../config/jwt.js';
 import { authRequired } from '../middleware/auth.js';
 import {
@@ -58,18 +59,19 @@ const router = express.Router();
 
 // POST /api/auth/register
 router.post('/register', async (req, res) => {
-  const { email, username, password } = req.body || {};
-  if (!email || !username || !password) {
+  // Geriye dönük uyumluluk: email opsiyonel
+  const { email = null, username, password } = req.body || {};
+  if (!username || !password) {
     return res.status(400).json({ error: 'missing_fields', message: mapAuthError('missing_fields') });
   }
   try {
     const existing =
-      (await findByEmailOrUsername(email)) ||
+      (email ? await findByEmailOrUsername(email) : null) ||
       (await findByEmailOrUsername(username)) ||
       (await findUserByUsername(username));
 
     if (existing) {
-      if (existing.email && existing.email.toLowerCase() === email.toLowerCase()) {
+      if (email && existing.email && existing.email.toLowerCase() === email.toLowerCase()) {
         return res.status(409).json({ error: 'duplicate_email', message: mapAuthError('duplicate_email') });
       }
       if (existing.username && existing.username.toLowerCase() === username.toLowerCase()) {
@@ -77,9 +79,9 @@ router.post('/register', async (req, res) => {
       }
     }
 
-    const user = await createUser({ email, username, password });
-    const token = signToken(user.id, { username: user.username, email: user.email });
-    return res.status(201).json({ token, user: { id: user.id, email: user.email, username: user.username } });
+  const user = await createUser({ email, username, password });
+  const token = signToken(user.id, { username: user.username, email: user.email, roles: user.roles || [] });
+  return res.status(201).json({ token, user: { id: user.id, email: user.email, username: user.username, roles: user.roles || [] } });
   } catch (e) {
     console.error('[auth/register] error', e);
     return res.status(500).json({ error: 'server_error', message: mapAuthError('server_error') });
@@ -88,7 +90,10 @@ router.post('/register', async (req, res) => {
 
 // POST /api/auth/login  body: { identity, password }
 router.post('/login', async (req, res) => {
-  const { identity, password } = req.body || {};
+  // Geriye dönük uyumluluk: identity || username || email
+  const body = req.body || {};
+  const identity = body.identity || body.username || body.email;
+  const password = body.password;
   if (!identity || !password) {
     return res.status(400).json({ error: 'missing_fields', message: mapAuthError('missing_fields') });
   }
@@ -120,9 +125,11 @@ router.post('/login', async (req, res) => {
       });
     }
 
-    clearFails(identity, ip);
-    const token = signToken(user.id, { username: user.username, email: user.email });
-    return res.json({ token, user: { id: user.id, email: user.email, username: user.username } });
+  clearFails(identity, ip);
+  let roles = [];
+  if (user.roles) { try { roles = JSON.parse(user.roles); } catch { roles = []; } }
+  const token = signToken(user.id, { username: user.username, email: user.email, roles });
+  return res.json({ token, user: { id: user.id, email: user.email, username: user.username, roles } });
   } catch (e) {
     console.error('[auth/login] error', e);
     return res.status(500).json({ error: 'server_error', message: mapAuthError('server_error') });

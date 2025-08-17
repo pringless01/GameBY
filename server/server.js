@@ -1,40 +1,44 @@
-import express from 'express';
-import http from 'http';
-import { Server } from 'socket.io';
-import cors from 'cors';
-import { corsMiddleware } from './config/cors.js';
-import morgan from 'morgan';
-// Ortam değişkenleri için merkezi yükleme & doğrulama
-import { envConfig } from './config/env.js';
-import path from 'path';
 import fs from 'fs';
+import http from 'http';
+import path from 'path';
 import { fileURLToPath } from 'url';
-import { initDb, runMigration } from './config/database.js';
-import { leaderboardCache, trustAroundCache, dailyTrustCache, scheduleTrustCacheMaintenance } from './cache/trustCaches.js';
+
+import cors from 'cors';
+import express from 'express';
+import helmet from 'helmet';
+import morgan from 'morgan';
+import { register } from 'prom-client';
+import { Server } from 'socket.io';
+
 import { mentorsLbCache, mentorsRankCache, scheduleMentorCacheMaintenance } from './cache/mentorCaches.js';
 import { initRedisIfEnabled } from './cache/redisAdapter.js';
-import authRoutes from './routes/auth.js';
-import userRoutes from './routes/user.js';
-import contractRoutes from './routes/contract.js';
-import adminRoutes from './routes/admin.js';
-import roleRoutes from './routes/role.js';
-import mentorRoutes from './routes/mentor.js';
+import { leaderboardCache, trustAroundCache, dailyTrustCache, scheduleTrustCacheMaintenance } from './cache/trustCaches.js';
+import { corsMiddleware } from './config/cors.js';
+// Ortam değişkenleri için merkezi yükleme & doğrulama
+import { initDb, runMigration } from './config/database.js';
+import { envConfig } from './config/env.js';
+import { httpRequestDuration, getPercentiles } from './metrics/latencyMetrics.js';
+import { idempotencyMiddleware } from './middleware/idempotency.js';
+import { leaderboardHeader } from './middleware/leaderboardHeader.js';
+import { socketAuth } from './middleware/socketAuth.js';
 import activityRoutes from './routes/activity.js';
+import adminRoutes from './routes/admin.js';
+import authRoutes from './routes/auth.js';
+import contractRoutes from './routes/contract.js';
 import marketplaceRoutes from './routes/marketplace.js';
+import mentorRoutes from './routes/mentor.js';
 import reputationRoutes from './routes/reputation.js';
+import roleRoutes from './routes/role.js';
+import userRoutes from './routes/user.js';
+import { initBlacklist } from './security/tokenBlacklist.js';
+import { scheduleEconomySinkIfEnabled } from './services/economyService.js';
+import { rehydrateQueues } from './services/mentorService.js';
+import { scheduleDecayIfEnabled } from './services/reputationDecayService.js';
 import { registerChatNamespace } from './sockets/chatSocket.js';
 import { setIo } from './sockets/io.js';
-import { initBlacklist } from './security/tokenBlacklist.js';
-import { socketAuth } from './middleware/socketAuth.js';
-import { idempotencyMiddleware } from './middleware/idempotency.js';
-import helmet from 'helmet';
-import { rehydrateQueues } from './services/mentorService.js';
 import { getIo } from './sockets/io.js';
-import { scheduleDecayIfEnabled } from './services/reputationDecayService.js';
-import { scheduleEconomySinkIfEnabled } from './services/economyService.js';
-import { httpRequestDuration, getPercentiles } from './metrics/latencyMetrics.js';
-import { register } from 'prom-client';
-import { leaderboardHeader } from './middleware/leaderboardHeader.js';
+
+
 
 // Basic Prometheus-like app metrics (T008)
 const appMetrics = {

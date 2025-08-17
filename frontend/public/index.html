@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="/css/style.css">
     <link rel="stylesheet" href="/css/dashboard.css">
     <link rel="stylesheet" href="/css/navigation.css">
+    <link rel="stylesheet" href="/css/codara-intro.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -24,6 +25,26 @@
     <link rel="preload" href="/js/dashboard.js" as="script">
 </head>
 <body class="loading">
+        <!-- CODARA Splash Intro Overlay -->
+        <div id="codara-intro" class="codara-intro hidden" role="dialog" aria-modal="true" aria-label="CODARA intro">
+            <div class="stage">
+                <canvas id="spark"></canvas>
+                <div class="halo top"></div>
+                <div class="halo bottom"></div>
+
+                <div class="stack">
+                    <div class="mark" aria-label="Codara mark">
+                        <span class="brace">{</span><span class="c">C</span><span class="brace">}</span>
+                    </div>
+                    <div class="word" aria-label="Codara wordmark">
+                        <div id="brand" class="brand" data-text="CODARA">CODARA</div>
+                        <div class="tag">GAME</div>
+                    </div>
+                </div>
+
+                <div class="skip">Devam etmek için bir tuşa basın / tıklayın</div>
+            </div>
+        </div>
     <div class="mobile-container dashboard">
         
         <!-- Dashboard Header -->
@@ -384,6 +405,7 @@
     <script src="/js/socket-client.js"></script>
     <script src="/js/dashboard.js"></script>
     <script src="/js/utils.js"></script>
+    <script src="/js/codara-intro.js"></script>
 
     <!-- Service Worker for PWA -->
     <script>

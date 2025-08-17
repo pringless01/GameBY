@@ -1,0 +1,20 @@
+config:
+  target: "http://127.0.0.1:3000"
+  phases:
+    - duration: 30
+      arrivalRate: 2
+scenarios:
+  - name: health + auth roundtrip
+    flow:
+      - get:
+          url: "/health"
+      - post:
+          url: "/api/auth/register"
+          json:
+            email: "smoke_{{$randomNumber(10000,99999)}}@ex.com"
+            password: "P@ssw0rd!"
+      - post:
+          url: "/api/auth/login"
+          json:
+            email: "{{ last_response.body.email || 'smoke@example.com' }}"
+            password: "P@ssw0rd!"

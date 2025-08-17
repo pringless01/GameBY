@@ -1,0 +1,20 @@
+{
+  "all": true,
+  "reporter": ["text-summary", "lcov"],
+  "include": [
+    "routes/**/*.js",
+    "services/**/*.js",
+    "middleware/**/*.js",
+    "security/**/*.js",
+    "metrics/**/*.js",
+    "utils/**/*.js"
+  ],
+  "exclude": [
+    "server.js",
+    "tests/**",
+    "scripts/**",
+    "migrations/**",
+    "sockets/**",
+    "data/**"
+  ]
+}

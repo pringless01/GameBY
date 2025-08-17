@@ -16,7 +16,7 @@ jobs:
       ALLOWED_ORIGINS: ${{ secrets.ALLOWED_ORIGINS }}
       REDIS_URL: ${{ secrets.REDIS_URL }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: actions/setup-node@v4
         with:
           node-version: 20
@@ -60,7 +60,7 @@ jobs:
       ALLOWED_ORIGINS: ${{ secrets.ALLOWED_ORIGINS }}
       REDIS_URL: ${{ secrets.REDIS_URL }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: actions/setup-node@v4
         with:
           node-version: 22
@@ -91,7 +91,7 @@ jobs:
       ALLOWED_ORIGINS: ${{ secrets.ALLOWED_ORIGINS }}
       REDIS_URL: ${{ secrets.REDIS_URL }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           fetch-depth: 1
       - uses: actions/setup-node@v4
@@ -113,7 +113,7 @@ jobs:
   migrations_check:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: actions/setup-node@v4
         with:
           node-version: 20
