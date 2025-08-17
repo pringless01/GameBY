@@ -29,6 +29,9 @@ const schema = [
   { key:'CURSOR_AUTO_DEGRADE', default:'0', validate:v=>['0','1'].includes(v) },
   { key:'LB_RATE_WINDOW_MS', default:'15000', validate:v=>!isNaN(Number(v)) && Number(v)>=500 },
   { key:'LB_RATE_MAX', default:'10', validate:v=>!isNaN(Number(v)) && Number(v)>=1 },
+  // Ops Agent feature flags
+  { key:'AGENT_ENABLED', default:'0', validate:v=>['0','1'].includes(v) },
+  { key:'AGENT_CONFIG_PATH', default:'./gpt-5/config.json', validate:v=>typeof v==='string' && v.length>0 },
   // Cache backend
   { key:'CACHE_BACKEND', default:'memory', validate:v=>['memory','redis'].includes(v) },
   { key:'REDIS_URL' },

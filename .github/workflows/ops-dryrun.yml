@@ -1,0 +1,27 @@
+name: Ops Agent Dry Run
+
+on:
+  workflow_dispatch: {}
+  push:
+    paths:
+      - 'gpt-5/**'
+
+jobs:
+  dryrun:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: SelfTest (parser & helpers)
+        shell: pwsh
+        run: |
+          cd gpt-5
+          pwsh -NoLogo -NoProfile -File ./gpt-ops.ps1 -SelfTest
+
+      - name: OpenAI API Test (optional)
+        shell: pwsh
+        run: |
+          cd gpt-5
+          if (-not "$env:OPENAI_API_KEY") { Write-Host "OPENAI_API_KEY yok, atlanıyor"; exit 0 }
+          pwsh -NoLogo -NoProfile -File ./gpt-ops.ps1 -ApiTest

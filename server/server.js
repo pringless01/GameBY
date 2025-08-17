@@ -22,6 +22,7 @@ import mentorRoutes from './routes/mentor.js';
 import activityRoutes from './routes/activity.js';
 import marketplaceRoutes from './routes/marketplace.js';
 import reputationRoutes from './routes/reputation.js';
+import opsRoutes from './routes/ops.js';
 import { registerChatNamespace } from './sockets/chatSocket.js';
 import { setIo } from './sockets/io.js';
 import { initBlacklist } from './security/tokenBlacklist.js';
@@ -227,6 +228,8 @@ app.use('/api/mentor', mentorRoutes);
 app.use('/api/activity', activityRoutes);
 app.use('/api/marketplace', marketplaceRoutes);
 app.use('/api/reputation', reputationRoutes);
+// Admin ops (agent) - guarded by env flag inside route
+app.use('/api/ops', opsRoutes);
 
 // Serve frontend (optional quick integration)
 app.use(express.static(path.join(__dirname, '..', 'frontend', 'public')));
