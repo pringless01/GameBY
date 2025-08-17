@@ -1,15 +1,15 @@
 # Next Action: Monorepo: verify workspaces and package.json test scripts across apps/* and packages/*
 
-1. **Workspace Doğrulaması**: Monorepo'daki tüm workspace'leri tarayarak mevcut olanları ve yapılandırmalarını kontrol et. Her uygulama ve paket için gerekli olan workspace tanımlamalarını doğrula.
+1. **Workspace Kontrolü**: Tüm workspace'leri incele ve doğru yapılandırıldıklarından emin ol. Her bir proje için `package.json` dosyasını kontrol et.
 
-2. **package.json Dosyası Kontrolü**: `apps/*` ve `packages/*` dizinlerindeki tüm `package.json` dosyalarını incele. Her bir dosyanın doğru bağımlılıkları ve script'leri içerdiğinden emin ol.
+2. **Test Scriptlerini İnceleme**: `apps/*` ve `packages/*` dizinlerindeki her bir `package.json` dosyasındaki test scriptlerini not al ve geçerliliklerini kontrol et.
 
-3. **Test Script'lerinin Doğrulanması**: Her bir `package.json` dosyasında bulunan test script'lerini belirle. Bu script'lerin geçerli ve çalışır durumda olduğundan emin ol.
+3. **Test Scriptlerini Çalıştırma**: Belirlenen test scriptlerini çalıştırarak her bir uygulama ve paket için testlerin başarılı bir şekilde geçip geçmediğini doğrula.
 
-4. **Testlerin Çalıştırılması**: Bulunan test script'lerini çalıştırarak her bir uygulama ve paketin testlerinin başarılı bir şekilde geçtiğini doğrula.
+4. **Hata Raporlama**: Eğer herhangi bir test başarısız olursa, detayları içeren bir hata raporu hazırla ve ilgili proje dosyalarına ekle.
 
-5. **Raporlama**: Yapılan doğrulama ve test süreçlerinin sonuçlarını derleyerek bir rapor oluştur. Rapor, hangi workspace'lerin ve testlerin başarıyla geçtiğini içermelidir. 
+5. **Sonuçları Belgeleme**: Tüm test sonuçlarını ve gözlemleri içeren bir rapor oluştur ve bunu uygun bir dosyaya kaydet. 
 
-Bu adımların her biri, projenin sağlıklı bir şekilde çalışmasını sağlamak için önemlidir.
+Her adımda gerekli değişiklikler yapılacak ve süreç sonunda güncellemeler belgelenerek hafızaya eklenip raporlanacak.
 
-— Agent: GameBY Agent • 2025-08-17T00:19:02.920Z
+— Agent: GameBY Agent • 2025-08-17T00:19:50.140Z
