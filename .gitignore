@@ -40,3 +40,8 @@ Thumbs.db
 
 # Husky
 .husky/_
+
+# Extra guard for nested data path
+server/server/data/*.db
+server/server/data/*.sqlite
+server/server/data/*.db-journal
