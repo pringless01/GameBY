@@ -26,6 +26,16 @@ for ($i=0; $i -lt $max; $i++) {
 }
 if (-not $ok) { throw "API health check failed" }
 
+Write-Host "Waiting for Nginx..." -ForegroundColor Yellow
+$ok=$false
+for ($i=0; $i -lt $max; $i++) {
+  try {
+    $resp = Invoke-WebRequest -UseBasicParsing http://localhost/health -TimeoutSec 2
+    if ($resp.StatusCode -eq 200) { $ok=$true; break }
+  } catch { Start-Sleep -Seconds 1 }
+}
+if (-not $ok) { throw "Nginx health check failed" }
+
 Write-Host "Smoke test..." -ForegroundColor Yellow
 try {
   $resp = Invoke-WebRequest -UseBasicParsing http://localhost:3000/metrics -TimeoutSec 2
@@ -34,5 +44,13 @@ try {
   throw $_
 }
 
+try {
+  $resp = Invoke-WebRequest -UseBasicParsing http://localhost/ -TimeoutSec 3
+  if ($resp.StatusCode -ne 200) { throw "Frontend index not 200" }
+} catch {
+  throw $_
+}
+
 Write-Host "Deploy OK" -ForegroundColor Green
 Write-Host "Health: http://localhost:3000/health" -ForegroundColor DarkGreen
+Write-Host "Frontend: http://localhost/" -ForegroundColor DarkGreen
