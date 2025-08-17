@@ -1,3 +1,6 @@
+2025-08-16: Phase-4 domain hardening helpers added (shared-utils dates.clamp, cursor.safeBase64*). Lint/Test PASS. Report created.
+[2025-08-16] templates/CODEOWNERS/smoke/perf stub eklendi. PR: https://github.com/pringless01/GameBY/pull/16
+\n[2025-08-16] CI roll-up ve sweep artifact workflow’ları eklendi; haftalık hafıza özetleri otomatikleşti.
 # Project Facts
 - Repo: pringless01/GameBY
 - Ana branch: main
@@ -5,3 +8,1338 @@
 	- Root lint: npm run lint
 	- API test: npm --prefix apps/api/src test
 	- API coverage: npm --prefix apps/api/src run coverage
+
+
+## Repo snapshot (kısa)
+- Monorepo (Node >=18, ESM): apps/api, apps/web, packages/shared-*, docs/, infra/, server/ mevcut.
+- API workspace: `apps/api/src` (oyun-backend); testler unit+integration yoğun şekilde burada.
+- Frontend: `apps/web` (workspaces) ve ayrıca legacy `frontend/` PWA statik içerik.
+- Shared paketler: `packages/shared-utils`, `packages/shared-types`.
+- Backend eski klasör yapısı da mevcut: `server/` (routes/services/cache/security/utils/...)
+- Kritik kurallar: importlarda .js uzantısı, ESM modülü, controller-first; middleware yolu tekil: `apps/api/src/http/middleware/auth.js`.
+- Leaderboard kuralları ve header konvansiyonu: `.github/copilot-instructions.md` dokümanındaki sabit başlıklar korunmalı.
+
+## Workspaces ve scriptler (özet)
+- Root workspaces: apps/*, apps/api/src, packages/*
+- Root scripts:
+	- lint, lint:fix, test (workspaces), smoke:local, dc:up, dc:down, coverage, ci:all
+- apps/api/src (oyun-backend):
+	- test kompozisyonu: unit (cursor-security, reputation-decay, onboarding, cache, auth-refresh) + integration (contracts, funds, barter, trustcap, leaderboard, mentor-flow, fraud-risk, contract-risk, abuse-stats, weak-secret, ws-auth, marketplace-idem)
+- CI workflows: ci.yml (root workspaces), ci-full.yml (server pipeline), memory-rollup.yml (günlük roll-up)
+
+## Açık işler
+- Domain split: economy, fraud, chat mantığını service/repo katmanlarına indirmek (davranış değiştirmeden).
+- ESLint modül sınırlarını sertleştirmek (no-cycle, no-restricted-imports; import/order; no-unused-vars istisnaları).
+- Shared utils/types genişletme: pagination, dates, hmac wrapper; DTO ekleri (davranışsız).
+- CI rehberi: env secret min uzunlukları, report-only check; compose smoke ve memory roll-up workflow’ları.
+- Dokümantasyon güncelleme: architecture/index/security + weekly report ve sweep raporu artifact’i.
+
+## Kalite durumu (2025-08-16)
+- Lint: PASS (0 warning; root `npm run lint`).
+- Test: PASS (apps/api/src tüm unit+integration). Bazı testler env için `CURSOR_SECRET:weak/invalid` uyarılarını beklenen şekilde logluyor.
+- Güvenlik: `npm ci` sonrası 2 low severity vulnerability (npm audit raporuna göre) — davranış dışı, izlemeye alındı.
+
+### Notlar
+- Module Boundaries enforced: import/no-cycle + no-restricted-imports kuralları root ESLint’e eklendi (davranış değişimi yok).
+- Economy: modules/economy altında facade (economy.service.js) hazır; unit test eklendi (tests/unit/economy.service.test.js). Tam test suite PASS.
+
+---
+- [2025-08-16 12:00] memory/bootstrap: İlk okuma & 5 maddelik özet raporu eklendi (docs/reports/2025-08-16_bootstrap.md).
+- [2025-08-16 12:10] status/next-actions: Run workflow adımı Blocked olarak not edildi; rapor eklendi (docs/reports/2025-08-16_run-workflow.md).
+- [2025-08-16 12:18] memory/project_facts: Repo workspaces, scriptler ve CI özetleri eklendi (docs/reports/2025-08-16_project-facts.md).
+- [2025-08-16 12:26] docs/readme: Hafıza Sistemi bölümü README.md’ye eklendi (docs/reports/2025-08-16_readme-memory.md).
+ - [2025-08-16 12:40] closure: Next Actions temizlendi; final rapor yazıldı (docs/reports/2025-08-16_final.md). Lint/Test yeşil.
+ - [2025-08-16 13:00] memory/bootstrap: Özet güncellendi; önceki bootstrap arşivlendi (docs/archive/2025-08-16_bootstrap.prev.md).
+ - [2025-08-16 13:05] fraud/unit: Fraud servisine repo stub ile birim test eklendi; lint/test yeşil (commit d4e5036). Rapor: docs/reports/2025-08-16_fraud-service-unit.md
+ - [2025-08-16 13:15] memory/bootstrap: Mevcut durum okundu, 5 maddelik özet bootstrap raporuna eklendi
+ - [2025-08-16 13:20] eslint/boundaries: Module boundary kuralları doğrulandı - ihlal yok, lint+test PASS
+ - [2025-08-16 13:25] docs/update: architecture/index/security güncellendi, haftalık rapor oluşturuldu - lint+test PASS
+ - [2025-08-16 13:30] ci/workflow: GitHub Actions workflows doğrulandı, memory rollup test edildi - tamamen operasyonel
+ - [2025-08-16 13:15] shared-utils/types: Pagination helpers (normalizeLimit/Offset) ve PaginationParams DTO eklendi; davranış değişimi yok. Rapor: docs/reports/2025-08-16_shared-utils-types.md
+
+- [2025-08-16 14:10] memory/bootstrap: Rapor güncellendi; Next Actions roadmap'tan seed edildi (docs/reports/2025-08-16_bootstrap.md)
+
+ - [2025-08-16T06:52:00Z] env/check: scripts/print-env-check.js eklendi (rapor-only); status Phase-2 madde tamamlandı.
+ - [2025-08-16T06:52:10Z] memory: env rehberi raporu oluşturuldu (docs/reports/2025-08-16_env-rehberi-scripts-print-env-check-js-rapor-only.md).
+
+- [2025-08-16T06:37:28.367Z] bootstrap summary appended
+- [2025-08-16T06:37:30.480Z] bootstrap summary appended
+- [2025-08-16T06:37:32.586Z] bootstrap summary appended
+- [2025-08-16T06:37:34.694Z] bootstrap summary appended
+- [2025-08-16T06:37:36.798Z] bootstrap summary appended
+- [2025-08-16T06:37:39.022Z] bootstrap summary appended
+- [2025-08-16T06:37:41.144Z] bootstrap summary appended
+- [2025-08-16T06:37:43.241Z] bootstrap summary appended
+- [2025-08-16T06:37:45.370Z] bootstrap summary appended
+- [2025-08-16T06:37:47.464Z] bootstrap summary appended
+- [2025-08-16T06:37:49.571Z] bootstrap summary appended
+- [2025-08-16T06:37:51.660Z] bootstrap summary appended
+- [2025-08-16T06:37:53.791Z] bootstrap summary appended
+- [2025-08-16T06:37:55.886Z] bootstrap summary appended
+- [2025-08-16T06:37:58.003Z] bootstrap summary appended
+- [2025-08-16T06:38:00.148Z] bootstrap summary appended
+- [2025-08-16T06:38:02.291Z] bootstrap summary appended
+- [2025-08-16T06:38:04.430Z] bootstrap summary appended
+- [2025-08-16T06:38:06.626Z] bootstrap summary appended
+- [2025-08-16T06:38:08.925Z] bootstrap summary appended
+- [2025-08-16T06:38:11.050Z] bootstrap summary appended
+- [2025-08-16T06:38:13.186Z] bootstrap summary appended
+- [2025-08-16T06:38:15.325Z] bootstrap summary appended
+- [2025-08-16T06:38:17.444Z] bootstrap summary appended
+- [2025-08-16T06:38:19.657Z] bootstrap summary appended
+- [2025-08-16T06:38:21.778Z] bootstrap summary appended
+- [2025-08-16T06:38:24.047Z] bootstrap summary appended
+- [2025-08-16T06:38:26.252Z] bootstrap summary appended
+- [2025-08-16T06:38:28.459Z] bootstrap summary appended
+- [2025-08-16T06:38:30.629Z] bootstrap summary appended
+- [2025-08-16T06:38:32.704Z] bootstrap summary appended
+- [2025-08-16T06:38:34.836Z] bootstrap summary appended
+- [2025-08-16T06:38:36.917Z] bootstrap summary appended
+- [2025-08-16T06:38:39.042Z] bootstrap summary appended
+- [2025-08-16T06:38:41.140Z] bootstrap summary appended
+- [2025-08-16T06:38:43.226Z] bootstrap summary appended
+- [2025-08-16T06:38:45.329Z] bootstrap summary appended
+- [2025-08-16T06:38:47.395Z] bootstrap summary appended
+- [2025-08-16T06:38:49.502Z] bootstrap summary appended
+- [2025-08-16T06:38:51.619Z] bootstrap summary appended
+- [2025-08-16T06:38:53.711Z] bootstrap summary appended
+- [2025-08-16T06:38:55.843Z] bootstrap summary appended
+- [2025-08-16T06:38:57.954Z] bootstrap summary appended
+- [2025-08-16T06:39:00.163Z] bootstrap summary appended
+- [2025-08-16T06:39:02.286Z] bootstrap summary appended
+- [2025-08-16T06:39:04.398Z] bootstrap summary appended
+- [2025-08-16T06:39:06.521Z] bootstrap summary appended
+- [2025-08-16T06:39:08.638Z] bootstrap summary appended
+- [2025-08-16T06:39:10.756Z] bootstrap summary appended
+- [2025-08-16T06:39:12.844Z] bootstrap summary appended
+- [2025-08-16T06:39:14.948Z] bootstrap summary appended
+- [2025-08-16T06:39:17.246Z] bootstrap summary appended
+- [2025-08-16T06:39:19.632Z] bootstrap summary appended
+- [2025-08-16T06:39:21.767Z] bootstrap summary appended
+- [2025-08-16T06:39:41.422Z] bootstrap summary appended
+- [2025-08-16T06:39:43.498Z] bootstrap summary appended
+- [2025-08-16T06:39:45.586Z] bootstrap summary appended
+- [2025-08-16T06:39:47.705Z] bootstrap summary appended
+- [2025-08-16T06:39:49.899Z] bootstrap summary appended
+- [2025-08-16T06:39:52.029Z] bootstrap summary appended
+- [2025-08-16T06:39:54.154Z] bootstrap summary appended
+- [2025-08-16T06:39:56.289Z] bootstrap summary appended
+- [2025-08-16T06:39:58.383Z] bootstrap summary appended
+- [2025-08-16T06:40:00.550Z] bootstrap summary appended
+- [2025-08-16T06:40:02.831Z] bootstrap summary appended
+- [2025-08-16T06:40:04.931Z] bootstrap summary appended
+- [2025-08-16T06:40:07.205Z] bootstrap summary appended
+- [2025-08-16T06:40:09.391Z] bootstrap summary appended
+- [2025-08-16T06:40:11.550Z] bootstrap summary appended
+- [2025-08-16T06:40:13.723Z] bootstrap summary appended
+- [2025-08-16T06:40:15.983Z] bootstrap summary appended
+- [2025-08-16T06:40:18.099Z] bootstrap summary appended
+- [2025-08-16T06:40:20.211Z] bootstrap summary appended
+- [2025-08-16T06:40:22.302Z] bootstrap summary appended
+- [2025-08-16T06:40:24.445Z] bootstrap summary appended
+- [2025-08-16T06:40:26.617Z] bootstrap summary appended
+- [2025-08-16T06:40:28.765Z] bootstrap summary appended
+- [2025-08-16T06:40:30.893Z] bootstrap summary appended
+- [2025-08-16T06:40:33.021Z] bootstrap summary appended
+- [2025-08-16T06:40:35.120Z] bootstrap summary appended
+- [2025-08-16T06:40:37.281Z] bootstrap summary appended
+- [2025-08-16T06:40:39.490Z] bootstrap summary appended
+- [2025-08-16T06:41:14.878Z] bootstrap summary appended
+- [2025-08-16T06:41:16.950Z] bootstrap summary appended
+- [2025-08-16T06:41:19.069Z] bootstrap summary appended
+- [2025-08-16T06:41:21.136Z] bootstrap summary appended
+- [2025-08-16T06:41:23.202Z] bootstrap summary appended
+- [2025-08-16T06:41:25.326Z] bootstrap summary appended
+- [2025-08-16T06:41:27.403Z] bootstrap summary appended
+- [2025-08-16T06:41:29.519Z] bootstrap summary appended
+- [2025-08-16T06:41:31.681Z] bootstrap summary appended
+- [2025-08-16T06:41:33.863Z] bootstrap summary appended
+- [2025-08-16T06:41:36.112Z] bootstrap summary appended
+- [2025-08-16T06:41:38.267Z] bootstrap summary appended
+- [2025-08-16T06:41:40.397Z] bootstrap summary appended
+- [2025-08-16T06:41:42.541Z] bootstrap summary appended
+- [2025-08-16T06:41:44.764Z] bootstrap summary appended
+- [2025-08-16T06:41:46.892Z] bootstrap summary appended
+- [2025-08-16T06:41:49.003Z] bootstrap summary appended
+- [2025-08-16T06:41:51.157Z] bootstrap summary appended
+- [2025-08-16T06:41:53.292Z] bootstrap summary appended
+- [2025-08-16T06:41:55.433Z] bootstrap summary appended
+- [2025-08-16T06:41:57.564Z] bootstrap summary appended
+- [2025-08-16T06:42:26.496Z] bootstrap summary appended
+- [2025-08-16T06:42:28.583Z] bootstrap summary appended
+- [2025-08-16T06:42:30.671Z] bootstrap summary appended
+- [2025-08-16T06:42:32.793Z] bootstrap summary appended
+- [2025-08-16T06:42:34.858Z] bootstrap summary appended
+- [2025-08-16T06:42:37.000Z] bootstrap summary appended
+- [2025-08-16T06:42:39.191Z] bootstrap summary appended
+- [2025-08-16T06:42:41.276Z] bootstrap summary appended
+- [2025-08-16T06:42:43.349Z] bootstrap summary appended
+- [2025-08-16T06:42:45.455Z] bootstrap summary appended
+- [2025-08-16T06:42:47.575Z] bootstrap summary appended
+- [2025-08-16T06:42:49.656Z] bootstrap summary appended
+- [2025-08-16T06:42:51.720Z] bootstrap summary appended
+- [2025-08-16T06:42:53.830Z] bootstrap summary appended
+- [2025-08-16T06:42:55.915Z] bootstrap summary appended
+- [2025-08-16T06:42:57.983Z] bootstrap summary appended
+- [2025-08-16T06:43:00.096Z] bootstrap summary appended
+- [2025-08-16T06:43:02.236Z] bootstrap summary appended
+- [2025-08-16T06:43:04.503Z] bootstrap summary appended
+- [2025-08-16T06:43:06.836Z] bootstrap summary appended
+- [2025-08-16T06:43:09.226Z] bootstrap summary appended
+- [2025-08-16T06:43:11.341Z] bootstrap summary appended
+- [2025-08-16T06:43:47.641Z] bootstrap summary appended
+- [2025-08-16T06:43:49.740Z] bootstrap summary appended
+- [2025-08-16T06:43:51.852Z] bootstrap summary appended
+- [2025-08-16T06:43:53.946Z] bootstrap summary appended
+- [2025-08-16T06:43:56.009Z] bootstrap summary appended
+- [2025-08-16T06:43:58.077Z] bootstrap summary appended
+- [2025-08-16T06:44:00.148Z] bootstrap summary appended
+- [2025-08-16T06:44:02.242Z] bootstrap summary appended
+- [2025-08-16T06:44:04.336Z] bootstrap summary appended
+- [2025-08-16T06:44:06.471Z] bootstrap summary appended
+- [2025-08-16T06:44:08.752Z] bootstrap summary appended
+- [2025-08-16T06:44:11.100Z] bootstrap summary appended
+- [2025-08-16T06:44:13.282Z] bootstrap summary appended
+- [2025-08-16T06:44:15.573Z] bootstrap summary appended
+- [2025-08-16T06:44:17.772Z] bootstrap summary appended
+- [2025-08-16T06:44:48.142Z] bootstrap summary appended
+- [2025-08-16T06:44:50.259Z] bootstrap summary appended
+- [2025-08-16T06:44:52.358Z] bootstrap summary appended
+- [2025-08-16T06:44:54.469Z] bootstrap summary appended
+- [2025-08-16T06:44:56.562Z] bootstrap summary appended
+- [2025-08-16T06:44:58.630Z] bootstrap summary appended
+- [2025-08-16T06:45:00.762Z] bootstrap summary appended
+- [2025-08-16T06:45:02.861Z] bootstrap summary appended
+- [2025-08-16T06:45:04.964Z] bootstrap summary appended
+- [2025-08-16T06:45:07.158Z] bootstrap summary appended
+- [2025-08-16T06:45:09.316Z] bootstrap summary appended
+- [2025-08-16T06:45:11.522Z] bootstrap summary appended
+- [2025-08-16T06:45:13.595Z] bootstrap summary appended
+- [2025-08-16T06:45:15.681Z] bootstrap summary appended
+- [2025-08-16T06:45:17.789Z] bootstrap summary appended
+- [2025-08-16T06:45:19.870Z] bootstrap summary appended
+- [2025-08-16T06:45:21.950Z] bootstrap summary appended
+- [2025-08-16T06:45:24.006Z] bootstrap summary appended
+- [2025-08-16T06:45:26.104Z] bootstrap summary appended
+- [2025-08-16T06:45:28.182Z] bootstrap summary appended
+- [2025-08-16T06:45:30.269Z] bootstrap summary appended
+- [2025-08-16T06:45:32.336Z] bootstrap summary appended
+- [2025-08-16T06:45:34.416Z] bootstrap summary appended
+- [2025-08-16T06:45:36.532Z] bootstrap summary appended
+- [2025-08-16T06:45:38.615Z] bootstrap summary appended
+- [2025-08-16T06:45:40.708Z] bootstrap summary appended
+- [2025-08-16T06:45:42.791Z] bootstrap summary appended
+- [2025-08-16T06:45:44.883Z] bootstrap summary appended
+- [2025-08-16T06:45:46.967Z] bootstrap summary appended
+- [2025-08-16T06:45:49.059Z] bootstrap summary appended
+- [2025-08-16T06:45:51.275Z] bootstrap summary appended
+- [2025-08-16T06:45:53.339Z] bootstrap summary appended
+- [2025-08-16T06:45:55.415Z] bootstrap summary appended
+- [2025-08-16T06:45:57.517Z] bootstrap summary appended
+- [2025-08-16T06:45:59.601Z] bootstrap summary appended
+- [2025-08-16T06:46:01.692Z] bootstrap summary appended
+- [2025-08-16T06:46:03.768Z] bootstrap summary appended
+- [2025-08-16T06:46:05.850Z] bootstrap summary appended
+- [2025-08-16T06:46:08.124Z] bootstrap summary appended
+- [2025-08-16T06:46:10.273Z] bootstrap summary appended
+- [2025-08-16T06:46:12.389Z] bootstrap summary appended
+- [2025-08-16T06:46:14.468Z] bootstrap summary appended
+- [2025-08-16T06:46:16.576Z] bootstrap summary appended
+- [2025-08-16T06:46:18.728Z] bootstrap summary appended
+- [2025-08-16T06:46:20.832Z] bootstrap summary appended
+- [2025-08-16T06:46:22.934Z] bootstrap summary appended
+- [2025-08-16T06:46:25.034Z] bootstrap summary appended
+- [2025-08-16T06:46:27.118Z] bootstrap summary appended
+- [2025-08-16T06:46:29.199Z] bootstrap summary appended
+- [2025-08-16T06:46:31.292Z] bootstrap summary appended
+- [2025-08-16T06:46:33.372Z] bootstrap summary appended
+- [2025-08-16T06:46:35.452Z] bootstrap summary appended
+- [2025-08-16T06:46:37.577Z] bootstrap summary appended
+- [2025-08-16T06:46:39.663Z] bootstrap summary appended
+- [2025-08-16T06:46:41.754Z] bootstrap summary appended
+- [2025-08-16T06:46:43.827Z] bootstrap summary appended
+- [2025-08-16T06:46:45.907Z] bootstrap summary appended
+- [2025-08-16T06:46:48.005Z] bootstrap summary appended
+- [2025-08-16T06:46:50.127Z] bootstrap summary appended
+- [2025-08-16T06:46:52.315Z] bootstrap summary appended
+- [2025-08-16T06:46:54.391Z] bootstrap summary appended
+- [2025-08-16T06:46:56.487Z] bootstrap summary appended
+- [2025-08-16T06:46:58.606Z] bootstrap summary appended
+- [2025-08-16T06:47:00.685Z] bootstrap summary appended
+- [2025-08-16T06:47:02.795Z] bootstrap summary appended
+- [2025-08-16T06:47:04.868Z] bootstrap summary appended
+- [2025-08-16T06:47:07.086Z] bootstrap summary appended
+- [2025-08-16T06:47:09.281Z] bootstrap summary appended
+- [2025-08-16T06:47:11.392Z] bootstrap summary appended
+- [2025-08-16T06:47:13.502Z] bootstrap summary appended
+- [2025-08-16T06:47:15.630Z] bootstrap summary appended
+- [2025-08-16T06:47:17.741Z] bootstrap summary appended
+- [2025-08-16T06:47:19.830Z] bootstrap summary appended
+- [2025-08-16T06:47:21.941Z] bootstrap summary appended
+- [2025-08-16T06:47:24.068Z] bootstrap summary appended
+- [2025-08-16T06:47:26.199Z] bootstrap summary appended
+- [2025-08-16T06:47:28.326Z] bootstrap summary appended
+- [2025-08-16T06:47:30.464Z] bootstrap summary appended
+- [2025-08-16T06:47:32.666Z] bootstrap summary appended
+- [2025-08-16T06:47:34.775Z] bootstrap summary appended
+- [2025-08-16T06:47:36.852Z] bootstrap summary appended
+- [2025-08-16T06:47:38.938Z] bootstrap summary appended
+- [2025-08-16T06:47:41.029Z] bootstrap summary appended
+- [2025-08-16T06:47:43.109Z] bootstrap summary appended
+- [2025-08-16T06:47:45.213Z] bootstrap summary appended
+- [2025-08-16T06:47:47.319Z] bootstrap summary appended
+- [2025-08-16T06:47:49.432Z] bootstrap summary appended
+- [2025-08-16T06:47:51.510Z] bootstrap summary appended
+- [2025-08-16T06:47:53.634Z] bootstrap summary appended
+- [2025-08-16T06:47:55.729Z] bootstrap summary appended
+- [2025-08-16T06:47:57.819Z] bootstrap summary appended
+- [2025-08-16T06:47:59.941Z] bootstrap summary appended
+- [2025-08-16T06:48:02.038Z] bootstrap summary appended
+- [2025-08-16T06:48:04.127Z] bootstrap summary appended
+- [2025-08-16T06:48:06.234Z] bootstrap summary appended
+- [2025-08-16T06:48:08.493Z] bootstrap summary appended
+- [2025-08-16T06:48:10.730Z] bootstrap summary appended
+- [2025-08-16T06:48:12.806Z] bootstrap summary appended
+- [2025-08-16T06:48:15.038Z] bootstrap summary appended
+- [2025-08-16T06:48:17.262Z] bootstrap summary appended
+- [2025-08-16T06:48:19.389Z] bootstrap summary appended
+- [2025-08-16T06:48:21.538Z] bootstrap summary appended
+- [2025-08-16T06:48:23.692Z] bootstrap summary appended
+- [2025-08-16T06:48:59.050Z] bootstrap summary appended
+- [2025-08-16T06:49:01.250Z] bootstrap summary appended
+- [2025-08-16T06:49:03.315Z] bootstrap summary appended
+- [2025-08-16T06:49:05.420Z] bootstrap summary appended
+- [2025-08-16T06:49:07.678Z] bootstrap summary appended
+- [2025-08-16T06:49:09.820Z] bootstrap summary appended
+- [2025-08-16T06:49:12.060Z] bootstrap summary appended
+- [2025-08-16T06:49:14.167Z] bootstrap summary appended
+- [2025-08-16T06:49:16.261Z] bootstrap summary appended
+- [2025-08-16T06:49:18.387Z] bootstrap summary appended
+- [2025-08-16T06:49:20.507Z] bootstrap summary appended
+- [2025-08-16T06:49:22.600Z] bootstrap summary appended
+- [2025-08-16T06:49:24.681Z] bootstrap summary appended
+- [2025-08-16T06:49:26.786Z] bootstrap summary appended
+- [2025-08-16T06:49:28.889Z] bootstrap summary appended
+- [2025-08-16T06:49:30.975Z] bootstrap summary appended
+- [2025-08-16T06:49:33.056Z] bootstrap summary appended
+- [2025-08-16T06:49:35.123Z] bootstrap summary appended
+- [2025-08-16T06:49:37.254Z] bootstrap summary appended
+- [2025-08-16T06:49:39.367Z] bootstrap summary appended
+- [2025-08-16T06:49:41.498Z] bootstrap summary appended
+- [2025-08-16T06:50:06.559Z] bootstrap summary appended
+- [2025-08-16T06:50:41.880Z] bootstrap summary appended
+- [2025-08-16T06:51:01.497Z] bootstrap summary appended
+- [2025-08-16T06:51:33.860Z] bootstrap summary appended
+- [2025-08-16T07:12:14.397Z] bootstrap summary appended
+- [2025-08-16T07:12:42.261Z] mvp-haf-za-dosyalar-roll-up-action-pr-ablonlar-: step advanced (lint/test PASS)
+- [2025-08-16T08:33:44.631Z] bootstrap summary appended
+- [2025-08-16T08:34:12.915Z] mvp-haf-za-dosyalar-roll-up-action-pr-ablonlar-: step advanced (lint/test PASS)
+- [2025-08-16T08:43:27.739Z] bootstrap summary appended
+- [2025-08-16T08:44:17.267Z] bootstrap summary appended
+- [2025-08-16T08:44:32.624Z] bootstrap summary appended
+- [2025-08-16T08:44:40.644Z] bootstrap summary appended
+- [2025-08-16T08:45:08.587Z] mvp-haf-za-dosyalar-roll-up-action-pr-ablonlar-: step advanced (lint/test PASS)
+- [2025-08-16T08:45:40.914Z] bootstrap summary appended
+- [2025-08-16T08:46:08.891Z] mvp-haf-za-dosyalar-roll-up-action-pr-ablonlar-: step advanced (lint/test PASS)
+- [2025-08-16T08:46:40.088Z] bootstrap summary appended
+- [2025-08-16T08:51:41.118Z] bootstrap summary appended
+- [2025-08-16T08:52:10.554Z] mvp-haf-za-dosyalar-roll-up-action-pr-ablonlar-: step advanced (lint/test PASS)
+- [2025-08-16T08:55:43.044Z] bootstrap summary appended
+- [2025-08-16T08:56:10.956Z] mvp-haf-za-dosyalar-roll-up-action-pr-ablonlar-: step advanced (lint/test PASS)
+- [2025-08-16T08:59:15.855Z] bootstrap summary appended
+- [2025-08-16T08:59:47.343Z] mvp-haf-za-dosyalar-roll-up-action-pr-ablonlar-: step advanced (lint/test PASS)
+- [2025-08-16T09:01:49.589Z] bootstrap summary appended
+- [2025-08-16T09:02:22.714Z] mvp-haf-za-dosyalar-roll-up-action-pr-ablonlar-: step advanced (lint/test PASS)
+- [2025-08-16T09:02:46.017Z] bootstrap summary appended
+- [2025-08-16T09:03:18.073Z] mvp-haf-za-dosyalar-roll-up-action-pr-ablonlar-: step advanced (lint/test PASS)
+- [2025-08-16T09:11:34.658Z] bootstrap summary appended
+- [2025-08-16T09:12:06.259Z] mvp-haf-za-dosyalar-roll-up-action-pr-ablonlar-: step advanced (lint/test PASS)
+- [2025-08-16T09:13:49.829Z] bootstrap summary appended
+- [2025-08-16T09:14:22.498Z] test-performance-analysis-ve-optimization-i-in-leaderboard-cursor-sisteminde-complex-algorithm-geli-tir: step advanced (lint/test PASS)
+- [2025-08-16T09:17:26.405Z] bootstrap summary appended
+- [2025-08-16T09:17:57.588Z] mvp-haf-za-dosyalar-roll-up-action-pr-ablonlar-: step advanced (lint/test PASS)
+- [2025-08-16T09:18:28.152Z] bootstrap summary appended
+- [2025-08-16T09:19:00.254Z] mvp-haf-za-dosyalar-roll-up-action-pr-ablonlar-: step advanced (lint/test PASS)
+- [2025-08-16T09:19:09.069Z] bootstrap summary appended
+- [2025-08-16T09:19:40.141Z] mvp-haf-za-dosyalar-roll-up-action-pr-ablonlar-: step advanced (lint/test PASS)
+- [2025-08-16T09:19:51.603Z] bootstrap summary appended
+- [2025-08-16T09:20:23.614Z] mvp-haf-za-dosyalar-roll-up-action-pr-ablonlar-: step advanced (lint/test PASS)
+- [2025-08-16T09:20:36.045Z] bootstrap summary appended
+- [2025-08-16T09:21:09.606Z] mvp-haf-za-dosyalar-roll-up-action-pr-ablonlar-: step advanced (lint/test PASS)
+- [2025-08-16T09:21:20.723Z] bootstrap summary appended
+- [2025-08-16T09:21:54.364Z] mvp-haf-za-dosyalar-roll-up-action-pr-ablonlar-: step advanced (lint/test PASS)
+- [2025-08-16T09:22:06.771Z] bootstrap summary appended
+- [2025-08-16T09:22:40.158Z] mvp-haf-za-dosyalar-roll-up-action-pr-ablonlar-: step advanced (lint/test PASS)
+- [2025-08-16T09:22:48.757Z] bootstrap summary appended
+- [2025-08-16T09:23:17.531Z] mvp-haf-za-dosyalar-roll-up-action-pr-ablonlar-: step advanced (lint/test PASS)
+- [2025-08-16T09:23:26.067Z] bootstrap summary appended
+- [2025-08-16T09:23:58.805Z] mvp-haf-za-dosyalar-roll-up-action-pr-ablonlar-: step advanced (lint/test PASS)
+- [2025-08-16T09:24:08.251Z] bootstrap summary appended
+- [2025-08-16T09:24:38.672Z] mvp-haf-za-dosyalar-roll-up-action-pr-ablonlar-: step advanced (lint/test PASS)
+- [2025-08-16T09:24:47.633Z] bootstrap summary appended
+- [2025-08-16T09:25:18.160Z] mvp-haf-za-dosyalar-roll-up-action-pr-ablonlar-: step advanced (lint/test PASS)
+- [2025-08-16T09:25:26.763Z] bootstrap summary appended
+- [2025-08-16T09:25:57.732Z] mvp-haf-za-dosyalar-roll-up-action-pr-ablonlar-: step advanced (lint/test PASS)
+- [2025-08-16T09:26:06.163Z] bootstrap summary appended
+- [2025-08-16T09:26:35.721Z] mvp-haf-za-dosyalar-roll-up-action-pr-ablonlar-: step advanced (lint/test PASS)
+- [2025-08-16T09:26:45.260Z] bootstrap summary appended
+- [2025-08-16T09:55:27.887Z] bootstrap summary appended
+- [2025-08-16T09:55:58.349Z] security-codeql-trivy-sbom-report-only-: step advanced (lint/test PASS)
+- [2025-08-16T09:56:14.517Z] bootstrap summary appended
+- [2025-08-16T10:04:51.888Z] bootstrap summary appended
+- [2025-08-16T10:05:22.431Z] mvp-haf-za-dosyalar-roll-up-action-pr-ablonlar-: step advanced (lint/test PASS)
+- [2025-08-16T10:05:30.829Z] bootstrap summary appended
+- [2025-08-16T10:06:05.143Z] mvp-haf-za-dosyalar-roll-up-action-pr-ablonlar-: step advanced (lint/test PASS)
+- [2025-08-16T10:06:13.070Z] bootstrap summary appended
+- [2025-08-16T10:06:43.726Z] mvp-haf-za-dosyalar-roll-up-action-pr-ablonlar-: step advanced (lint/test PASS)
+- [2025-08-16T10:06:52.347Z] bootstrap summary appended
+- [2025-08-16T10:07:23.639Z] mvp-haf-za-dosyalar-roll-up-action-pr-ablonlar-: step advanced (lint/test PASS)
+- [2025-08-16T10:07:34.616Z] bootstrap summary appended
+- [2025-08-16T10:08:06.934Z] mvp-haf-za-dosyalar-roll-up-action-pr-ablonlar-: step advanced (lint/test PASS)
+- [2025-08-16T10:08:15.986Z] bootstrap summary appended
+- [2025-08-16T10:08:48.799Z] mvp-haf-za-dosyalar-roll-up-action-pr-ablonlar-: step advanced (lint/test PASS)
+- [2025-08-16T10:08:58.010Z] bootstrap summary appended
+- [2025-08-16T10:09:33.563Z] mvp-haf-za-dosyalar-roll-up-action-pr-ablonlar-: step advanced (lint/test PASS)
+- [2025-08-16T10:09:42.584Z] bootstrap summary appended
+- [2025-08-16T10:10:16.103Z] mvp-haf-za-dosyalar-roll-up-action-pr-ablonlar-: step advanced (lint/test PASS)
+- [2025-08-16T10:10:24.805Z] bootstrap summary appended
+- [2025-08-16T10:10:58.400Z] mvp-haf-za-dosyalar-roll-up-action-pr-ablonlar-: step advanced (lint/test PASS)
+- [2025-08-16T10:11:06.803Z] bootstrap summary appended
+- [2025-08-16T10:11:37.062Z] mvp-haf-za-dosyalar-roll-up-action-pr-ablonlar-: step advanced (lint/test PASS)
+- [2025-08-16T10:11:46.896Z] bootstrap summary appended
+- [2025-08-16T10:12:20.584Z] mvp-haf-za-dosyalar-roll-up-action-pr-ablonlar-: step advanced (lint/test PASS)
+- [2025-08-16T10:12:29.833Z] bootstrap summary appended
+- [2025-08-16T10:13:02.814Z] mvp-haf-za-dosyalar-roll-up-action-pr-ablonlar-: step advanced (lint/test PASS)
+- [2025-08-16T10:13:11.717Z] bootstrap summary appended
+- [2025-08-16T10:13:43.122Z] mvp-haf-za-dosyalar-roll-up-action-pr-ablonlar-: step advanced (lint/test PASS)
+- [2025-08-16T10:13:51.651Z] bootstrap summary appended
+- [2025-08-16T10:14:22.240Z] mvp-haf-za-dosyalar-roll-up-action-pr-ablonlar-: step advanced (lint/test PASS)
+- [2025-08-16T10:14:30.930Z] bootstrap summary appended
+- [2025-08-16T10:15:02.960Z] mvp-haf-za-dosyalar-roll-up-action-pr-ablonlar-: step advanced (lint/test PASS)
+- [2025-08-16T10:15:11.647Z] bootstrap summary appended
+- [2025-08-16T10:15:43.472Z] mvp-haf-za-dosyalar-roll-up-action-pr-ablonlar-: step advanced (lint/test PASS)
+- [2025-08-16T10:15:51.626Z] bootstrap summary appended
+- [2025-08-16T10:16:25.416Z] mvp-haf-za-dosyalar-roll-up-action-pr-ablonlar-: step advanced (lint/test PASS)
+- [2025-08-16T10:16:34.633Z] bootstrap summary appended
+- [2025-08-16T10:19:40.895Z] bootstrap summary appended
+- [2025-08-16T10:20:12.112Z] mvp-haf-za-dosyalar-roll-up-action-pr-ablonlar-: step advanced (lint/test PASS)
+- [2025-08-16T10:20:21.084Z] bootstrap summary appended
+- [2025-08-16T10:20:52.140Z] mvp-haf-za-dosyalar-roll-up-action-pr-ablonlar-: step advanced (lint/test PASS)
+- [2025-08-16T10:21:01.218Z] bootstrap summary appended
+- [2025-08-16T10:21:33.575Z] mvp-haf-za-dosyalar-roll-up-action-pr-ablonlar-: step advanced (lint/test PASS)
+- [2025-08-16T10:21:43.308Z] bootstrap summary appended
+- [2025-08-16T10:22:15.362Z] mvp-haf-za-dosyalar-roll-up-action-pr-ablonlar-: step advanced (lint/test PASS)
+- [2025-08-16T10:22:23.704Z] bootstrap summary appended
+- [2025-08-16T10:22:56.070Z] mvp-haf-za-dosyalar-roll-up-action-pr-ablonlar-: step advanced (lint/test PASS)
+- [2025-08-16T10:23:05.639Z] bootstrap summary appended
+- [2025-08-16T10:23:37.216Z] mvp-haf-za-dosyalar-roll-up-action-pr-ablonlar-: step advanced (lint/test PASS)
+- [2025-08-16T10:23:47.415Z] bootstrap summary appended
+- [2025-08-16T10:24:19.343Z] mvp-haf-za-dosyalar-roll-up-action-pr-ablonlar-: step advanced (lint/test PASS)
+- [2025-08-16T10:24:27.891Z] bootstrap summary appended
+- [2025-08-16T10:24:59.940Z] mvp-haf-za-dosyalar-roll-up-action-pr-ablonlar-: step advanced (lint/test PASS)
+- [2025-08-16T10:25:10.584Z] bootstrap summary appended
+- [2025-08-16T10:25:42.786Z] mvp-haf-za-dosyalar-roll-up-action-pr-ablonlar-: step advanced (lint/test PASS)
+- [2025-08-16T10:25:53.166Z] bootstrap summary appended
+- [2025-08-16T10:26:26.823Z] mvp-haf-za-dosyalar-roll-up-action-pr-ablonlar-: step advanced (lint/test PASS)
+- [2025-08-16T10:26:35.564Z] bootstrap summary appended
+- [2025-08-16T10:27:06.362Z] mvp-haf-za-dosyalar-roll-up-action-pr-ablonlar-: step advanced (lint/test PASS)
+- [2025-08-16T10:27:15.085Z] bootstrap summary appended
+- [2025-08-16T10:27:45.007Z] mvp-haf-za-dosyalar-roll-up-action-pr-ablonlar-: step advanced (lint/test PASS)
+- [2025-08-16T10:27:54.303Z] bootstrap summary appended
+- [2025-08-16T10:28:25.777Z] mvp-haf-za-dosyalar-roll-up-action-pr-ablonlar-: step advanced (lint/test PASS)
+- [2025-08-16T10:28:36.697Z] bootstrap summary appended
+- [2025-08-16T10:29:08.248Z] mvp-haf-za-dosyalar-roll-up-action-pr-ablonlar-: step advanced (lint/test PASS)
+- [2025-08-16T10:29:16.831Z] bootstrap summary appended
+- [2025-08-16T10:29:48.450Z] mvp-haf-za-dosyalar-roll-up-action-pr-ablonlar-: step advanced (lint/test PASS)
+- [2025-08-16T10:29:59.028Z] bootstrap summary appended
+- [2025-08-16T10:30:35.077Z] mvp-haf-za-dosyalar-roll-up-action-pr-ablonlar-: step advanced (lint/test PASS)
+- [2025-08-16T10:30:45.988Z] bootstrap summary appended
+- [2025-08-16T10:31:17.882Z] mvp-haf-za-dosyalar-roll-up-action-pr-ablonlar-: step advanced (lint/test PASS)
+- [2025-08-16T10:31:27.927Z] bootstrap summary appended
+- [2025-08-16T10:31:58.490Z] mvp-haf-za-dosyalar-roll-up-action-pr-ablonlar-: step advanced (lint/test PASS)
+- [2025-08-16T10:32:07.334Z] bootstrap summary appended
+- [2025-08-16T10:32:38.163Z] mvp-haf-za-dosyalar-roll-up-action-pr-ablonlar-: step advanced (lint/test PASS)
+- [2025-08-16T10:32:46.048Z] bootstrap summary appended
+- [2025-08-16T10:33:18.300Z] mvp-haf-za-dosyalar-roll-up-action-pr-ablonlar-: step advanced (lint/test PASS)
+- [2025-08-16T10:33:26.525Z] bootstrap summary appended
+- [2025-08-16T10:33:57.967Z] mvp-haf-za-dosyalar-roll-up-action-pr-ablonlar-: step advanced (lint/test PASS)
+- [2025-08-16T10:34:07.552Z] bootstrap summary appended
+- [2025-08-16T10:34:37.183Z] mvp-haf-za-dosyalar-roll-up-action-pr-ablonlar-: step advanced (lint/test PASS)
+- [2025-08-16T10:34:45.744Z] bootstrap summary appended
+- [2025-08-16T10:35:17.110Z] mvp-haf-za-dosyalar-roll-up-action-pr-ablonlar-: step advanced (lint/test PASS)
+- [2025-08-16T10:35:28.550Z] bootstrap summary appended
+- [2025-08-16T10:36:02.477Z] mvp-haf-za-dosyalar-roll-up-action-pr-ablonlar-: step advanced (lint/test PASS)
+- [2025-08-16T10:36:15.487Z] bootstrap summary appended
+- [2025-08-16T10:36:51.131Z] mvp-haf-za-dosyalar-roll-up-action-pr-ablonlar-: step advanced (lint/test PASS)
+- [2025-08-16T10:36:59.862Z] bootstrap summary appended
+- [2025-08-16T10:37:30.721Z] mvp-haf-za-dosyalar-roll-up-action-pr-ablonlar-: step advanced (lint/test PASS)
+- [2025-08-16T10:37:39.093Z] bootstrap summary appended
+- [2025-08-16T10:38:09.446Z] mvp-haf-za-dosyalar-roll-up-action-pr-ablonlar-: step advanced (lint/test PASS)
+- [2025-08-16T10:38:19.047Z] bootstrap summary appended
+- [2025-08-16T10:38:48.224Z] mvp-haf-za-dosyalar-roll-up-action-pr-ablonlar-: step advanced (lint/test PASS)
+- [2025-08-16T10:38:57.028Z] bootstrap summary appended
+- [2025-08-16T10:39:26.700Z] mvp-haf-za-dosyalar-roll-up-action-pr-ablonlar-: step advanced (lint/test PASS)
+- [2025-08-16T10:39:36.970Z] bootstrap summary appended
+- [2025-08-16T10:40:05.627Z] mvp-haf-za-dosyalar-roll-up-action-pr-ablonlar-: step advanced (lint/test PASS)
+- [2025-08-16T10:40:14.829Z] bootstrap summary appended
+- [2025-08-16T10:40:44.245Z] mvp-haf-za-dosyalar-roll-up-action-pr-ablonlar-: step advanced (lint/test PASS)
+- [2025-08-16T10:40:53.681Z] bootstrap summary appended
+- [2025-08-16T10:41:23.793Z] mvp-haf-za-dosyalar-roll-up-action-pr-ablonlar-: step advanced (lint/test PASS)
+- [2025-08-16T10:41:33.286Z] bootstrap summary appended
+- [2025-08-16T10:42:03.311Z] mvp-haf-za-dosyalar-roll-up-action-pr-ablonlar-: step advanced (lint/test PASS)
+- [2025-08-16T10:42:12.292Z] bootstrap summary appended
+- [2025-08-16T10:42:42.777Z] mvp-haf-za-dosyalar-roll-up-action-pr-ablonlar-: step advanced (lint/test PASS)
+- [2025-08-16T10:42:51.635Z] bootstrap summary appended
+- [2025-08-16T10:43:21.103Z] mvp-haf-za-dosyalar-roll-up-action-pr-ablonlar-: step advanced (lint/test PASS)
+- [2025-08-16T10:43:29.789Z] bootstrap summary appended
+- [2025-08-16T10:43:59.530Z] mvp-haf-za-dosyalar-roll-up-action-pr-ablonlar-: step advanced (lint/test PASS)
+- [2025-08-16T10:44:07.617Z] bootstrap summary appended
+- [2025-08-16T10:44:38.955Z] mvp-haf-za-dosyalar-roll-up-action-pr-ablonlar-: step advanced (lint/test PASS)
+- [2025-08-16T10:44:48.065Z] bootstrap summary appended
+- [2025-08-16T10:45:18.449Z] mvp-haf-za-dosyalar-roll-up-action-pr-ablonlar-: step advanced (lint/test PASS)
+- [2025-08-16T10:45:28.579Z] bootstrap summary appended
+- [2025-08-16T10:46:00.042Z] mvp-haf-za-dosyalar-roll-up-action-pr-ablonlar-: step advanced (lint/test PASS)
+- [2025-08-16T10:46:09.698Z] bootstrap summary appended
+- [2025-08-16T10:46:39.678Z] mvp-haf-za-dosyalar-roll-up-action-pr-ablonlar-: step advanced (lint/test PASS)
+- [2025-08-16T10:46:51.046Z] bootstrap summary appended
+- [2025-08-16T10:47:23.606Z] mvp-haf-za-dosyalar-roll-up-action-pr-ablonlar-: step advanced (lint/test PASS)
+- [2025-08-16T10:47:36.291Z] bootstrap summary appended
+- [2025-08-16T10:48:09.507Z] mvp-haf-za-dosyalar-roll-up-action-pr-ablonlar-: step advanced (lint/test PASS)
+- [2025-08-16T10:48:19.545Z] bootstrap summary appended
+- [2025-08-16T10:48:49.438Z] mvp-haf-za-dosyalar-roll-up-action-pr-ablonlar-: step advanced (lint/test PASS)
+- [2025-08-16T10:48:58.413Z] bootstrap summary appended
+- [2025-08-16T10:49:29.561Z] mvp-haf-za-dosyalar-roll-up-action-pr-ablonlar-: step advanced (lint/test PASS)
+- [2025-08-16T10:49:39.291Z] bootstrap summary appended
+- [2025-08-16T10:50:09.674Z] mvp-haf-za-dosyalar-roll-up-action-pr-ablonlar-: step advanced (lint/test PASS)
+- [2025-08-16T10:50:18.293Z] bootstrap summary appended
+- [2025-08-16T10:50:49.814Z] mvp-haf-za-dosyalar-roll-up-action-pr-ablonlar-: step advanced (lint/test PASS)
+- [2025-08-16T10:50:59.471Z] bootstrap summary appended
+- [2025-08-16T10:51:33.030Z] mvp-haf-za-dosyalar-roll-up-action-pr-ablonlar-: step advanced (lint/test PASS)
+- [2025-08-16T10:51:43.409Z] bootstrap summary appended
+- [2025-08-16T10:52:13.902Z] mvp-haf-za-dosyalar-roll-up-action-pr-ablonlar-: step advanced (lint/test PASS)
+- [2025-08-16T10:52:23.864Z] bootstrap summary appended
+- [2025-08-16T10:54:06.304Z] bootstrap summary appended
+- [2025-08-16T11:04:35.698Z] bootstrap summary appended
+- [2025-08-16T11:05:06.358Z] mvp-haf-za-dosyalar-roll-up-action-pr-ablonlar-: step advanced (lint/test PASS)
+- [2025-08-16T11:05:16.052Z] bootstrap summary appended
+- [2025-08-16T11:05:48.942Z] mvp-haf-za-dosyalar-roll-up-action-pr-ablonlar-: step advanced (lint/test PASS)
+- [2025-08-16T11:05:59.026Z] bootstrap summary appended
+- [2025-08-16T11:06:29.829Z] mvp-haf-za-dosyalar-roll-up-action-pr-ablonlar-: step advanced (lint/test PASS)
+- [2025-08-16T11:06:40.524Z] bootstrap summary appended
+- [2025-08-16T11:07:13.480Z] mvp-haf-za-dosyalar-roll-up-action-pr-ablonlar-: step advanced (lint/test PASS)
+- [2025-08-16T11:07:23.798Z] bootstrap summary appended
+- [2025-08-16T11:07:55.358Z] mvp-haf-za-dosyalar-roll-up-action-pr-ablonlar-: step advanced (lint/test PASS)
+- [2025-08-16T11:08:03.942Z] bootstrap summary appended
+- [2025-08-16T11:08:34.779Z] mvp-haf-za-dosyalar-roll-up-action-pr-ablonlar-: step advanced (lint/test PASS)
+- [2025-08-16T11:08:42.986Z] bootstrap summary appended
+- [2025-08-16T11:09:13.048Z] mvp-haf-za-dosyalar-roll-up-action-pr-ablonlar-: step advanced (lint/test PASS)
+- [2025-08-16T11:09:21.295Z] bootstrap summary appended
+- [2025-08-16T11:09:52.686Z] mvp-haf-za-dosyalar-roll-up-action-pr-ablonlar-: step advanced (lint/test PASS)
+- [2025-08-16T11:10:03.993Z] bootstrap summary appended
+- [2025-08-16T11:10:36.656Z] mvp-haf-za-dosyalar-roll-up-action-pr-ablonlar-: step advanced (lint/test PASS)
+- [2025-08-16T11:10:48.604Z] bootstrap summary appended
+- [2025-08-16T11:11:21.702Z] mvp-haf-za-dosyalar-roll-up-action-pr-ablonlar-: step advanced (lint/test PASS)
+- [2025-08-16T11:11:30.826Z] bootstrap summary appended
+- [2025-08-16T11:11:40.458Z] bootstrap summary appended
+- [2025-08-16T11:12:16.662Z] mvp-haf-za-dosyalar-roll-up-action-pr-ablonlar-: step advanced (lint/test PASS)
+- [2025-08-16T11:12:27.770Z] bootstrap summary appended
+- [2025-08-16T11:13:02.625Z] mvp-haf-za-dosyalar-roll-up-action-pr-ablonlar-: step advanced (lint/test PASS)
+- [2025-08-16T11:13:13.334Z] bootstrap summary appended
+- [2025-08-16T11:13:49.416Z] mvp-haf-za-dosyalar-roll-up-action-pr-ablonlar-: step advanced (lint/test PASS)
+- [2025-08-16T11:14:00.233Z] bootstrap summary appended
+- [2025-08-16T11:14:34.442Z] mvp-haf-za-dosyalar-roll-up-action-pr-ablonlar-: step advanced (lint/test PASS)
+- [2025-08-16T11:14:45.940Z] bootstrap summary appended
+- [2025-08-16T11:15:19.966Z] mvp-haf-za-dosyalar-roll-up-action-pr-ablonlar-: step advanced (lint/test PASS)
+- [2025-08-16T11:15:32.430Z] bootstrap summary appended
+- [2025-08-16T11:16:13.218Z] mvp-haf-za-dosyalar-roll-up-action-pr-ablonlar-: step advanced (lint/test PASS)
+- [2025-08-16T11:16:27.085Z] bootstrap summary appended
+- [2025-08-16T11:17:08.078Z] mvp-haf-za-dosyalar-roll-up-action-pr-ablonlar-: step advanced (lint/test PASS)
+- [2025-08-16T11:17:21.454Z] bootstrap summary appended
+- [2025-08-16T11:17:57.665Z] mvp-haf-za-dosyalar-roll-up-action-pr-ablonlar-: step advanced (lint/test PASS)
+- [2025-08-16T11:18:09.253Z] bootstrap summary appended
+- [2025-08-16T11:18:44.188Z] mvp-haf-za-dosyalar-roll-up-action-pr-ablonlar-: step advanced (lint/test PASS)
+- [2025-08-16T11:19:06.231Z] bootstrap summary appended
+- [2025-08-16T11:19:43.940Z] mvp-haf-za-dosyalar-roll-up-action-pr-ablonlar-: step advanced (lint/test PASS)
+- [2025-08-16T11:19:57.197Z] bootstrap summary appended
+- [2025-08-16T11:20:35.379Z] mvp-haf-za-dosyalar-roll-up-action-pr-ablonlar-: step advanced (lint/test PASS)
+- [2025-08-16T11:20:46.598Z] bootstrap summary appended
+- [2025-08-16T11:21:21.831Z] mvp-haf-za-dosyalar-roll-up-action-pr-ablonlar-: step advanced (lint/test PASS)
+- [2025-08-16T11:21:33.060Z] bootstrap summary appended
+- [2025-08-16T11:22:07.390Z] mvp-haf-za-dosyalar-roll-up-action-pr-ablonlar-: step advanced (lint/test PASS)
+- [2025-08-16T11:22:19.554Z] bootstrap summary appended
+- [2025-08-16T11:22:55.247Z] mvp-haf-za-dosyalar-roll-up-action-pr-ablonlar-: step advanced (lint/test PASS)
+- [2025-08-16T11:23:06.911Z] bootstrap summary appended
+- [2025-08-16T11:23:41.848Z] mvp-haf-za-dosyalar-roll-up-action-pr-ablonlar-: step advanced (lint/test PASS)
+- [2025-08-16T11:23:54.691Z] bootstrap summary appended
+- [2025-08-16T11:24:30.178Z] mvp-haf-za-dosyalar-roll-up-action-pr-ablonlar-: step advanced (lint/test PASS)
+- [2025-08-16T11:24:45.965Z] bootstrap summary appended
+- [2025-08-16T11:25:24.478Z] mvp-haf-za-dosyalar-roll-up-action-pr-ablonlar-: step advanced (lint/test PASS)
+- [2025-08-16T11:25:38.397Z] bootstrap summary appended
+- [2025-08-16T11:26:15.001Z] mvp-haf-za-dosyalar-roll-up-action-pr-ablonlar-: step advanced (lint/test PASS)
+- [2025-08-16T11:26:26.218Z] bootstrap summary appended
+- [2025-08-16T11:27:01.649Z] mvp-haf-za-dosyalar-roll-up-action-pr-ablonlar-: step advanced (lint/test PASS)
+- [2025-08-16T11:27:13.657Z] bootstrap summary appended
+- [2025-08-16T11:27:49.703Z] mvp-haf-za-dosyalar-roll-up-action-pr-ablonlar-: step advanced (lint/test PASS)
+- [2025-08-16T11:28:05.341Z] bootstrap summary appended
+- [2025-08-16T11:28:41.212Z] mvp-haf-za-dosyalar-roll-up-action-pr-ablonlar-: step advanced (lint/test PASS)
+- [2025-08-16T11:28:54.459Z] bootstrap summary appended
+- [2025-08-16T11:29:30.363Z] mvp-haf-za-dosyalar-roll-up-action-pr-ablonlar-: step advanced (lint/test PASS)
+- [2025-08-16T11:29:41.518Z] bootstrap summary appended
+- [2025-08-16T11:30:15.959Z] mvp-haf-za-dosyalar-roll-up-action-pr-ablonlar-: step advanced (lint/test PASS)
+- [2025-08-16T11:30:27.984Z] bootstrap summary appended
+- [2025-08-16T11:31:02.975Z] mvp-haf-za-dosyalar-roll-up-action-pr-ablonlar-: step advanced (lint/test PASS)
+- [2025-08-16T11:31:15.460Z] bootstrap summary appended
+- [2025-08-16T11:31:51.617Z] mvp-haf-za-dosyalar-roll-up-action-pr-ablonlar-: step advanced (lint/test PASS)
+- [2025-08-16T11:32:02.046Z] bootstrap summary appended
+- [2025-08-16T11:32:37.914Z] mvp-haf-za-dosyalar-roll-up-action-pr-ablonlar-: step advanced (lint/test PASS)
+- [2025-08-16T11:32:48.682Z] bootstrap summary appended
+- [2025-08-16T11:33:23.574Z] mvp-haf-za-dosyalar-roll-up-action-pr-ablonlar-: step advanced (lint/test PASS)
+- [2025-08-16T11:33:34.865Z] bootstrap summary appended
+- [2025-08-16T11:34:11.991Z] mvp-haf-za-dosyalar-roll-up-action-pr-ablonlar-: step advanced (lint/test PASS)
+- [2025-08-16T11:34:23.301Z] bootstrap summary appended
+- [2025-08-16T11:34:59.939Z] mvp-haf-za-dosyalar-roll-up-action-pr-ablonlar-: step advanced (lint/test PASS)
+- [2025-08-16T11:35:11.837Z] bootstrap summary appended
+- [2025-08-16T11:35:47.151Z] mvp-haf-za-dosyalar-roll-up-action-pr-ablonlar-: step advanced (lint/test PASS)
+- [2025-08-16T11:35:58.734Z] bootstrap summary appended
+- [2025-08-16T11:36:32.833Z] mvp-haf-za-dosyalar-roll-up-action-pr-ablonlar-: step advanced (lint/test PASS)
+- [2025-08-16T11:36:44.510Z] bootstrap summary appended
+- [2025-08-16T11:37:19.047Z] mvp-haf-za-dosyalar-roll-up-action-pr-ablonlar-: step advanced (lint/test PASS)
+- [2025-08-16T11:37:30.121Z] bootstrap summary appended
+- [2025-08-16T11:38:05.816Z] mvp-haf-za-dosyalar-roll-up-action-pr-ablonlar-: step advanced (lint/test PASS)
+- [2025-08-16T11:38:17.520Z] bootstrap summary appended
+- [2025-08-16T11:38:53.156Z] mvp-haf-za-dosyalar-roll-up-action-pr-ablonlar-: step advanced (lint/test PASS)
+- [2025-08-16T11:39:05.075Z] bootstrap summary appended
+- [2025-08-16T11:39:39.441Z] mvp-haf-za-dosyalar-roll-up-action-pr-ablonlar-: step advanced (lint/test PASS)
+- [2025-08-16T11:39:50.833Z] bootstrap summary appended
+- [2025-08-16T11:40:25.790Z] mvp-haf-za-dosyalar-roll-up-action-pr-ablonlar-: step advanced (lint/test PASS)
+- [2025-08-16T11:40:37.057Z] bootstrap summary appended
+- [2025-08-16T11:41:11.643Z] mvp-haf-za-dosyalar-roll-up-action-pr-ablonlar-: step advanced (lint/test PASS)
+- [2025-08-16T11:41:26.110Z] bootstrap summary appended
+- [2025-08-16T11:42:02.305Z] mvp-haf-za-dosyalar-roll-up-action-pr-ablonlar-: step advanced (lint/test PASS)
+- [2025-08-16T11:42:14.540Z] bootstrap summary appended
+- [2025-08-16T11:42:52.592Z] backend-api-add-marketplace-bidding-system-endpoints-api-marketplace-bid-: step advanced (lint/test PASS)
+- [2025-08-16T11:43:06.977Z] bootstrap summary appended
+- [2025-08-16T11:49:31.365Z] bootstrap summary appended
+- [2025-08-16T11:50:10.673Z] monorepo-complete-apps-api-src-domain-split-economy-fraud-chat-services-: step advanced (lint/test PASS)
+- [2025-08-16T11:50:24.029Z] bootstrap summary appended
+- [2025-08-16T11:50:59.861Z] monorepo-complete-apps-api-src-domain-split-economy-fraud-chat-services-: step advanced (lint/test PASS)
+- [2025-08-16T11:51:11.949Z] bootstrap summary appended
+- [2025-08-16T11:51:48.218Z] monorepo-complete-apps-api-src-domain-split-economy-fraud-chat-services-: step advanced (lint/test PASS)
+- [2025-08-16T11:52:00.049Z] bootstrap summary appended
+- [2025-08-16T11:52:34.588Z] monorepo-complete-apps-api-src-domain-split-economy-fraud-chat-services-: step advanced (lint/test PASS)
+- [2025-08-16T11:52:45.931Z] bootstrap summary appended
+- [2025-08-16T11:53:20.809Z] monorepo-complete-apps-api-src-domain-split-economy-fraud-chat-services-: step advanced (lint/test PASS)
+- [2025-08-16T11:53:33.248Z] bootstrap summary appended
+- [2025-08-16T11:54:08.291Z] monorepo-complete-apps-api-src-domain-split-economy-fraud-chat-services-: step advanced (lint/test PASS)
+- [2025-08-16T11:54:23.303Z] bootstrap summary appended
+- [2025-08-16T11:54:57.432Z] monorepo-complete-apps-api-src-domain-split-economy-fraud-chat-services-: step advanced (lint/test PASS)
+- [2025-08-16T11:55:09.503Z] bootstrap summary appended
+- [2025-08-16T11:55:43.299Z] monorepo-complete-apps-api-src-domain-split-economy-fraud-chat-services-: step advanced (lint/test PASS)
+- [2025-08-16T11:55:55.075Z] bootstrap summary appended
+- [2025-08-16T11:56:29.832Z] monorepo-complete-apps-api-src-domain-split-economy-fraud-chat-services-: step advanced (lint/test PASS)
+- [2025-08-16T11:56:42.591Z] bootstrap summary appended
+- [2025-08-16T11:57:17.430Z] monorepo-complete-apps-api-src-domain-split-economy-fraud-chat-services-: step advanced (lint/test PASS)
+- [2025-08-16T11:57:28.535Z] bootstrap summary appended
+- [2025-08-16T11:58:03.702Z] monorepo-complete-apps-api-src-domain-split-economy-fraud-chat-services-: step advanced (lint/test PASS)
+- [2025-08-16T11:58:16.681Z] bootstrap summary appended
+- [2025-08-16T11:58:51.482Z] monorepo-complete-apps-api-src-domain-split-economy-fraud-chat-services-: step advanced (lint/test PASS)
+- [2025-08-16T11:59:03.904Z] bootstrap summary appended
+- [2025-08-16T11:59:40.059Z] monorepo-complete-apps-api-src-domain-split-economy-fraud-chat-services-: step advanced (lint/test PASS)
+- [2025-08-16T11:59:52.847Z] bootstrap summary appended
+- [2025-08-16T12:00:27.448Z] monorepo-complete-apps-api-src-domain-split-economy-fraud-chat-services-: step advanced (lint/test PASS)
+- [2025-08-16T12:00:39.544Z] bootstrap summary appended
+- [2025-08-16T12:01:16.516Z] monorepo-complete-apps-api-src-domain-split-economy-fraud-chat-services-: step advanced (lint/test PASS)
+- [2025-08-16T12:01:31.051Z] bootstrap summary appended
+- [2025-08-16T12:02:08.103Z] monorepo-complete-apps-api-src-domain-split-economy-fraud-chat-services-: step advanced (lint/test PASS)
+- [2025-08-16T12:02:23.685Z] bootstrap summary appended
+- [2025-08-16T12:03:00.350Z] monorepo-complete-apps-api-src-domain-split-economy-fraud-chat-services-: step advanced (lint/test PASS)
+- [2025-08-16T12:03:15.159Z] bootstrap summary appended
+- [2025-08-16T12:03:55.153Z] monorepo-complete-apps-api-src-domain-split-economy-fraud-chat-services-: step advanced (lint/test PASS)
+- [2025-08-16T12:04:08.575Z] bootstrap summary appended
+- [2025-08-16T12:04:44.284Z] monorepo-complete-apps-api-src-domain-split-economy-fraud-chat-services-: step advanced (lint/test PASS)
+- [2025-08-16T12:04:55.884Z] bootstrap summary appended
+- [2025-08-16T12:05:31.279Z] monorepo-complete-apps-api-src-domain-split-economy-fraud-chat-services-: step advanced (lint/test PASS)
+- [2025-08-16T12:05:44.210Z] bootstrap summary appended
+- [2025-08-16T12:06:21.511Z] monorepo-complete-apps-api-src-domain-split-economy-fraud-chat-services-: step advanced (lint/test PASS)
+- [2025-08-16T12:06:35.602Z] bootstrap summary appended
+- [2025-08-16T12:07:10.652Z] monorepo-complete-apps-api-src-domain-split-economy-fraud-chat-services-: step advanced (lint/test PASS)
+- [2025-08-16T12:07:24.639Z] bootstrap summary appended
+- [2025-08-16T12:08:00.827Z] monorepo-complete-apps-api-src-domain-split-economy-fraud-chat-services-: step advanced (lint/test PASS)
+- [2025-08-16T12:08:13.082Z] bootstrap summary appended
+- [2025-08-16T12:08:48.697Z] monorepo-complete-apps-api-src-domain-split-economy-fraud-chat-services-: step advanced (lint/test PASS)
+- [2025-08-16T12:09:01.327Z] bootstrap summary appended
+- [2025-08-16T12:09:36.197Z] monorepo-complete-apps-api-src-domain-split-economy-fraud-chat-services-: step advanced (lint/test PASS)
+- [2025-08-16T12:09:48.700Z] bootstrap summary appended
+- [2025-08-16T12:10:24.058Z] monorepo-complete-apps-api-src-domain-split-economy-fraud-chat-services-: step advanced (lint/test PASS)
+- [2025-08-16T12:10:36.331Z] bootstrap summary appended
+- [2025-08-16T12:11:10.700Z] monorepo-complete-apps-api-src-domain-split-economy-fraud-chat-services-: step advanced (lint/test PASS)
+- [2025-08-16T12:11:25.112Z] bootstrap summary appended
+- [2025-08-16T12:11:59.553Z] monorepo-complete-apps-api-src-domain-split-economy-fraud-chat-services-: step advanced (lint/test PASS)
+- [2025-08-16T12:12:11.855Z] bootstrap summary appended
+- [2025-08-16T12:12:45.710Z] monorepo-complete-apps-api-src-domain-split-economy-fraud-chat-services-: step advanced (lint/test PASS)
+- [2025-08-16T12:12:57.951Z] bootstrap summary appended
+- [2025-08-16T12:13:32.304Z] monorepo-complete-apps-api-src-domain-split-economy-fraud-chat-services-: step advanced (lint/test PASS)
+- [2025-08-16T12:13:43.807Z] bootstrap summary appended
+- [2025-08-16T12:14:17.308Z] monorepo-complete-apps-api-src-domain-split-economy-fraud-chat-services-: step advanced (lint/test PASS)
+- [2025-08-16T12:14:29.601Z] bootstrap summary appended
+- [2025-08-16T12:15:05.362Z] monorepo-complete-apps-api-src-domain-split-economy-fraud-chat-services-: step advanced (lint/test PASS)
+- [2025-08-16T12:15:16.903Z] bootstrap summary appended
+- [2025-08-16T12:15:50.056Z] monorepo-complete-apps-api-src-domain-split-economy-fraud-chat-services-: step advanced (lint/test PASS)
+- [2025-08-16T12:16:01.704Z] bootstrap summary appended
+- [2025-08-16T12:16:36.323Z] monorepo-complete-apps-api-src-domain-split-economy-fraud-chat-services-: step advanced (lint/test PASS)
+- [2025-08-16T12:16:48.661Z] bootstrap summary appended
+- [2025-08-16T12:17:22.585Z] monorepo-complete-apps-api-src-domain-split-economy-fraud-chat-services-: step advanced (lint/test PASS)
+- [2025-08-16T12:17:34.636Z] bootstrap summary appended
+- [2025-08-16T12:18:09.066Z] monorepo-complete-apps-api-src-domain-split-economy-fraud-chat-services-: step advanced (lint/test PASS)
+- [2025-08-16T12:18:21.331Z] bootstrap summary appended
+- [2025-08-16T12:18:55.768Z] monorepo-complete-apps-api-src-domain-split-economy-fraud-chat-services-: step advanced (lint/test PASS)
+- [2025-08-16T12:19:08.805Z] bootstrap summary appended
+- [2025-08-16T12:19:44.816Z] monorepo-complete-apps-api-src-domain-split-economy-fraud-chat-services-: step advanced (lint/test PASS)
+- [2025-08-16T12:19:57.288Z] bootstrap summary appended
+- [2025-08-16T12:20:36.256Z] monorepo-complete-apps-api-src-domain-split-economy-fraud-chat-services-: step advanced (lint/test PASS)
+- [2025-08-16T12:20:53.089Z] bootstrap summary appended
+- [2025-08-16T12:21:28.841Z] monorepo-complete-apps-api-src-domain-split-economy-fraud-chat-services-: step advanced (lint/test PASS)
+- [2025-08-16T12:21:41.011Z] bootstrap summary appended
+- [2025-08-16T12:22:15.962Z] monorepo-complete-apps-api-src-domain-split-economy-fraud-chat-services-: step advanced (lint/test PASS)
+- [2025-08-16T12:22:28.694Z] bootstrap summary appended
+- [2025-08-16T12:23:03.939Z] monorepo-complete-apps-api-src-domain-split-economy-fraud-chat-services-: step advanced (lint/test PASS)
+- [2025-08-16T12:23:16.543Z] bootstrap summary appended
+- [2025-08-16T12:23:51.234Z] monorepo-complete-apps-api-src-domain-split-economy-fraud-chat-services-: step advanced (lint/test PASS)
+- [2025-08-16T12:24:04.420Z] bootstrap summary appended
+- [2025-08-16T12:24:39.508Z] monorepo-complete-apps-api-src-domain-split-economy-fraud-chat-services-: step advanced (lint/test PASS)
+- [2025-08-16T12:24:54.343Z] bootstrap summary appended
+- [2025-08-16T12:25:31.409Z] monorepo-complete-apps-api-src-domain-split-economy-fraud-chat-services-: step advanced (lint/test PASS)
+- [2025-08-16T12:25:43.802Z] bootstrap summary appended
+- [2025-08-16T12:26:18.171Z] monorepo-complete-apps-api-src-domain-split-economy-fraud-chat-services-: step advanced (lint/test PASS)
+- [2025-08-16T12:26:29.301Z] bootstrap summary appended
+- [2025-08-16T12:27:03.359Z] monorepo-complete-apps-api-src-domain-split-economy-fraud-chat-services-: step advanced (lint/test PASS)
+- [2025-08-16T12:27:15.757Z] bootstrap summary appended
+- [2025-08-16T12:27:52.650Z] monorepo-complete-apps-api-src-domain-split-economy-fraud-chat-services-: step advanced (lint/test PASS)
+- [2025-08-16T12:28:05.940Z] bootstrap summary appended
+- [2025-08-16T12:28:40.637Z] monorepo-complete-apps-api-src-domain-split-economy-fraud-chat-services-: step advanced (lint/test PASS)
+- [2025-08-16T12:28:56.418Z] bootstrap summary appended
+- [2025-08-16T12:29:32.380Z] monorepo-complete-apps-api-src-domain-split-economy-fraud-chat-services-: step advanced (lint/test PASS)
+- [2025-08-16T12:29:44.425Z] bootstrap summary appended
+- [2025-08-16T12:30:18.427Z] monorepo-complete-apps-api-src-domain-split-economy-fraud-chat-services-: step advanced (lint/test PASS)
+- [2025-08-16T12:30:30.170Z] bootstrap summary appended
+- [2025-08-16T12:31:05.399Z] monorepo-complete-apps-api-src-domain-split-economy-fraud-chat-services-: step advanced (lint/test PASS)
+- [2025-08-16T12:31:19.060Z] bootstrap summary appended
+- [2025-08-16T12:32:06.462Z] monorepo-complete-apps-api-src-domain-split-economy-fraud-chat-services-: step advanced (lint/test PASS)
+- [2025-08-16T12:32:20.690Z] bootstrap summary appended
+- [2025-08-16T12:32:55.650Z] monorepo-complete-apps-api-src-domain-split-economy-fraud-chat-services-: step advanced (lint/test PASS)
+- [2025-08-16T12:33:09.000Z] bootstrap summary appended
+- [2025-08-16T12:33:46.098Z] monorepo-complete-apps-api-src-domain-split-economy-fraud-chat-services-: step advanced (lint/test PASS)
+- [2025-08-16T12:33:59.414Z] bootstrap summary appended
+- [2025-08-16T12:35:15.196Z] bootstrap summary appended
+- [2025-08-16T12:35:53.614Z] monorepo-complete-apps-api-src-domain-split-economy-fraud-chat-services-: step advanced (lint/test PASS)
+- [2025-08-16T12:36:10.593Z] bootstrap summary appended
+- [2025-08-16T12:36:47.612Z] monorepo-complete-apps-api-src-domain-split-economy-fraud-chat-services-: step advanced (lint/test PASS)
+- [2025-08-16T12:37:01.281Z] bootstrap summary appended
+- [2025-08-16T12:37:39.336Z] monorepo-complete-apps-api-src-domain-split-economy-fraud-chat-services-: step advanced (lint/test PASS)
+- [2025-08-16T12:37:53.219Z] bootstrap summary appended
+- [2025-08-16T12:38:29.832Z] monorepo-complete-apps-api-src-domain-split-economy-fraud-chat-services-: step advanced (lint/test PASS)
+- [2025-08-16T12:38:41.351Z] bootstrap summary appended
+- [2025-08-16T12:39:22.054Z] bootstrap summary appended
+- [2025-08-16T12:40:03.694Z] bootstrap summary appended
+- [2025-08-16T12:40:50.861Z] bootstrap summary appended
+- [2025-08-16T12:41:31.611Z] bootstrap summary appended
+- [2025-08-16T12:42:11.471Z] bootstrap summary appended
+- [2025-08-16T12:42:58.245Z] bootstrap summary appended
+- [2025-08-16T12:43:40.337Z] bootstrap summary appended
+- [2025-08-16T12:44:23.188Z] bootstrap summary appended
+- [2025-08-16T12:45:10.446Z] bootstrap summary appended
+- [2025-08-16T12:45:51.642Z] bootstrap summary appended
+- [2025-08-16T12:46:32.670Z] bootstrap summary appended
+- [2025-08-16T12:47:20.901Z] bootstrap summary appended
+- [2025-08-16T12:48:02.681Z] bootstrap summary appended
+- [2025-08-16T12:48:44.259Z] bootstrap summary appended
+- [2025-08-16T12:49:31.362Z] bootstrap summary appended
+- [2025-08-16T12:50:12.200Z] bootstrap summary appended
+- [2025-08-16T12:50:57.579Z] bootstrap summary appended
+- [2025-08-16T12:51:44.846Z] bootstrap summary appended
+- [2025-08-16T12:52:28.581Z] bootstrap summary appended
+- [2025-08-16T12:53:11.315Z] bootstrap summary appended
+- [2025-08-16T12:54:01.084Z] bootstrap summary appended
+- [2025-08-16T12:54:43.579Z] bootstrap summary appended
+- [2025-08-16T12:55:25.418Z] bootstrap summary appended
+- [2025-08-16T12:56:14.101Z] bootstrap summary appended
+- [2025-08-16T12:56:57.557Z] bootstrap summary appended
+- [2025-08-16T12:57:39.086Z] bootstrap summary appended
+- [2025-08-16T12:58:26.827Z] bootstrap summary appended
+- [2025-08-16T12:59:11.183Z] bootstrap summary appended
+- [2025-08-16T12:59:52.899Z] bootstrap summary appended
+- [2025-08-16T13:00:41.610Z] bootstrap summary appended
+- [2025-08-16T13:01:25.783Z] bootstrap summary appended
+- [2025-08-16T13:02:11.590Z] bootstrap summary appended
+- [2025-08-16T13:03:06.634Z] bootstrap summary appended
+- [2025-08-16T13:03:47.343Z] bootstrap summary appended
+- [2025-08-16T13:04:27.913Z] bootstrap summary appended
+- [2025-08-16T13:05:22.261Z] bootstrap summary appended
+- [2025-08-16T13:06:03.063Z] bootstrap summary appended
+- [2025-08-16T13:06:44.634Z] bootstrap summary appended
+- [2025-08-16T13:07:30.760Z] bootstrap summary appended
+- [2025-08-16T13:08:11.774Z] bootstrap summary appended
+- [2025-08-16T13:08:55.750Z] bootstrap summary appended
+- [2025-08-16T13:09:44.165Z] bootstrap summary appended
+- [2025-08-16T13:10:30.520Z] bootstrap summary appended
+- [2025-08-16T13:11:16.137Z] bootstrap summary appended
+- [2025-08-16T13:12:02.182Z] bootstrap summary appended
+- [2025-08-16T13:12:44.000Z] bootstrap summary appended
+- [2025-08-16T13:13:24.322Z] bootstrap summary appended
+- [2025-08-16T13:14:11.632Z] bootstrap summary appended
+- [2025-08-16T13:14:53.025Z] bootstrap summary appended
+- [2025-08-16T13:15:35.169Z] bootstrap summary appended
+- [2025-08-16T13:16:24.390Z] bootstrap summary appended
+- [2025-08-16T13:17:06.676Z] bootstrap summary appended
+- [2025-08-16T13:17:48.812Z] bootstrap summary appended
+- [2025-08-16T13:18:39.036Z] bootstrap summary appended
+- [2025-08-16T13:19:22.020Z] bootstrap summary appended
+- [2025-08-16T13:20:05.492Z] bootstrap summary appended
+- [2025-08-16T13:20:54.823Z] bootstrap summary appended
+- [2025-08-16T13:21:40.442Z] bootstrap summary appended
+- [2025-08-16T13:22:26.584Z] bootstrap summary appended
+- [2025-08-16T13:23:15.093Z] bootstrap summary appended
+- [2025-08-16T13:23:58.451Z] bootstrap summary appended
+- [2025-08-16T13:24:40.837Z] bootstrap summary appended
+- [2025-08-16T13:25:29.643Z] bootstrap summary appended
+- [2025-08-16T13:26:10.511Z] bootstrap summary appended
+- [2025-08-16T13:26:50.649Z] bootstrap summary appended
+- [2025-08-16T13:27:37.997Z] bootstrap summary appended
+- [2025-08-16T13:28:23.523Z] bootstrap summary appended
+- [2025-08-16T13:29:09.029Z] bootstrap summary appended
+- [2025-08-16T13:29:58.742Z] bootstrap summary appended
+- [2025-08-16T13:30:40.282Z] bootstrap summary appended
+- [2025-08-16T13:31:21.694Z] bootstrap summary appended
+- [2025-08-16T13:32:08.628Z] bootstrap summary appended
+- [2025-08-16T13:32:49.275Z] bootstrap summary appended
+- [2025-08-16T13:33:28.668Z] bootstrap summary appended
+- [2025-08-16T13:34:12.889Z] bootstrap summary appended
+- [2025-08-16T13:34:52.046Z] bootstrap summary appended
+- [2025-08-16T13:35:31.554Z] bootstrap summary appended
+- [2025-08-16T13:36:16.337Z] bootstrap summary appended
+- [2025-08-16T13:36:55.265Z] bootstrap summary appended
+- [2025-08-16T13:37:36.994Z] bootstrap summary appended
+- [2025-08-16T13:38:22.526Z] bootstrap summary appended
+- [2025-08-16T13:39:02.419Z] bootstrap summary appended
+- [2025-08-16T13:39:42.539Z] bootstrap summary appended
+- [2025-08-16T13:40:29.260Z] bootstrap summary appended
+- [2025-08-16T13:41:08.671Z] bootstrap summary appended
+- [2025-08-16T13:41:49.664Z] bootstrap summary appended
+- [2025-08-16T13:42:37.446Z] bootstrap summary appended
+- [2025-08-16T13:43:22.694Z] bootstrap summary appended
+- [2025-08-16T13:44:05.862Z] bootstrap summary appended
+- [2025-08-16T13:44:52.092Z] bootstrap summary appended
+- [2025-08-16T13:45:35.955Z] bootstrap summary appended
+- [2025-08-16T13:46:20.835Z] bootstrap summary appended
+- [2025-08-16T13:47:09.539Z] bootstrap summary appended
+- [2025-08-16T13:47:51.234Z] bootstrap summary appended
+- [2025-08-16T13:48:32.171Z] bootstrap summary appended
+- [2025-08-16T13:49:17.228Z] bootstrap summary appended
+- [2025-08-16T13:49:57.656Z] bootstrap summary appended
+- [2025-08-16T13:50:38.715Z] bootstrap summary appended
+- [2025-08-16T13:51:24.058Z] bootstrap summary appended
+- [2025-08-16T13:52:06.263Z] bootstrap summary appended
+- [2025-08-16T13:52:53.222Z] bootstrap summary appended
+- [2025-08-16T13:53:43.344Z] bootstrap summary appended
+- [2025-08-16T13:54:25.277Z] bootstrap summary appended
+- [2025-08-16T13:55:08.142Z] bootstrap summary appended
+- [2025-08-16T13:55:52.164Z] bootstrap summary appended
+- [2025-08-16T13:56:32.084Z] bootstrap summary appended
+- [2025-08-16T13:57:12.137Z] bootstrap summary appended
+- [2025-08-16T13:57:57.193Z] bootstrap summary appended
+- [2025-08-16T13:58:38.078Z] bootstrap summary appended
+- [2025-08-16T13:59:19.417Z] bootstrap summary appended
+- [2025-08-16T14:00:09.490Z] bootstrap summary appended
+- [2025-08-16T14:00:55.686Z] bootstrap summary appended
+- [2025-08-16T14:01:40.523Z] bootstrap summary appended
+- [2025-08-16T14:02:28.858Z] bootstrap summary appended
+- [2025-08-16T14:03:11.947Z] bootstrap summary appended
+- [2025-08-16T14:03:54.080Z] bootstrap summary appended
+- [2025-08-16T14:04:41.469Z] bootstrap summary appended
+- [2025-08-16T14:05:24.836Z] bootstrap summary appended
+- [2025-08-16T14:06:09.903Z] bootstrap summary appended
+- [2025-08-16T14:07:00.246Z] bootstrap summary appended
+- [2025-08-16T14:07:44.126Z] bootstrap summary appended
+- [2025-08-16T14:08:26.761Z] bootstrap summary appended
+- [2025-08-16T14:09:12.211Z] bootstrap summary appended
+- [2025-08-16T14:09:56.552Z] bootstrap summary appended
+- [2025-08-16T14:10:39.150Z] bootstrap summary appended
+- [2025-08-16T14:11:26.056Z] bootstrap summary appended
+- [2025-08-16T14:12:06.202Z] bootstrap summary appended
+- [2025-08-16T14:12:46.339Z] bootstrap summary appended
+- [2025-08-16T14:14:06.294Z] bootstrap summary appended
+- [2025-08-16T14:14:25.644Z] bootstrap summary appended
+- [2025-08-16T14:14:40.816Z] bootstrap summary appended
+- [2025-08-16T14:15:00.272Z] bootstrap summary appended
+- [2025-08-16T14:15:16.349Z] bootstrap summary appended
+- [2025-08-16T14:15:30.563Z] bootstrap summary appended
+- [2025-08-16T14:15:51.992Z] bootstrap summary appended
+- [2025-08-16T14:16:07.596Z] bootstrap summary appended
+- [2025-08-16T14:16:23.825Z] bootstrap summary appended
+- [2025-08-16T14:16:43.908Z] bootstrap summary appended
+- [2025-08-16T14:16:58.392Z] bootstrap summary appended
+- [2025-08-16T14:17:14.147Z] bootstrap summary appended
+- [2025-08-16T14:17:35.712Z] bootstrap summary appended
+- [2025-08-16T14:17:51.177Z] bootstrap summary appended
+- [2025-08-16T14:18:08.039Z] bootstrap summary appended
+- [2025-08-16T14:18:29.422Z] bootstrap summary appended
+- [2025-08-16T14:18:45.792Z] bootstrap summary appended
+- [2025-08-16T14:19:03.792Z] bootstrap summary appended
+- [2025-08-16T14:19:25.998Z] bootstrap summary appended
+- [2025-08-16T14:19:47.079Z] bootstrap summary appended
+- [2025-08-16T14:20:10.181Z] bootstrap summary appended
+- [2025-08-16T14:20:35.619Z] bootstrap summary appended
+- [2025-08-16T14:20:54.678Z] bootstrap summary appended
+- [2025-08-16T14:21:13.332Z] bootstrap summary appended
+- [2025-08-16T14:21:35.139Z] bootstrap summary appended
+- [2025-08-16T14:21:51.275Z] bootstrap summary appended
+- [2025-08-16T14:22:06.317Z] bootstrap summary appended
+- [2025-08-16T14:22:26.966Z] bootstrap summary appended
+- [2025-08-16T14:22:41.788Z] bootstrap summary appended
+- [2025-08-16T14:22:57.314Z] bootstrap summary appended
+- [2025-08-16T14:23:18.461Z] bootstrap summary appended
+- [2025-08-16T14:23:35.022Z] bootstrap summary appended
+- [2025-08-16T14:23:53.623Z] bootstrap summary appended
+- [2025-08-16T14:24:20.399Z] bootstrap summary appended
+- [2025-08-16T14:24:35.818Z] bootstrap summary appended
+- [2025-08-16T14:24:52.302Z] bootstrap summary appended
+- [2025-08-16T14:36:23.305Z] bootstrap summary appended
+- [2025-08-16T14:37:07.324Z] bootstrap summary appended
+- [2025-08-16T14:37:55.053Z] bootstrap summary appended
+- [2025-08-16T14:38:44.529Z] bootstrap summary appended
+- [2025-08-16T14:39:12.274Z] bootstrap summary appended
+- [2025-08-16T14:52:43.433Z] bootstrap summary appended
+- [2025-08-16T14:53:20.107Z] monorepo-complete-apps-api-src-domain-split-economy-fraud-chat-services-: step advanced (lint/test PASS)
+- [2025-08-16T14:53:31.796Z] bootstrap summary appended
+- [2025-08-16T14:54:06.700Z] monorepo-complete-apps-api-src-domain-split-economy-fraud-chat-services-: step advanced (lint/test PASS)
+- [2025-08-16T14:54:19.038Z] bootstrap summary appended
+- [2025-08-16T14:54:53.974Z] monorepo-complete-apps-api-src-domain-split-economy-fraud-chat-services-: step advanced (lint/test PASS)
+- [2025-08-16T14:55:05.108Z] bootstrap summary appended
+- [2025-08-16T14:55:39.707Z] monorepo-complete-apps-api-src-domain-split-economy-fraud-chat-services-: step advanced (lint/test PASS)
+- [2025-08-16T14:55:52.329Z] bootstrap summary appended
+- [2025-08-16T14:56:27.143Z] monorepo-complete-apps-api-src-domain-split-economy-fraud-chat-services-: step advanced (lint/test PASS)
+- [2025-08-16T14:56:38.454Z] bootstrap summary appended
+- [2025-08-16T14:57:12.322Z] monorepo-complete-apps-api-src-domain-split-economy-fraud-chat-services-: step advanced (lint/test PASS)
+- [2025-08-16T14:57:27.352Z] bootstrap summary appended
+- [2025-08-16T14:58:02.612Z] monorepo-complete-apps-api-src-domain-split-economy-fraud-chat-services-: step advanced (lint/test PASS)
+- [2025-08-16T14:58:13.564Z] bootstrap summary appended
+- [2025-08-16T14:58:48.317Z] monorepo-complete-apps-api-src-domain-split-economy-fraud-chat-services-: step advanced (lint/test PASS)
+- [2025-08-16T14:59:01.657Z] bootstrap summary appended
+- [2025-08-16T14:59:38.821Z] monorepo-complete-apps-api-src-domain-split-economy-fraud-chat-services-: step advanced (lint/test PASS)
+- [2025-08-16T14:59:50.576Z] bootstrap summary appended
+- [2025-08-16T15:00:25.184Z] monorepo-complete-apps-api-src-domain-split-economy-fraud-chat-services-: step advanced (lint/test PASS)
+- [2025-08-16T15:00:36.126Z] bootstrap summary appended
+- [2025-08-16T22:05:50.614Z] bootstrap summary appended
+- [2025-08-16T22:06:06.956Z] bootstrap summary appended
+- [2025-08-16T22:06:54.303Z] bootstrap summary appended
+- [2025-08-16T22:07:16.300Z] bootstrap summary appended
+- [2025-08-16T22:07:32.484Z] bootstrap summary appended
+- [2025-08-16T22:07:48.305Z] bootstrap summary appended
+- [2025-08-16T22:08:11.742Z] bootstrap summary appended
+- [2025-08-16T22:08:29.003Z] bootstrap summary appended
+- [2025-08-16T22:08:45.788Z] bootstrap summary appended
+- [2025-08-16T22:09:01.653Z] bootstrap summary appended
+- [2025-08-16T22:09:16.373Z] bootstrap summary appended
+- [2025-08-16T22:09:37.125Z] bootstrap summary appended
+- [2025-08-16T22:09:53.728Z] bootstrap summary appended
+- [2025-08-16T22:10:09.161Z] bootstrap summary appended
+- [2025-08-16T22:10:29.580Z] bootstrap summary appended
+- [2025-08-16T22:10:46.739Z] bootstrap summary appended
+- [2025-08-16T22:11:02.774Z] bootstrap summary appended
+- [2025-08-16T22:11:25.004Z] bootstrap summary appended
+- [2025-08-16T22:11:45.006Z] bootstrap summary appended
+- [2025-08-16T22:12:04.467Z] bootstrap summary appended
+- [2025-08-16T22:12:26.880Z] bootstrap summary appended
+- [2025-08-16T22:12:45.386Z] bootstrap summary appended
+- [2025-08-16T22:13:01.803Z] bootstrap summary appended
+- [2025-08-16T22:13:21.771Z] bootstrap summary appended
+- [2025-08-16T22:13:37.879Z] bootstrap summary appended
+- [2025-08-16T22:13:54.154Z] bootstrap summary appended
+- [2025-08-16T22:14:14.701Z] bootstrap summary appended
+- [2025-08-16T22:14:30.379Z] bootstrap summary appended
+- [2025-08-16T22:14:46.047Z] bootstrap summary appended
+- [2025-08-16T22:15:08.268Z] bootstrap summary appended
+- [2025-08-16T22:15:23.333Z] bootstrap summary appended
+- [2025-08-16T22:15:39.524Z] bootstrap summary appended
+- [2025-08-16T22:16:01.618Z] bootstrap summary appended
+- [2025-08-16T22:16:19.231Z] bootstrap summary appended
+- [2025-08-16T22:16:34.796Z] bootstrap summary appended
+- [2025-08-16T22:16:57.306Z] bootstrap summary appended
+- [2025-08-16T22:17:14.732Z] bootstrap summary appended
+- [2025-08-16T22:17:31.424Z] bootstrap summary appended
+- [2025-08-16T22:17:56.204Z] bootstrap summary appended
+- [2025-08-16T22:18:12.942Z] bootstrap summary appended
+- [2025-08-16T22:18:29.176Z] bootstrap summary appended
+- [2025-08-16T22:18:53.464Z] bootstrap summary appended
+- [2025-08-16T22:19:10.137Z] bootstrap summary appended
+- [2025-08-16T22:19:25.107Z] bootstrap summary appended
+- [2025-08-16T22:19:46.489Z] bootstrap summary appended
+- [2025-08-16T22:20:03.273Z] bootstrap summary appended
+- [2025-08-16T22:20:19.645Z] bootstrap summary appended
+- [2025-08-16T22:20:45.062Z] bootstrap summary appended
+- [2025-08-16T22:21:06.771Z] bootstrap summary appended
+- [2025-08-16T22:21:27.251Z] bootstrap summary appended
+- [2025-08-16T22:21:51.688Z] bootstrap summary appended
+- [2025-08-16T22:22:08.211Z] bootstrap summary appended
+- [2025-08-16T22:22:24.720Z] bootstrap summary appended
+- [2025-08-16T22:22:45.690Z] bootstrap summary appended
+- [2025-08-16T22:22:59.769Z] bootstrap summary appended
+- [2025-08-16T22:23:14.157Z] bootstrap summary appended
+- [2025-08-16T22:23:34.227Z] bootstrap summary appended
+- [2025-08-16T22:23:49.387Z] bootstrap summary appended
+- [2025-08-16T22:24:04.372Z] bootstrap summary appended
+- [2025-08-16T22:24:24.813Z] bootstrap summary appended
+- [2025-08-16T22:24:39.338Z] bootstrap summary appended
+- [2025-08-16T22:24:53.227Z] bootstrap summary appended
+- [2025-08-16T22:25:13.002Z] bootstrap summary appended
+- [2025-08-16T22:25:27.789Z] bootstrap summary appended
+- [2025-08-16T22:25:41.470Z] bootstrap summary appended
+- [2025-08-16T22:26:01.885Z] bootstrap summary appended
+- [2025-08-16T22:26:16.634Z] bootstrap summary appended
+- [2025-08-16T22:26:31.197Z] bootstrap summary appended
+- [2025-08-16T22:26:51.892Z] bootstrap summary appended
+- [2025-08-16T22:27:06.815Z] bootstrap summary appended
+- [2025-08-16T22:27:22.343Z] bootstrap summary appended
+- [2025-08-16T22:27:42.650Z] bootstrap summary appended
+- [2025-08-16T22:27:58.541Z] bootstrap summary appended
+- [2025-08-16T22:28:14.268Z] bootstrap summary appended
+- [2025-08-16T22:28:34.362Z] bootstrap summary appended
+- [2025-08-16T22:28:49.228Z] bootstrap summary appended
+- [2025-08-16T22:29:05.069Z] bootstrap summary appended
+- [2025-08-16T22:29:25.656Z] bootstrap summary appended
+- [2025-08-16T22:29:40.646Z] bootstrap summary appended
+- [2025-08-16T22:29:55.771Z] bootstrap summary appended
+- [2025-08-16T22:30:16.768Z] bootstrap summary appended
+- [2025-08-16T22:30:31.790Z] bootstrap summary appended
+- [2025-08-16T22:30:49.425Z] bootstrap summary appended
+- [2025-08-16T22:31:10.556Z] bootstrap summary appended
+- [2025-08-16T22:31:26.600Z] bootstrap summary appended
+- [2025-08-16T22:31:43.617Z] bootstrap summary appended
+- [2025-08-16T22:32:03.566Z] bootstrap summary appended
+- [2025-08-16T22:32:19.439Z] bootstrap summary appended
+- [2025-08-16T22:32:37.051Z] bootstrap summary appended
+- [2025-08-16T22:33:02.308Z] bootstrap summary appended
+- [2025-08-16T22:33:18.410Z] bootstrap summary appended
+- [2025-08-16T22:33:34.929Z] bootstrap summary appended
+- [2025-08-16T22:33:57.735Z] bootstrap summary appended
+- [2025-08-16T22:34:14.601Z] bootstrap summary appended
+- [2025-08-16T22:34:31.674Z] bootstrap summary appended
+- [2025-08-16T22:34:52.661Z] bootstrap summary appended
+- [2025-08-16T22:35:09.013Z] bootstrap summary appended
+- [2025-08-16T22:35:24.476Z] bootstrap summary appended
+- [2025-08-16T22:35:46.800Z] bootstrap summary appended
+- [2025-08-16T22:36:03.593Z] bootstrap summary appended
+- [2025-08-16T22:36:22.925Z] bootstrap summary appended
+- [2025-08-16T22:36:46.498Z] bootstrap summary appended
+- [2025-08-16T22:37:02.400Z] bootstrap summary appended
+- [2025-08-16T22:37:19.266Z] bootstrap summary appended
+- [2025-08-16T22:37:41.692Z] bootstrap summary appended
+- [2025-08-16T22:37:57.344Z] bootstrap summary appended
+- [2025-08-16T22:38:14.283Z] bootstrap summary appended
+- [2025-08-16T22:38:38.729Z] bootstrap summary appended
+- [2025-08-16T22:38:59.106Z] bootstrap summary appended
+- [2025-08-16T22:39:18.051Z] bootstrap summary appended
+- [2025-08-16T22:39:41.197Z] bootstrap summary appended
+- [2025-08-16T22:39:58.806Z] bootstrap summary appended
+- [2025-08-16T22:40:15.548Z] bootstrap summary appended
+- [2025-08-16T22:40:38.336Z] bootstrap summary appended
+- [2025-08-16T22:40:55.859Z] bootstrap summary appended
+- [2025-08-16T22:41:13.503Z] bootstrap summary appended
+- [2025-08-16T22:41:35.267Z] bootstrap summary appended
+- [2025-08-16T22:41:51.651Z] bootstrap summary appended
+- [2025-08-16T22:42:08.855Z] bootstrap summary appended
+- [2025-08-16T22:42:31.997Z] bootstrap summary appended
+- [2025-08-16T22:42:48.074Z] bootstrap summary appended
+- [2025-08-16T22:43:04.577Z] bootstrap summary appended
+- [2025-08-16T22:43:26.474Z] bootstrap summary appended
+- [2025-08-16T22:43:43.095Z] bootstrap summary appended
+- [2025-08-16T22:43:59.037Z] bootstrap summary appended
+- [2025-08-16T22:44:21.463Z] bootstrap summary appended
+- [2025-08-16T22:44:38.257Z] bootstrap summary appended
+- [2025-08-16T22:44:54.641Z] bootstrap summary appended
+- [2025-08-16T22:45:16.995Z] bootstrap summary appended
+- [2025-08-16T22:45:34.986Z] bootstrap summary appended
+- [2025-08-16T22:45:51.370Z] bootstrap summary appended
+- [2025-08-16T22:46:14.104Z] bootstrap summary appended
+- [2025-08-16T22:46:30.692Z] bootstrap summary appended
+- [2025-08-16T22:46:46.818Z] bootstrap summary appended
+- [2025-08-16T22:47:08.897Z] bootstrap summary appended
+- [2025-08-16T22:47:24.861Z] bootstrap summary appended
+- [2025-08-16T22:47:44.932Z] bootstrap summary appended
+- [2025-08-16T22:48:06.744Z] bootstrap summary appended
+- [2025-08-16T22:48:24.152Z] bootstrap summary appended
+- [2025-08-16T22:48:38.693Z] bootstrap summary appended
+- [2025-08-16T22:48:59.069Z] bootstrap summary appended
+- [2025-08-16T22:49:16.273Z] bootstrap summary appended
+- [2025-08-16T22:49:34.296Z] bootstrap summary appended
+- [2025-08-16T22:49:53.956Z] bootstrap summary appended
+- [2025-08-16T22:50:10.861Z] bootstrap summary appended
+- [2025-08-16T22:50:25.488Z] bootstrap summary appended
+- [2025-08-16T22:50:46.796Z] bootstrap summary appended
+- [2025-08-16T22:51:03.179Z] bootstrap summary appended
+- [2025-08-16T22:51:17.506Z] bootstrap summary appended
+- [2025-08-16T22:51:37.893Z] bootstrap summary appended
+- [2025-08-16T22:51:54.994Z] bootstrap summary appended
+- [2025-08-16T22:52:11.992Z] bootstrap summary appended
+- [2025-08-16T22:52:31.756Z] bootstrap summary appended
+- [2025-08-16T22:52:48.694Z] bootstrap summary appended
+- [2025-08-16T22:53:05.138Z] bootstrap summary appended
+- [2025-08-16T22:53:24.648Z] bootstrap summary appended
+- [2025-08-16T22:53:39.257Z] bootstrap summary appended
+- [2025-08-16T22:53:53.983Z] bootstrap summary appended
+- [2025-08-16T22:54:16.007Z] bootstrap summary appended
+- [2025-08-16T22:54:36.684Z] bootstrap summary appended
+- [2025-08-16T22:54:51.854Z] bootstrap summary appended
+- [2025-08-16T22:55:12.908Z] bootstrap summary appended
+- [2025-08-16T22:55:29.151Z] bootstrap summary appended
+- [2025-08-16T22:55:46.418Z] bootstrap summary appended
+- [2025-08-16T22:56:07.893Z] bootstrap summary appended
+- [2025-08-16T22:56:23.692Z] bootstrap summary appended
+- [2025-08-16T22:56:39.363Z] bootstrap summary appended
+- [2025-08-16T22:56:59.635Z] bootstrap summary appended
+- [2025-08-16T22:57:20.422Z] bootstrap summary appended
+- [2025-08-16T22:57:37.115Z] bootstrap summary appended
+- [2025-08-16T22:57:58.924Z] bootstrap summary appended
+- [2025-08-16T22:58:17.356Z] bootstrap summary appended
+- [2025-08-16T22:58:34.631Z] bootstrap summary appended
+- [2025-08-16T22:58:55.450Z] bootstrap summary appended
+- [2025-08-16T22:59:15.139Z] bootstrap summary appended
+- [2025-08-16T22:59:31.913Z] bootstrap summary appended
+- [2025-08-16T22:59:54.535Z] bootstrap summary appended
+- [2025-08-16T23:00:13.069Z] bootstrap summary appended
+- [2025-08-16T23:00:30.272Z] bootstrap summary appended
+- [2025-08-16T23:00:52.083Z] bootstrap summary appended
+- [2025-08-16T23:01:11.130Z] bootstrap summary appended
+- [2025-08-16T23:01:29.392Z] bootstrap summary appended
+- [2025-08-16T23:01:54.011Z] bootstrap summary appended
+- [2025-08-16T23:02:09.677Z] bootstrap summary appended
+- [2025-08-16T23:02:26.804Z] bootstrap summary appended
+- [2025-08-16T23:02:49.229Z] bootstrap summary appended
+- [2025-08-16T23:03:06.638Z] bootstrap summary appended
+- [2025-08-16T23:03:22.305Z] bootstrap summary appended
+- [2025-08-16T23:03:43.706Z] bootstrap summary appended
+- [2025-08-16T23:03:59.882Z] bootstrap summary appended
+- [2025-08-16T23:04:18.079Z] bootstrap summary appended
+- [2025-08-16T23:04:39.055Z] bootstrap summary appended
+- [2025-08-16T23:04:54.362Z] bootstrap summary appended
+- [2025-08-16T23:05:09.723Z] bootstrap summary appended
+- [2025-08-16T23:05:30.209Z] bootstrap summary appended
+- [2025-08-16T23:05:46.250Z] bootstrap summary appended
+- [2025-08-16T23:06:02.561Z] bootstrap summary appended
+- [2025-08-16T23:06:23.656Z] bootstrap summary appended
+- [2025-08-16T23:06:39.220Z] bootstrap summary appended
+- [2025-08-16T23:06:54.888Z] bootstrap summary appended
+- [2025-08-16T23:07:16.494Z] bootstrap summary appended
+- [2025-08-16T23:07:30.866Z] bootstrap summary appended
+- [2025-08-16T23:07:47.557Z] bootstrap summary appended
+- [2025-08-16T23:08:09.743Z] bootstrap summary appended
+- [2025-08-16T23:08:25.819Z] bootstrap summary appended
+- [2025-08-16T23:08:42.669Z] bootstrap summary appended
+- [2025-08-16T23:09:04.629Z] bootstrap summary appended
+- [2025-08-16T23:09:20.661Z] bootstrap summary appended
+- [2025-08-16T23:09:36.135Z] bootstrap summary appended
+- [2025-08-16T23:09:58.594Z] bootstrap summary appended
+- [2025-08-16T23:10:13.749Z] bootstrap summary appended
+- [2025-08-16T23:10:28.067Z] bootstrap summary appended
+- [2025-08-16T23:10:49.488Z] bootstrap summary appended
+- [2025-08-16T23:11:06.793Z] bootstrap summary appended
+- [2025-08-16T23:11:23.586Z] bootstrap summary appended
+- [2025-08-16T23:11:45.019Z] bootstrap summary appended
+- [2025-08-16T23:12:03.162Z] bootstrap summary appended
+- [2025-08-16T23:12:20.166Z] bootstrap summary appended
+- [2025-08-16T23:12:41.998Z] bootstrap summary appended
+- [2025-08-16T23:12:58.206Z] bootstrap summary appended
+- [2025-08-16T23:13:15.005Z] bootstrap summary appended
+- [2025-08-16T23:13:35.984Z] bootstrap summary appended
+- [2025-08-16T23:13:52.320Z] bootstrap summary appended
+- [2025-08-16T23:14:09.619Z] bootstrap summary appended
+- [2025-08-16T23:14:30.843Z] bootstrap summary appended
+- [2025-08-16T23:14:49.616Z] bootstrap summary appended
+- [2025-08-16T23:15:09.104Z] bootstrap summary appended
+- [2025-08-16T23:15:31.131Z] bootstrap summary appended
+- [2025-08-16T23:15:49.017Z] bootstrap summary appended
+- [2025-08-16T23:16:08.254Z] bootstrap summary appended
+- [2025-08-16T23:16:35.101Z] bootstrap summary appended
+- [2025-08-16T23:16:50.998Z] bootstrap summary appended
+- [2025-08-16T23:17:07.688Z] bootstrap summary appended
+- [2025-08-16T23:17:29.396Z] bootstrap summary appended
+- [2025-08-16T23:17:47.165Z] bootstrap summary appended
+- [2025-08-16T23:18:04.145Z] bootstrap summary appended
+- [2025-08-16T23:18:24.963Z] bootstrap summary appended
+- [2025-08-16T23:18:41.859Z] bootstrap summary appended
+- [2025-08-16T23:18:57.629Z] bootstrap summary appended
+- [2025-08-16T23:19:23.639Z] bootstrap summary appended
+- [2025-08-16T23:19:44.426Z] bootstrap summary appended
+- [2025-08-16T23:20:00.965Z] bootstrap summary appended
+- [2025-08-16T23:20:20.419Z] bootstrap summary appended
+- [2025-08-16T23:20:37.366Z] bootstrap summary appended
+- [2025-08-16T23:20:52.522Z] bootstrap summary appended
+- [2025-08-16T23:21:13.821Z] bootstrap summary appended
+- [2025-08-16T23:21:29.599Z] bootstrap summary appended
+- [2025-08-16T23:21:44.098Z] bootstrap summary appended
+- [2025-08-16T23:22:05.432Z] bootstrap summary appended
+- [2025-08-16T23:22:21.234Z] bootstrap summary appended
+- [2025-08-16T23:22:36.182Z] bootstrap summary appended
+- [2025-08-16T23:22:57.041Z] bootstrap summary appended
+- [2025-08-16T23:23:12.094Z] bootstrap summary appended
+- [2025-08-16T23:23:26.390Z] bootstrap summary appended
+- [2025-08-16T23:23:48.608Z] bootstrap summary appended
+- [2025-08-16T23:24:04.523Z] bootstrap summary appended
+- [2025-08-16T23:24:19.207Z] bootstrap summary appended
+- [2025-08-16T23:24:39.339Z] bootstrap summary appended
+- [2025-08-16T23:24:56.347Z] bootstrap summary appended
+- [2025-08-16T23:25:11.175Z] bootstrap summary appended
+- [2025-08-16T23:25:31.889Z] bootstrap summary appended
+- [2025-08-16T23:25:47.435Z] bootstrap summary appended
+- [2025-08-16T23:26:03.250Z] bootstrap summary appended
+- [2025-08-16T23:26:27.580Z] bootstrap summary appended
+- [2025-08-16T23:26:46.031Z] bootstrap summary appended
+- [2025-08-16T23:27:00.959Z] bootstrap summary appended
+- [2025-08-16T23:27:21.122Z] bootstrap summary appended
+- [2025-08-16T23:27:36.599Z] bootstrap summary appended
+- [2025-08-16T23:27:51.748Z] bootstrap summary appended
+- [2025-08-16T23:28:12.332Z] bootstrap summary appended
+- [2025-08-16T23:28:27.282Z] bootstrap summary appended
+- [2025-08-16T23:28:45.202Z] bootstrap summary appended
+- [2025-08-16T23:29:05.167Z] bootstrap summary appended
+- [2025-08-16T23:29:15.109Z] bootstrap summary appended
+- [2025-08-16T23:29:30.668Z] bootstrap summary appended
+- [2025-08-16T23:29:47.098Z] bootstrap summary appended
+- [2025-08-16T23:30:14.191Z] bootstrap summary appended
+- [2025-08-16T23:30:29.618Z] bootstrap summary appended
+- [2025-08-16T23:30:45.933Z] bootstrap summary appended
+- [2025-08-16T23:31:08.682Z] bootstrap summary appended
+- [2025-08-16T23:31:29.130Z] bootstrap summary appended
+- [2025-08-16T23:31:45.734Z] bootstrap summary appended
+- [2025-08-16T23:32:05.977Z] bootstrap summary appended
+- [2025-08-16T23:32:21.164Z] bootstrap summary appended
+- [2025-08-16T23:32:36.147Z] bootstrap summary appended
+- [2025-08-16T23:32:59.202Z] bootstrap summary appended
+- [2025-08-16T23:33:16.350Z] bootstrap summary appended
+- [2025-08-16T23:33:32.948Z] bootstrap summary appended
+- [2025-08-16T23:33:55.125Z] bootstrap summary appended
+- [2025-08-16T23:34:12.700Z] bootstrap summary appended
+- [2025-08-16T23:34:32.922Z] bootstrap summary appended
+- [2025-08-16T23:34:53.843Z] bootstrap summary appended
+- [2025-08-16T23:35:10.193Z] bootstrap summary appended
+- [2025-08-16T23:35:28.514Z] bootstrap summary appended
+- [2025-08-16T23:35:49.651Z] bootstrap summary appended
+- [2025-08-16T23:36:24.170Z] monorepo-analyze-repo-and-fully-set-up-workspaces-apps-packages-ensure-lint-test-green-end-to-end-auto-fix-missing-test-scripts-install-deps-and-run-ci-all: step advanced (lint/test PASS)
+- [2025-08-16T23:36:36.550Z] bootstrap summary appended
+- [2025-08-16T23:37:10.580Z] monorepo-analyze-repo-and-fully-set-up-workspaces-apps-packages-ensure-lint-test-green-end-to-end-auto-fix-missing-test-scripts-install-deps-and-run-ci-all: step advanced (lint/test PASS)
+- [2025-08-16T23:37:22.928Z] bootstrap summary appended
+- [2025-08-16T23:37:58.517Z] monorepo-analyze-repo-and-fully-set-up-workspaces-apps-packages-ensure-lint-test-green-end-to-end-auto-fix-missing-test-scripts-install-deps-and-run-ci-all: step advanced (lint/test PASS)
+- [2025-08-16T23:38:10.972Z] bootstrap summary appended
+- [2025-08-16T23:38:46.384Z] monorepo-analyze-repo-and-fully-set-up-workspaces-apps-packages-ensure-lint-test-green-end-to-end-auto-fix-missing-test-scripts-install-deps-and-run-ci-all: step advanced (lint/test PASS)
+- [2025-08-16T23:38:59.281Z] bootstrap summary appended
+- [2025-08-16T23:39:34.331Z] monorepo-analyze-repo-and-fully-set-up-workspaces-apps-packages-ensure-lint-test-green-end-to-end-auto-fix-missing-test-scripts-install-deps-and-run-ci-all: step advanced (lint/test PASS)
+- [2025-08-16T23:39:50.207Z] bootstrap summary appended
+- [2025-08-16T23:40:25.892Z] monorepo-analyze-repo-and-fully-set-up-workspaces-apps-packages-ensure-lint-test-green-end-to-end-auto-fix-missing-test-scripts-install-deps-and-run-ci-all: step advanced (lint/test PASS)
+- [2025-08-16T23:40:37.797Z] bootstrap summary appended
+- [2025-08-16T23:41:18.125Z] monorepo-analyze-repo-and-fully-set-up-workspaces-apps-packages-ensure-lint-test-green-end-to-end-auto-fix-missing-test-scripts-install-deps-and-run-ci-all: step advanced (lint/test PASS)
+- [2025-08-16T23:41:29.933Z] bootstrap summary appended
+- [2025-08-16T23:42:03.637Z] monorepo-analyze-repo-and-fully-set-up-workspaces-apps-packages-ensure-lint-test-green-end-to-end-auto-fix-missing-test-scripts-install-deps-and-run-ci-all: step advanced (lint/test PASS)
+- [2025-08-16T23:42:15.708Z] bootstrap summary appended
+- [2025-08-16T23:42:51.722Z] monorepo-analyze-repo-and-fully-set-up-workspaces-apps-packages-ensure-lint-test-green-end-to-end-auto-fix-missing-test-scripts-install-deps-and-run-ci-all: step advanced (lint/test PASS)
+- [2025-08-16T23:43:03.113Z] bootstrap summary appended
+- [2025-08-16T23:43:38.688Z] monorepo-analyze-repo-and-fully-set-up-workspaces-apps-packages-ensure-lint-test-green-end-to-end-auto-fix-missing-test-scripts-install-deps-and-run-ci-all: step advanced (lint/test PASS)
+- [2025-08-16T23:43:51.266Z] bootstrap summary appended
+- [2025-08-16T23:44:28.461Z] monorepo-analyze-repo-and-fully-set-up-workspaces-apps-packages-ensure-lint-test-green-end-to-end-auto-fix-missing-test-scripts-install-deps-and-run-ci-all: step advanced (lint/test PASS)
+- [2025-08-16T23:44:41.101Z] bootstrap summary appended
+- [2025-08-16T23:45:16.253Z] monorepo-verify-workspaces-and-package-json-test-scripts-across-apps-and-packages-: step advanced (lint/test PASS)
+- [2025-08-16T23:45:28.197Z] bootstrap summary appended
+- [2025-08-16T23:46:01.148Z] monorepo-verify-workspaces-and-package-json-test-scripts-across-apps-and-packages-: step advanced (lint/test PASS)
+- [2025-08-16T23:46:12.063Z] bootstrap summary appended
+- [2025-08-16T23:46:45.661Z] monorepo-verify-workspaces-and-package-json-test-scripts-across-apps-and-packages-: step advanced (lint/test PASS)
+- [2025-08-16T23:46:58.464Z] bootstrap summary appended
+- [2025-08-16T23:47:30.863Z] monorepo-verify-workspaces-and-package-json-test-scripts-across-apps-and-packages-: step advanced (lint/test PASS)
+- [2025-08-16T23:47:43.727Z] bootstrap summary appended
+- [2025-08-16T23:48:16.985Z] monorepo-verify-workspaces-and-package-json-test-scripts-across-apps-and-packages-: step advanced (lint/test PASS)
+- [2025-08-16T23:48:28.860Z] bootstrap summary appended
+- [2025-08-16T23:49:02.641Z] monorepo-verify-workspaces-and-package-json-test-scripts-across-apps-and-packages-: step advanced (lint/test PASS)
+- [2025-08-16T23:49:14.402Z] bootstrap summary appended
+- [2025-08-16T23:49:47.418Z] monorepo-verify-workspaces-and-package-json-test-scripts-across-apps-and-packages-: step advanced (lint/test PASS)
+- [2025-08-16T23:49:58.874Z] bootstrap summary appended
+- [2025-08-16T23:50:32.558Z] monorepo-verify-workspaces-and-package-json-test-scripts-across-apps-and-packages-: step advanced (lint/test PASS)
+- [2025-08-16T23:50:46.724Z] bootstrap summary appended
+- [2025-08-16T23:51:21.706Z] monorepo-verify-workspaces-and-package-json-test-scripts-across-apps-and-packages-: step advanced (lint/test PASS)
+- [2025-08-16T23:51:34.706Z] bootstrap summary appended
+- [2025-08-16T23:52:08.423Z] monorepo-verify-workspaces-and-package-json-test-scripts-across-apps-and-packages-: step advanced (lint/test PASS)
+- [2025-08-16T23:52:20.699Z] bootstrap summary appended
+- [2025-08-16T23:52:54.927Z] monorepo-verify-workspaces-and-package-json-test-scripts-across-apps-and-packages-: step advanced (lint/test PASS)
+- [2025-08-16T23:53:07.095Z] bootstrap summary appended
+- [2025-08-16T23:53:42.533Z] monorepo-verify-workspaces-and-package-json-test-scripts-across-apps-and-packages-: step advanced (lint/test PASS)
+- [2025-08-16T23:53:55.300Z] bootstrap summary appended
+- [2025-08-16T23:54:29.121Z] monorepo-verify-workspaces-and-package-json-test-scripts-across-apps-and-packages-: step advanced (lint/test PASS)
+- [2025-08-16T23:54:40.173Z] bootstrap summary appended
+- [2025-08-16T23:55:13.922Z] monorepo-verify-workspaces-and-package-json-test-scripts-across-apps-and-packages-: step advanced (lint/test PASS)
+- [2025-08-16T23:55:26.336Z] bootstrap summary appended
+- [2025-08-16T23:56:00.411Z] monorepo-verify-workspaces-and-package-json-test-scripts-across-apps-and-packages-: step advanced (lint/test PASS)
+- [2025-08-16T23:56:12.988Z] bootstrap summary appended
+- [2025-08-16T23:56:49.542Z] monorepo-verify-workspaces-and-package-json-test-scripts-across-apps-and-packages-: step advanced (lint/test PASS)
+- [2025-08-16T23:57:01.565Z] bootstrap summary appended
+- [2025-08-16T23:57:34.484Z] monorepo-verify-workspaces-and-package-json-test-scripts-across-apps-and-packages-: step advanced (lint/test PASS)
+- [2025-08-16T23:57:47.440Z] bootstrap summary appended
+- [2025-08-16T23:58:20.678Z] monorepo-verify-workspaces-and-package-json-test-scripts-across-apps-and-packages-: step advanced (lint/test PASS)
+- [2025-08-16T23:58:33.012Z] bootstrap summary appended
+- [2025-08-16T23:59:06.239Z] monorepo-verify-workspaces-and-package-json-test-scripts-across-apps-and-packages-: step advanced (lint/test PASS)
+- [2025-08-16T23:59:18.884Z] bootstrap summary appended
+- [2025-08-16T23:59:52.363Z] monorepo-verify-workspaces-and-package-json-test-scripts-across-apps-and-packages-: step advanced (lint/test PASS)
+- [2025-08-17T00:00:04.552Z] bootstrap summary appended
+- [2025-08-17T00:00:37.706Z] monorepo-verify-workspaces-and-package-json-test-scripts-across-apps-and-packages-: step advanced (lint/test PASS)
+- [2025-08-17T00:00:50.024Z] bootstrap summary appended
+- [2025-08-17T00:01:24.240Z] monorepo-verify-workspaces-and-package-json-test-scripts-across-apps-and-packages-: step advanced (lint/test PASS)
+- [2025-08-17T00:01:37.436Z] bootstrap summary appended
+- [2025-08-17T00:02:12.952Z] monorepo-verify-workspaces-and-package-json-test-scripts-across-apps-and-packages-: step advanced (lint/test PASS)
+- [2025-08-17T00:02:26.971Z] bootstrap summary appended
+- [2025-08-17T00:03:02.262Z] monorepo-verify-workspaces-and-package-json-test-scripts-across-apps-and-packages-: step advanced (lint/test PASS)
+- [2025-08-17T00:03:14.914Z] bootstrap summary appended
+- [2025-08-17T00:03:48.965Z] monorepo-verify-workspaces-and-package-json-test-scripts-across-apps-and-packages-: step advanced (lint/test PASS)
+- [2025-08-17T00:04:01.098Z] bootstrap summary appended
+- [2025-08-17T00:04:37.084Z] monorepo-verify-workspaces-and-package-json-test-scripts-across-apps-and-packages-: step advanced (lint/test PASS)
+- [2025-08-17T00:04:50.556Z] bootstrap summary appended
+- [2025-08-17T00:05:24.629Z] monorepo-verify-workspaces-and-package-json-test-scripts-across-apps-and-packages-: step advanced (lint/test PASS)
+- [2025-08-17T00:05:37.762Z] bootstrap summary appended
+- [2025-08-17T00:06:13.969Z] monorepo-verify-workspaces-and-package-json-test-scripts-across-apps-and-packages-: step advanced (lint/test PASS)
+- [2025-08-17T00:06:28.040Z] bootstrap summary appended
+- [2025-08-17T00:07:07.969Z] monorepo-verify-workspaces-and-package-json-test-scripts-across-apps-and-packages-: step advanced (lint/test PASS)
+- [2025-08-17T00:07:21.391Z] bootstrap summary appended
+- [2025-08-17T00:07:55.564Z] monorepo-verify-workspaces-and-package-json-test-scripts-across-apps-and-packages-: step advanced (lint/test PASS)
+- [2025-08-17T00:08:09.928Z] bootstrap summary appended
+- [2025-08-17T00:08:52.989Z] monorepo-verify-workspaces-and-package-json-test-scripts-across-apps-and-packages-: step advanced (lint/test PASS)
+- [2025-08-17T00:09:05.125Z] bootstrap summary appended
+- [2025-08-17T00:09:39.808Z] monorepo-verify-workspaces-and-package-json-test-scripts-across-apps-and-packages-: step advanced (lint/test PASS)
+- [2025-08-17T00:10:00.502Z] bootstrap summary appended
+- [2025-08-17T00:10:41.890Z] monorepo-verify-workspaces-and-package-json-test-scripts-across-apps-and-packages-: step advanced (lint/test PASS)
+- [2025-08-17T00:10:54.076Z] bootstrap summary appended
+- [2025-08-17T00:11:29.395Z] monorepo-verify-workspaces-and-package-json-test-scripts-across-apps-and-packages-: step advanced (lint/test PASS)
+- [2025-08-17T00:11:42.818Z] bootstrap summary appended
+- [2025-08-17T00:12:18.073Z] monorepo-verify-workspaces-and-package-json-test-scripts-across-apps-and-packages-: step advanced (lint/test PASS)
+- [2025-08-17T00:12:30.981Z] bootstrap summary appended
+- [2025-08-17T00:13:08.796Z] monorepo-verify-workspaces-and-package-json-test-scripts-across-apps-and-packages-: step advanced (lint/test PASS)
+- [2025-08-17T00:13:22.215Z] bootstrap summary appended
+- [2025-08-17T00:13:56.414Z] monorepo-verify-workspaces-and-package-json-test-scripts-across-apps-and-packages-: step advanced (lint/test PASS)
+- [2025-08-17T00:14:09.866Z] bootstrap summary appended
+- [2025-08-17T00:14:44.118Z] monorepo-verify-workspaces-and-package-json-test-scripts-across-apps-and-packages-: step advanced (lint/test PASS)
+- [2025-08-17T00:14:56.866Z] bootstrap summary appended
+- [2025-08-17T00:15:31.089Z] monorepo-verify-workspaces-and-package-json-test-scripts-across-apps-and-packages-: step advanced (lint/test PASS)
+- [2025-08-17T00:15:43.049Z] bootstrap summary appended
+- [2025-08-17T00:16:19.434Z] monorepo-verify-workspaces-and-package-json-test-scripts-across-apps-and-packages-: step advanced (lint/test PASS)
+- [2025-08-17T00:16:31.197Z] bootstrap summary appended
+- [2025-08-17T00:17:05.650Z] monorepo-verify-workspaces-and-package-json-test-scripts-across-apps-and-packages-: step advanced (lint/test PASS)
+- [2025-08-17T00:17:19.314Z] bootstrap summary appended
+- [2025-08-17T00:17:55.519Z] monorepo-verify-workspaces-and-package-json-test-scripts-across-apps-and-packages-: step advanced (lint/test PASS)
+- [2025-08-17T00:18:08.802Z] bootstrap summary appended
+- [2025-08-17T00:18:44.248Z] monorepo-verify-workspaces-and-package-json-test-scripts-across-apps-and-packages-: step advanced (lint/test PASS)
+- [2025-08-17T00:18:56.681Z] bootstrap summary appended
+- [2025-08-17T00:19:31.767Z] monorepo-verify-workspaces-and-package-json-test-scripts-across-apps-and-packages-: step advanced (lint/test PASS)
+- [2025-08-17T00:19:44.634Z] bootstrap summary appended
+- [2025-08-17T00:20:19.748Z] monorepo-verify-workspaces-and-package-json-test-scripts-across-apps-and-packages-: step advanced (lint/test PASS)
+- [2025-08-17T00:20:32.232Z] bootstrap summary appended
+- [2025-08-17T00:21:06.459Z] monorepo-verify-workspaces-and-package-json-test-scripts-across-apps-and-packages-: step advanced (lint/test PASS)
+- [2025-08-17T00:21:18.216Z] bootstrap summary appended
+- [2025-08-17T00:21:53.274Z] monorepo-verify-workspaces-and-package-json-test-scripts-across-apps-and-packages-: step advanced (lint/test PASS)
+- [2025-08-17T00:22:05.120Z] bootstrap summary appended
+- [2025-08-17T00:22:39.824Z] monorepo-verify-workspaces-and-package-json-test-scripts-across-apps-and-packages-: step advanced (lint/test PASS)
+- [2025-08-17T00:22:51.491Z] bootstrap summary appended
+- [2025-08-17T00:23:26.323Z] monorepo-verify-workspaces-and-package-json-test-scripts-across-apps-and-packages-: step advanced (lint/test PASS)

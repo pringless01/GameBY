@@ -239,6 +239,9 @@ app.use(express.static(path.join(__dirname, '..', 'frontend', 'public')));
 
 // Sunucu başlatma bloğu yeniden aktif
 (async () => {
+  // Prevent multiple starts across repeated imports (tests may import server multiple times)
+  if (globalThis.__GBY_API_STARTED) { return; }
+  globalThis.__GBY_API_STARTED = true;
   await initDb();
   try { await initRedisIfEnabled(); } catch { /* ignore */ }
   try { await initBlacklist(); } catch { /* ignore */ }
@@ -268,7 +271,13 @@ app.use(express.static(path.join(__dirname, '..', 'frontend', 'public')));
   io.on('disconnect', () => { appMetrics.socket_connections_current = Math.max(0, appMetrics.socket_connections_current-1); });
   const PORT = envConfig.PORT || 3000;
   server.listen(PORT, () => {
-    console.log('Server listening on port', PORT);
+    try {
+      const addr = server.address();
+      const actual = typeof addr === 'object' && addr ? addr.port : PORT;
+      console.log('Server listening on port', actual);
+    } catch {
+      console.log('Server listening on port', PORT);
+    }
   });
 
   const shutdown = (signal) => {

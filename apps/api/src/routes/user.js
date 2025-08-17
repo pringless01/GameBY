@@ -9,7 +9,7 @@ import { leaderboardMetrics } from '../metrics/leaderboardMetrics.js';
 import { reputationMetrics } from '../metrics/reputationMetrics.js';
 import { authRequired } from '../middleware/auth.js';
 import { trustRateLimit, rateLimit } from '../middleware/rateLimit.js';
-import { encodeCursor, decodeCursor, WEAK_CURSOR_SECRET, isCursorAbuse, isInCursorCooldown, getIpInvalidCount, getCooldownIpCount, getAbusiveIpCount, getInvalidCursorRecent, getCursorCooldownUntil, INVALID_CURSOR_THRESHOLD, shouldAutoDegrade, getInvalidCursorIpStats } from '../security/cursorSecurity.js';
+import { encodeCursor, decodeCursor, WEAK_CURSOR_SECRET, isCursorAbuse, isInCursorCooldown, getIpInvalidCount, getCooldownIpCount, getAbusiveIpCount, getInvalidCursorRecent, getCursorCooldownUntil, shouldAutoDegrade, getInvalidCursorIpStats } from '../security/cursorSecurity.js';
 import { DAILY_CONTRACT_TRUST_CAP } from '../services/contractService.js';
 import { getMultiUserIps, getMultiUserDevices, computeFraudRiskScore } from '../services/fraudService.js';
 import { canBeMentor, getActiveMentorship, getQueues, computeMentorQualityScore } from '../services/mentorService.js';
@@ -591,9 +591,9 @@ router.get('/leaderboard', authRequired, lbRate, async (req,res)=>{
   let r = await getTrustLeaderboard(db,{ limit, offset, useAround, window, userId, cursor, needRank: useAround ? true : wantRank, ip: req.ip });
     if(r.error === 'invalid_cursor'){
       const cnt = getIpInvalidCount(req.ip);
-      if(process.env.CURSOR_AUTO_DEGRADE==='1' && cnt > INVALID_CURSOR_THRESHOLD){
+      if(shouldAutoDegrade(cnt)){
         req._autoDegrade = true; cursor = null; offset='0';
-  const rDegraded = await getTrustLeaderboard(db,{ limit, offset, useAround, window, userId, cursor:null, needRank: useAround ? true : wantRank, ip: req.ip });
+        const rDegraded = await getTrustLeaderboard(db,{ limit, offset, useAround, window, userId, cursor:null, needRank: useAround ? true : wantRank, ip: req.ip });
         if(!rDegraded.error){ r = rDegraded; }
       }
     }
