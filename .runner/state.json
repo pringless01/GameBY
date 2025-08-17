@@ -1,6 +1,6 @@
 {
   "current_task": "T002",
-  "last_commit": "feat(runner): initial runner scaffolding, scripts, state, CI smoke",
+  "last_commit": "feat(runner): bootstrap continuous runner scaffolding (tasks, memory, scripts, state, smoke CI)",
   "next_actions": [
     "apps/api/src unit test iskeletini stabilize et (README talimatları)",
     "scripts/test.ps1 içine test matrisi (unit+integration smoke) opsiyonel ekle",
