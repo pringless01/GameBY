@@ -1,0 +1,66 @@
+name: Deploy (Self-hosted)
+
+on:
+  push:
+    branches: [ "main" ]
+  workflow_dispatch: {}
+
+concurrency:
+  group: deploy-selfhosted-main
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: self-hosted
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Write .env for compose
+        working-directory: ${{ github.workspace }}
+        env:
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
+          CURSOR_SECRET: ${{ secrets.CURSOR_SECRET }}
+          CURSOR_SECRET_ROTATION: ${{ secrets.CURSOR_SECRET_ROTATION }}
+          REFRESH_SECRET: ${{ secrets.REFRESH_SECRET }}
+          CORS_ORIGIN: ${{ secrets.CORS_ORIGIN }}
+          BASIC_AUTH_USER: ${{ secrets.BASIC_AUTH_USER }}
+          BASIC_AUTH_PASS: ${{ secrets.BASIC_AUTH_PASS }}
+          AGENT_ENABLED: ${{ secrets.AGENT_ENABLED }}
+          AGENT_CONFIG_PATH: ${{ secrets.AGENT_CONFIG_PATH }}
+        run: |
+          set -euo pipefail
+          umask 077
+          cat > .env << EOF
+          JWT_SECRET=${JWT_SECRET}
+          CURSOR_SECRET=${CURSOR_SECRET}
+          CURSOR_SECRET_ROTATION=${CURSOR_SECRET_ROTATION}
+          REFRESH_SECRET=${REFRESH_SECRET}
+          CORS_ORIGIN=${CORS_ORIGIN}
+          BASIC_AUTH_USER=${BASIC_AUTH_USER}
+          BASIC_AUTH_PASS=${BASIC_AUTH_PASS}
+          AGENT_ENABLED=${AGENT_ENABLED}
+          AGENT_CONFIG_PATH=${AGENT_CONFIG_PATH}
+          EOF
+
+      - name: Compose up
+        working-directory: ${{ github.workspace }}
+        run: |
+          set -euo pipefail
+          if docker compose version >/dev/null 2>&1; then
+            DC="docker compose"
+          elif command -v docker-compose >/dev/null 2>&1; then
+            DC="docker-compose"
+          else
+            echo "docker compose not available on runner"; exit 1
+          fi
+          sudo $DC up -d --build
+
+      - name: Health check
+        run: |
+          set -euo pipefail
+          for i in {1..30}; do
+            curl -fsS http://127.0.0.1/health && break || true
+            sleep 2
+          done
+          curl -fsS http://127.0.0.1/health || (echo "Health failed"; docker compose ps; exit 1)
