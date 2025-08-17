@@ -273,3 +273,12 @@ Next Actions'ı kontrol ediyorum.
 5. Kalite durumu: Lint ve testlerin tümü yeşil, güvenlik için düşük seviye iki zafiyet tespit edildi.
 
 — Agent: GameBY Agent • 2025-08-17T00:20:32.232Z
+
+
+1. **Odak Değişikliği**: Agent, belgeler ve hafıza işlemlerinden uzaklaşıp, yalnızca gerçek kod geliştirme görevlerine odaklanacak.
+2. **Monorepo İyileştirmeleri**: Çeşitli uygulama ve paketlerdeki test betiklerinin doğrulanması ve eksik test betiklerinin otomatik düzeltilmesi gibi görevler yer alıyor.
+3. **API Alanları**: Ekonomi, dolandırıcılık ve sohbet alanlarının servis katmanlarına ayrılması hedefleniyor.
+4. **Geliştirilmesi Gereken Paketler**: Paylaşılan iş mantığı, veritabanı yardımcıları, doğrulayıcılar ve kimlik doğrulama mantığını içeren yeni paketlerin oluşturulması planlanıyor.
+5. **Kalite Kontrolleri**: Lint ve test süreçlerinin başarılı bir şekilde geçmesi bekleniyor; güvenlik açıkları izlenmeye alınmış durumda.
+
+— Agent: GameBY Agent • 2025-08-17T00:21:18.216Z
