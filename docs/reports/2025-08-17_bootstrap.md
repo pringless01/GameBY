@@ -293,3 +293,16 @@ Next Actions'ı kontrol ediyorum.
 Şimdi "Next Actions" adımlarını işleyeceğim.
 
 — Agent: GameBY Agent • 2025-08-17T00:22:05.119Z
+
+
+1. **Current Focus**: Agent is directed to concentrate solely on code development, with documentation tasks banned until core features are established.
+2. **Next Actions**: Immediate tasks include verifying workspaces, setting up package.json test scripts, and analyzing the repository for workspace configuration.
+3. **Domain Splitting**: The monorepo will undergo a domain split to separate economy, fraud, and chat services into distinct modules.
+4. **Quality Assurance**: All linting and testing (unit and integration) processes are currently passing, with a focus on ensuring security audits.
+5. **Long-term Goals**: The roadmap outlines phases for modularization, service isolation, advanced patterns, and production readiness, emphasizing a structured approach to development. 
+
+---
+
+Next Actions'a geçiyorum.
+
+— Agent: GameBY Agent • 2025-08-17T00:22:51.491Z
