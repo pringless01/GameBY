@@ -28,7 +28,6 @@ jobs:
           host: ${{ secrets.SERVER_HOST }}
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SERVER_SSH_KEY }}
-          port: ${{ secrets.SERVER_PORT || 22 }}
           script_stop: true
           script: |
             set -e
@@ -42,11 +41,11 @@ jobs:
           host: ${{ secrets.SERVER_HOST }}
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SERVER_SSH_KEY }}
-          port: ${{ secrets.SERVER_PORT || 22 }}
           source: "."
           target: "~/gameby"
           rm: true
           overwrite: true
+          debug: true
 
       - name: SSH deploy
         uses: appleboy/ssh-action@v1.2.0
@@ -64,7 +63,6 @@ jobs:
           host: ${{ secrets.SERVER_HOST }}
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SERVER_SSH_KEY }}
-          port: ${{ secrets.SERVER_PORT || 22 }}
           envs: JWT_SECRET,CURSOR_SECRET,CURSOR_SECRET_ROTATION,REFRESH_SECRET,CORS_ORIGIN,BASIC_AUTH_USER,BASIC_AUTH_PASS,AGENT_ENABLED,AGENT_CONFIG_PATH
           script_stop: true
           script: |
@@ -116,7 +114,7 @@ jobs:
             sudo $DC up -d --build
 
             for i in {1..30}; do
-              curl -fsS http://localhost/health && break || true
+              curl -fsS http://127.0.0.1/health && break || true
               sleep 2
             done
-            curl -fsS http://localhost/health || (echo "Health failed"; sudo $DC ps; exit 1)
+            curl -fsS http://127.0.0.1/health || (echo "Health failed"; sudo $DC ps; exit 1)
