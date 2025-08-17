@@ -4,6 +4,11 @@
   "version": "0.0.1",
   "type": "module",
   "scripts": {
-    "codex:run": "node tools/codex-runner.js"
+  "codex:run": "node tools/codex-runner.js",
+  "lint": "npm --prefix server run lint",
+  "lint:fix": "npm --prefix server run lint:fix",
+  "test": "npm --prefix server test",
+  "coverage": "npm --prefix server run coverage",
+  "ci:all": "npm --prefix server ci --silent || npm --prefix server test"
   }
 }
