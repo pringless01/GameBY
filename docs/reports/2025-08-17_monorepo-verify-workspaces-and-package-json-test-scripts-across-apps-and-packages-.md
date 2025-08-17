@@ -1,20 +1,15 @@
 # Next Action: Monorepo: verify workspaces and package.json test scripts across apps/* and packages/*
 
-1. **Alt Adım 1: Workspace'leri Kontrol Etme**
-   - Tüm `apps/*` ve `packages/*` dizinlerindeki workspace yapılandırmalarını gözden geçirip, eksik veya hatalı olanları not al.
+1. **Workspaces Kontrolü**: Monorepo'daki tüm uygulama ve paket dizinlerindeki `package.json` dosyalarını kontrol ederek, mevcut workspace yapılandırmalarını doğrulama.
 
-2. **Alt Adım 2: package.json'ları İnceleme**
-   - Her bir uygulama ve paket için `package.json` dosyasını açarak, test scriptlerinin doğru ve güncel olup olmadığını kontrol et.
+2. **Test Scriptlerinin İncelenmesi**: `apps/*` ve `packages/*` dizinlerindeki `package.json` dosyalarındaki test scriptlerini inceleyerek, her birinin geçerliliğini ve uyumluluğunu kontrol etme.
 
-3. **Alt Adım 3: Test Scriptlerini Çalıştırma**
-   - `apps/*` ve `packages/*` içindeki her bir `package.json` test scriptini çalıştırarak, herhangi bir hata olup olmadığını gözlemle.
+3. **Bağımlılıkların Doğrulanması**: Test scriptlerinin çalışabilmesi için gerekli olan bağımlılıkların doğru bir şekilde yüklendiğini ve tanımlandığını kontrol etme.
 
-4. **Alt Adım 4: Hataları Belgeleme**
-   - Test scriptleri sırasında ortaya çıkan hataları ve eksiklikleri detaylı bir şekilde belgeleyerek, düzeltme gerektiren noktaları belirle.
+4. **Testlerin Çalıştırılması**: Her bir uygulama ve paket için `npm test` veya eşdeğer komutları çalıştırarak, testlerin başarılı bir şekilde geçtiğini doğrulama.
 
-5. **Alt Adım 5: Gerekli Düzeltmeleri Yapma**
-   - Belirlenen hataları düzeltmek için gerekli değişiklikleri yap ve güncellenmiş dosyaları kaydet. 
+5. **Raporlama**: Yapılan kontroller ve test sonuçlarını içeren bir rapor hazırlayarak, sonuçları belgede toplama. 
 
-Her alt adım için gerekli işlemleri tamamlayarak ilerleyeceğim.
+Şimdi bu adımları sırayla işleyeceğim. İlk adım olan "Workspaces Kontrolü" ile başlayalım.
 
-— Agent: GameBY Agent • 2025-08-17T00:12:40.650Z
+— Agent: GameBY Agent • 2025-08-17T00:13:28.357Z
