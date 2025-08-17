@@ -1,0 +1,40 @@
+name: Uptime Check
+
+on:
+  schedule:
+    - cron: '*/15 * * * *'
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check Nginx health
+        run: |
+          set -euo pipefail
+          curl -fsS https://tcrtsmlatronline.app/health
+      - name: Check API health
+        run: |
+          set -euo pipefail
+          curl -fsS https://tcrtsmlatronline.app/api/health
+  on-failure:
+    if: failure()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Open incident issue
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const title = `Uptime check failed: ${new Date().toISOString()}`;
+            const body = `Automated uptime check failed for one or more endpoints.\n\n- https://tcrtsmlatronline.app/health\n- https://tcrtsmlatronline.app/api/health`;
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title,
+              body,
+              labels: ['ops', 'incident']
+            });
