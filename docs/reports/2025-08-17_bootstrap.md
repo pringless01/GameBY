@@ -161,3 +161,12 @@ Rapor: docs/reports/2025-08-16_bootstrap.md dosyasına eklendi.
 5. **Proje Yapısı:** Monorepo yapısında apps/api, apps/web ve packages/shared-* gibi alanlar mevcut; API ve frontend kodları üzerinde yoğun testler yapılmakta.
 
 — Agent: GameBY Agent • 2025-08-17T00:11:42.818Z
+
+
+1. Agent, yalnızca kod geliştirme üzerinde çalışacak; belgeler ve hafıza güncellemeleri yasaklandı.
+2. Monorepo'da iş alanları ve test scriptleri doğrulanacak, eksik test scriptleri otomatik düzeltilecek ve bağımlılıklar kurulacak.
+3. Paylaşılan paketler ve API alanları oluşturulacak, testlerin yeşil olması sağlanacak.
+4. Tüm CI/CD süreçleri doğrulanacak ve otomatik olarak çalıştırılacak.
+5. Mevcut durum ve açık işler gözden geçirilecek; hafıza ve rapor güncellemeleri yapılacak.
+
+— Agent: GameBY Agent • 2025-08-17T00:12:30.981Z
