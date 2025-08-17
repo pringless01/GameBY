@@ -182,7 +182,8 @@ async function getTrustLeaderboard(db, { limit, offset, useAround, window, userI
       const end = userRank + window;
       rows = rows.filter(r=> r.r >= start && r.r <= end);
     } catch(err){
-      const many = await db.all('SELECT id, username, trust_score FROM users ORDER BY trust_score DESC, id ASC LIMIT 500');
+      const { fetchTopN } = await import('../src/modules/leaderboard/services/trustQueries.js');
+      const many = await fetchTopN(db, 500);
       rows = many.map((r,i)=>({ ...r, r: i+1 })).filter(r=> r.r >= userRank-window && r.r <= userRank+window);
     }
     trustAroundCache.set(aroundKey, { ts: Date.now(), userRank, list: rows });
@@ -210,9 +211,9 @@ async function getTrustLeaderboard(db, { limit, offset, useAround, window, userI
       return { payload: { category:'trust', list: cached.data, cached:true, ttl_ms: ttl, ...(needRank && userRankMeta ? { userRank: userRankMeta.rank, userRankMeta } : {}), total, offset: Number(offset), limit: Number(limit), hasMore, mode:'offset' }, cache:'HIT', ttl, lastTs: cached.ts };
     }
     leaderboardMetrics.trust.offset.misses++;
-    const list = await db.all('SELECT id, username, trust_score FROM users ORDER BY trust_score DESC, id ASC LIMIT ? OFFSET ?', [limit, offset]);
-    const totalRow = await db.get('SELECT COUNT(*) as c FROM users');
-    const total = totalRow.c;
+  const { fetchTrustPage, countUsers } = await import('../src/modules/leaderboard/services/trustQueries.js');
+  const list = await fetchTrustPage(db, limit, offset);
+  const total = await countUsers(db);
     leaderboardCache.set(limit+':'+offset, { ts: now, data: list, total });
     let userRankMeta = null;
     if(needRank){ userRankMeta = await computeUserRankMeta(db, userId); }
@@ -220,13 +221,8 @@ async function getTrustLeaderboard(db, { limit, offset, useAround, window, userI
     return { payload: { category:'trust', list, cached:false, ...(needRank && userRankMeta ? { userRank: userRankMeta.rank, userRankMeta } : {}), total, offset: Number(offset), limit: Number(limit), hasMore, mode:'offset' }, cache:'MISS', ttl: LEADERBOARD_TTL_MS, lastTs: now };
   }
   // Cursor mode
-  const params = [];
-  let where = '';
-  if(decodedCursor){
-    where = 'WHERE (trust_score < ? OR (trust_score = ? AND id > ?))';
-    params.push(decodedCursor.score, decodedCursor.score, decodedCursor.id);
-  }
-  const rows = await db.all(`SELECT id, username, trust_score FROM users ${where} ORDER BY trust_score DESC, id ASC LIMIT ?`, [...params, limit]);
+  const { fetchTrustAfterCursor } = await import('../src/modules/leaderboard/services/trustQueries.js');
+  const rows = await fetchTrustAfterCursor(db, decodedCursor, limit);
   const totalRow = await db.get('SELECT COUNT(*) as c FROM users');
   const total = totalRow.c;
   let userRankMeta = null;
@@ -241,8 +237,9 @@ async function getTrustLeaderboard(db, { limit, offset, useAround, window, userI
 // Mentor leaderboard
 async function getMentorLeaderboard(db, { limit, minSessions, wantSelf, userId }){
   try {
-    const tbl = await db.all("PRAGMA table_info(mentorships)");
-    if(!Array.isArray(tbl) || tbl.length===0){
+    const { hasMentorshipsTable } = await import('../src/modules/leaderboard/services/mentorQueries.js');
+    const ok = await hasMentorshipsTable(db);
+    if(!ok){
       return { payload: { category:'mentor', list:[], total:0, cached:false, ttl_ms:0, selfRank:null, unavailable:true }, cache:'MISS', ttl:0, lastTs: Date.now() };
     }
   } catch {
@@ -261,30 +258,17 @@ async function getMentorLeaderboard(db, { limit, minSessions, wantSelf, userId }
       if(age < MENTOR_LB_TTL_MS){ list = cached.data; totalQualified = cached.total; listCached = true; ttlMs = MENTOR_LB_TTL_MS - age; }
     }
     if(!listCached){
-      list = await db.all(`SELECT m.mentor_id as id, u.username, COUNT(m.id) as sessions, ROUND(AVG(m.mentor_rating),2) as avg_rating
-        FROM mentorships m
-        JOIN users u ON u.id = m.mentor_id
-        WHERE m.status='COMPLETED' AND m.mentor_rating IS NOT NULL
-        GROUP BY m.mentor_id
-        HAVING sessions >= ?
-        ORDER BY avg_rating DESC, sessions DESC, id ASC
-        LIMIT ?`, [minSessions, limit]);
-      const totalRow = await db.get(`SELECT COUNT(*) as total FROM (
-          SELECT m.mentor_id
-          FROM mentorships m
-          WHERE m.status='COMPLETED' AND m.mentor_rating IS NOT NULL
-          GROUP BY m.mentor_id
-          HAVING COUNT(m.id) >= ?
-        ) x`, [minSessions]);
-      totalQualified = totalRow.total;
+      const { fetchMentorAgg, countMentorsQualified } = await import('../src/modules/leaderboard/services/mentorQueries.js');
+      list = await fetchMentorAgg(db, minSessions, limit);
+      totalQualified = await countMentorsQualified(db, minSessions);
       mentorsLbCache.set(cacheKey, { ts: now, data: list, total: totalQualified });
       ttlMs = MENTOR_LB_TTL_MS;
     }
   }
   let selfRank = null;
   if(wantSelf){
-    const selfRow = await db.get(`SELECT COUNT(id) as sessions, ROUND(AVG(mentor_rating),2) as avg_rating
-      FROM mentorships WHERE mentor_id=? AND status='COMPLETED' AND mentor_rating IS NOT NULL`, [userId]);
+    const { fetchSelfMentorStats, fetchMentorAggAll } = await import('../src/modules/leaderboard/services/mentorQueries.js');
+    const selfRow = await fetchSelfMentorStats(db, userId);
     if(!selfRow || !selfRow.sessions || selfRow.sessions < minSessions || selfRow.avg_rating === null){
       selfRank = { ranked:false, reason: selfRow && selfRow.sessions < minSessions ? 'min_sessions' : 'no_rating', sessions: selfRow?.sessions||0, minSessions };
     } else {
@@ -292,13 +276,7 @@ async function getMentorLeaderboard(db, { limit, minSessions, wantSelf, userId }
       let aggAge; let aggTtl;
       if(agg){ aggAge = now - agg.ts; if(aggAge > MENTOR_LB_TTL_MS) agg = null; else aggTtl = MENTOR_LB_TTL_MS - aggAge; }
       if(!agg){
-        const rows = await db.all(`SELECT m.mentor_id as id, u.username, COUNT(m.id) as sessions, ROUND(AVG(m.mentor_rating),2) as avg_rating
-          FROM mentorships m
-          JOIN users u ON u.id = m.mentor_id
-          WHERE m.status='COMPLETED' AND m.mentor_rating IS NOT NULL
-          GROUP BY m.mentor_id
-          HAVING sessions >= ?
-          ORDER BY avg_rating DESC, sessions DESC, id ASC`, [minSessions]);
+        const rows = await fetchMentorAggAll(db, minSessions);
         agg = { ts: now, rows, total: rows.length };
         mentorsRankCache.set(minSessions, agg);
         aggTtl = MENTOR_LB_TTL_MS;
@@ -714,12 +692,14 @@ router.get('/leaderboard', authRequired, lbRate, async (req,res)=>{
       res.setHeader('Server-Timing', `total;dur=${(Number(tEnd - tStart)/1e6).toFixed(2)}`);
       return sendWithEtag(req,res,r.payload, { lastTs: r.lastTs });
     }
-    let r = await getTrustLeaderboard(db,{ limit, offset, useAround, window, userId, cursor, needRank: useAround ? true : wantRank, ip: req.ip });
+  // Modül facade: davranış eşdeğeri sonuç döndürür
+  const { getTrustLeaderboardFacade } = await import('../src/modules/leaderboard/index.js');
+  let r = await getTrustLeaderboard(db,{ limit, offset, useAround, window, userId, cursor, needRank: useAround ? true : wantRank, ip: req.ip });
     if(r.error === 'invalid_cursor'){
       const cnt = getIpInvalidCount(req.ip);
       if(process.env.CURSOR_AUTO_DEGRADE==='1' && cnt > INVALID_CURSOR_THRESHOLD){
         req._autoDegrade = true; cursor = null; offset='0';
-        const rDegraded = await getTrustLeaderboard(db,{ limit, offset, useAround, window, userId, cursor:null, needRank: useAround ? true : wantRank, ip: req.ip });
+  const rDegraded = await getTrustLeaderboard(db,{ limit, offset, useAround, window, userId, cursor:null, needRank: useAround ? true : wantRank, ip: req.ip });
         if(!rDegraded.error){ r = rDegraded; }
       }
     }
