@@ -57,10 +57,18 @@ jobs:
           sudo $DC up -d --build
 
       - name: Health check
+        working-directory: ${{ github.workspace }}
         run: |
           set -euo pipefail
           for i in {1..30}; do
             curl -fsS http://127.0.0.1/health && break || true
             sleep 2
           done
-          curl -fsS http://127.0.0.1/health || (echo "Health failed"; docker compose ps; exit 1)
+          if ! curl -fsS http://127.0.0.1/health; then
+            if docker compose version >/dev/null 2>&1; then
+              docker compose ps || true
+            elif command -v docker-compose >/dev/null 2>&1; then
+              docker-compose ps || true
+            fi
+            exit 1
+          fi

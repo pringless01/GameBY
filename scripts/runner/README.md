@@ -32,6 +32,8 @@ sudo ./svc.sh status
 sudo ./svc.sh restart
 sudo ./svc.sh stop
 sudo ./svc.sh start
+# Onarım (servis ayakta değilse)
+bash scripts/runner/service-repair.sh
 ```
 
 ## 5) Güvenlik
