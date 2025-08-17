@@ -336,12 +336,12 @@ function updateHeartbeat() {
   let s = read(p);
   if (!s) { write(p, `# Status\n\nLast activity: ${now}\n\n## Next Actions\n`); gitAddCommit(`chore(agent): heartbeat init`); return; }
   if (/^Last activity:/m.test(s)) {
-    s = s.replace(/^Last activity:.*$/m, `Last activity: ${now}`);
+  const updated = s.replace(/^Last activity:.*$/m, `Last activity: ${now}`);
+  if (updated !== s) { write(p, updated); }
   } else {
-    s = s.replace(/^(# .*?$)/m, `$1\n\nLast activity: ${now}`);
+  const updated = s.replace(/^(# .*?$)/m, `$1\n\nLast activity: ${now}`);
+  if (updated !== s) { write(p, updated); gitAddCommit(`chore(agent): heartbeat update`); }
   }
-  write(p, s);
-  gitAddCommit(`chore(agent): heartbeat update`);
 }
 function ensureNextActions() {
   ensureStatusSkeleton();
@@ -386,9 +386,13 @@ function markDone(title) {
   const esc = title.replace(/[.*+?^${}()|[\\]\\]/g, "\\$&");
   // Satır biçimleri: "- title" veya "- [ ] title" / "- [x] title"
   const re = new RegExp(`^\\s*-\\s*(?:\\[(?: |x|X)\\]\\s*)?${esc}\\s*$`, "m");
-  s = s.replace(re, `- ~~${title}~~ ✅`);
-  write(p, s);
-  gitAddCommit(`docs(status): mark done - ${title}`);
+  const next = s.replace(re, `- ~~${title}~~ ✅`);
+  if (next !== s) {
+    write(p, next);
+    gitAddCommit(`docs(status): mark done - ${title}`);
+  } else {
+    log(`markDone: no change for "${title}"`);
+  }
 }
 function slugify(t) { return t.toLowerCase().replace(/[^a-z0-9]+/g, "-"); }
 
