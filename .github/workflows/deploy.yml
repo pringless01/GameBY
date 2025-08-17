@@ -34,8 +34,18 @@ jobs:
           PORT: ${{ secrets.SERVER_PORT }}
         run: |
           set -euo pipefail
-          : "${PORT:=22}"
-          ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -p "$PORT" "$USER@$HOST" "mkdir -p \"\$HOME/gameby\" && echo Prepared \"\$HOME/gameby\""
+          CANDIDATES="${PORT:-} 22 2222"
+          SELECTED_PORT=""
+          for P in $CANDIDATES; do
+            [ -z "$P" ] && continue
+            echo "[prepare] trying ssh port $P"
+            if ssh -o BatchMode=yes -o ConnectTimeout=10 -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -p "$P" "$USER@$HOST" "echo ok"; then
+              SELECTED_PORT="$P"; break
+            fi
+          done
+          [ -n "$SELECTED_PORT" ] || { echo "SSH connection failed for all candidate ports"; exit 1; }
+          echo "[prepare] using port $SELECTED_PORT"
+          ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -p "$SELECTED_PORT" "$USER@$HOST" "mkdir -p \"\$HOME/gameby\" && echo Prepared \"\$HOME/gameby\""
 
       - name: Sync repo to server (tar stream)
         env:
@@ -44,14 +54,24 @@ jobs:
           PORT: ${{ secrets.SERVER_PORT }}
         run: |
           set -euo pipefail
-          : "${PORT:=22}"
+          CANDIDATES="${PORT:-} 22 2222"
+          SELECTED_PORT=""
+          for P in $CANDIDATES; do
+            [ -z "$P" ] && continue
+            echo "[sync] trying ssh port $P"
+            if ssh -o BatchMode=yes -o ConnectTimeout=10 -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -p "$P" "$USER@$HOST" "echo ok"; then
+              SELECTED_PORT="$P"; break
+            fi
+          done
+          [ -n "$SELECTED_PORT" ] || { echo "SSH connection failed for all candidate ports"; exit 1; }
+          echo "[sync] using port $SELECTED_PORT"
           TAR_EXCLUDES=(
             "--exclude=.git"
             "--exclude=node_modules"
             "--exclude=logs"
             "--exclude=.github/workflows/*.yml~"
           )
-          tar -czf - "${TAR_EXCLUDES[@]}" . | ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -p "$PORT" "$USER@$HOST" 'mkdir -p "$HOME/gameby" && tar -xzf - -C "$HOME/gameby"'
+          tar -czf - "${TAR_EXCLUDES[@]}" . | ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -p "$SELECTED_PORT" "$USER@$HOST" 'mkdir -p "$HOME/gameby" && tar -xzf - -C "$HOME/gameby"'
 
       - name: SSH deploy
         env:
@@ -69,8 +89,18 @@ jobs:
           AGENT_CONFIG_PATH: ${{ secrets.AGENT_CONFIG_PATH }}
         run: |
           set -euo pipefail
-          : "${PORT:=22}"
-          ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -p "$PORT" "$USER@$HOST" bash -s << 'REMOTE_EOF'
+          CANDIDATES="${PORT:-} 22 2222"
+          SELECTED_PORT=""
+          for P in $CANDIDATES; do
+            [ -z "$P" ] && continue
+            echo "[deploy] trying ssh port $P"
+            if ssh -o BatchMode=yes -o ConnectTimeout=10 -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -p "$P" "$USER@$HOST" "echo ok"; then
+              SELECTED_PORT="$P"; break
+            fi
+          done
+          [ -n "$SELECTED_PORT" ] || { echo "SSH connection failed for all candidate ports"; exit 1; }
+          echo "[deploy] using port $SELECTED_PORT"
+          ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -p "$SELECTED_PORT" "$USER@$HOST" bash -s << 'REMOTE_EOF'
           set -euo pipefail
           echo "Starting deploy on $(hostname)"
           cd "$HOME/gameby"
