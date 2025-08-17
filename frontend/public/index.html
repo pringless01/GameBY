@@ -1,17 +1,10 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="tr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <meta name="description" content="2D Online Ticaret Oyunu - Güven odaklı ticaret ekosistemi">
-    <meta name="theme-color" content="#2E7D32">
-    <title>Ana Sayfa - Ticaret Oyunu</title>
-    
-    <!doctype html>
-    <html lang="tr">
-    <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+    <meta name="description" content="2D Online Ticaret Oyunu - Güven odaklı ticaret ekosistemi" />
+    <meta name="theme-color" content="#000" />
     <title>CODARA GAME — Splash Intro (Neon)</title>
     <style>
     :root{
@@ -285,119 +278,6 @@
     </script>
     </body>
     </html>
-                    <div class="stat-card">
-                        <span class="stat-value" id="user-trust">100</span>
-                        <span class="stat-label">⭐ İtibar</span>
-                    </div>
-                    <div class="stat-card">
-                        <span class="stat-value" id="trust-earned-today">+0</span>
-                        <span class="stat-label">📈 Kazanç</span>
-                    </div>
-                    <div class="stat-card">
-                        <span class="stat-value" id="online-count">0</span>
-                        <span class="stat-label">👥 Online</span>
-                    </div>
-                    <div class="stat-card">
-                        <span class="stat-value" id="daily-earning">+0</span>
-                        <span class="stat-label">💰 Günlük</span>
-                    </div>
-                </div>
-                <div id="trust-rank-panel" style="margin-top:8px;padding:6px 10px;background:#1e1f23;border:1px solid #2c2d31;border-radius:10px;display:flex;flex-direction:column;gap:4px;">
-                  <div id="trust-rank-line" style="font-size:11px;color:#aaa;">Sıra: -</div>
-                  <div id="trust-trend-spark" style="height:30px;overflow:hidden;"></div>
-                  <div style="display:flex;gap:6px;flex-wrap:wrap;">
-                    <button class="btn btn-xsmall btn-outline" style="font-size:10px;padding:2px 6px;" onclick="openTrustTrendModal()">Trend Detay</button>
-                  </div>
-                </div>
-            </div>
-        </header>
-
-        <!-- Dashboard Grid -->
-        <div class="dashboard-grid">
-            
-            <!-- Resources Card -->
-            <div class="card resource-card animate-slideUp" style="animation-delay: 0.1s">
-                <div class="card-header">
-                    <h2 class="card-title">💰 Tezlerim</h2>
-                    <button class="btn btn-small btn-outline" onclick="refreshResources()">
-                        🔄 Yenile
-                    </button>
-                </div>
-                
-                <div class="resources-grid">
-                    <div class="resource-item" data-resource="money">
-                        <span class="resource-icon">💰</span>
-                        <span class="resource-label">Para</span>
-                        <span class="resource-value" id="money">50 TL</span>
-                        <div class="resource-change positive" id="money-change">
-                            +5 TL ↗️
-                        </div>
-                    </div>
-                    
-                    <div class="resource-item" data-resource="wood">
-                        <span class="resource-icon">🌳</span>
-                        <span class="resource-label">Odun</span>
-                        <span class="resource-value" id="wood">0</span>
-                        <div class="resource-change" id="wood-change">
-                            -
-                        </div>
-                    </div>
-                    
-                    <div class="resource-item" data-resource="grain">
-                        <span class="resource-icon">🌾</span>
-                        <span class="resource-label">Tahıl</span>
-                        <span class="resource-value" id="grain">0</span>
-                        <div class="resource-change" id="grain-change">
-                            -
-                        </div>
-                    </div>
-                    
-                    <div class="resource-item" data-resource="business">
-                        <span class="resource-icon">🏪</span>
-                        <span class="resource-label">İşletme</span>
-                        <span class="resource-value" id="business">0</span>
-                        <div class="resource-change" id="business-change">
-                            -
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Quick Actions Card -->
-            <div class="card actions-card animate-slideUp" style="animation-delay: 0.2s">
-                <div class="card-header">
-                    <h2 class="card-title">⚡ Hızlı İşlemler</h2>
-                </div>
-                
-                <div class="action-buttons">
-                    <button class="action-btn action-btn-primary" id="chop-wood" onclick="performAction('chop-wood')">
-                        <span class="action-btn-icon">🪓</span>
-                        <span class="action-btn-label">Odun Kes</span>
-                    </button>
-                    
-                    <button class="action-btn action-btn-primary" id="farm-grain" onclick="performAction('farm')">
-                        <span class="action-btn-icon">🌾</span>
-                        <span class="action-btn-label">Tarım Yap</span>
-                    </button>
-                    
-                    <a href="/chat.html" class="action-btn action-btn-chat">
-                        <span class="action-btn-icon">💬</span>
-                        <span class="action-btn-label">
-                            Chat
-                            <span class="chat-notification d-none" id="chat-notification">3</span>
-                        </span>
-                    </a>
-                    
-                    <a href="/marketplace.html" class="action-btn action-btn-secondary">
-                        <span class="action-btn-icon">🏪</span>
-                        <span class="action-btn-label">Pazar</span>
-                    </a>
-                </div>
-            </div>
-
-            <!-- Daily Goal Card -->
-            <div class="card goal-card animate-slideUp" style="animation-delay: 0.3s">
-                <div class="card-header">
                     <h2 class="card-title">🎯 Günlük Hedef</h2>
                     <span class="trust-badge trust-medium" id="goal-status">%50</span>
                 </div>
