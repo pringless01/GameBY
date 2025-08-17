@@ -1,15 +1,17 @@
 # Next Action: Monorepo: verify workspaces and package.json test scripts across apps/* and packages/*
 
-1. **Workspace'ları Kontrol Et**: Monorepo'daki tüm workspace'lerin doğru yapılandırıldığını ve belirtilen dizinlerde bulunduğunu doğrula.
+Aksiyon "Monorepo: verify workspaces and package.json test scripts across apps/* and packages/*" şu şekilde 5 alt adıma bölünebilir:
 
-2. **package.json Dosyalarını İncele**: `apps/*` ve `packages/*` altındaki tüm `package.json` dosyalarını açarak, test scriptlerinin varlığını ve doğruluğunu kontrol et.
+1. **Workspace Yapılandırmasını Kontrol Et**: Tüm `apps/*` ve `packages/*` dizinlerindeki `package.json` dosyalarını kontrol ederek, workspace yapılandırmalarının doğru yapıldığından emin olunacak.
 
-3. **Test Scriptlerini Çalıştır**: Her bir `package.json` dosyasındaki test scriptlerini çalıştırarak beklenen sonuçları elde etmeyi sağla.
+2. **Test Scriptlerini İncele**: Her `package.json` dosyasındaki test scriptlerini gözden geçirerek, doğru ve güncel olduklarını doğrulamak için gerekli kontroller yapılacak.
 
-4. **Hata Günlüğü Oluştur**: Test sırasında karşılaşılan hataları ve sorunları kaydet ve bir rapor oluştur.
+3. **Test Scriptlerini Çalıştır**: Her uygulama ve paket için belirlenen test scriptleri çalıştırılarak, herhangi bir hata olup olmadığı kontrol edilecek.
 
-5. **Sonuçları Raporla**: Elde edilen sonuçları ve yapılan işlemleri belgelerle birlikte güncelleyerek raporla.
+4. **Sonuçları Belgele**: Test sonuçları ve karşılaşılan hatalar, rapor haline getirilecek ve gerekli düzeltmeler için notlar alınacak.
 
-Bu adımların her biri gerçekleştirildikten sonra uygun değişiklikler yapılacaktır.
+5. **Gerekli Düzeltmeleri Uygula**: Eğer hatalar tespit edilirse, ilgili `package.json` dosyalarında gerekli düzeltmeler yapılarak, yapılandırmalar güncellenecek.
 
-— Agent: GameBY Agent • 2025-08-17T00:00:55.955Z
+Her adım için gerekli değişiklikler ve raporlar oluşturulacak. Şimdi ilk adıma geçiyorum.
+
+— Agent: GameBY Agent • 2025-08-17T00:01:44.787Z
