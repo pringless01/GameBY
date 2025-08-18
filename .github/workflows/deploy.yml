@@ -49,6 +49,14 @@ jobs:
           chmod 600 "$KEYFILE"
           echo "KEYFILE=$KEYFILE" >> $GITHUB_ENV
 
+      - name: Print deploy key fingerprint
+        run: |
+          set -euo pipefail
+          PUB="$RUNNER_TEMP/gameby_deploy_key.pub"
+          ssh-keygen -y -f "$KEYFILE" > "$PUB"
+          echo "Derived public key:" && head -n1 "$PUB"
+          echo "Fingerprint:" && ssh-keygen -lf "$PUB"
+
       - name: Prepare target directory
         env:
           HOST: ${{ secrets.SERVER_HOST }}
@@ -61,7 +69,7 @@ jobs:
           for P in $CANDIDATES; do
             [ -z "$P" ] && continue
             echo "[prepare] trying ssh port $P"
-            if ssh -i "$KEYFILE" -o BatchMode=yes -o ConnectTimeout=10 -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -p "$P" "$USER@$HOST" "echo ok"; then
+            if ssh -vvv -i "$KEYFILE" -o PreferredAuthentications=publickey -o PubkeyAuthentication=yes -o BatchMode=yes -o ConnectTimeout=10 -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -p "$P" "$USER@$HOST" "echo ok"; then
               SELECTED_PORT="$P"; break
             fi
           done
@@ -81,7 +89,7 @@ jobs:
           for P in $CANDIDATES; do
             [ -z "$P" ] && continue
             echo "[sync] trying ssh port $P"
-            if ssh -i "$KEYFILE" -o BatchMode=yes -o ConnectTimeout=10 -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -p "$P" "$USER@$HOST" "echo ok"; then
+            if ssh -vvv -i "$KEYFILE" -o PreferredAuthentications=publickey -o PubkeyAuthentication=yes -o BatchMode=yes -o ConnectTimeout=10 -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -p "$P" "$USER@$HOST" "echo ok"; then
               SELECTED_PORT="$P"; break
             fi
           done
@@ -116,7 +124,7 @@ jobs:
           for P in $CANDIDATES; do
             [ -z "$P" ] && continue
             echo "[deploy] trying ssh port $P"
-            if ssh -i "$KEYFILE" -o BatchMode=yes -o ConnectTimeout=10 -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -p "$P" "$USER@$HOST" "echo ok"; then
+            if ssh -vvv -i "$KEYFILE" -o PreferredAuthentications=publickey -o PubkeyAuthentication=yes -o BatchMode=yes -o ConnectTimeout=10 -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -p "$P" "$USER@$HOST" "echo ok"; then
               SELECTED_PORT="$P"; break
             fi
           done

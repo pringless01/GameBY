@@ -1,0 +1,5 @@
+- chore(frontend): demo/test HTML sayfalar (login.html, chat.html, marketplace.html, test.html, bypass-auth.html) kaldırıldı
+- frontend/public/js altındaki demo bağımlıları (dashboard.js, utils.js, navigation.js, login.js, chat.js, socket-client.js, auth.js, config.js) temizlendi
+- frontend/public/css altındaki demo stilleri (dashboard.css, navigation.css, style.css, login.css, chat.css, debug-login.css) temizlendi
+- Splash entry korunarak index.html sadece açılış animasyonunu gösterip app.html'e yönlendiriyor
+- Nginx ve simple-server yönlendirmeleri değişmedi; SPA giriş akışı: / (intro) -> /app.html
