@@ -1,4 +1,17 @@
 # Changelog
+## [Unreleased]
+
+### Removed
+- Frontend demo sayfaları (chat.html, login.html, marketplace.html, test.html, bypass-auth.html) kaldırıldı ya da app.html’e yönlendiren stub’a indirildi.
+- Demo’ya özel JS/CSS dosyaları stublandı (dashboard.js, socket-client.js, navigation.js, utils.js, login.js, chat.js, auth.js, config.js; chat.css, dashboard.css, navigation.css, login.css, debug-login.css, style.css).
+
+### Changed
+- `frontend/public/index.html` artık yalnızca splash intro içerir ve otomatik olarak `app.html`'e yönlendirir.
+
+### Notes
+- SPA giriş akışı korunmuştur: splash → app.html.
+- Nginx ve simple-server configlerinde demo route bulunmadığı için değişiklik yapılmadı.
+
 ## [v0.2.0-rc] - 2025-08-12
 
 ### Added

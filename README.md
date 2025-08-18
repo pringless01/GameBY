@@ -36,6 +36,8 @@
 
 GameBY, %100 oyuncu odaklı ekonomi sistemi ile çalışan sosyal ticaret oyunudur. İtibar sistemi en değerli meta-game olarak tasarlanmış, 30 dakikalık kritik onboarding deneyimi ile oyuncuları sisteme adapte eder.
 
+Not (Frontend Cleanup): Demo amaçlı statik sayfalar ve yalnızca bu sayfalar tarafından kullanılan JS/CSS varlıkları kaldırılmış ya da stub’a indirilmiştir. Giriş akışı splash (index.html) → app.html olarak sadeleştirilmiştir.
+
 ## 🚀 Teknoloji Stack
 
 - **Backend:** Node.js + Express + Socket.io

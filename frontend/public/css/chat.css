@@ -1,17 +1,4 @@
-/* 💬 Chat Sayfası - Özel Stiller */
-
-/* ==================== CHAT CONTAINER ==================== */
-.chat-container {
-  display: flex;
-  flex-direction: column;
-  height: calc(100vh - 80px); /* Bottom nav için yer bırak */
-  max-height: 700px;
-  background: var(--bg-surface);
-  border-radius: var(--radius-lg);
-  overflow: hidden;
-  box-shadow: var(--shadow-medium);
-  margin-bottom: 80px; /* Bottom nav için yer */
-}
+/* removed: demo-only chat styles */
 
 /* ==================== CHAT HEADER ==================== */
 .chat-header {
