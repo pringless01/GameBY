@@ -3,28 +3,86 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>GameBY • Giriş</title>
+  <title>GameBY • Ana Ekran</title>
   <link rel="stylesheet" href="/css/app.css" />
 </head>
 <body>
-  <main class="container">
-    <header>
-      <h1>GameBY</h1>
-      <p class="subtitle">Sosyal ticaret ve itibar oyunu</p>
+  <div class="app-container">
+    <!-- Üst Header: Profil + İtibar + Para -->
+    <header class="main-header">
+      <div class="user-info">
+        <div class="avatar">👤</div>
+        <div class="user-details">
+          <span class="username">Musa</span>
+          <div class="trust-score">
+            <span class="trust-icon">⭐</span>
+            <span class="trust-value">180</span>
+            <span class="trust-max">/200</span>
+          </div>
+        </div>
+      </div>
+      <div class="money-display">
+        <span class="money-icon">💰</span>
+        <span class="money-value">2.5K</span>
+      </div>
     </header>
 
-    <section class="card">
-      <p>Adım adım ilerleyeceğiz. İlk ekran: giriş.</p>
-      <div class="actions">
-        <button id="btn-start" class="btn primary">Başla</button>
-        <button id="btn-login" class="btn">Giriş Yap</button>
-      </div>
-    </section>
+    <!-- Ana Dashboard Grid -->
+    <main class="dashboard-grid">
+      <button class="dashboard-btn chat-btn" id="btn-chat">
+        <span class="btn-icon">💬</span>
+        <span class="btn-label">Chat</span>
+        <span class="notification-badge">3</span>
+      </button>
 
-    <footer>
-      <small>v0 — demo ekranı, henüz bağlılık yok</small>
+      <button class="dashboard-btn" id="btn-notifications">
+        <span class="btn-icon">🔔</span>
+        <span class="btn-label">Bildirim</span>
+      </button>
+
+      <button class="dashboard-btn" id="btn-portfolio">
+        <span class="btn-icon">📊</span>
+        <span class="btn-label">Portföy</span>
+      </button>
+
+      <button class="dashboard-btn" id="btn-contracts">
+        <span class="btn-icon">🤝</span>
+        <span class="btn-label">Kontratlar</span>
+      </button>
+
+      <button class="dashboard-btn" id="btn-businesses">
+        <span class="btn-icon">🏪</span>
+        <span class="btn-label">İşletmeler</span>
+      </button>
+
+      <button class="dashboard-btn" id="btn-mentors">
+        <span class="btn-icon">👥</span>
+        <span class="btn-label">Mentorlar</span>
+      </button>
+
+      <button class="dashboard-btn" id="btn-market">
+        <span class="btn-icon">📈</span>
+        <span class="btn-label">Piyasa</span>
+      </button>
+
+      <button class="dashboard-btn" id="btn-settings">
+        <span class="btn-icon">⚙️</span>
+        <span class="btn-label">Ayarlar</span>
+      </button>
+    </main>
+
+    <!-- Alt Status Bar -->
+    <footer class="status-bar">
+      <div class="status-item">
+        <span class="status-label">Aktif İşletme:</span>
+        <span class="status-value">2</span>
+      </div>
+      <div class="status-item">
+        <span class="status-label">Günlük Kazanç:</span>
+        <span class="status-value positive">+75 TL</span>
+      </div>
     </footer>
-  </main>
+  </div>
 
   <script src="/js/app.js" type="module"></script>
 </body>
