@@ -7,6 +7,12 @@
   <link rel="stylesheet" href="/css/app.css" />
 </head>
 <body>
+  <script src="/js/auth-client.js"></script>
+  <script>
+    (async function(){
+      if(window.AuthClient){ await AuthClient.requireAuthOrRedirect(); }
+    })();
+  </script>
   <div class="app-container">
     <!-- Üst Header: Profil + İtibar + Para -->
     <header class="main-header">
@@ -24,7 +30,7 @@
       <div class="money-display">
         <span class="money-icon">💰</span>
         <span class="money-value">2.5K</span>
-      </div>
+  </div>
     </header>
 
     <!-- Ana Dashboard Grid -->
