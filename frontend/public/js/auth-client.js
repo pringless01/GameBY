@@ -45,7 +45,7 @@
   function logout(){
     clearToken();
     try{ sessionStorage.clear(); }catch{}
-    go('/login.html');
+    go('/login.html?logout=1');
   }
 
   window.AuthClient = { getToken, hasToken, verifyToken, isLoggedIn, requireAuthOrRedirect, clearToken, logout };
