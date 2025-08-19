@@ -310,10 +310,9 @@
     async function routeAfterIntro(){
         try{
             if(window.AuthClient){
-                const me = await AuthClient.verifyToken();
+                const logged = await AuthClient.isLoggedIn();
                 if(perfEnabled && perfBox){ try{ perfBox.remove(); }catch{} }
-                if(me) { window.AuthClient && AuthClient.requireAuthOrRedirect; /* noop ensure loaded */ location.href = '/app.html'; }
-                else { location.href = '/login.html'; }
+                location.href = logged ? '/app.html' : '/login.html';
             } else {
                 location.href = '/login.html';
             }

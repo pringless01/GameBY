@@ -10,7 +10,11 @@
   <script src="/js/auth-client.js"></script>
   <script>
     (async function(){
-      if(window.AuthClient){ await AuthClient.requireAuthOrRedirect(); }
+      if(window.AuthClient){
+        // Eğer token yoksa direkt login'e yönlendir (hafif kontrol)
+        if(!AuthClient.hasToken()){ AuthClient.logout(); return; }
+        await AuthClient.requireAuthOrRedirect();
+      }
     })();
   </script>
   <div class="app-container">
