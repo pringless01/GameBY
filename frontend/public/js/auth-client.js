@@ -16,9 +16,11 @@
     } catch { return null; }
   }
 
+  let navigating = false;
+  function go(href){ if(navigating) return; navigating = true; setTimeout(()=>{ location.href = href; }, 0); }
   async function requireAuthOrRedirect(){
     const me = await verifyToken();
-    if(!me){ location.href = '/login.html'; return null; }
+    if(!me){ go('/login.html'); return null; }
     return me;
   }
 
@@ -30,7 +32,7 @@
   function logout(){
     clearToken();
     try{ sessionStorage.clear(); }catch{}
-    location.href = '/login.html';
+    go('/login.html');
   }
 
   window.AuthClient = { getToken, verifyToken, requireAuthOrRedirect, clearToken, logout };

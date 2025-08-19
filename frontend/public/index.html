@@ -312,7 +312,8 @@
             if(window.AuthClient){
                 const me = await AuthClient.verifyToken();
                 if(perfEnabled && perfBox){ try{ perfBox.remove(); }catch{} }
-                location.href = me ? '/app.html' : '/login.html';
+                if(me) { window.AuthClient && AuthClient.requireAuthOrRedirect; /* noop ensure loaded */ location.href = '/app.html'; }
+                else { location.href = '/login.html'; }
             } else {
                 location.href = '/login.html';
             }

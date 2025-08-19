@@ -1,5 +1,6 @@
 (function () {
-  const API = window.__API_BASE || 'http://localhost:3000';
+  // Same-origin by default; nginx proxy should route /api/*
+  const API = window.__API_BASE || '';
   const form = document.getElementById('loginForm');
   const identityEl = document.getElementById('identity');
   const passEl = document.getElementById('password');
