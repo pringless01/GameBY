@@ -22,5 +22,16 @@
     return me;
   }
 
-  window.AuthClient = { getToken, verifyToken, requireAuthOrRedirect };
+  function clearToken(){
+    try{ localStorage.removeItem(KEY); }catch{}
+    try{ sessionStorage.removeItem(KEY); }catch{}
+  }
+
+  function logout(){
+    clearToken();
+    try{ sessionStorage.clear(); }catch{}
+    location.href = '/login.html';
+  }
+
+  window.AuthClient = { getToken, verifyToken, requireAuthOrRedirect, clearToken, logout };
 })();

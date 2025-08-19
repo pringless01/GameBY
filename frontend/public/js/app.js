@@ -53,6 +53,21 @@ document.addEventListener('DOMContentLoaded', () => {
     openSettings();
   });
 
+  // Çıkış
+  qs('#btn-logout')?.addEventListener('click', () => {
+    try {
+      showToast('🚪 Çıkış yapılıyor...');
+      if (window.AuthClient) AuthClient.logout();
+      else {
+        // Yedek: token temizle ve yönlendir
+        try { localStorage.removeItem('auth_token'); sessionStorage.removeItem('auth_token'); } catch {}
+        window.location.href = '/login.html';
+      }
+    } catch (e) {
+      console.error('[app] logout hata', e);
+    }
+  });
+
   // İlk yüklendiğinde kullanıcı verilerini getir
   loadUserData();
 });
