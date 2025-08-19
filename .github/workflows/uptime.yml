@@ -16,11 +16,19 @@ jobs:
       - name: Check Nginx health
         run: |
           set -euo pipefail
-          curl -fsS https://tcrtsmlatronline.app/health
+          for i in {1..5}; do
+            code=$(curl -m 10 -sS -o /dev/null -w "%{http_code}" https://tcrtsmlatronline.app/health || echo 000)
+            echo "try $i -> $code";
+            [ "$code" = "200" ] && exit 0; sleep 5;
+          done; echo "nginx health failed"; exit 1
       - name: Check API health
         run: |
           set -euo pipefail
-          curl -fsS https://tcrtsmlatronline.app/api/health
+          for i in {1..5}; do
+            code=$(curl -m 10 -sS -o /dev/null -w "%{http_code}" https://tcrtsmlatronline.app/api/health || echo 000)
+            echo "try $i -> $code";
+            [ "$code" = "200" ] && exit 0; sleep 5;
+          done; echo "api health failed"; exit 1
   on-failure:
     if: failure()
     runs-on: ubuntu-latest

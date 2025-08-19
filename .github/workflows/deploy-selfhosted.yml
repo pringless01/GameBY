@@ -1,20 +1,22 @@
-name: Deploy (Self-hosted)
+name: Deploy (Self-hosted) [DISABLED]
 
 on:
-  push:
-    branches: [ "main" ]
-  workflow_dispatch: {}
+  workflow_dispatch:
+    inputs:
+      disabled:
+        description: 'This workflow is disabled. Use SSH deploy.'
+        required: false
+        default: 'true'
 
 concurrency:
   group: deploy-selfhosted-main
   cancel-in-progress: true
 
 jobs:
-  deploy:
-    runs-on: [self-hosted, prod]
+  noop:
+    runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - run: echo "Self-hosted deploy workflow is disabled. Use Deploy to Server (deploy.yml)."
 
       - name: Write .env for compose
         working-directory: ${{ github.workspace }}
@@ -45,8 +47,19 @@ jobs:
 
       - name: Compose up
         working-directory: ${{ github.workspace }}
+        env:
+          COMPOSE_PROJECT_NAME: gameby
         run: |
           set -euo pipefail
+          if id -nG | grep -q '\bdocker\b'; then
+            SUDO=""
+          elif sudo -n true 2>/dev/null; then
+            SUDO="sudo"
+          else
+            echo "Runner user is not in 'docker' group and passwordless sudo is not available." >&2
+            echo "Add the runner to docker group or enable NOPASSWD sudo for docker." >&2
+            exit 1
+          fi
           if docker compose version >/dev/null 2>&1; then
             DC="docker compose"
           elif command -v docker-compose >/dev/null 2>&1; then
@@ -54,21 +67,31 @@ jobs:
           else
             echo "docker compose not available on runner"; exit 1
           fi
-          sudo $DC up -d --build
+          $SUDO $DC down --remove-orphans || true
+          $SUDO $DC up -d --build
 
       - name: Health check
         working-directory: ${{ github.workspace }}
+        env:
+          COMPOSE_PROJECT_NAME: gameby
         run: |
           set -euo pipefail
+          if id -nG | grep -q '\bdocker\b'; then
+            SUDO=""
+          elif sudo -n true 2>/dev/null; then
+            SUDO="sudo"
+          else
+            SUDO=""
+          fi
           for i in {1..30}; do
             curl -fsS http://127.0.0.1/health && break || true
             sleep 2
           done
           if ! curl -fsS http://127.0.0.1/health; then
             if docker compose version >/dev/null 2>&1; then
-              docker compose ps || true
+              $SUDO docker compose ps || true
             elif command -v docker-compose >/dev/null 2>&1; then
-              docker-compose ps || true
+              $SUDO docker-compose ps || true
             fi
             exit 1
           fi
