@@ -2,12 +2,19 @@
   // Same-origin by default; nginx proxy should route /api/*
   const API = window.__API_BASE || '';
   const form = document.getElementById('loginForm');
+  const signupForm = document.getElementById('signupForm');
   const identityEl = document.getElementById('identity');
   const passEl = document.getElementById('password');
   const toggleBtn = document.getElementById('togglePass');
   const rememberEl = document.getElementById('remember');
   const statusBox = document.getElementById('statusBox');
   const submitBtn = document.getElementById('submitBtn');
+  const suEmail = document.getElementById('su_email');
+  const suUsername = document.getElementById('su_username');
+  const suPassword = document.getElementById('su_password');
+  const suRemember = document.getElementById('su_remember');
+  const suStatus = document.getElementById('su_status');
+  const signupBtn = document.getElementById('signupBtn');
 
   function setStatus(type, msg) {
     statusBox.className = 'status ' + type;
@@ -27,6 +34,12 @@
       network_error: 'Ağ hatası'
     };
     return dict[code] || code || 'Bilinmeyen hata';
+  }
+  function setSuStatus(type, msg){
+    if(!suStatus) return;
+    suStatus.className = 'status ' + type;
+    suStatus.textContent = msg;
+    suStatus.style.display = 'block';
   }
 
   function saveToken(token, remember) {
@@ -71,6 +84,30 @@
     return resp.json();
   }
 
+  async function signup(email, username, password){
+    try{
+      const controller = new AbortController();
+      const t = setTimeout(() => controller.abort(), 15000);
+      const resp = await fetch(API + '/api/auth/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, username, password }),
+        signal: controller.signal
+      });
+      clearTimeout(t);
+      const isJson = resp.headers.get('content-type')?.includes('application/json');
+      const data = isJson ? await resp.json() : {};
+      if (!resp.ok) {
+        throw { status: resp.status, code: data.error, message: data.message };
+      }
+      return data; // { token, user }
+    }catch(e){
+      if (e.name === 'AbortError') throw { status: 0, code: 'timeout' };
+      if (e.status === undefined) throw { status: 0, code: 'network_error' };
+      throw e;
+    }
+  }
+
   toggleBtn.addEventListener('click', () => {
     if (passEl.type === 'password') { passEl.type = 'text'; toggleBtn.textContent = 'Gizle'; }
     else { passEl.type = 'password'; toggleBtn.textContent = 'Göster'; }
@@ -98,6 +135,26 @@
       else setStatus('error', mapAuthError(err.code) || 'Hata oluştu');
     } finally {
       submitBtn.disabled = false;
+    }
+  });
+
+  signupForm?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const email = suEmail?.value.trim();
+    const username = suUsername?.value.trim();
+    const password = suPassword?.value || '';
+    if(!email || !username || !password){ setSuStatus('error','Alanları doldurun'); return; }
+    if(signupBtn) signupBtn.disabled = true;
+    setSuStatus('info','Kayıt oluşturuluyor...');
+    try{
+      const { token } = await signup(email, username, password);
+      saveToken(token, !!suRemember?.checked);
+      setSuStatus('success','Kayıt başarılı, yönlendiriliyor...');
+      setTimeout(()=>{ window.location.href = './app.html'; }, 600);
+    }catch(err){
+      setSuStatus('error', mapAuthError(err.code));
+    }finally{
+      if(signupBtn) signupBtn.disabled = false;
     }
   });
 

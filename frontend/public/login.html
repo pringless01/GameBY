@@ -54,8 +54,46 @@
       <div id="statusBox" class="status info">Bilgilerinizi girin</div>
       <div class="actions">
         <button type="submit" id="submitBtn">Giriş</button>
+        <button type="button" id="goSignup" style="background:#334155">Hesabın yok mu? Kayıt Ol</button>
+      </div>
+    </form>
+
+    <form id="signupForm" autocomplete="on" style="display:none; margin-top:16px">
+      <h1 style="margin-top:0">Kayıt Ol</h1>
+      <label for="su_email">E-posta</label>
+      <div class="row">
+        <input id="su_email" name="email" type="email" placeholder="ornek@mail.com" required />
+      </div>
+      <label for="su_username">Kullanıcı Adı</label>
+      <div class="row">
+        <input id="su_username" name="username" type="text" placeholder="kullanici" required />
+      </div>
+      <label for="su_password">Şifre</label>
+      <div class="row">
+        <input id="su_password" name="password" type="password" placeholder="••••••••" required />
+      </div>
+      <div class="remember">
+        <input type="checkbox" id="su_remember" />
+        <label for="su_remember" style="margin:0">Beni hatırla</label>
+      </div>
+      <div id="su_status" class="status info" style="display:none">Bilgilerinizi girin</div>
+      <div class="actions">
+        <button type="submit" id="signupBtn">Kayıt Ol</button>
+        <button type="button" id="goLogin" style="background:#334155">Zaten hesabın var mı? Giriş Yap</button>
       </div>
     </form>
   </main>
+  <script>
+    (function(){
+      const loginForm = document.getElementById('loginForm');
+      const signupForm = document.getElementById('signupForm');
+      const goSignup = document.getElementById('goSignup');
+      const goLogin = document.getElementById('goLogin');
+      function showSignup(){ loginForm.style.display='none'; signupForm.style.display='block'; }
+      function showLogin(){ signupForm.style.display='none'; loginForm.style.display='block'; }
+      goSignup?.addEventListener('click', showSignup);
+      goLogin?.addEventListener('click', showLogin);
+    })();
+  </script>
 </body>
 </html>
