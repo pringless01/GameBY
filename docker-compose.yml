@@ -12,6 +12,8 @@ services:
       CURSOR_SECRET_ROTATION: ${CURSOR_SECRET_ROTATION}
       CORS_ORIGIN: ${CORS_ORIGIN}
       DB_PATH: /data/game.db
+      MIGRATIONS_AUTO_APPLY: "1"
+      AUDIT_MAX: "20000"
       REFRESH_SECRET: ${REFRESH_SECRET:-default-refresh-secret-change-in-production}
       AGENT_ENABLED: "${AGENT_ENABLED:-0}"
       AGENT_CONFIG_PATH: "${AGENT_CONFIG_PATH}"
