@@ -2,11 +2,26 @@ import express from 'express';
 import rateLimit from 'express-rate-limit';
 import { signAdminCoreToken, verifyAdminCoreToken } from '../config/adminCoreJwt.js';
 import {
-  ensureInitialSuperAdmin, findByUsername, findById, verifyPassword, incrementFail, resetFails,
-  recordLogin, changePassword, resetPassword, updateRoles, setLock, listAdmins, listAudit,
-  createAdmin, stats, blacklistJti, isJtiBlacklisted
+  ensureInitialSuperAdmin,
+  findByUsername,
+  findById,
+  verifyPassword,
+  incrementFail,
+  resetFails,
+  recordLogin,
+  changePassword,
+  resetPassword,
+  updateRoles,
+  setLock,
+  listAdmins,
+  listAudit,
+  createAdmin,
+  stats,
+  blacklistJti,
+  isJtiBlacklisted,
+  audit
 } from '../services/adminAccountService.js';
-import { audit } from '../services/adminAccountService.js';
+import { initDb } from '../config/database.js';
 
 const router = express.Router();
 
@@ -126,5 +141,47 @@ router.get('/stats', auth, requireRoles(['super_admin','ops_admin','security_adm
   const s = await stats();
   res.json(s);
 });
+
+// --- Yeni: Kullanıcı listesi (fraud sütunu varsa dahil) ---
+router.get('/users', auth, requireRoles(['super_admin','security_admin','read_only']), async (req, res) => {
+  try {
+    const db = await initDb();
+    const limit = Math.min(Number(req.query.limit)||50, 200);
+    const offset = Math.max(Number(req.query.offset)||0, 0);
+    const search = (req.query.search||'').toString().trim();
+    const fraud = await hasFraudColumn(db);
+    const cols = 'id, username, email, created_at' + (fraud ? ', is_fraud' : '');
+    let rows;
+    if(search){
+      rows = await db.all(`SELECT ${cols} FROM users WHERE lower(username) LIKE lower(?) OR lower(coalesce(email,'')) LIKE lower(?) ORDER BY id DESC LIMIT ? OFFSET ?`, [`%${search}%`,`%${search}%`,limit,offset]);
+    } else {
+      rows = await db.all(`SELECT ${cols} FROM users ORDER BY id DESC LIMIT ? OFFSET ?`, [limit, offset]);
+    }
+    res.json({ users: rows, limit, offset, search });
+  } catch(e){
+    console.error('[admin-core/users]', e);
+    res.status(500).json({ error:'server_error' });
+  }
+});
+
+// --- Yeni: Fraud flag ---
+router.post('/users/:id/flag-fraud', auth, requireRoles(['super_admin','security_admin']), async (req, res) => {
+  try {
+    const db = await initDb();
+    if(!await hasFraudColumn(db)) return res.status(400).json({ error:'fraud_flag_not_supported' });
+    const id = Number(req.params.id);
+    if(!id) return res.status(400).json({ error:'invalid_id' });
+    await db.run('UPDATE users SET is_fraud=1 WHERE id=?', [id]);
+    await audit(req.admin.aid, 'flag_fraud', `target=${id}`);
+    res.json({ flagged:true });
+  } catch(e){
+    console.error('[admin-core/flag-fraud]', e);
+    res.status(500).json({ error:'server_error' });
+  }
+});
+
+async function hasFraudColumn(db){
+  try { const rows = await db.all("PRAGMA table_info(users)"); return rows.some(c=>c.name==='is_fraud'); } catch { return false; }
+}
 
 export default router;

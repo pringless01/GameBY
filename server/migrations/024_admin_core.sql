@@ -35,8 +35,9 @@ CREATE TABLE IF NOT EXISTS admin_session_blacklist (
 CREATE INDEX IF NOT EXISTS idx_admin_session_blacklist_jti ON admin_session_blacklist(jti);
 
 -- Eski tablo varsa veriyi taşı
-INSERT INTO admin_accounts (username, password_hash, roles, force_reset, last_login_at, last_login_ip)
-SELECT username, password_hash, COALESCE(roles,'[]'), force_reset, last_login_at, last_login_ip FROM admin_users
-ON CONFLICT(username) DO NOTHING;
+-- NOT: Eski SQLite sürümlerinde (3.24.0 öncesi) "ON CONFLICT(col) DO NOTHING" desteklenmez.
+-- Bu yüzden uyumluluk için INSERT OR IGNORE kullanıyoruz.
+INSERT OR IGNORE INTO admin_accounts (username, password_hash, roles, force_reset, last_login_at, last_login_ip)
+SELECT username, password_hash, COALESCE(roles,'[]'), force_reset, last_login_at, last_login_ip FROM admin_users;
 
 COMMIT;

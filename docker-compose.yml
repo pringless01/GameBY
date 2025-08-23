@@ -4,6 +4,9 @@ services:
       context: ./server
       dockerfile: Dockerfile
     restart: unless-stopped
+    depends_on:
+      redis:
+        condition: service_started
     environment:
       NODE_ENV: production
       PORT: 3000
@@ -17,6 +20,8 @@ services:
       REFRESH_SECRET: ${REFRESH_SECRET:-default-refresh-secret-change-in-production}
       AGENT_ENABLED: "${AGENT_ENABLED:-0}"
       AGENT_CONFIG_PATH: "${AGENT_CONFIG_PATH}"
+      CACHE_BACKEND: redis
+      REDIS_URL: redis://redis:6379
     volumes:
       - api-data:/data
     ports:
@@ -47,6 +52,7 @@ services:
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf:ro
       - ./frontend/public:/usr/share/nginx/html:ro
+      - ./admin-static:/usr/share/nginx/html-admin:ro
       # SSL (Let's Encrypt) mount points
       - letsencrypt:/etc/letsencrypt:ro
       - certbot-www:/var/www/certbot:ro
@@ -72,6 +78,19 @@ services:
       - /var/cache/nginx:rw,noexec,nosuid,size=64m
       - /var/run:rw,noexec,nosuid,size=8m
       - /tmp:rw,noexec,nosuid,size=16m
+    # (Optional) Internal scrape of metrics via basic auth could be added here.
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    command: redis-server --appendonly no --save "" --maxmemory 256mb --maxmemory-policy allkeys-lru
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+  # Güvenlik sertleştirmesi ilk etapta kapatıldı; stabil çalışma sağlandıktan sonra kademeli eklenebilir.
   # Certbot yenileme servisi (daemon tarzı 12 saatte bir renew)
   certbot:
     image: certbot/certbot:latest
@@ -87,7 +106,7 @@ services:
     restart: unless-stopped
     depends_on:
       - nginx
-    command: tunnel run 961f2bba-1f4b-43f4-af3c-a3dbbced3f7e
+    command: tunnel --config /etc/cloudflared/config.yml run
     environment:
       TUNNEL_TOKEN: ${TUNNEL_TOKEN:-}
     volumes:
@@ -96,3 +115,4 @@ volumes:
   api-data:
   letsencrypt:
   certbot-www:
+  redis-data:

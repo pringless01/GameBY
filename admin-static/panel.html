@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8" />
+<title>Admin Panel</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<style>
+ body {font-family: system-ui, Arial; background:#0d1117; color:#e6edf3; margin:0;}
+ header {background:#161b22; padding:12px 24px; display:flex; align-items:center; justify-content:space-between;}
+ h1 {font-size:18px; margin:0;}
+ button {background:#30363d; color:#e6edf3; border:1px solid #484f58; padding:6px 14px; border-radius:6px; cursor:pointer;}
+ button:hover {background:#484f58;}
+ main {padding:20px;}
+ table {border-collapse:collapse; width:100%; margin-top:12px;}
+ th,td {border:1px solid #30363d; padding:6px 8px; font-size:13px;}
+ th {background:#1f242d;}
+ .flagged {background:#3d1f1f;}
+ .status-ok {color:#2ea043;}
+ .status-flag {color:#f85149; font-weight:600;}
+ .error {color:#ff7979;}
+</style>
+</head>
+<body>
+  <header>
+    <h1>Kullanıcılar</h1>
+    <div>
+      <button id="refresh">Yenile</button>
+      <button id="logout">Çıkış</button>
+    </div>
+  </header>
+  <main>
+    <div id="error" class="error"></div>
+    <table id="usersTbl">
+      <thead><tr><th>ID</th><th>Kullanıcı</th><th>Email</th><th>Created</th><th>Fraud</th><th>Aksiyon</th></tr></thead>
+      <tbody></tbody>
+    </table>
+  </main>
+<script>
+const token = localStorage.getItem('admin_token');
+if(!token){ location.href='/login.html'; }
+async function loadUsers(){
+  const err = document.getElementById('error');
+  err.textContent='';
+  try {
+    const res = await fetch('/api/admin/users', {headers:{Authorization:'Bearer '+token}});
+    const data = await res.json();
+    if(!res.ok){ if(res.status===401){ localStorage.removeItem('admin_token'); location.href='/login.html'; return;} err.textContent=data.error||'Hata'; return; }
+    const tbody = document.querySelector('#usersTbl tbody');
+    tbody.innerHTML='';
+    data.users.forEach(u=>{
+      const tr=document.createElement('tr');
+      if(u.is_fraud) tr.classList.add('flagged');
+      tr.innerHTML = `<td>${u.id}</td><td>${u.username||''}</td><td>${u.email||''}</td><td>${u.created_at||''}</td><td>${u.is_fraud?'<span class="status-flag">FLAG</span>':'<span class="status-ok">OK</span>'}</td><td><button data-id="${u.id}" class="flagBtn">Fraud İşaretle</button></td>`;
+      tbody.appendChild(tr);
+    });
+  } catch(e){ err.textContent='Sunucu hatası'; }
+}
+
+document.getElementById('refresh').onclick=loadUsers;
+addEventListener('click', async (e)=>{
+  if(e.target.classList.contains('flagBtn')){
+    const id = e.target.getAttribute('data-id');
+    if(!confirm('Bu kullanıcı FRAUD işaretlenecek, devam?')) return;
+    const res = await fetch('/api/admin/users/'+id+'/flag-fraud', {method:'POST', headers:{'Authorization':'Bearer '+token}});
+    if(res.ok) loadUsers(); else alert('İşlem başarısız');
+  }
+});
+
+document.getElementById('logout').onclick=()=>{ localStorage.removeItem('admin_token'); location.href='/login.html'; };
+loadUsers();
+</script>
+</body>
+</html>
