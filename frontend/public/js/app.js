@@ -1,4 +1,8 @@
-/* GameBY - Ana Dashboard JavaScript */
+/*
+ * legacy app.js (dashboard) - Yeni layout (app.html + core.js) ile KULLANILMIYOR.
+ * Marka güncellendi: Sermaye Arena (eski: GameBY).
+ */
+/* Sermaye Arena - Eski Dashboard JS */
 const qs = s => document.querySelector(s);
 
 // Dashboard buton event listener'ları

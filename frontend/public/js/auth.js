@@ -12,6 +12,7 @@
   const suEmail = document.getElementById('su_email');
   const suUsername = document.getElementById('su_username');
   const suPassword = document.getElementById('su_password');
+  const suDisplay = document.getElementById('su_display');
   const suRemember = document.getElementById('su_remember');
   const suStatus = document.getElementById('su_status');
   const signupBtn = document.getElementById('signupBtn');
@@ -84,14 +85,14 @@
     return resp.json();
   }
 
-  async function signup(email, username, password){
+  async function signup(email, username, password, display_name){
     try{
       const controller = new AbortController();
       const t = setTimeout(() => controller.abort(), 15000);
       const resp = await fetch(API + '/api/auth/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, username, password }),
+  body: JSON.stringify({ email, username, password, display_name }),
         signal: controller.signal
       });
       clearTimeout(t);
@@ -143,16 +144,31 @@
     const email = suEmail?.value.trim();
     const username = suUsername?.value.trim();
     const password = suPassword?.value || '';
+    const displayName = suDisplay?.value.trim();
     if(!email || !username || !password){ setSuStatus('error','Alanları doldurun'); return; }
     if(signupBtn) signupBtn.disabled = true;
     setSuStatus('info','Kayıt oluşturuluyor...');
     try{
-      const { token } = await signup(email, username, password);
+      const { token, user } = await signup(email, username, password, displayName);
       saveToken(token, !!suRemember?.checked);
+      const greetName = (user && (user.display_name || user.username)) || (displayName || username);
+      if(window.__showGreeting){ window.__showGreeting(greetName); }
       setSuStatus('success','Kayıt başarılı, yönlendiriliyor...');
-      setTimeout(()=>{ window.location.href = './app.html'; }, 600);
+      setTimeout(()=>{ window.location.href = './app.html'; }, 900);
     }catch(err){
-      setSuStatus('error', mapAuthError(err.code));
+      // Önceden: duplicate durumda otomatik login denemesi yapılıyordu -> kaldırıldı.
+      if(err && (err.code === 'duplicate_email' || err.code === 'duplicate_username')){
+        // Otomatik giriş yerine kullanıcıyı bilgilendir ve login sekmesine yönlendir.
+        const msg = err.code === 'duplicate_email'
+          ? 'Bu e-posta zaten kayıtlı. Lütfen Giriş sekmesine geçip giriş yapın.'
+          : 'Bu kullanıcı adı alınmış. Farklı bir kullanıcı adı deneyin veya Giriş sekmesine geçin.';
+        setSuStatus('error', msg);
+        try {
+          document.getElementById('tabLogin')?.click();
+        } catch {}
+      } else {
+        setSuStatus('error', mapAuthError(err.code));
+      }
     }finally{
       if(signupBtn) signupBtn.disabled = false;
     }
@@ -164,4 +180,12 @@
   if (me) window.location.href = './app.html';
     } catch { /* noop */ }
   })();
+
+  // logout bilgilendirme mesajı
+  try {
+    const params = new URLSearchParams(window.location.search);
+    if(params.get('logout')==='1'){
+      setStatus('info','Çıkış yapıldı');
+    }
+  } catch { /* ignore */ }
 })();

@@ -33,6 +33,8 @@ function prune(tsArr){
 export function registerChatNamespace(io) {
   io.on('connection', (socket) => {
     let userId = socket.user?.id || null;
+  // Kullanıcıya özel oda: direct messages teslimi için
+  if(userId){ socket.join('user:'+userId); }
     socket.use(async (packet, next) => {
       const token = socket.handshake.auth?.token;
       if(await isTokenRevoked(token) || !socket.user){
@@ -85,6 +87,31 @@ export function registerChatNamespace(io) {
       }
       emitReputationEvent({ userId: socket.user.id, type: ReputationEventType.CHAT_MESSAGE }).catch(()=>{});
       endWs();
+    });
+
+    // Yeni DM gönderim (basit): event adı 'dm:send', cevap 'dm:new'
+    socket.on('dm:send', async (payload) => {
+      try {
+        if(!socket.user?.id) return;
+        const to = Number(payload?.to);
+        const rawMsg = payload?.message;
+        if(!to || !rawMsg) return;
+        if(to === socket.user.id) return;
+        const sanitized = sanitize(rawMsg).slice(0,1000);
+        if(!sanitized.trim()) return;
+        const db = await initDb();
+        const u = await db.get('SELECT id, username FROM users WHERE id=?', [to]);
+        if(!u) return;
+        const ins = await db.run('INSERT INTO direct_messages (sender_id, recipient_id, message) VALUES (?,?,?)', [socket.user.id, to, sanitized]);
+        const row = await db.get(`SELECT dm.id, dm.message, dm.created_at, dm.sender_id, su.username AS sender_username,
+                                         dm.recipient_id, ru.username AS recipient_username
+                                  FROM direct_messages dm
+                                  JOIN users su ON su.id = dm.sender_id
+                                  JOIN users ru ON ru.id = dm.recipient_id
+                                  WHERE dm.id = ?`, [ins.lastID]);
+        socket.emit('dm:new', row);
+        io.to('user:'+to).emit('dm:new', row);
+      } catch(e){ console.warn('[ws] dm:send error', e.message); }
     });
 
     socket.on('disconnect', () => {

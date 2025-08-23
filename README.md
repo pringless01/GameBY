@@ -24,7 +24,7 @@
 - 12.08.2025 Checkpoint-5: T004 tamamlandı. /health JSON’a cache özetleri, ilk 5 pending list, rateLimit snapshot ve Server-Timing eklendi.
 - 12.08.2025 Checkpoint-6: T005 tamamlandı. Chat flood limitleri envConfig’e taşındı/doğrulandı ve README env tablosu ile senkron.
 
-# GameBY - 2D Mobil Online Ticaret Oyunu
+# Sermaye Arena - 2D Mobil Online Ticaret Oyunu (Eski ad: GameBY)
 
 [![CI](https://github.com/pringless01/GameBY/actions/workflows/ci-full.yml/badge.svg)](https://github.com/pringless01/GameBY/actions/workflows/ci-full.yml)
 [![Deploy](https://github.com/pringless01/GameBY/actions/workflows/deploy.yml/badge.svg)](https://github.com/pringless01/GameBY/actions/workflows/deploy.yml)
@@ -34,7 +34,7 @@
 
 ## 🎯 Proje Özeti
 
-GameBY, %100 oyuncu odaklı ekonomi sistemi ile çalışan sosyal ticaret oyunudur. İtibar sistemi en değerli meta-game olarak tasarlanmış, 30 dakikalık kritik onboarding deneyimi ile oyuncuları sisteme adapte eder.
+Sermaye Arena, %100 oyuncu odaklı ekonomi sistemi ile çalışan sosyal ticaret oyunudur. İtibar sistemi en değerli meta-game olarak tasarlanmış, 30 dakikalık kritik onboarding deneyimi ile oyuncuları sisteme adapte eder. (Önceki proje adı: GameBY)
 
 Not (Frontend Cleanup): Demo amaçlı statik sayfalar ve yalnızca bu sayfalar tarafından kullanılan JS/CSS varlıkları kaldırılmış ya da stub’a indirilmiştir. Giriş akışı splash (index.html) → app.html olarak sadeleştirilmiştir.
 
@@ -311,3 +311,41 @@ REPUTATION_NEGATIVE_WEIGHT=1
 **Not:** Bu README v3.5-pre teknik durumunu yansıtır; roadmap güncellemeleri Ana Oyun Dokümanı ile senkron tutulacaktır.
 # Test commit Fri 15 Aug 2025 08:49:31 PM UTC
 # Deploy test Fri 15 Aug 2025 08:54:18 PM UTC
+
+---
+## 🔐 Yeni Admin-Core Sistemi
+
+Yeni yönetim altyapısı /api/admin-core altında devrede. Eski /api/root-admin rotaları deprecate edilmiştir ve yakında kaldırılacaktır.
+
+Ön Bilgi:
+- Panel Arayüzü: /sysadmin.html
+- İlk Kurulum: POST /api/admin-core/bootstrap (yoksa admin/admin yaratır, force_reset=1)
+- Roller: super_admin, security_admin, ops_admin, read_only
+- JWT: 30m süreli, jti içerir, logout sonrası jti blacklist edilir.
+
+Önemli Endpointler:
+| Endpoint | Metod | Yetki |
+|----------|-------|-------|
+| /api/admin-core/login | POST | Public (rate limit) |
+| /api/admin-core/me | GET | Auth |
+| /api/admin-core/logout | POST | Auth |
+| /api/admin-core/password | POST | Auth (self) |
+| /api/admin-core/stats | GET | Her rol |
+| /api/admin-core/admins | GET | super_admin / security_admin |
+| /api/admin-core/admins | POST | super_admin |
+| /api/admin-core/admins/:id/roles | PATCH | super_admin |
+| /api/admin-core/admins/:id/lock | PATCH | super_admin / security_admin |
+| /api/admin-core/admins/:id/unlock | PATCH | super_admin / security_admin |
+| /api/admin-core/admins/:id/reset-password | POST | super_admin / security_admin |
+| /api/admin-core/audit | GET | super_admin / security_admin |
+
+Migration:
+024_admin_core.sql eski admin_users verilerini admin_accounts tablosuna taşır. İlk deploy’da otomatik migration açıksa ek işlem gerekmez.
+
+Güvenlik Notları:
+- 5 yanlış parola → otomatik hesap kilidi (unlock için yetkili endpoint).
+- Parola minimum 8 karakter.
+- force_reset=1 olan hesaplarda giriş sonrası şifre değişikliği zorunlu.
+
+Geçiş:
+Eski admindashboard.html yerine sysadmin.html kullanılmalı. root-admin JS/HTML ileride repodan çıkarılacak.

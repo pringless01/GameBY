@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Sistem Admin Paneli</title>
+  <meta http-equiv="Cache-Control" content="no-store" />
+  <style>
+    :root { --bg:#0d1117; --panel:#161b22; --border:#30363d; --accent:#2563eb; --danger:#dc2626; }
+    * { box-sizing:border-box; }
+    body { margin:0; font-family: system-ui,-apple-system,Segoe UI,Roboto,sans-serif; background:var(--bg); color:#e6edf3; min-height:100vh; display:flex; }
+    h1,h2,h3 { margin:0; font-weight:600; }
+    a { color: var(--accent); text-decoration:none; }
+    input,select { background:var(--bg); border:1px solid var(--border); padding:10px 12px; border-radius:8px; color:#e6edf3; font-size:14px; width:100%; }
+    input:focus { outline:none; border-color:var(--accent); }
+    button { background:var(--accent); border:none; color:#fff; padding:10px 16px; border-radius:8px; font-size:14px; font-weight:600; cursor:pointer; display:inline-flex; align-items:center; gap:6px; }
+    button.danger { background:var(--danger); }
+    button.outline { background:transparent; border:1px solid var(--border); }
+    button:disabled { opacity:.5; cursor:not-allowed; }
+    .login-wrapper { margin:auto; width:100%; max-width:400px; background:var(--panel); padding:34px 32px 40px; border:1px solid var(--border); border-radius:18px; box-shadow:0 4px 28px -8px #000; }
+    .title { text-align:center; font-size:22px; margin-bottom:24px; }
+    label { display:block; font-size:12px; letter-spacing:.6px; margin:14px 0 6px; font-weight:600; text-transform:uppercase; color:#8b949e; }
+    .status { margin-top:16px; padding:10px 12px; border-radius:10px; font-size:12px; line-height:1.4; display:none; }
+    .status.info { background:#172b3a; border:1px solid #1e3a5f; color:#bfdbfe; }
+    .status.error { background:#3a1215; border:1px solid #7f1d1d; color:#fca5a5; }
+    .status.success { background:#132f1d; border:1px solid #1d4d2b; color:#bbf7d0; }
+    main { flex:1; display:none; flex-direction:column; }
+    header { display:flex; justify-content:space-between; align-items:center; padding:14px 20px; background:var(--panel); border-bottom:1px solid var(--border); }
+    nav { display:flex; gap:8px; flex-wrap:wrap; }
+    nav button { background:#1f242c; font-size:12px; padding:6px 12px; }
+    nav button.active { background:var(--accent); }
+    .content { padding:20px; flex:1; overflow:auto; }
+    .grid { display:grid; gap:14px; grid-template-columns:repeat(auto-fit,minmax(170px,1fr)); margin-bottom:28px; }
+    .card { background:var(--panel); border:1px solid var(--border); padding:14px 16px; border-radius:12px; position:relative; }
+    .card h3 { margin:0 0 6px; font-size:12px; letter-spacing:.5px; text-transform:uppercase; color:#8b949e; }
+    .metric { font-size:22px; font-weight:600; }
+    pre { background:#0d1117; border:1px solid var(--border); padding:10px 12px; border-radius:10px; font-size:12px; max-height:280px; overflow:auto; line-height:1.45; }
+    table { width:100%; border-collapse:collapse; font-size:13px; }
+    th,td { padding:6px 8px; border-bottom:1px solid var(--border); text-align:left; }
+    th { font-weight:600; font-size:11px; text-transform:uppercase; letter-spacing:.6px; color:#9ca3af; }
+    tr:last-child td { border-bottom:none; }
+    .flex { display:flex; gap:10px; }
+    .gap { gap:14px; }
+    .mt { margin-top:20px; }
+    .hidden { display:none !important; }
+    .pill { background:#1f2933; padding:3px 8px; border-radius:999px; font-size:11px; margin:0 4px 4px 0; display:inline-block; }
+    .roles-box { display:flex; flex-wrap:wrap; gap:4px; }
+    .panel { background:var(--panel); border:1px solid var(--border); padding:16px 18px; border-radius:14px; margin-bottom:24px; }
+    form.inline > * { margin-right:8px; }
+    .w50 { width:50%; }
+    @media (max-width:800px){ .flex.row { flex-direction:column; } .w50 { width:100%; } }
+  </style>
+</head>
+<body>
+  <div class="login-wrapper" id="loginView">
+    <div class="title">Sistem Admin Giriş</div>
+    <form id="loginForm">
+      <label>Kullanıcı Adı</label>
+      <input id="loginUsername" autocomplete="username" />
+      <label>Şifre</label>
+      <input id="loginPassword" type="password" autocomplete="current-password" />
+      <button type="submit" style="margin-top:22px;width:100%">Giriş</button>
+      <div class="status info" id="loginStatus">Bilgileri girin</div>
+    </form>
+  </div>
+  <div class="login-wrapper" id="forceResetView" style="display:none">
+    <div class="title">İlk Şifre Değişimi</div>
+    <form id="resetForm">
+      <label>Yeni Şifre</label>
+      <input id="newPassword" type="password" />
+      <button type="submit" style="margin-top:22px;width:100%">Güncelle</button>
+      <div class="status info" id="resetStatus">Yeni şifre belirleyin</div>
+    </form>
+  </div>
+  <main id="appMain">
+    <header>
+      <h2 style="font-size:16px">Sistem Admin Panel</h2>
+      <div style="display:flex;align-items:center;gap:12px">
+        <span id="meBadge" style="font-size:12px;color:#9ca3af"></span>
+        <button id="logoutBtn" class="danger" style="background:#1f242c;border:1px solid var(--border);color:#f87171">Çıkış</button>
+      </div>
+    </header>
+    <nav id="navTabs">
+      <button data-tab="dashboard" class="active">Dashboard</button>
+      <button data-tab="admins">Adminler</button>
+      <button data-tab="audit">Audit</button>
+      <button data-tab="security">Güvenlik</button>
+    </nav>
+    <div class="content">
+      <div id="tab-dashboard">
+        <div class="grid" id="metricsGrid"></div>
+        <div class="panel">
+          <h3>Hızlı Bilgi</h3>
+          <pre id="quickInfo">Yükleniyor...</pre>
+        </div>
+      </div>
+      <div id="tab-admins" class="hidden">
+        <div class="panel">
+          <h3>Yeni Admin Oluştur</h3>
+          <form id="createAdminForm" class="flex row" style="flex-wrap:wrap">
+            <div class="w50">
+              <label>Kullanıcı Adı</label>
+              <input id="newAdminUser" />
+            </div>
+            <div class="w50">
+              <label>Geçici Şifre</label>
+              <input id="newAdminPass" type="password" />
+            </div>
+            <div style="width:100%">
+              <label>Roller (virgül)</label>
+              <input id="newAdminRoles" placeholder="super_admin,ops_admin" />
+            </div>
+            <div style="width:100%;margin-top:12px"><button type="submit">Oluştur</button></div>
+            <div class="status info" id="createAdminStatus" style="width:100%;margin-top:10px">...</div>
+          </form>
+        </div>
+        <div class="panel">
+          <h3>Admin Listesi</h3>
+          <table id="adminTable"><thead><tr><th>ID</th><th>Kullanıcı</th><th>Roller</th><th>Durum</th><th>Son Login</th><th>Aksiyon</th></tr></thead><tbody></tbody></table>
+        </div>
+      </div>
+      <div id="tab-audit" class="hidden">
+        <div class="panel">
+          <h3>Audit Kayıtları</h3>
+          <div class="flex" style="margin-bottom:10px;flex-wrap:wrap;gap:8px">
+            <input id="auditFilterAction" placeholder="action filtresi (opsiyonel)" style="flex:1;min-width:200px" />
+            <button id="auditReload" class="outline" style="font-size:12px">Yenile</button>
+          </div>
+          <pre id="auditLog">Yükleniyor...</pre>
+        </div>
+      </div>
+      <div id="tab-security" class="hidden">
+        <div class="panel">
+          <h3>Güvenlik İşlemleri</h3>
+          <form id="lockForm" class="flex row" style="flex-wrap:wrap">
+            <div class="w50">
+              <label>Admin ID</label>
+              <input id="lockAdminId" />
+            </div>
+            <div class="w50">
+              <label>İşlem</label>
+              <select id="lockAction"><option value="lock">Kilitle</option><option value="unlock">Kilidi Aç</option></select>
+            </div>
+            <div style="width:100%;margin-top:12px"><button type="submit">Uygula</button></div>
+            <div class="status info" id="lockStatus" style="width:100%;margin-top:10px">...</div>
+          </form>
+          <form id="resetPwForm" class="flex row" style="flex-wrap:wrap;margin-top:26px">
+            <div class="w50">
+              <label>Admin ID</label>
+              <input id="resetPwAdminId" />
+            </div>
+            <div class="w50">
+              <label>Yeni Geçici Şifre</label>
+              <input id="resetPwNew" type="password" />
+            </div>
+            <div style="width:100%;margin-top:12px"><button type="submit">Reset</button></div>
+            <div class="status info" id="resetPwStatus" style="width:100%;margin-top:10px">...</div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </main>
+  <script src="/js/sys-admin.js" defer></script>
+</body>
+</html>

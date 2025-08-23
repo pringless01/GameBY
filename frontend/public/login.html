@@ -3,27 +3,74 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Giriş Yap • GameBY</title>
+  <title>Sermaye Arena • Giriş / Kayıt</title>
+  <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
   <style>
-    body{margin:0;min-height:100vh;display:grid;place-items:center;background:#0e1116;color:#e5edf5;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
-    .card{background:#18202a;border:1px solid #243041;border-radius:12px;padding:22px 22px 18px;width:min(92vw,380px);box-shadow:0 6px 20px rgba(0,0,0,.35)}
-    h1{margin:0 0 14px;font-size:20px}
-    label{display:block;font-size:12px;color:#9fb3c8;margin:12px 0 6px;letter-spacing:.2px}
-    input{width:100%;padding:12px 14px;border-radius:8px;border:1px solid #2b3a4b;background:#0f1520;color:#f8fbff}
+    :root { --bg:#0e1116; --panel:#18202a; --panel-border:#243041; --accent:#2563eb; --accent-hover:#1d4ed8; --error:#dc2626; --warn:#d97706; --ok:#16a34a; }
+  body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;background:radial-gradient(circle at 25% 20%,#16212c,#0e1116 62%);color:#e5edf5;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;padding:30px}
+    .auth-shell{display:flex;flex-direction:row;gap:60px;align-items:stretch;width:100%;max-width:1080px}
+    .hero{flex:1;display:flex;flex-direction:column;justify-content:center;gap:22px;min-width:300px}
+  .hero h1{margin:0;font-size:38px;background:linear-gradient(90deg,#60a5fa,#93c5fd);-webkit-background-clip:text;background-clip:text;color:transparent;font-weight:700;letter-spacing:.5px}
+    .hero p{margin:0;font-size:15px;line-height:1.5;color:#b8c7d4;max-width:480px}
+    .card{flex:0 0 400px;background:rgba(24,32,42,.92);backdrop-filter:blur(8px);border:1px solid #243041;border-radius:20px;padding:32px 30px 26px;box-shadow:0 10px 40px -12px rgba(0,0,0,.55);position:relative;overflow:hidden}
+  .card:before{content:'';position:absolute;inset:0;border-radius:20px;padding:1px;background:linear-gradient(135deg,#1d4ed8,#1e293b,#0f172a);-webkit-mask:linear-gradient(#000,#000) content-box,linear-gradient(#000,#000);mask:linear-gradient(#000,#000) content-box,linear-gradient(#000,#000);-webkit-mask-composite:xor;mask-composite:exclude;opacity:.35}
+    h1{margin:0 0 18px;font-size:24px;font-weight:600;letter-spacing:.3px}
+    .switcher{position:absolute;top:14px;right:14px;display:flex;gap:6px}
+    .switcher button{background:#1f2c37;border:1px solid #324657;color:#d2dee8;font-size:12px;padding:6px 10px;border-radius:999px;cursor:pointer;transition:background .2s,border .2s}
+    .switcher button:hover{background:#243543}
+    .switcher button.active{background:#2563eb;border-color:#1d4ed8;color:#fff;box-shadow:0 0 0 1px #1d4ed84d,0 4px 14px -6px #1d4ed8aa}
+    label{display:block;font-size:12px;color:#9fb3c8;margin:16px 0 6px;letter-spacing:.25px;font-weight:500;text-transform:uppercase}
+    input{width:100%;padding:14px 14px;border-radius:10px;border:1px solid #2b3a4b;background:#0f1520;color:#f8fbff;font-size:14px;transition:border .2s,background .2s}
+    input:focus{outline:none;border-color:#3b82f6;background:#111b28}
     .row{position:relative}
-    .toggle{position:absolute;top:50%;right:10px;transform:translateY(-50%);background:none;border:none;color:#8aa0b8;cursor:pointer}
-    .actions{margin-top:16px;display:flex;flex-direction:column;gap:10px}
-    button[type=submit]{cursor:pointer;background:linear-gradient(135deg,#2563eb,#1d4ed8);border:none;color:#fff;font-weight:700;padding:12px 14px;border-radius:8px}
-    .remember{display:flex;align-items:center;gap:8px;margin-top:8px;font-size:13px;color:#c6d4e1}
-    .status{display:none;margin-top:12px;padding:10px;border-radius:8px;font-size:13px}
+    .toggle{position:absolute;top:50%;right:10px;transform:translateY(-50%);background:none;border:none;color:#8aa0b8;cursor:pointer;font-size:12px;padding:4px 6px}
+  .actions{margin-top:22px;display:flex;flex-direction:column;gap:12px;position:relative;z-index:10}
+  button[type=submit]{cursor:pointer;background:linear-gradient(135deg,#2563eb,#1d4ed8);border:none;color:#fff;font-weight:600;padding:14px 16px;border-radius:12px;font-size:15px;letter-spacing:.3px;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 4px 18px -6px #1d4ed8aa;transition:filter .2s,transform .15s;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+    button[type=submit]:hover{filter:brightness(1.1)}
+    button[type=submit]:active{transform:translateY(1px)}
+    .remember{display:flex;align-items:center;gap:8px;margin-top:10px;font-size:13px;color:#c6d4e1}
+    .remember input{width:16px;height:16px;padding:0}
+    .status{display:none;margin-top:14px;padding:12px 14px;border-radius:12px;font-size:13px;line-height:1.4}
     .status.info{background:#13283a;border:1px solid #1e3a8a;color:#cfe0ff}
     .status.error{background:#3a1215;border:1px solid #7f1d1d;color:#fecaca}
     .status.success{background:#122d1b;border:1px solid #14532d;color:#bbf7d0}
+    .password-meter{margin-top:6px;height:6px;border-radius:4px;background:#1e2934;overflow:hidden;display:flex;gap:3px}
+    .password-meter span{flex:1;background:#2b3a4b;transition:background .3s}
+    .password-meter span.on.weak{background:#dc2626}
+    .password-meter span.on.medium{background:#d97706}
+    .password-meter span.on.strong{background:#16a34a}
+    .greet{display:none;margin-top:10px;font-size:13px;color:#8fb3ff}
+    .policy{margin-top:14px;font-size:11px;line-height:1.5;color:#6f8294}
+    .policy a{color:#93c5fd;text-decoration:none}
+    .inline-note{font-size:11px;color:#6b7f92;margin-top:4px}
+    @media (max-width: 900px){
+      body{padding:18px}
+      .auth-shell{flex-direction:column;align-items:stretch;gap:26px}
+      .hero{align-items:center;text-align:center;min-width:0}
+    }
+    @media (max-width: 580px){
+      body{padding:14px}
+      .hero{display:none}
+      .card{flex:1 1 auto;width:100%;padding:26px 22px 22px;border-radius:18px}
+      .switcher{top:10px;right:10px}
+      h1#formTitle{margin-top:10px;font-size:22px}
+      input{padding:12px 12px;font-size:15px}
+      .actions{margin-top:18px}
+      .remember{margin-top:6px}
+      .status{margin-top:12px}
+      .password-meter{margin-top:4px}
+    }
+    /* iOS safe-area */
+    @supports(padding:max(env(safe-area-inset-left))){
+      body{padding-left:calc(16px + env(safe-area-inset-left));padding-right:calc(16px + env(safe-area-inset-right));padding-top:calc(20px + env(safe-area-inset-top));padding-bottom:calc(20px + env(safe-area-inset-bottom));}
+    }
   </style>
+  <script src="/js/branding.js" defer></script>
   <script src="/js/config.js" defer></script>
   <script src="/js/auth.js" defer></script>
   <script>
-    // Eğer logout parametresi varsa yerel token temizlemeyi güvenceye al
     (function(){
       try{
         if(new URLSearchParams(location.search).has('logout')){
@@ -33,67 +80,97 @@
       }catch{}
     })();
   </script>
-  </head>
+</head>
 <body>
-  <main class="card">
-    <h1>Giriş Yap</h1>
-    <form id="loginForm" autocomplete="on">
-      <label for="identity">E-posta veya Kullanıcı Adı</label>
-      <div class="row">
-        <input id="identity" name="identity" type="text" inputmode="email" placeholder="ornek@mail.com / kullanici" required autofocus />
+  <div class="auth-shell">
+    <section class="hero">
+  <h1>Sermaye Arena Ekosistemine Katıl</h1>
+      <p>Tek bir hesapla oyun içi varlıklarını yönet, mentorlarınla etkileşime gir ve büyüyen ekonomide yerini al. Güvenli, hızlı, ölçeklenebilir.</p>
+      <p style="font-size:13px;color:#5c7186">Performans odaklı mimari • Anlık itibar sistemi • Güçlü güvenlik katmanları</p>
+    </section>
+    <main class="card" id="authCard">
+      <div class="switcher">
+        <button type="button" id="tabLogin" class="active">Giriş</button>
+        <button type="button" id="tabSignup">Kayıt</button>
       </div>
-      <label for="password">Şifre</label>
-      <div class="row">
-        <input id="password" name="password" type="password" placeholder="••••••••" required />
-        <button type="button" class="toggle" id="togglePass">Göster</button>
-      </div>
-      <div class="remember">
-        <input type="checkbox" id="remember" />
-        <label for="remember" style="margin:0">Beni hatırla</label>
-      </div>
-      <div id="statusBox" class="status info">Bilgilerinizi girin</div>
-      <div class="actions">
-        <button type="submit" id="submitBtn">Giriş</button>
-        <button type="button" id="goSignup" style="background:#334155">Hesabın yok mu? Kayıt Ol</button>
-      </div>
-    </form>
-
-    <form id="signupForm" autocomplete="on" style="display:none; margin-top:16px">
-      <h1 style="margin-top:0">Kayıt Ol</h1>
-      <label for="su_email">E-posta</label>
-      <div class="row">
-        <input id="su_email" name="email" type="email" placeholder="ornek@mail.com" required />
-      </div>
-      <label for="su_username">Kullanıcı Adı</label>
-      <div class="row">
-        <input id="su_username" name="username" type="text" placeholder="kullanici" required />
-      </div>
-      <label for="su_password">Şifre</label>
-      <div class="row">
-        <input id="su_password" name="password" type="password" placeholder="••••••••" required />
-      </div>
-      <div class="remember">
-        <input type="checkbox" id="su_remember" />
-        <label for="su_remember" style="margin:0">Beni hatırla</label>
-      </div>
-      <div id="su_status" class="status info" style="display:none">Bilgilerinizi girin</div>
-      <div class="actions">
-        <button type="submit" id="signupBtn">Kayıt Ol</button>
-        <button type="button" id="goLogin" style="background:#334155">Zaten hesabın var mı? Giriş Yap</button>
-      </div>
-    </form>
-  </main>
+      <h1 id="formTitle">Giriş Yap</h1>
+      <form id="loginForm" autocomplete="on">
+        <label for="identity">E-posta veya Kullanıcı Adı</label>
+        <div class="row">
+          <input id="identity" name="identity" type="text" inputmode="email" placeholder="ornek@mail.com / kullanici" required autofocus />
+        </div>
+        <label for="password">Şifre</label>
+        <div class="row">
+          <input id="password" name="password" type="password" placeholder="••••••••" required />
+          <button type="button" class="toggle" id="togglePass">Göster</button>
+        </div>
+        <div class="remember">
+          <input type="checkbox" id="remember" />
+          <label for="remember" style="margin:0">Beni hatırla</label>
+        </div>
+        <div id="statusBox" class="status info">Bilgilerinizi girin</div>
+        <div class="actions">
+          <button type="submit" id="submitBtn">Giriş</button>
+        </div>
+      </form>
+      <form id="signupForm" autocomplete="on" style="display:none;">
+        <label for="su_email">E-posta</label>
+        <div class="row">
+          <input id="su_email" name="email" type="email" placeholder="ornek@mail.com" required />
+        </div>
+        <label for="su_username">Kullanıcı Adı</label>
+        <div class="row">
+          <input id="su_username" name="username" type="text" placeholder="kullanici" required />
+        </div>
+        <label for="su_display">Görünen İsim (Hitap)</label>
+        <div class="row">
+          <input id="su_display" name="display_name" type="text" placeholder="Örn. Ali" />
+        </div>
+        <label for="su_password">Şifre</label>
+        <div class="row">
+          <input id="su_password" name="password" type="password" placeholder="••••••••" required />
+          <div class="password-meter" id="pwMeter"><span></span><span></span><span></span></div>
+        </div>
+        <div class="remember">
+          <input type="checkbox" id="su_remember" />
+          <label for="su_remember" style="margin:0">Beni hatırla</label>
+        </div>
+        <div id="su_status" class="status info" style="display:none">Bilgilerinizi girin</div>
+        <div class="actions">
+          <button type="submit" id="signupBtn">Kayıt Ol</button>
+        </div>
+        <div class="policy">Kaydolarak <a href="#" id="termsLink">Kullanım Koşulları</a> ve <a href="#" id="privacyLink">Gizlilik Politikası</a>nı kabul edersiniz.</div>
+      </form>
+      <div class="greet" id="greetBox"></div>
+    </main>
+  </div>
   <script>
     (function(){
+      const tabLogin = document.getElementById('tabLogin');
+      const tabSignup = document.getElementById('tabSignup');
       const loginForm = document.getElementById('loginForm');
       const signupForm = document.getElementById('signupForm');
-      const goSignup = document.getElementById('goSignup');
-      const goLogin = document.getElementById('goLogin');
-      function showSignup(){ loginForm.style.display='none'; signupForm.style.display='block'; }
-      function showLogin(){ signupForm.style.display='none'; loginForm.style.display='block'; }
-      goSignup?.addEventListener('click', showSignup);
-      goLogin?.addEventListener('click', showLogin);
+      const formTitle = document.getElementById('formTitle');
+      const greetBox = document.getElementById('greetBox');
+      const suPassword = document.getElementById('su_password');
+      const meter = document.getElementById('pwMeter');
+      const meterBars = meter ? Array.from(meter.children) : [];
+      function activate(tab){
+        if(tab==='login'){
+          tabLogin.classList.add('active'); tabSignup.classList.remove('active');
+          loginForm.style.display='block'; signupForm.style.display='none'; formTitle.textContent='Giriş Yap';
+        } else {
+          tabSignup.classList.add('active'); tabLogin.classList.remove('active');
+          signupForm.style.display='block'; loginForm.style.display='none'; formTitle.textContent='Kayıt Ol';
+        }
+      }
+      tabLogin.addEventListener('click', ()=>activate('login'));
+      tabSignup.addEventListener('click', ()=>activate('signup'));
+      function scorePassword(p){ let score=0; if(!p) return 0; if(p.length>=8) score++; if(/[A-ZÇĞİÖŞÜ]/.test(p) && /[a-zçğıöşü]/.test(p)) score++; if(/\d/.test(p) || /[^A-Za-z0-9]/.test(p)) score++; return Math.min(score,3); }
+      suPassword?.addEventListener('input', ()=>{ const s = scorePassword(suPassword.value); meterBars.forEach((b,i)=>{ b.className=''; if(i < s){ b.classList.add('on', s===1?'weak':s===2?'medium':'strong'); } }); });
+      window.__showGreeting = function(name){ greetBox.style.display='block'; greetBox.textContent = 'Hoş geldin ' + name + '! Hesabın hazır, yönlendiriliyorsun...'; };
     })();
   </script>
+  <script src="/js/auth.js" defer></script>
 </body>
 </html>

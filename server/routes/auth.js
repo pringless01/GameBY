@@ -1,6 +1,7 @@
 import express from 'express';
-import { signToken } from '../config/jwt.js';
+import { signToken, verifyToken } from '../config/jwt.js';
 import { authRequired } from '../middleware/auth.js';
+import { revokeToken } from '../security/tokenBlacklist.js';
 import {
   createUser,
   findUserByUsername,
@@ -58,28 +59,42 @@ const router = express.Router();
 
 // POST /api/auth/register
 router.post('/register', async (req, res) => {
-  const { email, username, password } = req.body || {};
+  const { email, username, password, display_name } = req.body || {};
   if (!email || !username || !password) {
     return res.status(400).json({ error: 'missing_fields', message: mapAuthError('missing_fields') });
   }
   try {
-    const existing =
-      (await findByEmailOrUsername(email)) ||
-      (await findByEmailOrUsername(username)) ||
-      (await findUserByUsername(username));
-
+    // Normalize to lower for comparison
+    const lowerEmail = email.toLowerCase();
+    const lowerUser = username.toLowerCase();
+    const existing = await findByEmailOrUsername(lowerEmail) || await findByEmailOrUsername(lowerUser) || await findUserByUsername(lowerUser);
     if (existing) {
-      if (existing.email && existing.email.toLowerCase() === email.toLowerCase()) {
+      if (existing.email && existing.email.toLowerCase() === lowerEmail) {
         return res.status(409).json({ error: 'duplicate_email', message: mapAuthError('duplicate_email') });
       }
-      if (existing.username && existing.username.toLowerCase() === username.toLowerCase()) {
+      if (existing.username && existing.username.toLowerCase() === lowerUser) {
         return res.status(409).json({ error: 'duplicate_username', message: mapAuthError('duplicate_username') });
       }
     }
 
-  const user = await createUser({ email, username, password });
+  let user;
+  try {
+    user = await createUser({ email, username, password, display_name });
+  } catch (e) {
+    if (e && /UNIQUE/i.test(String(e.message))) {
+      // Race condition fallback
+      const again = await findByEmailOrUsername(email) || await findUserByUsername(username);
+      if (again?.email?.toLowerCase() === email.toLowerCase()) {
+        return res.status(409).json({ error: 'duplicate_email', message: mapAuthError('duplicate_email') });
+      }
+      if (again?.username?.toLowerCase() === username.toLowerCase()) {
+        return res.status(409).json({ error: 'duplicate_username', message: mapAuthError('duplicate_username') });
+      }
+    }
+    throw e;
+  }
   const token = signToken(user.id, { username: user.username, email: user.email, roles: user.roles || [] });
-    return res.status(201).json({ token, user: { id: user.id, email: user.email, username: user.username } });
+    return res.status(201).json({ token, user: { id: user.id, email: user.email, username: user.username, display_name: user.display_name || display_name || username } });
   } catch (e) {
     console.error('[auth/register] error', e);
     return res.status(500).json({ error: 'server_error', message: mapAuthError('server_error') });
@@ -136,8 +151,45 @@ router.get('/me', authRequired, async (req, res) => {
   try {
     const user = await findUserById(req.user.id);
     if (!user) return res.status(404).json({ error: 'not_found' });
-    return res.json({ id: user.id, email: user.email, username: user.username, trust_score: user.trust_score });
+    let roles = [];
+    try { roles = user.roles ? JSON.parse(user.roles) : []; } catch { roles = []; }
+    return res.json({
+      id: user.id,
+      email: user.email,
+      username: user.username,
+      display_name: user.display_name || null,
+      trust_score: user.trust_score,
+      roles
+    });
   } catch (e) {
+    return res.status(500).json({ error: 'server_error' });
+  }
+});
+
+// POST /api/auth/logout
+// Authorization: Bearer <token>
+// JWT stateless olduğu için logout = token'ı kalan ömrü boyunca revoke listesine eklemek.
+router.post('/logout', authRequired, async (req, res) => {
+  const header = req.headers.authorization;
+  const token = header?.startsWith('Bearer ') ? header.slice(7) : null;
+  if(!token){
+    // authRequired normalde engeller ama savunma amaçlı
+    return res.status(401).json({ error: 'unauthorized' });
+  }
+  try {
+    let ttlMs = 0;
+    try {
+      const decoded = verifyToken(token); // middleware zaten doğruladı; tekrar decode için kullanıyoruz
+      if (decoded?.exp) {
+        const expiresAt = decoded.exp * 1000;
+        ttlMs = Math.max(0, expiresAt - Date.now());
+      }
+    } catch { /* ignore decode issues */ }
+    // Eğer exp yoksa (örn. süresiz token) yine revoke ederiz ama TTL belirtmeyiz -> bellek/redis kalıcı.
+    await revokeToken(token, ttlMs || undefined);
+    return res.json({ success: true, revoked_ms: ttlMs || null });
+  } catch (e) {
+    console.error('[auth/logout] error', e);
     return res.status(500).json({ error: 'server_error' });
   }
 });

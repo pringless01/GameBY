@@ -22,6 +22,10 @@ import mentorRoutes from './routes/mentor.js';
 import activityRoutes from './routes/activity.js';
 import marketplaceRoutes from './routes/marketplace.js';
 import reputationRoutes from './routes/reputation.js';
+import chatRoutes from './routes/chat.js';
+import dmRoutes from './routes/dm.js';
+import rootAdminRoutes from './routes/rootAdmin.js'; // deprecated soon
+import adminCoreRoutes from './routes/adminCore.js';
 import opsRoutes from './routes/ops.js';
 import { registerChatNamespace } from './sockets/chatSocket.js';
 import { setIo } from './sockets/io.js';
@@ -101,7 +105,8 @@ app.use((req, res, next) => {
   next();
 });
 
-app.get('/health', async (req, res) => {
+// Health check mantığını fonksiyonlaştırdık ki /api/health alias'ı da aynı çıktıyı versin
+async function buildHealth(res){
   const t0 = Date.now();
   try {
     const db = await initDb();
@@ -111,8 +116,7 @@ app.get('/health', async (req, res) => {
     const appliedRows = await db.all('SELECT name FROM migrations');
     const appliedSet = new Set(appliedRows.map(r=>r.name));
     const pending = files.filter(f=>!appliedSet.has(f));
-    // Basit cache ölçümleri: entry sayıları ve tahmini yaş ortalaması (ms)
-  function cacheStats(cache){
+    function cacheStats(cache){
       const entries = Array.from(cache.values());
       if(!entries.length) return { entries:0 };
       const now = Date.now();
@@ -127,13 +131,11 @@ app.get('/health', async (req, res) => {
       mentor_lb: cacheStats(mentorsLbCache),
       mentor_rank: cacheStats(mentorsRankCache)
     };
-    // Rate limit snapshot (no PII)
     let rateLimit;
     try {
       const { getRateLimitSnapshot } = await import('./middleware/rateLimit.js');
       rateLimit = getRateLimitSnapshot();
     } catch { rateLimit = undefined; }
-
     const body = {
       status: 'ok',
       commit: currentCommit,
@@ -150,6 +152,14 @@ app.get('/health', async (req, res) => {
   } catch(e){
     res.status(500).json({ status:'fail', error:'health_check_failed' });
   }
+}
+
+app.get('/health', async (req, res) => {
+  await buildHealth(res);
+});
+// Alias: bazı monitorler /api/health çağırıyor (404 gürültüsü vardı)
+app.get('/api/health', async (req, res) => {
+  await buildHealth(res);
 });
 app.get('/metrics', async (req, res) => {
   try {
@@ -219,6 +229,17 @@ app.get('/healthz', (req, res) => {
 app.get('/login', (_req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'login.html'));
 });
+// Root admin dashboard alias yolları
+['/admindashboard','/root-admin','/admin-panel','/root-admin/dashboard'].forEach(p => {
+  app.get(p, (_req, res) => {
+  console.log('[route] serving admindashboard for', p);
+  res.sendFile(path.join(__dirname, 'public', 'admindashboard.html'));    
+  });
+});
+  // Yeni sistem admin panel alias
+  app.get(['/sysadmin','/sysadmin/','/admin-core','/admin-core/'], (_req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'sysadmin.html'));
+  });
 app.use('/api/auth', authRoutes);
 app.use('/api/user', userRoutes);
 app.use('/api/contracts', contractRoutes);
@@ -228,6 +249,41 @@ app.use('/api/mentor', mentorRoutes);
 app.use('/api/activity', activityRoutes);
 app.use('/api/marketplace', marketplaceRoutes);
 app.use('/api/reputation', reputationRoutes);
+app.use('/api/chat', chatRoutes);
+app.use('/api/dm', dmRoutes);
+// DEBUG: mevcut tüm tanımlı express route path'lerini görmek için (geçici, prod sonrası kaldır)
+app.get('/api/_routes', (req, res) => {
+  try {
+    const out = [];
+    function walk(stack, prefix=''){
+      stack.forEach(l=>{
+        if(l.route && l.route.path){
+          const methods = Object.keys(l.route.methods).filter(m=>l.route.methods[m]).join(',');
+          out.push(methods.toUpperCase()+' '+prefix+l.route.path);
+        } else if(l.name==='router' && l.handle && l.handle.stack){
+          const base = l.regexp && l.regexp.source ? (l.regexp.source
+            .replace('^\\','')
+            .replace('\\/?(?=\\/|$)','')
+            .replace('(?=\/|$)','')
+            .replace('^','')
+            .replace('$','')) : '';
+          walk(l.handle.stack, prefix + (base && base!=='/'? (base.startsWith('/')?base:'/'+base):''));
+        }
+      });
+    }
+    walk(app._router.stack);
+    res.json({ routes: out.sort() });
+  } catch(e){ res.status(500).json({ error:'route_debug_failed' }); }
+});
+// Deprecated root-admin (eski). Geçiş notu:
+app.use('/api/root-admin', (req, res, next) => {
+  if(req.path === '/login' || req.path === '/me') {
+    console.warn('[deprecated] /api/root-admin kullanılıyor. Yeni: /api/admin-core');
+  }
+  next();
+}, rootAdminRoutes);
+// Yeni admin çekirdek
+app.use('/api/admin-core', adminCoreRoutes);
 // Admin ops (agent) - guarded by env flag inside route
 app.use('/api/ops', opsRoutes);
 
@@ -241,6 +297,29 @@ app.use(express.static(path.join(__dirname, '..', 'frontend', 'public')));
   await initDb();
   try { await initRedisIfEnabled(); } catch { /* ignore */ }
   try { await initBlacklist(); } catch { /* ignore */ }
+  try { const { createInitialAdmin } = await import('./services/adminUserService.js'); await createInitialAdmin(); } catch { /* ignore */ }
+  // Başlangıç admin seed
+  try {
+    const seed = (process.env.ADMIN_SEED_USERNAMES || '').split(',').map(s=>s.trim()).filter(Boolean);
+    if(seed.length){
+      const { initDb } = await import('./config/database.js');
+      const db = await initDb();
+      for(const uname of seed){
+        try {
+          const row = await db.get('SELECT id, roles FROM users WHERE lower(username)=lower(?)', [uname]);
+          if(row){
+            let roles = [];
+            try { roles = row.roles ? JSON.parse(row.roles) : []; } catch { roles = []; }
+            if(!roles.includes('admin')){
+              roles.push('admin');
+              await db.run('UPDATE users SET roles = ? WHERE id = ?', [JSON.stringify(roles), row.id]);
+              console.log('[admin-seed] kullanıcıya admin rolü verildi:', uname);
+            }
+          }
+        } catch(e){ console.error('[admin-seed] hata', uname, e.message); }
+      }
+    }
+  } catch(e){ console.error('[admin-seed] genel hata', e); }
   if(envConfig.MIGRATIONS_AUTO_APPLY === '1'){
     try {
       const migrationsDir = path.join(__dirname, 'migrations');

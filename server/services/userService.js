@@ -15,7 +15,7 @@ export async function recordUserLogin(userId, ip, userAgent, deviceFingerprint =
   );
 }
 
-export async function createUser({ email, username, password }) {
+export async function createUser({ email, username, password, display_name }) {
   const db = await initDb();
   const hash = bcrypt.hashSync(password, 10);
 
@@ -28,6 +28,7 @@ export async function createUser({ email, username, password }) {
   const cols = ['username', 'password_hash'];
   const vals = [username, hash];
   if (email) { cols.push('email'); vals.push(email); }
+  if (display_name) { cols.push('display_name'); vals.push(display_name); }
   if (rolesJson) { cols.push('roles'); vals.push(rolesJson); }
 
   const placeholders = cols.map(() => '?').join(',');
@@ -43,7 +44,7 @@ export async function createUser({ email, username, password }) {
     [result.lastID]
   );
 
-  return { id: result.lastID, username, email: email || null, roles: rolesJson ? JSON.parse(rolesJson) : [] };
+  return { id: result.lastID, username, email: email || null, display_name: display_name || null, roles: rolesJson ? JSON.parse(rolesJson) : [] };
 }
 
 export async function findUserByUsername(username) {

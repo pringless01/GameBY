@@ -3,14 +3,14 @@
 # GameBY Deployment Script with SSH Agent Support
 # Version: 2.0 - SSH Agent integrated
 
-LOG_FILE="/var/log/gameby-deploy.log"
+LOG_FILE="/var/log/sermaye-arena-deploy.log"
 PROJECT_DIR="/srv/gameby/GameBY"
 
 log() {
     echo "$(date): $1" | tee -a $LOG_FILE
 }
 
-log "Starting GameBY deployment..."
+log "Starting Sermaye Arena deployment (eski: GameBY)..."
 
 # Navigate to project directory
 cd $PROJECT_DIR

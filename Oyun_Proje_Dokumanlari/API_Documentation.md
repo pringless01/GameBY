@@ -90,6 +90,19 @@
 }
 ```
 
+### Logout
+`POST /api/auth/logout`
+
+Bearer token ile kimliği doğrulanmış kullanıcı mevcut JWT'yi geçersiz kılar. Sistem stateless olduğu için logout işlemi token'ı kalan süresi boyunca revoke listesine ekler; böylece tekrar kullanılamaz.
+
+Yanıt:
+```
+200 OK
+{ "success": true, "revoked_ms": 654321 } // revoked_ms: token süresinden kalan milisaniye; exp yoksa null
+```
+
+Hatalar: Standart 401 (Authorization header yok/bozuk) veya 500 sunucu hatası.
+
 ---
 
 ## 👤 User Endpoints

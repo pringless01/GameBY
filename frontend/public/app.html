@@ -3,100 +3,593 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>GameBY • Ana Ekran</title>
-  <link rel="stylesheet" href="/css/app.css" />
+  <title>Sermaye Arena • Oyuncu Paneli</title>
+  <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
+  <script>window.__APP_VERSION='20250823b';</script>
+  <link rel="stylesheet" href="/css/app.css?v=20250823b" />
+  <style>
+            /* Yeni layout ek stiller */
+            :root{--nav-height:70px;}
+            body{margin:0;display:flex;min-height:100vh;background:var(--bg-primary);font-family:'Inter',system-ui,sans-serif;overflow:hidden;}
+            :root{--top-height:60px;--bottom-height:0px;}
+            @supports(height:100dvh){:root{--vh:100dvh;} }
+            @supports not (height:100dvh){:root{--vh:100vh;} }
+            .layout{flex:1;display:flex;min-height:var(--vh);height:var(--vh);}
+            .sidebar{width:74px;background:#12171d;display:flex;flex-direction:column;align-items:center;padding:14px 8px;gap:14px;box-shadow:2px 0 8px rgba(0,0,0,.25)}
+            .side-logo{font-size:26px;margin:4px 0 18px;color:#4CAF50;font-weight:700}
+            .nav-btn{width:58px;height:58px;border-radius:14px;border:1px solid #1f2a33;background:#19222b;color:#c2d2df;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:15px;gap:4px;cursor:pointer;transition:background .18s,border .18s,color .18s}
+            .nav-btn:hover{background:#22303c;border-color:#33506a;color:#fff}
+            .nav-btn.active{background:#2563eb;border-color:#1d4ed8;color:#fff;box-shadow:0 0 0 1px #1d4ed866,0 4px 10px -2px #1d4ed8aa}
+            .nav-btn span.label{font-size:11px;font-weight:500;letter-spacing:.3px}
+            .content{flex:1;display:flex;flex-direction:column;min-width:0;height:var(--vh);}
+            .topbar{height:var(--top-height);flex:0 0 var(--top-height);display:flex;align-items:center;gap:18px;padding:0 18px;background:var(--bg-card);border-bottom:1px solid var(--border-light);}
+            .player-badge{display:flex;align-items:center;gap:10px;}
+            .player-badge .avatar{width:40px;height:40px;border-radius:50%;background:#2563eb;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:600;}
+            .player-meta{display:flex;flex-direction:column;line-height:1.2}
+            .player-meta .name{font-weight:600;font-size:15px}
+            .pill{background:#2563eb1a;color:#2563eb;font-size:11px;font-weight:600;padding:4px 8px;border-radius:999px;border:1px solid #2563eb33;}
+            .pill-id{cursor:pointer;user-select:all;transition:background .25s,color .25s,border-color .25s;}
+            .pill-id:hover{background:#1d4ed81a;}
+            .pill-id.copied{background:#15803d1a;color:#16a34a;border-color:#16a34a55;}
+            .spacer{flex:1}
+            .top-actions{display:flex;align-items:center;gap:10px}
+            .btn{border:1px solid #1f2a33;background:#19222b;color:#c2d2df;padding:8px 14px;border-radius:10px;font-size:13px;font-weight:500;cursor:pointer;display:inline-flex;align-items:center;gap:6px;}
+            .btn:hover{background:#22303c;color:#fff}
+            .btn.danger{background:#3a1b1b;border-color:#592626;color:#ffb3b3}
+            .btn.danger:hover{background:#5a2424;color:#fff}
+            .views{flex:1;position:relative;overflow:hidden;background:linear-gradient(180deg,var(--bg-card),var(--bg-primary));height:calc(var(--vh) - var(--top-height) - var(--bottom-height));}
+            .view{position:absolute;inset:0;padding:18px 22px;overflow:hidden;display:none;animation:fade .25s ease;display:none;}
+            .view.active{display:flex;flex-direction:column;}
+            .view.active{display:block}
+            .grid-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:18px;margin-top:12px}
+            .card{background:var(--bg-card);border:1px solid var(--border-light);padding:16px 18px;border-radius:14px;box-shadow:0 4px 14px -4px rgba(0,0,0,.07);display:flex;flex-direction:column;gap:10px;}
+            .card h3{margin:0;font-size:15px;font-weight:600}
+            .metric{font-size:26px;font-weight:700;color:#2563eb}
+            .small{font-size:12px;color:var(--text-secondary)}
+            .empty{opacity:.65;font-style:italic}
+            #loading-overlay{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(15,18,24,.78);backdrop-filter:blur(5px);z-index:999;visibility:hidden;opacity:0;transition:opacity .25s,visibility .25s}
+            #loading-overlay.active{visibility:visible;opacity:1}
+            @keyframes fade{from{opacity:0;transform:translateY(4px);}to{opacity:1;transform:translateY(0);}}
+            /* Mobil alt bar */
+            @media (max-width: 700px){
+              :root{--bottom-height:70px;}
+              .sidebar{position:fixed;bottom:0;left:0;right:0;height:var(--bottom-height);flex-direction:row;width:auto;justify-content:space-around;padding:8px 10px;box-shadow:0 -2px 12px rgba(0,0,0,.3);z-index:200}
+              .side-logo{display:none}
+              .nav-btn{width:60px;height:54px;border-radius:16px}
+              .layout{flex-direction:column;}
+              .content{padding-top:0;height:var(--vh);}
+              .views{height:calc(var(--vh) - var(--top-height) - var(--bottom-height));}
+            }
+          </style>
+  <script src="/js/branding.js?v=20250823b"></script>
+  <script src="/js/auth-client.js?v=20250823b"></script>
 </head>
 <body>
-  <script src="/js/auth-client.js"></script>
-  <script>
-    (async function(){
-      if(window.AuthClient){
-        // Eğer token yoksa direkt login'e yönlendir (hafif kontrol)
-        if(!AuthClient.hasToken()){ AuthClient.logout(); return; }
-        await AuthClient.requireAuthOrRedirect();
-      }
-    })();
-  </script>
-  <div class="app-container">
-    <!-- Üst Header: Profil + İtibar + Para -->
-    <header class="main-header">
-      <div class="user-info">
-        <div class="avatar">👤</div>
-        <div class="user-details">
-          <span class="username">Musa</span>
-          <div class="trust-score">
-            <span class="trust-icon">⭐</span>
-            <span class="trust-value">180</span>
-            <span class="trust-max">/200</span>
+  <div id="loading-overlay"><div style="color:#fff;font-weight:600;font-size:18px;">Yükleniyor...</div></div>
+  <!-- Tek sayfa login + oyun overlay yapısı -->
+  <div id="loginOverlay" class="login-overlay" aria-hidden="true">
+    <div class="login-panel">
+      <h1 class="lo-title">Sermaye Arena</h1>
+      <div class="lo-tabs">
+        <button type="button" class="lo-tab active" data-tab="login">Giriş</button>
+        <button type="button" class="lo-tab" data-tab="signup">Kayıt</button>
+      </div>
+      <form id="loFormLogin" class="lo-form" autocomplete="on">
+        <label class="lo-label">Kullanıcı / E-posta
+          <input class="lo-input" id="loIdentity" required maxlength="120" />
+        </label>
+        <label class="lo-label">Şifre
+          <div class="lo-pass-row"><input class="lo-input" id="loPassword" type="password" required maxlength="120" /><button type="button" id="loTogglePass" class="lo-pass-toggle">👁</button></div>
+        </label>
+        <div class="lo-remember"><label><input type="checkbox" id="loRemember" /> Beni hatırla</label></div>
+        <div class="lo-status" id="loStatus">Bilgilerinizi girin</div>
+        <button type="submit" class="lo-submit" id="loSubmit">Giriş Yap</button>
+      </form>
+      <form id="loFormSignup" class="lo-form" style="display:none" autocomplete="on">
+        <label class="lo-label">E-posta
+          <input class="lo-input" id="suEmail" type="email" required maxlength="150" />
+        </label>
+        <label class="lo-label">Kullanıcı Adı
+          <input class="lo-input" id="suUser" required maxlength="40" />
+        </label>
+        <label class="lo-label">Görünen İsim
+          <input class="lo-input" id="suDisplay" maxlength="60" />
+        </label>
+        <label class="lo-label">Şifre
+          <div class="lo-pass-row"><input class="lo-input" id="suPass" type="password" required /><div class="lo-meter" id="pwMeter"><span></span><span></span><span></span></div></div>
+        </label>
+        <div class="lo-remember"><label><input type="checkbox" id="suRemember" /> Beni hatırla</label></div>
+        <div class="lo-status" id="suStatus" style="display:none">Bilgilerinizi girin</div>
+        <button type="submit" class="lo-submit" id="suSubmit">Kayıt Ol</button>
+      </form>
+    </div>
+  </div>
+  <div class="layout" id="layoutRoot">
+    <nav class="sidebar" id="nav">
+  <div class="side-logo">SA</div>
+      <button class="nav-btn active" data-view="dashboard" id="nav-dashboard">🏠<span class="label">Panel</span></button>
+      <button class="nav-btn" data-view="chat" id="nav-chat">💬<span class="label">Chat</span></button>
+  <button class="nav-btn" data-view="dm" id="nav-dm">✉️<span class="label">DM</span></button>
+      <button class="nav-btn" data-view="market" id="nav-market">📈<span class="label">Piyasa</span></button>
+      <button class="nav-btn" data-view="contracts" id="nav-contracts">🤝<span class="label">Kontrat</span></button>
+      <button class="nav-btn" data-view="settings" id="nav-settings">⚙️<span class="label">Ayar</span></button>
+      <button class="nav-btn" data-view="logout" id="nav-logout">🚪<span class="label">Çıkış</span></button>
+    </nav>
+    <div class="content">
+      <div class="topbar">
+        <div class="player-badge">
+          <div class="avatar" id="playerAvatar">P</div>
+          <div class="player-meta">
+            <span class="name" id="playerName">Oyuncu</span>
+            <span class="pill" id="playerTrust">İtibar 0</span>
+            <span class="pill pill-id" id="playerId" title="Oyuncu ID">ID ?</span>
           </div>
         </div>
+        <div class="pill" id="playerMoney">💰 0</div>
+        <div class="spacer"></div>
+        <div class="top-actions">
+          <button class="btn" id="btn-refresh">↻ Yenile</button>
+          <button class="btn danger" id="btn-logout">Çıkış</button>
+        </div>
       </div>
-      <div class="money-display">
-        <span class="money-icon">💰</span>
-        <span class="money-value">2.5K</span>
+      <div class="views" id="views">
+        <section class="view active" id="view-dashboard">
+          <h2 style="margin:0 0 8px;font-size:20px;">Genel Durum</h2>
+          <div class="grid-cards" id="dashboardMetrics">
+            <div class="card"><h3>İtibar</h3><div class="metric" id="m-trust">0</div><div class="small">Güncel itibar değeri</div></div>
+            <div class="card"><h3>Varlıklar</h3><div class="metric" id="m-assets">0</div><div class="small">Toplam portföy</div></div>
+            <div class="card"><h3>Kontratlar</h3><div class="metric" id="m-contracts">0</div><div class="small">Aktif</div></div>
+            <div class="card"><h3>Mentor Puanı</h3><div class="metric" id="m-mentor">0</div><div class="small">Mentor skor</div></div>
+          </div>
+        </section>
+        <section class="view" id="view-chat">
+          <style>
+            /* Chat kontrast ve tema */
+            .chat-root{display:flex;flex-direction:column;height:100%;max-height:100%;}
+            .chat-head{display:flex;align-items:center;gap:12px;margin:0 0 10px;}
+            .chat-status{font-size:12px;padding:4px 10px;border-radius:20px;background:#334155;color:#cbd5e1;transition:background .2s,color .2s}
+            .chat-status.is-connected{background:#166534;color:#ecfdf5}
+            .chat-status.is-connecting{background:#b45309;color:#fffbeb}
+            .chat-status.is-error{background:#7f1d1d;color:#fee2e2}
+            .chat-online{font-size:12px;color:#64748b}
+            .chat-msg-list{flex:1;overflow:auto;background:#0f172a;border:1px solid #1e293b;border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:10px;font-size:13px;min-height:0;}
+            .chat-empty{opacity:.6;font-size:13px}
+            .chat-msg{background:#1e293b;border:1px solid #334155;padding:10px 12px;border-radius:10px;line-height:1.4;color:#f1f5f9;}
+            .chat-msg .meta{display:flex;align-items:center;gap:6px;margin-bottom:4px;font-size:11px;color:#94a3b8;}
+            .chat-msg .user{color:#38bdf8;font-weight:600;font-size:12px;}
+            .chat-input-row{margin-top:10px;display:flex;gap:10px;align-items:flex-end;}
+            .chat-input{flex:1;resize:vertical;min-height:46px;max-height:160px;border:1px solid #334155;background:#0f1a27;color:#f1f5f9;border-radius:10px;padding:10px 12px;font:inherit;line-height:1.35;}
+            .chat-input:focus{outline:2px solid #2563eb;outline-offset:0;}
+            .chat-send{height:46px;display:inline-flex;align-items:center;gap:6px;background:#2563eb;border:1px solid #1d4ed8;color:#fff;border-radius:10px;padding:0 18px;font-weight:600;cursor:pointer;}
+            .chat-send:hover{background:#1d4ed8}
+            .chat-flood{display:none;margin-top:6px;font-size:12px;color:#f59e0b;}
+            .chat-divider{height:1px;background:#334155;margin:4px 0;opacity:.4}
+            .chat-history-badge{font-size:10px;text-transform:uppercase;letter-spacing:.5px;background:#334155;color:#cbd5e1;padding:2px 8px;border-radius:12px;align-self:center;margin-bottom:4px;}
+            /* Mobil optimizasyon */
+            /* 700px ve altı (mobil nav aktifken) composer nav altında kalmasın diye offset veriyoruz */
+            @media (max-width: 700px){
+              #view-chat{padding:10px 12px 8px;}
+              #view-chat .chat-root{flex:1;min-height:0;position:relative;}
+              /* Liste alt boşluğu JS tarafından dinamik ayarlanacak */
+                          #view-chat .chat-msg-list{padding:8px;flex:1;min-height:0;}
+                          /* Sadece aktifken göster */
+                          #view-chat.active .chat-input-row{position:fixed;left:10px;right:10px;bottom:calc(var(--bottom-height) + env(safe-area-inset-bottom) + 16px);margin-top:0;padding:6px 12px;background:#0f172a;border:1px solid #1e293b;border-radius:16px;box-shadow:0 4px 14px -6px #0008;z-index:180;}
+                          #view-chat:not(.active) .chat-input-row{display:none!important;}
+              #view-chat .chat-input{min-height:38px;font-size:14px;}
+              #view-chat .chat-send{height:38px;padding:0 14px;font-size:14px;}
+              .view{padding:10px 12px 8px;}
+            }
+            @media (max-width: 780px){
+              .chat-head h2{font-size:17px;}
+              .chat-status{padding:3px 8px;font-size:11px;}
+              .chat-online{display:none;}
+              .chat-msg{font-size:13px;padding:8px 10px;}
+              .chat-msg .meta{font-size:10px;}
+              .chat-input-row{gap:6px;margin-top:8px;}
+              .chat-input{min-height:42px;font-size:14px;padding:8px 10px;}
+              .chat-send{height:42px;padding:0 14px;font-size:14px;}
+            }
+            @media (max-width: 520px){
+              #view-chat{padding:8px 10px 6px;}
+              #view-chat .chat-msg-list{padding:6px;}
+              #view-chat .chat-input-row{left:8px;right:8px;bottom:calc(var(--bottom-height) + env(safe-area-inset-bottom) + 12px);padding:6px 10px;border-radius:14px;}
+              .chat-input{border-radius:10px;}
+              .chat-send{border-radius:10px;}
+            }
+            @media (prefers-color-scheme: light){
+              /* Light tema için gradient 700px altı kuralında override edildi */
+            }
+            @media (max-height: 520px){
+              .chat-head h2{font-size:16px;}
+              .chat-input{max-height:100px;}
+            }
+            @media (prefers-color-scheme: light){
+              .chat-msg-list{background:#f1f5f9;color:#0f172a;}
+              .chat-msg{background:#ffffff;border-color:#cbd5e1;color:#0f172a;}
+              .chat-input{background:#fff;color:#0f172a;border-color:#cbd5e1;}
+              .chat-status{background:#e2e8f0;color:#475569;}
+              .chat-online{color:#475569;}
+              .chat-msg .meta{color:#64748b;}
+              .chat-msg .user{color:#2563eb;}
+            }
+          </style>
+          <div class="chat-root">
+            <div class="chat-head">
+              <h2 style="margin:0;font-size:20px;flex:1;">Chat</h2>
+              <div id="chatStatus" class="chat-status chat-status is-connecting">Bağlanıyor…</div>
+              <div id="chatOnline" class="chat-online">- çevrimiçi</div>
+            </div>
+            <div id="chatMessages" class="chat-msg-list">
+              <div class="chat-empty">Mesaj yok. İlk mesajı sen yaz.</div>
+            </div>
+            <form id="chatForm" class="chat-input-row" autocomplete="off">
+              <textarea id="chatInput" class="chat-input" placeholder="Mesaj yaz (CTRL+ENTER gönder)" maxlength="2000"></textarea>
+              <button type="submit" id="chatSendBtn" class="chat-send">Gönder</button>
+            </form>
+            <div id="chatFlood" class="chat-flood">Çok hızlı gönderiyorsun. Biraz bekle.</div>
+          </div>
+        </section>
+        <section class="view" id="view-dm">
+          <h2 style="margin:0 0 10px;font-size:20px;">Mesajlar</h2>
+          <div class="dm-layout">
+            <div class="dm-conversations" id="dmConversations"></div>
+            <div class="dm-thread">
+              <div class="dm-thread-messages" id="dmMessages"><div class="dm-empty">Konuşma seçin</div></div>
+              <form id="dmForm" class="dm-form" autocomplete="off">
+                <input type="text" id="dmTarget" class="dm-target" placeholder="Kullanıcı ID" inputmode="numeric" />
+                <textarea id="dmInput" class="dm-input" rows="1" placeholder="Mesaj"></textarea>
+                <button id="dmSendBtn" class="btn" type="submit">Gönder</button>
+              </form>
+            </div>
+          </div>
+        </section>
+        <section class="view" id="view-market">
+          <h2>Piyasa</h2>
+          <p class="small empty">Piyasa ekranı placeholder.</p>
+        </section>
+        <section class="view" id="view-contracts">
+          <h2>Kontratlar</h2>
+          <p class="small empty">Kontrat listesi placeholder.</p>
+        </section>
+        <section class="view" id="view-settings">
+          <h2>Ayarlar</h2>
+          <p class="small empty">Ayarlar yakında.</p>
+        </section>
       </div>
-      <div class="session-actions" style="margin-left:auto;display:flex;align-items:center;gap:8px;">
-        <button id="btn-logout" class="btn btn-small" style="padding:8px 12px;">Çıkış</button>
-      </div>
-    </header>
-
-    <!-- Ana Dashboard Grid -->
-    <main class="dashboard-grid">
-      <button class="dashboard-btn chat-btn" id="btn-chat">
-        <span class="btn-icon">💬</span>
-        <span class="btn-label">Chat</span>
-        <span class="notification-badge">3</span>
-      </button>
-
-      <button class="dashboard-btn" id="btn-notifications">
-        <span class="btn-icon">🔔</span>
-        <span class="btn-label">Bildirim</span>
-      </button>
-
-      <button class="dashboard-btn" id="btn-portfolio">
-        <span class="btn-icon">📊</span>
-        <span class="btn-label">Portföy</span>
-      </button>
-
-      <button class="dashboard-btn" id="btn-contracts">
-        <span class="btn-icon">🤝</span>
-        <span class="btn-label">Kontratlar</span>
-      </button>
-
-      <button class="dashboard-btn" id="btn-businesses">
-        <span class="btn-icon">🏪</span>
-        <span class="btn-label">İşletmeler</span>
-      </button>
-
-      <button class="dashboard-btn" id="btn-mentors">
-        <span class="btn-icon">👥</span>
-        <span class="btn-label">Mentorlar</span>
-      </button>
-
-      <button class="dashboard-btn" id="btn-market">
-        <span class="btn-icon">📈</span>
-        <span class="btn-label">Piyasa</span>
-      </button>
-
-      <button class="dashboard-btn" id="btn-settings">
-        <span class="btn-icon">⚙️</span>
-        <span class="btn-label">Ayarlar</span>
-      </button>
-    </main>
-
-    <!-- Alt Status Bar -->
-    <footer class="status-bar">
-      <div class="status-item">
-        <span class="status-label">Aktif İşletme:</span>
-        <span class="status-value">2</span>
-      </div>
-      <div class="status-item">
-        <span class="status-label">Günlük Kazanç:</span>
-        <span class="status-value positive">+75 TL</span>
-      </div>
-    </footer>
+    </div>
   </div>
+  <script src="/js/core.js?v=20250823b"></script>
+  <script src="/js/chat-client.js?v=20250823b"></script>
+  <script>
+    /* ==== Global tek sayfa layout stilleri (scrollsuz) ==== */
+    (function(){
+  // (DM) Ek fallback kaldırıldı; ChatClient tek seferde yüklenecek.
+      const style = document.createElement('style');
+      style.textContent = `html,body{margin:0;padding:0;height:100%;overscroll-behavior:none;-webkit-text-size-adjust:100%;}
+body{overflow:hidden;touch-action:manipulation;}
+/* 100dvh: mobil tarayıcı chrome url bar shrink sorunu için fallback */
+@supports(height:100dvh){ body{min-height:100dvh;} }
+.layout{height:100%;max-height:100%;}
+/* Login overlay */
+.login-overlay{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:radial-gradient(circle at 25% 20%,#16212c,#0e1116 62%);z-index:500;transition:opacity .35s,visibility .35s;}
+.login-overlay.hidden{opacity:0;visibility:hidden;}
+.login-panel{width:100%;max-width:440px;background:rgba(24,32,42,.92);border:1px solid #243041;border-radius:26px;padding:28px 26px 30px;display:flex;flex-direction:column;gap:18px;box-shadow:0 10px 40px -12px rgba(0,0,0,.55);}
+.lo-title{margin:0;font-size:28px;font-weight:700;letter-spacing:.5px;background:linear-gradient(90deg,#60a5fa,#93c5fd);-webkit-background-clip:text;color:transparent;text-align:center;}
+.lo-tabs{display:flex;gap:10px;justify-content:center;margin-top:4px;}
+.lo-tab{flex:1;background:#1f2c37;border:1px solid #324657;color:#d2dee8;border-radius:14px;padding:10px 0;font-size:14px;font-weight:600;cursor:pointer;}
+.lo-tab.active{background:#2563eb;border-color:#1d4ed8;color:#fff;box-shadow:0 0 0 1px #1d4ed84d,0 4px 14px -6px #1d4ed8aa}
+.lo-form{display:flex;flex-direction:column;gap:14px;}
+.lo-label{display:flex;flex-direction:column;font-size:12px;gap:6px;color:#9fb3c8;font-weight:500;letter-spacing:.3px;text-transform:uppercase;}
+.lo-input{border:1px solid #2b3a4b;background:#0f1520;color:#f8fbff;border-radius:12px;padding:12px 14px;font-size:15px;font-family:inherit;}
+.lo-input:focus{outline:none;border-color:#3b82f6;background:#111b28;}
+.lo-pass-row{display:flex;align-items:center;gap:8px;}
+.lo-pass-row .lo-input{flex:1;}
+.lo-pass-toggle{background:#1f2c37;border:1px solid #2e4252;color:#b2c1ce;border-radius:10px;padding:8px 10px;font-size:13px;cursor:pointer;}
+.lo-pass-toggle:hover{background:#243543;}
+.lo-remember{margin-top:2px;font-size:13px;color:#c6d4e1;}
+.lo-status{background:#13283a;border:1px solid #1e3a8a;color:#cfe0ff;padding:10px 12px;border-radius:12px;font-size:13px;}
+.lo-status.error{background:#3a1215;border-color:#7f1d1d;color:#fecaca;}
+.lo-status.success{background:#122d1b;border-color:#14532d;color:#bbf7d0;}
+.lo-submit{margin-top:4px;cursor:pointer;background:linear-gradient(135deg,#2563eb,#1d4ed8);border:none;color:#fff;font-weight:600;padding:14px 16px;border-radius:14px;font-size:16px;letter-spacing:.3px;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 4px 18px -6px #1d4ed8aa;touch-action:manipulation;}
+.lo-submit:active{transform:translateY(1px)}
+.lo-meter{display:flex;gap:4px;flex:0 0 54px;height:6px;border-radius:4px;background:#1e2934;padding:2px;}
+.lo-meter span{flex:1;background:#2b3a4b;border-radius:2px;}
+.lo-meter span.on.weak{background:#dc2626}
+.lo-meter span.on.medium{background:#d97706}
+.lo-meter span.on.strong{background:#16a34a}
+@media (max-width:520px){.login-panel{margin:0 10px;padding:24px 20px 26px;border-radius:22px;}}
+`;document.head.appendChild(style);
+    })();
+    (function(){
+  /* ==== DM STYLES ==== */
+  const dmStyle = document.createElement('style');
+  dmStyle.textContent = `#view-dm{display:none;}
+  #view-dm.active{display:flex;flex-direction:column;}
+  .dm-layout{display:flex;gap:12px;height:100%;max-height:100%;}
+  .dm-conversations{width:32%;max-width:260px;min-width:180px;border:1px solid #1e293b;border-radius:12px;background:#0f172a;overflow:auto;display:flex;flex-direction:column;}
+  .dm-thread{flex:1;display:flex;flex-direction:column;min-width:0;}
+  .dm-thread-messages{flex:1;overflow:auto;padding:12px;display:flex;flex-direction:column;gap:10px;border:1px solid #1e293b;background:#0f172a;border-radius:12px;}
+  .dm-form{display:flex;gap:8px;margin-top:10px;}
+  .dm-input{flex:1;resize:vertical;min-height:40px;max-height:160px;background:#0f1a27;border:1px solid #334155;color:#f1f5f9;border-radius:10px;padding:8px 10px;font:inherit;}
+  .dm-target{width:90px;background:#0f1a27;border:1px solid #334155;color:#f1f5f9;border-radius:10px;padding:8px 10px;font:inherit;font-size:13px;}
+  .dm-msg{background:#1e293b;border:1px solid #334155;padding:8px 10px;border-radius:10px;font-size:13px;line-height:1.35;color:#f1f5f9;max-width:86%;}
+  .dm-msg.me{background:#2563eb;border-color:#1d4ed8;color:#fff;align-self:flex-end;}
+  .dm-msg .meta{font-size:11px;color:#94a3b8;display:flex;gap:6px;margin-bottom:2px;}
+  .dm-conv{padding:10px 12px;border-bottom:1px solid #1e293b;cursor:pointer;font-size:14px;display:flex;flex-direction:column;gap:4px;}
+  .dm-conv.unread{font-weight:600;}
+  .dm-conv:hover{background:#1e293b;}
+  .dm-empty{opacity:.6;font-size:13px;padding:14px 10px;}
+  @media (max-width:780px){.dm-layout{flex-direction:column;} .dm-conversations{flex-direction:row;width:auto;min-width:0;overflow:auto;} .dm-conv{flex:0 0 auto;min-width:160px;border-right:1px solid #1e293b;border-bottom:none;}}
+  @media (prefers-color-scheme: light){ .dm-thread-messages,.dm-conversations{background:#f1f5f9;color:#0f172a;} .dm-msg{background:#fff;color:#0f172a;} .dm-msg.me{background:#2563eb;color:#fff;} }
+  `;
+  document.head.appendChild(dmStyle);
+      /* ==== Login Overlay Entegrasyonu ==== */
+      const loginOverlay = document.getElementById('loginOverlay');
+      const tabBtns = Array.from(document.querySelectorAll('.lo-tab'));
+      const formLogin = document.getElementById('loFormLogin');
+      const formSignup = document.getElementById('loFormSignup');
+      const statusLogin = document.getElementById('loStatus');
+      const statusSignup = document.getElementById('suStatus');
+      const pwMeter = document.getElementById('pwMeter');
+      const pwBars = pwMeter?Array.from(pwMeter.children):[];
+      const loIdentity = document.getElementById('loIdentity');
+      const loPassword = document.getElementById('loPassword');
+      const loTogglePass = document.getElementById('loTogglePass');
+      const loSubmit = document.getElementById('loSubmit');
+      const suEmail = document.getElementById('suEmail');
+      const suUser = document.getElementById('suUser');
+      const suDisplay = document.getElementById('suDisplay');
+      const suPass = document.getElementById('suPass');
+      const suSubmit = document.getElementById('suSubmit');
+      function activate(tab){
+        tabBtns.forEach(b=>b.classList.toggle('active', b.dataset.tab===tab));
+        if(tab==='login'){ formLogin.style.display='flex'; formSignup.style.display='none'; }
+        else { formSignup.style.display='flex'; formLogin.style.display='none'; }
+      }
+      tabBtns.forEach(b=>b.addEventListener('click',()=>activate(b.dataset.tab)));
+      loTogglePass?.addEventListener('click',()=>{ if(!loPassword) return; loPassword.type = loPassword.type==='password'?'text':'password'; });
+      function scorePassword(p){ let s=0; if(!p) return 0; if(p.length>=8) s++; if(/[A-ZÇĞİÖŞÜ]/.test(p)&&/[a-zçğıöşü]/.test(p)) s++; if(/\d/.test(p)||/[^A-Za-z0-9]/.test(p)) s++; return Math.min(s,3); }
+      suPass?.addEventListener('input',()=>{ const sc = scorePassword(suPass.value); pwBars.forEach((el,i)=>{ el.className=''; if(i<sc) el.classList.add('on', sc===1?'weak':sc===2?'medium':'strong'); }); });
+      async function api(path, opts){
+        const controller = new AbortController();
+        const t = setTimeout(()=>controller.abort(), 10000);
+        try {
+          const res = await fetch(path, { ...opts, signal:controller.signal, headers:{ 'Content-Type':'application/json', ...(opts&&opts.headers||{}) } });
+          clearTimeout(t); return res;
+        } catch(e){ clearTimeout(t); throw e; }
+      }
+      function rememberChecked(id){ try{ return document.getElementById(id)?.checked; }catch{return false;} }
+      function storeToken(tk, remember){ try{ (remember?localStorage:sessionStorage).setItem('auth_token', tk); }catch{} }
+      formLogin.addEventListener('submit', async (e)=>{
+        e.preventDefault(); if(!loIdentity.value||!loPassword.value) return; statusLogin.textContent='Gönderiliyor...'; statusLogin.classList.remove('error','success');
+        loSubmit.disabled=true;
+        try {
+          const res = await api('/api/auth/login',{ method:'POST', body:JSON.stringify({ identity:loIdentity.value.trim(), password:loPassword.value }) });
+          if(res.ok){ const data = await res.json(); if(data.token){ storeToken(data.token, rememberChecked('loRemember')); statusLogin.textContent='Başarılı, yükleniyor...'; statusLogin.classList.add('success'); await initAfterAuth(); }
+          } else { statusLogin.textContent='Hatalı bilgi'; statusLogin.classList.add('error'); }
+        } catch{ statusLogin.textContent='Ağ hatası'; statusLogin.classList.add('error'); }
+        loSubmit.disabled=false;
+      });
+      formSignup.addEventListener('submit', async (e)=>{
+        e.preventDefault(); if(!suEmail.value||!suUser.value||!suPass.value) return; statusSignup.style.display='block'; statusSignup.textContent='Gönderiliyor...'; statusSignup.classList.remove('error','success'); suSubmit.disabled=true;
+        try {
+          const res = await api('/api/auth/signup',{ method:'POST', body:JSON.stringify({ email:suEmail.value.trim(), username:suUser.value.trim(), display_name:suDisplay.value.trim()||undefined, password:suPass.value }) });
+          if(res.ok){ const data = await res.json(); if(data.token){ storeToken(data.token, rememberChecked('suRemember')); statusSignup.textContent='Hesap oluşturuldu'; statusSignup.classList.add('success'); await initAfterAuth(); }
+          } else { const txt = await res.text(); statusSignup.textContent= txt||'Kayıt başarısız'; statusSignup.classList.add('error'); }
+        } catch{ statusSignup.textContent='Ağ hatası'; statusSignup.classList.add('error'); }
+        suSubmit.disabled=false;
+      });
+      async function initAfterAuth(){
+        // Me bilgisi çek ve UI'ya yerleştir
+        try { const me = await window.AuthClient.verifyToken(); if(me){
+          document.getElementById('playerName').textContent = me.display_name || me.username || 'Oyuncu';
+          document.getElementById('playerAvatar').textContent = (me.display_name||me.username||'?')[0].toUpperCase();
+          document.getElementById('playerTrust').textContent = 'İtibar '+ (me.trust||0);
+          window.__ME_ID = me.id;
+          const pidEl = document.getElementById('playerId'); if(pidEl){ const pubId = me.id + USER_ID_OFFSET; pidEl.textContent = 'ID '+ pubId; pidEl.dataset.id = pubId; }
+        }} catch {}
+        loginOverlay.classList.add('hidden'); loginOverlay.setAttribute('aria-hidden','true');
+        document.body.classList.add('app-ready');
+        // Chat görünümü aktif ise bağlantı
+        if(document.getElementById('view-chat').classList.contains('active')){
+          const e = new Event('forceChatInit'); window.dispatchEvent(e);
+        }
+      }
+      // ID kopyalama
+      document.addEventListener('click', (e)=>{
+        const el = e.target.closest('.pill-id');
+        if(!el || !el.dataset.id) return;
+        try { navigator.clipboard.writeText(el.dataset.id); el.classList.add('copied'); setTimeout(()=>el.classList.remove('copied'), 1400); } catch{}
+      });
+      // İlk açılış: token varsa direkt me -> overlay kapat
+      (async ()=>{ if(await window.AuthClient.isLoggedIn()){ await initAfterAuth(); } else { loginOverlay.classList.remove('hidden'); loginOverlay.setAttribute('aria-hidden','false'); loIdentity.focus(); } })();
+    
+      const viewChat = document.getElementById('view-chat');
+      const chatMessages = document.getElementById('chatMessages');
+      const chatForm = document.getElementById('chatForm');
+      const chatInput = document.getElementById('chatInput');
+      const chatSendBtn = document.getElementById('chatSendBtn');
+      const chatStatus = document.getElementById('chatStatus');
+      const chatOnline = document.getElementById('chatOnline');
+      const chatFlood = document.getElementById('chatFlood');
+  // ==== DM ELEMANLARI (eksik tanımları ekledik) ====
+  const dmForm = document.getElementById('dmForm');
+  const dmInput = document.getElementById('dmInput');
+  const dmTarget = document.getElementById('dmTarget');
+  const dmMessagesEl = document.getElementById('dmMessages');
+  const dmConvsEl = document.getElementById('dmConversations');
+  const dmSendBtn = document.getElementById('dmSendBtn');
+  let currentDmUser = null;
+      let active = false;
+      let lastScrollStick = true; // auto scroll kontrolü
+      const seenIds = new Set();
+      // Chat history yapılandırması
+      const CHAT_HISTORY_LIMIT = 30; // Kolay değiştirilebilir sabit
+      let historyLoaded = false;     // En az bir mesaj geçmişi geldi mi?
+      let historyAttempts = 0;       // Kaç deneme yapıldı
+  // Public kullanıcı ID offset: gerçek id + OFFSET = görünen id (1 -> 162534)
+  const USER_ID_OFFSET = 162533;
 
-  <script src="/js/app.js" type="module"></script>
+      async function loadHistory(){
+        try {
+          const tk = window.AuthClient?.getToken(); if(!tk) return;
+          const controller = new AbortController();
+          const t = setTimeout(()=>controller.abort(), 8000);
+          // Yakın geçmişi çek
+          const resp = await fetch('/api/chat/recent?limit='+CHAT_HISTORY_LIMIT, { headers:{ Authorization:'Bearer '+tk }, signal:controller.signal });
+          clearTimeout(t);
+          if(!resp.ok) return;
+          const data = await resp.json();
+          if(!data.messages) return;
+          // Temizle placeholder
+          const empty = chatMessages.querySelector('.chat-empty'); if(empty) empty.remove();
+          // History badge
+          if(!chatMessages.querySelector('.chat-history-badge')){
+            const hb = document.createElement('div'); hb.className='chat-history-badge'; hb.textContent='Önceki Mesajlar'; chatMessages.appendChild(hb);
+          }
+          historyAttempts++;
+          const had = data.messages.length;
+          console.debug('[chat] history fetch attempt', historyAttempts, 'messages:', had);
+          for(const m of data.messages){ appendMessage(m, true); }
+          if(had){
+            historyLoaded = true;
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+          } else {
+            // İlk denemede hiç mesaj dönmediyse 1 kere daha kısa gecikme ile dene (token race vs. DB gecikmesi ihtimali)
+            if(historyAttempts < 2){ setTimeout(()=>{ loadHistory(); }, 1500); }
+          }
+        } catch(e){ console.warn('[chat] history fail', e); }
+      }
+
+      function setStatus(st){
+        if(!chatStatus) return;
+        chatStatus.textContent = st.connected ? 'Bağlı' : (st.connecting ? 'Bağlanıyor…' : 'Kopuk');
+        chatStatus.classList.remove('is-connected','is-connecting','is-error');
+        chatStatus.classList.add(st.connected?'is-connected': (st.connecting?'is-connecting':'is-error'));
+        chatInput.disabled = !st.connected;
+        chatSendBtn.disabled = !st.connected;
+      }
+      function appendMessage(m, fromHistory){
+        if(!m || seenIds.has(m.id)) return; seenIds.add(m.id);
+        const empty = chatMessages.querySelector('.chat-empty'); if(empty) empty.remove();
+        const wrap = document.createElement('div');
+        wrap.className = 'chat-msg';
+        const time = new Date(m.created_at || Date.now()).toLocaleTimeString('tr-TR',{hour:'2-digit',minute:'2-digit'});
+        wrap.innerHTML = '<div class="meta"><span class="user">'+escapeHtml(m.username||'?')+'</span><span>'+time+'</span></div><div class="body">'+m.message+'</div>';
+        chatMessages.appendChild(wrap);
+  // İstemci tarafında artık mesaj prune edilmiyor; kalıcı geçmiş backend'de tutuluyor.
+  adjustChatBottomGap();
+  if(!fromHistory && lastScrollStick){ chatMessages.scrollTop = chatMessages.scrollHeight; }
+      }
+      function escapeHtml(s){ return (''+s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c])); }
+        function escapeHtmlFull(s){ return (''+s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c])); }
+        // ---- DM Helpers ----
+        async function fetchDmThreads(){
+          try { const tk = window.AuthClient?.getToken(); if(!tk) return; const r = await fetch('/api/dm/threads',{ headers:{ Authorization:'Bearer '+tk }}); if(!r.ok) return; const d = await r.json(); dmConversations = d.threads||[]; renderDmThreads(); } catch(e){ console.warn('[dm] threads fail', e); }
+        }
+        async function fetchDmMessages(otherId){
+          try { const tk = window.AuthClient?.getToken(); if(!tk) return; const r = await fetch('/api/dm/messages?user_id='+otherId+'&limit=50',{ headers:{ Authorization:'Bearer '+tk }}); if(!r.ok) return; const d = await r.json(); renderDmMessages(d.messages||[], otherId); } catch(e){ console.warn('[dm] messages fail', e); }
+        }
+        function renderDmThreads(){
+          // Sadece DM view aktifken render
+          const dmView = document.getElementById('view-dm');
+          if(!dmView || !dmView.classList.contains('active')) return;
+          if(!dmConvsEl) return; dmConvsEl.innerHTML='';
+          if(!dmConversations.length){ dmConvsEl.innerHTML='<div class="dm-empty">Konuşma yok</div>'; return; }
+    for(const c of dmConversations){ const div=document.createElement('div'); div.className='dm-conv'+(c.unread?' unread':''); div.dataset.userId=c.user_id; const last=c.last_message_at?new Date(c.last_message_at).toLocaleTimeString('tr-TR',{hour:'2-digit',minute:'2-digit'}):''; const pubId = c.user_id + USER_ID_OFFSET; div.innerHTML='<strong>'+escapeHtmlFull(c.username||'Kullanıcı')+'</strong><span style="opacity:.65;font-size:11px">ID '+pubId+' · '+last+(c.unread?(' • '+c.unread+' yeni'):'')+'</span>'; div.addEventListener('click',()=>openDmThread(c.user_id)); dmConvsEl.appendChild(div);} }
+        function renderDmMessages(list, otherId){ if(!dmMessagesEl) return; dmMessagesEl.innerHTML=''; if(!list.length){ dmMessagesEl.innerHTML='<div class="dm-empty">Mesaj yok</div>'; return; } const meId=window.__ME_ID; for(const m of list){ appendDmMessage(m, meId); } dmMessagesEl.scrollTop = dmMessagesEl.scrollHeight; currentDmUser = otherId; }
+        function appendDmMessage(m, meId){ const wrap=document.createElement('div'); wrap.className='dm-msg'+(m.sender_id===meId?' me':''); const time=new Date(m.created_at||Date.now()).toLocaleTimeString('tr-TR',{hour:'2-digit',minute:'2-digit'}); const uname = escapeHtmlFull(m.sender_username||('#'+m.sender_id)); wrap.innerHTML='<div class="meta"><span>'+uname+'</span><span>'+time+'</span></div><div class="body">'+m.message+'</div>'; dmMessagesEl.appendChild(wrap); }
+  function openDmThread(userId){ if(!userId) return; dmTarget.value=(userId + USER_ID_OFFSET); fetchDmMessages(userId); }
+  function ensureChatSocket(cb, attempt=0){
+    if(!window.ChatClient){ console.warn('[dm] ChatClient yok'); return; }
+    const st = window.ChatClient.getStatus();
+    if(st.connected){ cb && cb(); return; }
+    if(!st.connecting){ window.ChatClient.connect(); }
+    if(attempt>10){ console.warn('[dm] socket bağlanamadı'); return; }
+    setTimeout(()=>ensureChatSocket(cb, attempt+1), 250);
+  }
+  dmForm && dmForm.addEventListener('submit',(e)=>{ e.preventDefault(); if(!dmTarget||!dmInput) return; if(!window.ChatClient || typeof window.ChatClient.sendDirectMessage!=='function'){ console.warn('[dm] ChatClient hazır değil, yeniden yükleniyor'); const ev = new Event('forceChatInit'); window.dispatchEvent(ev); setTimeout(()=>{ const s=document.createElement('script'); s.src='/js/chat-client.js?v='+window.__APP_VERSION+'&re='+Date.now(); document.head.appendChild(s); }, 100); return; } let to=Number(dmTarget.value.trim()); const text=dmInput.value.trim(); if(!to||!text) return; if(to>USER_ID_OFFSET) to = to - USER_ID_OFFSET; if(to<=0) return; dmSendBtn && (dmSendBtn.disabled=true);
+    ensureChatSocket(()=>{
+  console.debug('[dm] submit handler sending', { to, textLen: text.length });
+      const r=window.ChatClient.sendDirectMessage(to,text);
+      if(r.ok){ dmInput.value=''; dmInput.focus(); }
+      else { console.warn('[dm] send failed', r); alert('Mesaj gönderilemedi: '+(r.error||'bilinmeyen')); }
+      dmSendBtn && (dmSendBtn.disabled=false);
+    });
+  });
+        dmInput?.addEventListener('keydown',(e)=>{ if(e.key==='Enter' && !e.shiftKey){ e.preventDefault(); dmForm.dispatchEvent(new Event('submit')); } });
+  if(window.ChatClient){ window.ChatClient.on('dm',(m)=>{ const meId=window.__ME_ID; const dmView=document.getElementById('view-dm'); if(dmView && dmView.classList.contains('active')){ if(currentDmUser && (m.sender_id===currentDmUser || m.recipient_id===currentDmUser)){ appendDmMessage(m, meId); dmMessagesEl.scrollTop=dmMessagesEl.scrollHeight; } fetchDmThreads(); } }); }
+        const dmView = document.getElementById('view-dm');
+  const obsDm = new MutationObserver(()=>{ if(dmView.classList.contains('active')) { fetchDmThreads(); if(window.ChatClient){ const st = window.ChatClient.getStatus(); if(!st.connected && !st.connecting){ window.ChatClient.connect(); } } } });
+        obsDm.observe(dmView,{attributes:true,attributeFilter:['class']});
+  const dmPoll = setInterval(async ()=>{ if(window.__ME_ID){ clearInterval(dmPoll); fetchDmThreads(); return; } if(window.AuthClient?.hasToken()){ try{ const me=await window.AuthClient.verifyToken(); if(me){ window.__ME_ID=me.id; clearInterval(dmPoll); fetchDmThreads(); } }catch{} } },1500);
+
+      function initIfNeeded(){
+        if(active) return; active = true;
+        if(!window.ChatClient){ console.warn('[chat] ChatClient yok'); return; }
+        window.ChatClient.on('status', setStatus);
+        window.ChatClient.on('online', ({count})=>{ chatOnline.textContent = count + ' çevrimiçi'; });
+        window.ChatClient.on('message', (m)=>{
+          // Eğer history gelmeden ilk mesaj geldiyse (örn. history race) ve henüz deneme yapılmadıysa yeniden history al
+          if(!historyLoaded && historyAttempts===0){ setTimeout(()=>{ if(!historyLoaded && historyAttempts===0) loadHistory(); }, 400); }
+          appendMessage(m,false);
+        });
+        loadHistory().finally(()=>{ if(window.ChatClient) window.ChatClient.connect(); });
+  setTimeout(()=>{ adjustChatBottomGap(); chatMessages.scrollTop = chatMessages.scrollHeight; }, 160);
+      }
+      // Scroll sticky detection
+      chatMessages.addEventListener('scroll', ()=>{
+        const atBottom = chatMessages.scrollHeight - chatMessages.scrollTop - chatMessages.clientHeight < 8;
+        lastScrollStick = atBottom;
+      });
+
+      chatForm.addEventListener('submit', (e)=>{
+        e.preventDefault();
+        const text = chatInput.value.trim();
+        if(!text) return;
+        const r = window.ChatClient.sendMessage(text);
+        if(r.ok){ chatInput.value=''; chatInput.focus(); }
+      });
+      chatInput.addEventListener('keydown', (e)=>{
+        if(e.key==='Enter'){
+          // Shift+Enter çok satır (textarea) için satır sonu bırak
+            if(e.shiftKey){ return; }
+            e.preventDefault();
+            chatForm.dispatchEvent(new Event('submit'));
+        }
+      });
+  chatInput.addEventListener('focus', ()=>{ setTimeout(()=>{ chatMessages.scrollTop = chatMessages.scrollHeight; }, 60); });
+      // Mobil klavye açılışında viewport daralması sonrası yeniden kaydır
+      window.visualViewport && visualViewport.addEventListener('resize', ()=>{
+        if(document.activeElement===chatInput){ setTimeout(()=>{ chatMessages.scrollTop = chatMessages.scrollHeight; }, 80); }
+      });
+  window.addEventListener('orientationchange', ()=>{ setTimeout(()=>{ chatMessages.scrollTop = chatMessages.scrollHeight; }, 120); });
+
+      // View değişimlerini yakala: core.js selectView fonksiyonunu gözlemlemek yerine MutationObserver ile active class
+      const obs = new MutationObserver(()=>{
+        if(viewChat.classList.contains('active')){ initIfNeeded(); }
+      });
+      obs.observe(viewChat, { attributes:true, attributeFilter:['class'] });
+      // Sayfa yüklendiğinde eğer chat zaten aktifse
+      if(viewChat.classList.contains('active')) initIfNeeded();
+      // Login sonrası tetikleme için custom event
+      window.addEventListener('forceChatInit', ()=>{ initIfNeeded(); });
+      // Fixed composer: liste alt boşluğunu composer yüksekliğine göre ayarla
+      function adjustChatBottomGap(){
+  if(window.innerWidth>700){ chatMessages.style.paddingBottom='14px'; return; }
+  const comp = chatForm; if(!comp) return;
+  const rect = comp.getBoundingClientRect();
+  // Viewport'un composer altından kalan (nav dahil) alanını + ekstra boşluğu rezerve et
+  // Böylece liste en alta kadar scroll edildiğinde son mesaj composer altında kalmaz.
+  const reserve = Math.max(0, (window.innerHeight - rect.top)) + 12; // 12px güvenlik boşluğu
+  chatMessages.style.paddingBottom = Math.round(reserve) + 'px';
+      }
+      window.addEventListener('resize', ()=>{ adjustChatBottomGap(); });
+      chatInput.addEventListener('focus', ()=>{ setTimeout(()=>{ adjustChatBottomGap(); chatMessages.scrollTop = chatMessages.scrollHeight; }, 120); });
+  // (Mobil) Artık absolute composer yok, dinamik yükseklik ayarı gereksiz.
+    })();
+  </script>
 </body>
 </html>

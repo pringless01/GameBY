@@ -19,6 +19,15 @@
       const t = setTimeout(()=>controller.abort(), 8000);
       const resp = await fetch((API||'') + '/api/auth/me', { headers: { Authorization: 'Bearer ' + tk }, signal: controller.signal });
       clearTimeout(t);
+      if(resp.status === 401){
+        // Token expired or invalid => auto logout (silent)
+        clearToken();
+        // Avoid redirect loops if already at login
+        if(!location.pathname.endsWith('login.html')){
+          location.replace('/login.html?logout=1');
+        }
+        return null;
+      }
       if(!resp.ok) return null;
       lastMe = await resp.json(); lastTs = Date.now();
       return lastMe;
@@ -42,11 +51,28 @@
     try{ sessionStorage.removeItem(KEY); }catch{}
   }
 
-  function logout(){
+  async function logout(){
+    const tk = getToken();
+    // Önce local token'ı sil ki paralel istekler token'ı kullanamasın
     clearToken();
+    if(tk){
+      try {
+        const controller = new AbortController();
+        const t = setTimeout(()=>controller.abort(), 3500);
+        await fetch((API||'') + '/api/auth/logout', { method: 'POST', headers: { Authorization: 'Bearer '+tk }, signal: controller.signal });
+        clearTimeout(t);
+      } catch { /* network/timeouts yoksay */ }
+    }
     try{ sessionStorage.clear(); }catch{}
-    go('/login.html?logout=1');
+    // Hızlı yönlendirme (history kirletmeden)
+    if(!navigating){ navigating = true; location.replace('/login.html?logout=1'); }
   }
+
+  window.addEventListener('pageshow', (e)=>{
+    if(e.persisted){ // bfcache geri dönüşünde token hala geçerli mi kontrol
+      verifyToken();
+    }
+  });
 
   window.AuthClient = { getToken, hasToken, verifyToken, isLoggedIn, requireAuthOrRedirect, clearToken, logout };
 })();
